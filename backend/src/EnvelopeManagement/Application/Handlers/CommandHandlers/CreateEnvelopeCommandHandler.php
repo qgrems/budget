@@ -7,14 +7,14 @@ namespace App\EnvelopeManagement\Application\Handlers\CommandHandlers;
 use App\EnvelopeManagement\Application\Commands\CreateEnvelopeCommand;
 use App\EnvelopeManagement\Domain\Aggregates\Envelope;
 use App\EnvelopeManagement\Domain\Exceptions\EnvelopeAlreadyExistsException;
-use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeRepositoryInterface;
+use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeViewRepositoryInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 
 final readonly class CreateEnvelopeCommandHandler
 {
     public function __construct(
         private EventSourcedRepositoryInterface $eventSourcedRepository,
-        private EnvelopeRepositoryInterface $envelopeRepository,
+        private EnvelopeViewRepositoryInterface $envelopeViewRepository,
     ) {
     }
 
@@ -28,7 +28,7 @@ final readonly class CreateEnvelopeCommandHandler
                 $command->getUserUuid(),
                 $command->getTargetBudget(),
                 $command->getName(),
-                $this->envelopeRepository,
+                $this->envelopeViewRepository,
             );
             $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
             $aggregate->clearUncommitedEvent();

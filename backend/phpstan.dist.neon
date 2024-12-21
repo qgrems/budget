@@ -3,7 +3,6 @@ includes:
 
 parameters:
     excludePaths:
-        - 'src/Domain/Entity/Envelope/EnvelopeCollectionInterface.php'
     level: 9
     paths:
         - bin/

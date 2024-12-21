@@ -6,13 +6,13 @@ namespace App\EnvelopeManagement\Application\Handlers\QueryHandlers;
 
 use App\EnvelopeManagement\Application\Queries\ShowEnvelopeQuery;
 use App\EnvelopeManagement\Domain\Exceptions\EnvelopeNotFoundException;
-use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeRepositoryInterface;
+use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeViewRepositoryInterface;
 use App\EnvelopeManagement\ReadModels\Views\EnvelopeViewInterface;
 
 final readonly class ShowEnvelopeQueryHandler
 {
     public function __construct(
-        private EnvelopeRepositoryInterface $envelopeRepository,
+        private EnvelopeViewRepositoryInterface $envelopeViewRepository,
     ) {
     }
 
@@ -21,7 +21,7 @@ final readonly class ShowEnvelopeQueryHandler
      */
     public function __invoke(ShowEnvelopeQuery $getOneEnvelopeQuery): EnvelopeViewInterface
     {
-        $envelope = $this->envelopeRepository->findOneBy([
+        $envelope = $this->envelopeViewRepository->findOneBy([
             'uuid' => $getOneEnvelopeQuery->getEnvelopeUuid(),
             'user_uuid' => $getOneEnvelopeQuery->getUserUuid(),
             'is_deleted' => false,

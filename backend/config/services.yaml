@@ -43,19 +43,7 @@ services:
     App\EnvelopeManagement\Application\Handlers\QueryHandlers\GetEnvelopeByTitleQueryHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\EnvelopeManagement\ReadModels\Projections\EnvelopeCreatedProjection:
-        tags: [ 'messenger.message_handler' ]
-
-    App\EnvelopeManagement\ReadModels\Projections\EnvelopeNamedProjection:
-        tags: [ 'messenger.message_handler' ]
-
-    App\EnvelopeManagement\ReadModels\Projections\EnvelopeDebitedProjection:
-        tags: [ 'messenger.message_handler' ]
-
-    App\EnvelopeManagement\ReadModels\Projections\EnvelopeCreditedProjection:
-        tags: [ 'messenger.message_handler' ]
-
-    App\EnvelopeManagement\ReadModels\Projections\EnvelopeDeletedProjection:
+    App\EnvelopeManagement\ReadModels\Projections\EnvelopeProjection:
         tags: [ 'messenger.message_handler' ]
 
     App\UserManagement\Application\Handlers\CommandHandlers\CreateUserCommandHandler:
@@ -79,22 +67,7 @@ services:
     App\UserManagement\Application\Handlers\CommandHandlers\LogoutUserCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\ReadModels\Projections\UserCreatedProjection:
-        tags: [ 'messenger.message_handler' ]
-
-    App\UserManagement\ReadModels\Projections\UserFirstnameUpdatedProjection:
-        tags: [ 'messenger.message_handler' ]
-
-    App\UserManagement\ReadModels\Projections\UserLastnameUpdatedProjection:
-        tags: [ 'messenger.message_handler' ]
-
-    App\UserManagement\ReadModels\Projections\UserPasswordResetRequestedProjection:
-        tags: [ 'messenger.message_handler' ]
-
-    App\UserManagement\ReadModels\Projections\UserPasswordUpdatedProjection:
-        tags: [ 'messenger.message_handler' ]
-
-    App\UserManagement\ReadModels\Projections\UserPasswordResetProjection:
+    App\UserManagement\ReadModels\Projections\UserProjection:
         tags: [ 'messenger.message_handler' ]
 
     Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface:

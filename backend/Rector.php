@@ -11,7 +11,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->sets([
-        SetList::PHP_83,
+        SetList::PHP_84,
         SymfonySetList::SYMFONY_CODE_QUALITY,
         SymfonySetList::SYMFONY_CONSTRUCTOR_INJECTION,
         SymfonySetList::SYMFONY_71,

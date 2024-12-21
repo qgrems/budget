@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ORM\Entity(repositoryClass: 'App\UserManagement\Infrastructure\Persistence\Repositories\UserRepository')]
+#[ORM\Entity(repositoryClass: 'App\UserManagement\Infrastructure\Persistence\Repositories\UserViewRepository')]
 #[ORM\Table(name: 'user_view')]
 final class UserView implements UserViewInterface, UserInterface, PasswordAuthenticatedUserInterface, SharedUserInterface
 {
@@ -272,7 +272,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
         return $this->isDeleted;
     }
 
-    public function setIsDeleted(bool $isDeleted): UserView
+    public function setIsDeleted(bool $isDeleted): self
     {
         $this->isDeleted = $isDeleted;
 

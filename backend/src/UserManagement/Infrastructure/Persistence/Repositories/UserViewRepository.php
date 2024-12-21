@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserManagement\Infrastructure\Persistence\Repositories;
 
-use App\UserManagement\Domain\Ports\Inbound\UserRepositoryInterface;
+use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserManagement\Domain\Ports\Inbound\UserViewInterface;
 use App\UserManagement\ReadModels\Views\UserView;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -14,7 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<UserView>
  */
-class UserRepository extends ServiceEntityRepository implements UserRepositoryInterface
+class UserViewRepository extends ServiceEntityRepository implements UserViewRepositoryInterface
 {
     public function __construct(
         ManagerRegistry $registry,

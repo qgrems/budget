@@ -7,7 +7,7 @@ namespace App\Tests\EnvelopeManagement\Application\Handlers\QueryHandlers;
 use App\EnvelopeManagement\Application\Handlers\QueryHandlers\ShowEnvelopeQueryHandler;
 use App\EnvelopeManagement\Application\Queries\ShowEnvelopeQuery;
 use App\EnvelopeManagement\Domain\Exceptions\EnvelopeNotFoundException;
-use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeRepositoryInterface;
+use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeViewRepositoryInterface;
 use App\EnvelopeManagement\Domain\Ports\Outbound\QueryBusInterface;
 use App\EnvelopeManagement\ReadModels\Views\EnvelopeView;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -17,16 +17,16 @@ class ShowEnvelopeQueryHandlerTest extends TestCase
 {
     private ShowEnvelopeQueryHandler $showEnvelopeQueryHandler;
     private QueryBusInterface&MockObject $queryBus;
-    private EnvelopeRepositoryInterface&MockObject $envelopeRepository;
+    private EnvelopeViewRepositoryInterface&MockObject $envelopeViewRepository;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->envelopeRepository = $this->createMock(EnvelopeRepositoryInterface::class);
+        $this->envelopeViewRepository = $this->createMock(EnvelopeViewRepositoryInterface::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);
 
         $this->showEnvelopeQueryHandler = new ShowEnvelopeQueryHandler(
-            $this->envelopeRepository,
+            $this->envelopeViewRepository,
         );
     }
 
@@ -46,7 +46,7 @@ class ShowEnvelopeQueryHandlerTest extends TestCase
         );
         $showEnvelopeQuery = new ShowEnvelopeQuery($envelopeView->getUuid(), 'd26cc02e-99e7-428c-9d61-572dff3f84a7');
 
-        $this->envelopeRepository->expects($this->once())->method('findOneBy')->willReturn($envelopeView);
+        $this->envelopeViewRepository->expects($this->once())->method('findOneBy')->willReturn($envelopeView);
 
         $envelope = $this->showEnvelopeQueryHandler->__invoke($showEnvelopeQuery);
 
@@ -69,7 +69,7 @@ class ShowEnvelopeQueryHandlerTest extends TestCase
         );
         $showEnvelopeQuery = new ShowEnvelopeQuery($envelopeView->getUuid(), 'd26cc02e-99e7-428c-9d61-572dff3f84a7');
 
-        $this->envelopeRepository->expects($this->once())->method('findOneBy')->willReturn(null);
+        $this->envelopeViewRepository->expects($this->once())->method('findOneBy')->willReturn(null);
         $this->expectException(EnvelopeNotFoundException::class);
         $this->expectExceptionMessage('Envelope not found');
 

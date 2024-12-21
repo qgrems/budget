@@ -8,7 +8,7 @@ use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\UserManagement\Application\Commands\ResetUserPasswordCommand;
 use App\UserManagement\Domain\Aggregates\User;
 use App\UserManagement\Domain\Exceptions\UserNotFoundException;
-use App\UserManagement\Domain\Ports\Inbound\UserRepositoryInterface;
+use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserManagement\Domain\Ports\Inbound\UserViewInterface;
 use App\UserManagement\Domain\Ports\Outbound\PasswordHasherInterface;
 use App\UserManagement\Domain\ValueObjects\Password;
@@ -17,15 +17,15 @@ use App\UserManagement\Domain\ValueObjects\UserId;
 final readonly class ResetUserPasswordCommandHandler
 {
     public function __construct(
-        private UserRepositoryInterface $userRepository,
+        private UserViewRepositoryInterface     $userViewRepository,
         private EventSourcedRepositoryInterface $eventSourcedRepository,
-        private PasswordHasherInterface $passwordHasher,
+        private PasswordHasherInterface         $passwordHasher,
     ) {
     }
 
     public function __invoke(ResetUserPasswordCommand $command): void
     {
-        $userView = $this->userRepository->findOneBy(
+        $userView = $this->userViewRepository->findOneBy(
             [
                 'passwordResetToken' => $command->getResetToken(),
                 'isDeleted' => false,

@@ -8,7 +8,7 @@ use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\UserManagement\Application\Commands\CreateUserCommand;
 use App\UserManagement\Domain\Aggregates\User;
 use App\UserManagement\Domain\Exceptions\UserAlreadyExistsException;
-use App\UserManagement\Domain\Ports\Inbound\UserRepositoryInterface;
+use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserManagement\Domain\Ports\Outbound\PasswordHasherInterface;
 use App\UserManagement\ReadModels\Views\UserView;
 
@@ -16,8 +16,8 @@ final readonly class CreateUserCommandHandler
 {
     public function __construct(
         private EventSourcedRepositoryInterface $eventSourcedRepository,
-        private UserRepositoryInterface $userRepository,
-        private PasswordHasherInterface $userPasswordHasher,
+        private UserViewRepositoryInterface     $userViewRepository,
+        private PasswordHasherInterface         $userPasswordHasher,
     ) {
     }
 
@@ -33,7 +33,7 @@ final readonly class CreateUserCommandHandler
                 $command->getFirstName(),
                 $command->getLastName(),
                 $command->isConsentGiven(),
-                $this->userRepository,
+                $this->userViewRepository,
             );
             $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
             $aggregate->clearUncommitedEvent();

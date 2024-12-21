@@ -6,7 +6,7 @@ namespace App\Tests\EnvelopeManagement\Application\Handlers\QueryHandlers;
 
 use App\EnvelopeManagement\Application\Handlers\QueryHandlers\ListEnvelopesQueryHandler;
 use App\EnvelopeManagement\Application\Queries\ListEnvelopesQuery;
-use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeRepositoryInterface;
+use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeViewRepositoryInterface;
 use App\EnvelopeManagement\Domain\Ports\Outbound\QueryBusInterface;
 use App\EnvelopeManagement\Presentation\HTTP\DTOs\ListEnvelopesInput;
 use App\EnvelopeManagement\ReadModels\Views\EnvelopesPaginated;
@@ -18,16 +18,16 @@ class ListEnvelopesQueryHandlerTest extends TestCase
 {
     private ListEnvelopesQueryHandler $listEnvelopesQueryHandler;
     private QueryBusInterface&MockObject $queryBus;
-    private EnvelopeRepositoryInterface&MockObject $envelopeRepository;
+    private EnvelopeViewRepositoryInterface&MockObject $envelopeViewRepository;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->envelopeRepository = $this->createMock(EnvelopeRepositoryInterface::class);
+        $this->envelopeViewRepository = $this->createMock(EnvelopeViewRepositoryInterface::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);
 
         $this->listEnvelopesQueryHandler = new ListEnvelopesQueryHandler(
-            $this->envelopeRepository,
+            $this->envelopeViewRepository,
         );
     }
 
@@ -54,7 +54,7 @@ class ListEnvelopesQueryHandlerTest extends TestCase
             $listEnvelopesInput->getOffset(),
         );
 
-        $this->envelopeRepository->expects($this->once())->method('findBy')->willReturn($envelopePaginated);
+        $this->envelopeViewRepository->expects($this->once())->method('findBy')->willReturn($envelopePaginated);
 
         $envelopePaginatedResult = $this->listEnvelopesQueryHandler->__invoke($listEnvelopesQuery);
 
