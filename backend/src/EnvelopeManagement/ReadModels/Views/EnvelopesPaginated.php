@@ -2,7 +2,7 @@
 
 namespace App\EnvelopeManagement\ReadModels\Views;
 
-final class EnvelopesPaginated implements EnvelopesPaginatedInterface
+final class EnvelopesPaginated implements EnvelopesPaginatedInterface, \jsonSerializable
 {
     /** @var array<object> */
     private iterable $envelopes;
@@ -30,5 +30,13 @@ final class EnvelopesPaginated implements EnvelopesPaginatedInterface
     public function getTotalItems(): int
     {
         return $this->totalItems;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'envelopes' => $this->envelopes,
+            'totalItems' => $this->totalItems,
+        ];
     }
 }

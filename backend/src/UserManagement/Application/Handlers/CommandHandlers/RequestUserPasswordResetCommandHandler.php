@@ -24,7 +24,7 @@ final readonly class RequestUserPasswordResetCommandHandler
 
     public function __invoke(RequestUserPasswordResetCommand $command): void
     {
-        $userView = $this->userViewRepository->findOneBy(['email' => $command->getEmail(), 'isDeleted' => false]);
+        $userView = $this->userViewRepository->findOneBy(['email' => $command->getEmail()]);
 
         if (!$userView) {
             throw new UserNotFoundException(UserNotFoundException::MESSAGE, 404);

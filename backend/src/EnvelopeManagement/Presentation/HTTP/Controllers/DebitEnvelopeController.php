@@ -8,7 +8,6 @@ use App\EnvelopeManagement\Application\Commands\DebitEnvelopeCommand;
 use App\EnvelopeManagement\Domain\Ports\Outbound\CommandBusInterface;
 use App\EnvelopeManagement\Presentation\HTTP\DTOs\DebitEnvelopeInput;
 use App\SharedContext\Domain\Ports\Inbound\SharedUserInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -16,12 +15,12 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/api/envelopes/{uuid}/debit', name: 'app_envelope_dedit', methods: ['POST'])]
+#[Route('/api/envelopes/{uuid}/debit', name: 'app_envelope_debit', methods: ['POST'])]
 #[IsGranted('ROLE_USER')]
-final class DebitEnvelopeController extends AbstractController
+final readonly class DebitEnvelopeController
 {
     public function __construct(
-        private readonly CommandBusInterface $commandBus,
+        private CommandBusInterface $commandBus,
     ) {
     }
 
@@ -38,6 +37,6 @@ final class DebitEnvelopeController extends AbstractController
             ),
         );
 
-        return $this->json(['message' => 'Envelope debit request received'], Response::HTTP_OK);
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

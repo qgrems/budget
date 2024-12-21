@@ -6,6 +6,7 @@ namespace App\UserManagement\ReadModels\Projections;
 
 use App\SharedContext\Domain\Ports\Inbound\EventInterface;
 use App\UserManagement\Domain\Events\UserCreatedEvent;
+use App\UserManagement\Domain\Events\UserDeletedEvent;
 use App\UserManagement\Domain\Events\UserFirstnameUpdatedEvent;
 use App\UserManagement\Domain\Events\UserLastnameUpdatedEvent;
 use App\UserManagement\Domain\Events\UserPasswordResetEvent;
@@ -33,6 +34,7 @@ final readonly class UserProjection
             $event instanceof UserPasswordResetEvent => $this->handleUserPasswordResetEvent($event),
             $event instanceof UserPasswordResetRequestedEvent => $this->handleUserPasswordResetRequestedEvent($event),
             $event instanceof UserPasswordUpdatedEvent => $this->handleUserPasswordUpdatedEvent($event),
+            $event instanceof UserDeletedEvent => $this->handleUserDeletedEvent($event),
             default => null,
         };
     }
@@ -53,7 +55,6 @@ final readonly class UserProjection
                 ->setPassword($event->getPassword())
                 ->setPasswordResetToken(null)
                 ->setPasswordResetTokenExpiry(null)
-                ->setIsDeleted(false)
         );
     }
     
@@ -124,9 +125,20 @@ final readonly class UserProjection
         $userView->setPassword($event->getNewPassword());
         $this->userViewRepository->save($userView);
     }
-    
+
+    private function handleUserDeletedEvent(UserDeletedEvent $event): void
+    {
+        $userView = $this->getUserViewByEvent($event);
+
+        if (!$userView instanceof UserViewInterface) {
+            return;
+        }
+
+        $this->userViewRepository->delete($userView);
+    }
+
     private function getUserViewByEvent(EventInterface $event): ?UserViewInterface
     {
-        return $this->userViewRepository->findOneBy(['uuid' => $event->getAggregateId(), 'isDeleted' => false]);
+        return $this->userViewRepository->findOneBy(['uuid' => $event->getAggregateId()]);
     }
 }

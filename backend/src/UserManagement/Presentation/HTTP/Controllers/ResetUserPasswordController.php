@@ -7,17 +7,17 @@ namespace App\UserManagement\Presentation\HTTP\Controllers;
 use App\UserManagement\Application\Commands\ResetUserPasswordCommand;
 use App\UserManagement\Domain\Ports\Outbound\CommandBusInterface;
 use App\UserManagement\Presentation\HTTP\DTOs\ResetUserPasswordInput;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/api/users/reset-password', name: 'app_user_reset_password', methods: ['POST'])]
-final class ResetUserPasswordController extends AbstractController
+final readonly class ResetUserPasswordController
 {
-    public function __construct(private readonly CommandBusInterface $commandBus)
-    {
+    public function __construct(
+        private CommandBusInterface $commandBus,
+    ) {
     }
 
     /**
@@ -32,6 +32,6 @@ final class ResetUserPasswordController extends AbstractController
             ),
         );
 
-        return $this->json(['message' => 'Password was reset'], Response::HTTP_OK);
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

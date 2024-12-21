@@ -7,17 +7,16 @@ namespace App\UserManagement\Presentation\HTTP\Controllers;
 use App\UserManagement\Application\Commands\CreateUserCommand;
 use App\UserManagement\Domain\Ports\Outbound\CommandBusInterface;
 use App\UserManagement\Presentation\HTTP\DTOs\CreateUserInput;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/api/users/new', name: 'app_user_new', methods: ['POST'])]
-final class CreateUserController extends AbstractController
+final readonly class CreateUserController
 {
     public function __construct(
-        private readonly CommandBusInterface $commandBus,
+        private CommandBusInterface $commandBus,
     ) {
     }
 
@@ -37,6 +36,6 @@ final class CreateUserController extends AbstractController
             ),
         );
 
-        return $this->json(['message' => 'User creation request received'], Response::HTTP_ACCEPTED);
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

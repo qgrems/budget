@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 #[ORM\Table(name: 'envelope_view')]
 #[ORM\Index(name: 'idx_envelope_view_user_uuid', columns: ['user_uuid'])]
-final class EnvelopeView implements EnvelopeViewInterface
+final class EnvelopeView implements EnvelopeViewInterface, \JsonSerializable
 {
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
@@ -181,5 +181,16 @@ final class EnvelopeView implements EnvelopeViewInterface
         $this->isDeleted = $isDeleted;
 
         return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'uuid' => $this->uuid,
+            'currentBudget' => $this->currentBudget,
+            'targetBudget' => $this->targetBudget,
+            'name' => $this->name,
+            'userUuid' => $this->userUuid,
+        ];
     }
 }

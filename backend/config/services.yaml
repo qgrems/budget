@@ -19,6 +19,14 @@ services:
             $user: '%env(RABBITMQ_USER)%'
             $password: '%env(RABBITMQ_PASSWORD)%'
 
+    App\UserManagement\Presentation\HTTP\Controllers\:
+        resource: '../src/UserManagement/Presentation/HTTP/Controllers'
+        tags: [ 'controller.service_arguments' ]
+
+    App\EnvelopeManagement\Presentation\HTTP\Controllers\:
+        resource: '../src/EnvelopeManagement/Presentation/HTTP/Controllers'
+        tags: [ 'controller.service_arguments' ]
+
     App\EnvelopeManagement\Application\Handlers\CommandHandlers\CreateEnvelopeCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
@@ -65,6 +73,9 @@ services:
         tags: [ 'messenger.message_handler' ]
 
     App\UserManagement\Application\Handlers\CommandHandlers\LogoutUserCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\UserManagement\Application\Handlers\CommandHandlers\DeleteUserCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
     App\UserManagement\ReadModels\Projections\UserProjection:

@@ -4,6 +4,7 @@ namespace App\UserManagement\Domain\Aggregates;
 
 use App\SharedContext\Domain\Ports\Inbound\EventInterface;
 use App\UserManagement\Domain\Events\UserCreatedEvent;
+use App\UserManagement\Domain\Events\UserDeletedEvent;
 use App\UserManagement\Domain\Events\UserFirstnameUpdatedEvent;
 use App\UserManagement\Domain\Events\UserLastnameUpdatedEvent;
 use App\UserManagement\Domain\Events\UserPasswordResetEvent;
@@ -46,8 +47,6 @@ final class User
 
     private ?\DateTimeImmutable $passwordResetTokenExpiry;
 
-    private bool $isDeleted;
-
     private array $uncommittedEvents = [];
 
     private function __construct()
@@ -63,7 +62,6 @@ final class User
         $this->roles = ['ROLE_USER'];
         $this->passwordResetToken = null;
         $this->passwordResetTokenExpiry = null;
-        $this->isDeleted = false;
     }
 
     public static function reconstituteFromEvents(array $events): self
@@ -86,7 +84,7 @@ final class User
         bool                        $isConsentGiven,
         UserViewRepositoryInterface $userViewRepository,
     ): self {
-        if ($userViewRepository->findOneBy(['email' => $email, 'isDeleted' => false])) {
+        if ($userViewRepository->findOneBy(['email' => $email])) {
             throw new UserAlreadyExistsException(UserAlreadyExistsException::MESSAGE, 400);
         }
 
@@ -110,7 +108,6 @@ final class User
 
     public function updateFirstname(Firstname $firstname, UserId $userId): void
     {
-        $this->assertNotDeleted();
         $this->assertOwnership($userId);
 
         $event = new UserFirstnameUpdatedEvent(
@@ -124,7 +121,6 @@ final class User
 
     public function updateLastname(Lastname $lastname, UserId $userId): void
     {
-        $this->assertNotDeleted();
         $this->assertOwnership($userId);
 
         $event = new UserLastnameUpdatedEvent(
@@ -136,9 +132,20 @@ final class User
         $this->recordEvent($event);
     }
 
+    public function delete(UserId $userId): void
+    {
+        $this->assertOwnership($userId);
+
+        $event = new UserDeletedEvent(
+            $this->userId->toString(),
+        );
+
+        $this->applyEvent($event);
+        $this->recordEvent($event);
+    }
+
     public function updatePassword(Password $oldPassword, Password $newPassword, UserId $userId): void
     {
-        $this->assertNotDeleted();
         $this->assertOwnership($userId);
 
         $event = new UserPasswordUpdatedEvent(
@@ -153,7 +160,6 @@ final class User
 
     public function setPasswordResetToken(PasswordResetToken $passwordResetToken, UserId $userId): void
     {
-        $this->assertNotDeleted();
         $this->assertOwnership($userId);
 
         $event = new UserPasswordResetRequestedEvent(
@@ -168,7 +174,6 @@ final class User
 
     public function resetPassword(Password $password, UserId $userId): void
     {
-        $this->assertNotDeleted();
         $this->assertOwnership($userId);
 
         if ($this->passwordResetTokenExpiry < new \DateTimeImmutable()) {
@@ -203,6 +208,7 @@ final class User
             UserPasswordUpdatedEvent::class => $this->applyUserPasswordUpdated($event),
             UserPasswordResetRequestedEvent::class => $this->applyUserPasswordResetRequested($event),
             UserPasswordResetEvent::class => $this->applyUserPasswordReset($event),
+            UserDeletedEvent::class => $this->applyUserDeleted(),
             default => throw new \RuntimeException(sprintf('Unsupported event type: %s', get_class($event))),
         };
     }
@@ -221,7 +227,6 @@ final class User
         $this->roles = ['ROLE_USER'];
         $this->passwordResetToken = null;
         $this->passwordResetTokenExpiry = null;
-        $this->isDeleted = false;
     }
 
     private function applyFirstnameUpdated(UserFirstnameUpdatedEvent $event): void
@@ -255,17 +260,15 @@ final class User
         $this->updatedAt = new \DateTime();
     }
 
+    private function applyUserDeleted(): void
+    {
+        $this->updatedAt = new \DateTime();
+    }
+
     private function assertOwnership(UserId $userId): void
     {
         if (!$this->userId->equals($userId)) {
             throw new \RuntimeException('User does not have permission to access this user.');
-        }
-    }
-
-    private function assertNotDeleted(): void
-    {
-        if ($this->isDeleted) {
-            throw InvalidUserOperationException::operationOnDeletedUser();
         }
     }
 

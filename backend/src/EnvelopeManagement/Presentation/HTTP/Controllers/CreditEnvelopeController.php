@@ -8,7 +8,6 @@ use App\EnvelopeManagement\Application\Commands\CreditEnvelopeCommand;
 use App\EnvelopeManagement\Domain\Ports\Outbound\CommandBusInterface;
 use App\EnvelopeManagement\Presentation\HTTP\DTOs\CreditEnvelopeInput;
 use App\SharedContext\Domain\Ports\Inbound\SharedUserInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -18,10 +17,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/envelopes/{uuid}/credit', name: 'app_envelope_credit', methods: ['POST'])]
 #[IsGranted('ROLE_USER')]
-final class CreditEnvelopeController extends AbstractController
+final readonly class CreditEnvelopeController
 {
     public function __construct(
-        private readonly CommandBusInterface $commandBus,
+        private CommandBusInterface $commandBus,
     ) {
     }
 
@@ -38,6 +37,6 @@ final class CreditEnvelopeController extends AbstractController
             ),
         );
 
-        return $this->json(['message' => 'Envelope credit request received'], Response::HTTP_OK);
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

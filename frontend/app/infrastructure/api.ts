@@ -18,6 +18,11 @@ async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
     }
     throw new Error('API request failed')
   }
+
+  if (response.status === 204) {
+    return null; // Return null for successful requests with no content
+  }
+
   return response.json()
 }
 
