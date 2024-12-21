@@ -7,7 +7,7 @@ namespace App\EnvelopeManagement\Domain\Ports\Inbound;
 use App\EnvelopeManagement\ReadModels\Views\EnvelopesPaginatedInterface;
 use App\EnvelopeManagement\ReadModels\Views\EnvelopeViewInterface;
 
-interface EnvelopeRepositoryInterface
+interface EnvelopeViewRepositoryInterface
 {
     public function save(EnvelopeViewInterface $envelope): void;
 

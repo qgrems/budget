@@ -30,6 +30,9 @@ framework:
             'App\UserManagement\Domain\Events\UserCreatedEvent': async
             'App\UserManagement\Domain\Events\UserFirstnameUpdatedEvent': async
             'App\UserManagement\Domain\Events\UserLastnameUpdatedEvent': async
+            'App\UserManagement\Domain\Events\UserPasswordUpdatedEvent': async
+            'App\UserManagement\Domain\Events\UserPasswordResetRequestedEvent': async
+            'App\UserManagement\Domain\Events\UserPasswordResetEvent': async
 
 # when@test:
 #    framework:

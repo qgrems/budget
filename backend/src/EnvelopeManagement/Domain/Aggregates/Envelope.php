@@ -11,7 +11,7 @@ use App\EnvelopeManagement\Domain\Events\EnvelopeDeletedEvent;
 use App\EnvelopeManagement\Domain\Events\EnvelopeNamedEvent;
 use App\EnvelopeManagement\Domain\Exceptions\EnvelopeNameAlreadyExistsForUserException;
 use App\EnvelopeManagement\Domain\Exceptions\InvalidEnvelopeOperationException;
-use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeRepositoryInterface;
+use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeViewRepositoryInterface;
 use App\EnvelopeManagement\Domain\ValueObjects\EnvelopeCreditMoney;
 use App\EnvelopeManagement\Domain\ValueObjects\EnvelopeCurrentBudget;
 use App\EnvelopeManagement\Domain\ValueObjects\EnvelopeDebitMoney;
@@ -57,13 +57,13 @@ final class Envelope
     }
 
     public static function create(
-        string $envelopeId,
-        string $userId,
-        string $targetBudget,
-        string $name,
-        EnvelopeRepositoryInterface $envelopeRepository,
+        string                          $envelopeId,
+        string                          $userId,
+        string                          $targetBudget,
+        string                          $name,
+        EnvelopeViewRepositoryInterface $envelopeViewRepository,
     ): self {
-        if ($envelopeRepository->findOneBy(['user_uuid' => $userId, 'name' => $name, 'is_deleted' => false])) {
+        if ($envelopeViewRepository->findOneBy(['user_uuid' => $userId, 'name' => $name, 'is_deleted' => false])) {
             throw new EnvelopeNameAlreadyExistsForUserException(EnvelopeNameAlreadyExistsForUserException::MESSAGE, 400);
         }
 
@@ -83,15 +83,15 @@ final class Envelope
     }
 
     public function rename(
-        EnvelopeName $name,
-        UserId $userId,
-        EnvelopeId $envelopeId,
-        EnvelopeRepositoryInterface $envelopeRepository,
+        EnvelopeName                    $name,
+        UserId                          $userId,
+        EnvelopeId                      $envelopeId,
+        EnvelopeViewRepositoryInterface $envelopeViewRepository,
     ): void {
         $this->assertNotDeleted();
         $this->assertOwnership($userId);
 
-        $envelope = $envelopeRepository->findOneBy(
+        $envelope = $envelopeViewRepository->findOneBy(
             [
                 'user_uuid' => $userId->toString(),
                 'name' => $name->toString(),

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\EnvelopeManagement\Infrastructure\Persistence\Repositories;
 
-use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeRepositoryInterface;
+use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeViewRepositoryInterface;
 use App\EnvelopeManagement\ReadModels\Views\EnvelopeView;
 use App\EnvelopeManagement\ReadModels\Views\EnvelopeViewInterface;
 use App\EnvelopeManagement\ReadModels\Views\EnvelopesPaginated;
@@ -12,7 +12,7 @@ use App\EnvelopeManagement\ReadModels\Views\EnvelopesPaginatedInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 
-final class EnvelopeRepository implements EnvelopeRepositoryInterface
+final class EnvelopeViewRepository implements EnvelopeViewRepositoryInterface
 {
     private Connection $connection;
 

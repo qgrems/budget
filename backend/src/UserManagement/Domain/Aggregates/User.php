@@ -11,7 +11,7 @@ use App\UserManagement\Domain\Events\UserPasswordResetRequestedEvent;
 use App\UserManagement\Domain\Events\UserPasswordUpdatedEvent;
 use App\UserManagement\Domain\Exceptions\InvalidUserOperationException;
 use App\UserManagement\Domain\Exceptions\UserAlreadyExistsException;
-use App\UserManagement\Domain\Ports\Inbound\UserRepositoryInterface;
+use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserManagement\Domain\ValueObjects\Consent;
 use App\UserManagement\Domain\ValueObjects\Email;
 use App\UserManagement\Domain\ValueObjects\Firstname;
@@ -78,15 +78,15 @@ final class User
     }
 
     public static function create(
-        string $userId,
-        string $email,
-        string $password,
-        string $firstname,
-        string $lastname,
-        bool $isConsentGiven,
-        UserRepositoryInterface $userRepository,
+        string                      $userId,
+        string                      $email,
+        string                      $password,
+        string                      $firstname,
+        string                      $lastname,
+        bool                        $isConsentGiven,
+        UserViewRepositoryInterface $userViewRepository,
     ): self {
-        if ($userRepository->findOneBy(['email' => $email, 'isDeleted' => false])) {
+        if ($userViewRepository->findOneBy(['email' => $email, 'isDeleted' => false])) {
             throw new UserAlreadyExistsException(UserAlreadyExistsException::MESSAGE, 400);
         }
 

@@ -6,7 +6,7 @@ namespace App\EnvelopeManagement\Application\Handlers\CommandHandlers;
 
 use App\EnvelopeManagement\Application\Commands\NameEnvelopeCommand;
 use App\EnvelopeManagement\Domain\Aggregates\Envelope;
-use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeRepositoryInterface;
+use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeViewRepositoryInterface;
 use App\EnvelopeManagement\Domain\ValueObjects\EnvelopeId;
 use App\EnvelopeManagement\Domain\ValueObjects\EnvelopeName;
 use App\EnvelopeManagement\Domain\ValueObjects\UserId;
@@ -16,7 +16,7 @@ final readonly class NameEnvelopeCommandHandler
 {
     public function __construct(
         private EventSourcedRepositoryInterface $eventSourcedRepository,
-        private EnvelopeRepositoryInterface $envelopeRepository,
+        private EnvelopeViewRepositoryInterface $envelopeViewRepository,
     ) {
     }
 
@@ -28,7 +28,7 @@ final readonly class NameEnvelopeCommandHandler
             EnvelopeName::create($command->getName()),
             UserId::create($command->getUserUuid()),
             EnvelopeId::create($command->getUuid()),
-            $this->envelopeRepository,
+            $this->envelopeViewRepository,
         );
         $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
         $aggregate->clearUncommitedEvent();

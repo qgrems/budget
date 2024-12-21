@@ -9,7 +9,7 @@ use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedReposi
 use App\UserManagement\Application\Commands\CreateUserCommand;
 use App\UserManagement\Application\Handlers\CommandHandlers\CreateUserCommandHandler;
 use App\UserManagement\Domain\Ports\Outbound\PasswordHasherInterface;
-use App\UserManagement\Infrastructure\Persistence\Repositories\UserRepository;
+use App\UserManagement\Infrastructure\Persistence\Repositories\UserViewRepository;
 use App\UserManagement\Presentation\HTTP\DTOs\CreateUserInput;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 class CreateUserCommandHandlerTest extends TestCase
 {
     private EventStoreInterface&MockObject $eventStore;
-    private UserRepository&MockObject $userRepository;
+    private UserViewRepository&MockObject $userViewRepository;
     private PasswordHasherInterface&MockObject $passwordHasher;
     private EventSourcedRepository $eventSourcedRepository;
     private CreateUserCommandHandler $handler;
@@ -26,12 +26,12 @@ class CreateUserCommandHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->eventStore = $this->createMock(EventStoreInterface::class);
-        $this->userRepository = $this->createMock(UserRepository::class);
+        $this->userViewRepository = $this->createMock(UserViewRepository::class);
         $this->passwordHasher = $this->createMock(PasswordHasherInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
         $this->handler = new CreateUserCommandHandler(
             $this->eventSourcedRepository,
-            $this->userRepository,
+            $this->userViewRepository,
             $this->passwordHasher,
         );
     }

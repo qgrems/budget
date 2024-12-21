@@ -6,7 +6,7 @@ namespace App\Tests\EnvelopeManagement\Application\Handlers\QueryHandlers;
 
 use App\EnvelopeManagement\Application\Handlers\QueryHandlers\GetEnvelopeByTitleQueryHandler;
 use App\EnvelopeManagement\Application\Queries\GetEnvelopeByTitleQuery;
-use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeRepositoryInterface;
+use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeViewRepositoryInterface;
 use App\EnvelopeManagement\ReadModels\Views\EnvelopeView;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -14,14 +14,14 @@ use PHPUnit\Framework\TestCase;
 class GetEnvelopeByTitleQueryHandlerTest extends TestCase
 {
     private GetEnvelopeByTitleQueryHandler $getEnvelopeByTitleQueryHandler;
-    private EnvelopeRepositoryInterface&MockObject $envelopeRepository;
+    private EnvelopeViewRepositoryInterface&MockObject $envelopeViewRepository;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->envelopeRepository = $this->createMock(EnvelopeRepositoryInterface::class);
+        $this->envelopeViewRepository = $this->createMock(EnvelopeViewRepositoryInterface::class);
         $this->getEnvelopeByTitleQueryHandler = new GetEnvelopeByTitleQueryHandler(
-            $this->envelopeRepository,
+            $this->envelopeViewRepository,
         );
     }
 
@@ -41,7 +41,7 @@ class GetEnvelopeByTitleQueryHandlerTest extends TestCase
         );
         $getEnvelopeByTitleQuery = new GetEnvelopeByTitleQuery('Electricity', 'test-uuid');
 
-        $this->envelopeRepository->expects($this->once())->method('findOneBy')->willReturn($envelopeView);
+        $this->envelopeViewRepository->expects($this->once())->method('findOneBy')->willReturn($envelopeView);
 
         $envelope = $this->getEnvelopeByTitleQueryHandler->__invoke($getEnvelopeByTitleQuery);
 

@@ -10,7 +10,7 @@ use App\EnvelopeManagement\Domain\Events\EnvelopeCreatedEvent;
 use App\EnvelopeManagement\Domain\Exceptions\EnvelopeAlreadyExistsException;
 use App\EnvelopeManagement\Domain\Exceptions\EnvelopeNameAlreadyExistsForUserException;
 use App\EnvelopeManagement\Domain\Exceptions\TargetBudgetException;
-use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeRepositoryInterface;
+use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeViewRepositoryInterface;
 use App\EnvelopeManagement\Presentation\HTTP\DTOs\CreateEnvelopeInput;
 use App\EnvelopeManagement\ReadModels\Views\EnvelopeView;
 use App\SharedContext\EventStore\EventStoreInterface;
@@ -24,18 +24,18 @@ class CreateEnvelopeCommandHandlerTest extends TestCase
 
     private EventStoreInterface&MockObject $eventStore;
     private EventSourcedRepository $eventSourcedRepository;
-    private EnvelopeRepositoryInterface&MockObject $envelopeRepository;
+    private EnvelopeViewRepositoryInterface&MockObject $envelopeViewRepository;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->eventStore = $this->createMock(EventStoreInterface::class);
-        $this->envelopeRepository = $this->createMock(EnvelopeRepositoryInterface::class);
+        $this->envelopeViewRepository = $this->createMock(EnvelopeViewRepositoryInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
 
         $this->createEnvelopeCommandHandler = new CreateEnvelopeCommandHandler(
             $this->eventSourcedRepository,
-            $this->envelopeRepository,
+            $this->envelopeViewRepository,
         );
     }
 
@@ -110,7 +110,7 @@ class CreateEnvelopeCommandHandlerTest extends TestCase
         );
 
         $this->eventStore->expects($this->once())->method('load')->willThrowException(new \RuntimeException());
-        $this->envelopeRepository->expects($this->once())->method('findOneBy')->willReturn($envelopeView);
+        $this->envelopeViewRepository->expects($this->once())->method('findOneBy')->willReturn($envelopeView);
         $this->eventStore->expects($this->never())->method('save');
 
         $this->expectException(EnvelopeNameAlreadyExistsForUserException::class);

@@ -9,22 +9,22 @@ use App\UserManagement\Application\Commands\RequestUserPasswordResetCommand;
 use App\UserManagement\Domain\Aggregates\User;
 use App\UserManagement\Domain\Exceptions\UserNotFoundException;
 use App\UserManagement\Domain\Ports\Inbound\PasswordResetTokenGeneratorInterface;
-use App\UserManagement\Domain\Ports\Inbound\UserRepositoryInterface;
+use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserManagement\Domain\ValueObjects\PasswordResetToken;
 use App\UserManagement\Domain\ValueObjects\UserId;
 
 final readonly class RequestUserPasswordResetCommandHandler
 {
     public function __construct(
-        private UserRepositoryInterface $userRepository,
+        private UserViewRepositoryInterface          $userViewRepository,
         private PasswordResetTokenGeneratorInterface $passwordResetTokenGenerator,
-        private EventSourcedRepositoryInterface $eventSourcedRepository,
+        private EventSourcedRepositoryInterface      $eventSourcedRepository,
     ) {
     }
 
     public function __invoke(RequestUserPasswordResetCommand $command): void
     {
-        $userView = $this->userRepository->findOneBy(['email' => $command->getEmail(), 'isDeleted' => false]);
+        $userView = $this->userViewRepository->findOneBy(['email' => $command->getEmail(), 'isDeleted' => false]);
 
         if (!$userView) {
             throw new UserNotFoundException(UserNotFoundException::MESSAGE, 404);

@@ -2,7 +2,7 @@
 
 namespace App\UserManagement\Domain\Ports\Inbound;
 
-interface UserRepositoryInterface
+interface UserViewRepositoryInterface
 {
     public function save(UserViewInterface $user): void;
 
