@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: 'App\UserManagement\Infrastructure\Persistence\Repositories\UserViewRepository')]
 #[ORM\Table(name: 'user_view')]
-final class UserView implements UserViewInterface, UserInterface, PasswordAuthenticatedUserInterface, SharedUserInterface
+final class UserView implements UserViewInterface, UserInterface, PasswordAuthenticatedUserInterface, SharedUserInterface, \JsonSerializable
 {
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
@@ -51,9 +51,6 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
      */
     #[ORM\Column(name: 'roles', type: 'json')]
     private array $roles = ['ROLE_USER'];
-
-    #[ORM\Column(name: 'is_deleted', type: 'boolean', nullable: false)]
-    private bool $isDeleted = false;
 
     #[ORM\Column(name: 'password_reset_token', type: 'string', length: 64, nullable: true)]
     private ?string $passwordResetToken = null;
@@ -267,15 +264,13 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
         return $this;
     }
 
-    public function isDeleted(): bool
+    public function jsonSerialize(): array
     {
-        return $this->isDeleted;
-    }
-
-    public function setIsDeleted(bool $isDeleted): self
-    {
-        $this->isDeleted = $isDeleted;
-
-        return $this;
+        return [
+            'uuid' => $this->uuid,
+            'firstname' => $this->firstname,
+            'lastname' => $this->lastname,
+            'email' => $this->email,
+        ];
     }
 }

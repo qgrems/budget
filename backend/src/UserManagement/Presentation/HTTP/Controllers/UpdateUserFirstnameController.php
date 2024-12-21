@@ -8,7 +8,6 @@ use App\UserManagement\Application\Commands\UpdateUserFirstnameCommand;
 use App\UserManagement\Domain\Ports\Inbound\UserViewInterface;
 use App\UserManagement\Domain\Ports\Outbound\CommandBusInterface;
 use App\UserManagement\Presentation\HTTP\DTOs\UpdateUserFirstnameInput;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -18,10 +17,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/users/firstname', name: 'app_user_edit_firstname', methods: ['PUT'])]
 #[IsGranted('ROLE_USER')]
-final class UpdateUserFirstnameController extends AbstractController
+final readonly class UpdateUserFirstnameController
 {
     public function __construct(
-        private readonly CommandBusInterface $commandBus,
+        private CommandBusInterface $commandBus,
     ) {
     }
 
@@ -39,6 +38,6 @@ final class UpdateUserFirstnameController extends AbstractController
             ),
         );
 
-        return $this->json(['message' => 'Firstname change request processed successfully'], Response::HTTP_OK);
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

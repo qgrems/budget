@@ -8,7 +8,6 @@ use App\UserManagement\Application\Commands\UpdateUserPasswordCommand;
 use App\UserManagement\Domain\Ports\Outbound\CommandBusInterface;
 use App\UserManagement\Presentation\HTTP\DTOs\UpdateUserPasswordInput;
 use App\UserManagement\ReadModels\Views\UserView;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -18,10 +17,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/users/change-password', name: 'app_user_change_password', methods: ['POST'])]
 #[IsGranted('ROLE_USER')]
-final class UpdateUserPasswordController extends AbstractController
+final readonly class UpdateUserPasswordController
 {
     public function __construct(
-        private readonly CommandBusInterface $commandBus,
+        private CommandBusInterface $commandBus,
     ) {
     }
 
@@ -38,6 +37,6 @@ final class UpdateUserPasswordController extends AbstractController
             $currentUser->getUuid(),
         ));
 
-        return $this->json(['message' => 'Password change request processed successfully'], Response::HTTP_OK);
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

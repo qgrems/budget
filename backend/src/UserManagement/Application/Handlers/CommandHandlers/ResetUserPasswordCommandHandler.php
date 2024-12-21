@@ -28,7 +28,6 @@ final readonly class ResetUserPasswordCommandHandler
         $userView = $this->userViewRepository->findOneBy(
             [
                 'passwordResetToken' => $command->getResetToken(),
-                'isDeleted' => false,
             ],
         );
 
