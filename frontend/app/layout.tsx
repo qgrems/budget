@@ -3,12 +3,15 @@ import { Inter } from 'next/font/google'
 import { Providers } from './providers'
 import { AppContent } from './components/AppContent'
 import { LanguageProvider } from './contexts/LanguageContext'
+import {ErrorProvider} from "./contexts/ErrorContext";
+import ErrorModal from "./components/ErrorModal";
+import {ValidProvider} from "./contexts/ValidContext";
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-    title: 'Budget Envelope App',
-    description: 'Manage your budget with envelopes',
+    title: 'GoGoBudgeto App',
+    description: 'Manage your budget',
 }
 
 export default function RootLayout({
@@ -32,9 +35,13 @@ export default function RootLayout({
         <body className={inter.className}>
         <LanguageProvider>
             <Providers>
-                <div className="flex flex-col min-h-screen bg-background">
-                    <AppContent>{children}</AppContent>
-                </div>
+                <ErrorProvider>
+                    <ValidProvider>
+                        <div className="flex flex-col min-h-screen bg-background">
+                            <AppContent>{children}</AppContent>
+                        </div>
+                    </ValidProvider>
+                </ErrorProvider>
             </Providers>
         </LanguageProvider>
         </body>

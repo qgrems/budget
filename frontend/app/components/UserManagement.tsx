@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useUser } from '../domain/user/userHooks'
+import {useValidMessage} from "../contexts/ValidContext";
 
 export default function UserManagement() {
   const { user, createUser, editUser, requestPasswordReset, resetPassword, changePassword, loading, error } = useUser()
@@ -9,6 +10,7 @@ export default function UserManagement() {
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const [resetToken, setResetToken] = useState('')
+  const {validMessage, setValidMessage} = useValidMessage();
 
   const handleCreateUser = (e: React.FormEvent) => {
     e.preventDefault()

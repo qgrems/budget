@@ -3,6 +3,7 @@
 import { useAppContext } from '../providers'
 import Header from './Header'
 import Footer from './Footer'
+import {MobileNavBar} from "./MobileNavBar";
 
 function LoadingSpinner() {
     return (
@@ -25,6 +26,7 @@ export function AppContent({ children }: { children: React.ReactNode }) {
             <main className="flex-grow container mx-auto px-4 py-8">
                 {children}
             </main>
+            <MobileNavBar />
             <Footer />
         </>
     )

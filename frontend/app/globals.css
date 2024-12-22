@@ -20,6 +20,11 @@
   --border: 220 14% 90%;
   --input: 220 14% 90%;
   --ring: 220 90% 50%;
+  --chart-1: 200 100% 50%;
+  --chart-2: 150 100% 50%;
+  --chart-3: 100 100% 50%;
+  --chart-4: 50 100% 50%;
+  --chart-5: 0 100% 50%;
 }
 
 .dark {
@@ -48,9 +53,9 @@ body {
 }
 
 .neomorphic {
-  border-radius: 15px;
+  border-radius: 10px;
   background: linear-gradient(145deg, #f0f0f0, #ffffff);
-  box-shadow: 5px 5px 10px #d1d1d1, -5px -5px 10px #ffffff;
+  box-shadow: 3px 3px 6px #d1d1d1, -3px -3px 6px #ffffff;
 }
 
 .neomorphic-inset {
@@ -60,40 +65,146 @@ body {
 }
 
 .neomorphic-button {
-  border-radius: 10px;
+  border-radius: 8px;
   background: linear-gradient(145deg, #f0f0f0, #ffffff);
-  box-shadow: 3px 3px 6px #d1d1d1, -3px -3px 6px #ffffff;
+  box-shadow: 2px 2px 4px #d1d1d1, -2px -2px 4px #ffffff;
   transition: all 0.3s ease;
 }
 
 .neomorphic-button:hover {
-  box-shadow: 4px 4px 8px #d1d1d1, -4px -4px 8px #ffffff;
-}
-
-.neomorphic-button:hover {
-  box-shadow: 6px 6px 12px #d1d1d1, -6px -6px 12px #ffffff;
+  box-shadow: 3px 3px 6px #d1d1d1, -3px -3px 6px #ffffff;
 }
 
 .neomorphic-button:active {
-  box-shadow: inset 3px 3px 6px #d1d1d1, inset -3px -3px 6px #ffffff;
+  box-shadow: inset 2px 2px 4px #d1d1d1, inset -2px -2px 4px #ffffff;
 }
 
 .neomorphic-input {
-  border-radius: 10px;
+  border-radius: 8px;
   background: #f0f0f0;
-  box-shadow: inset 3px 3px 6px #d1d1d1, inset -3px -3px 6px #ffffff;
+  box-shadow: inset 2px 2px 4px #d1d1d1, inset -2px -2px 4px #ffffff;
 }
 
-:root {
-  --chart-1: 200 100% 50%;
-  --chart-2: 150 100% 50%;
-  --chart-3: 100 100% 50%;
-  --chart-4: 50 100% 50%;
-  --chart-5: 0 100% 50%;
-}
 
 .neomorphic-circle {
   border-radius: 50%;
   background: linear-gradient(145deg, #f0f0f0, #ffffff);
   box-shadow: 5px 5px 10px #d1d1d1, -5px -5px 10px #ffffff;
+}
+.container{
+  min-height: 50vh;
+}
+/* ErrorModal.css */
+.progress-bar {
+  width: 100%;
+  animation: progress 5s linear forwards;
+}
+.progress-bar-validation {
+  width: 100%;
+  animation: progress 2s linear forwards;
+}
+@keyframes progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+/* Add this CSS to your stylesheet */
+.mobile-nav-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  justify-content: space-around;
+}
+
+@media (max-width: 1080px) {
+  .mobile-nav-bar {
+    display: flex;
+  }
+}
+/* Add this CSS to your stylesheet */
+.mobile-nav-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  justify-content: space-around;
+  z-index: 10;
+}
+
+@media (max-width: 1080px) {
+  .mobile-nav-bar {
+    display: flex;
+  }
+}
+.footer-margin {
+  margin-bottom: 5rem;
+}
+@media (max-width: 1080px) {
+  .headerdislay{
+    display: none;
+
+  }
+}
+/* Add this CSS to your stylesheet */
+.mobile-nav-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  justify-content: space-around;
+  z-index: 10;
+}
+
+@media (max-width: 1080px) {
+  .mobile-nav-bar {
+    display: flex;
+  }
+}
+
+.active-link {
+  background-color: #e0e0e0; /* Highlight color */
+  border-radius: 4px;
+}
+/* Add this CSS to your stylesheet */
+.language-selector-modal {
+  position: absolute;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  width: 12rem;
+  background-color: white;
+  border-radius: 0.375rem;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  z-index: 20;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #f0f0f0, #ffffff);
+  box-shadow: 3px 3px 6px #d1d1d1, -3px -3px 6px #ffffff;
+}
+
+@media (max-width: 1080px) {
+  .language-selector-modal {
+    bottom: 49px;
+    right: -45px;
+  }
+}
+
+@media (min-width: 1081px) {
+  .language-selector-modal {
+    right: -22px;  }
 }

@@ -14,7 +14,7 @@ final readonly class EnvelopeCreditMoney
             ->notBlank('Credit money should not be blank.')
             ->string('Credit money must be a string.')
             ->minLength(1, 'The credit money must be at least 1 character long.')
-            ->maxLength(13, 'The credit money must be at least 13 character long.')
+            ->maxLength(13, 'The credit money must be at most 13 character long.')
             ->regex('/^\d+(\.\d{2})?$/', 'The credit money must be a string representing a number with up to two decimal places (e.g., "0.00").')
         ;
     }
