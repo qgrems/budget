@@ -14,6 +14,10 @@ interface AppState {
   user: User | null
   isAuthenticated: boolean
   loading: boolean
+  envelopesData: {
+    envelopes: [];
+    totalItems: number;
+  }
 }
 
 interface AppContextType {
@@ -44,7 +48,6 @@ export function Providers({ children }: { children: ReactNode }) {
             loading: false,
           }))
         } catch (error) {
-          console.error('Failed to fetch user data:', error)
           authService.logout()
           setState(prevState => ({
             ...prevState,
@@ -76,7 +79,6 @@ export function Providers({ children }: { children: ReactNode }) {
       }
       return false
     } catch (error) {
-      console.error('Login failed:', error)
       return false
     }
   }

@@ -1,29 +1,32 @@
 import { authService } from '../services/auth'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api'
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
-async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
-  const token = authService.getToken()
-  const headers = {
-    'Content-Type': 'application/json',
-    ...options.headers,
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  }
-
-  const response = await fetch(`${API_URL}${endpoint}`, { ...options, headers })
-  if (!response.ok) {
-    if (response.status === 401) {
-      authService.removeToken() // Clear invalid token
-      throw new Error('Unauthorized')
+async function fetchWithAuth(endpoint: string, options: RequestInit = {},) {
+  return authService.withTokenRefresh(async () => {
+    const token = authService.getToken()
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     }
-    throw new Error('API request failed')
-  }
 
-  if (response.status === 204) {
-    return null; // Return null for successful requests with no content
-  }
+    const response = await fetch(`${API_URL}${endpoint}`, { ...options, headers })
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      const errorMessage = errorResponse.error
+      console.log(errorMessage)
+      if (response.status === 401) {
+        throw new Error(errorMessage)
+      }
+      throw new Error(errorMessage)
+    }
 
-  return response.json()
+    if (response.status === 204) {
+      return null; // Return null for successful requests with no content
+    }
+    return response.json()
+  })
 }
 
 export const api = {
@@ -39,8 +42,9 @@ export const api = {
         consentGiven: userData.consentGiven
       })
     }),
-    editUser: (userId: string, userData: any) => fetchWithAuth(`/users/${userId}`, { method: 'PUT', body: JSON.stringify(userData) }),
-    changePassword: (userId: string, oldPassword: string, newPassword: string) => fetchWithAuth(`/users/${userId}/change-password`, { method: 'POST', body: JSON.stringify({ oldPassword, newPassword }) }),
+    updateFirstname: (firstname: string) => fetchWithAuth('/users/firstname', { method: 'POST', body: JSON.stringify({ firstname }) }),
+    updateLastname: (lastname: string) => fetchWithAuth('/users/lastname', { method: 'POST', body: JSON.stringify({ lastname }) }),
+    changePassword: (oldPassword: string, newPassword: string) => fetchWithAuth('/users/change-password', { method: 'POST', body: JSON.stringify({ oldPassword, newPassword }) }),
   },
   queries: {
     getCurrentUser: () => fetchWithAuth('/users/me'),
@@ -54,6 +58,5 @@ export const api = {
   },
   envelopeQueries: {
     listEnvelopes: () => fetchWithAuth('/envelopes'),
-    getEnvelope: (envelopeId: string) => fetchWithAuth(`/envelopes/${envelopeId}`),
   },
 }

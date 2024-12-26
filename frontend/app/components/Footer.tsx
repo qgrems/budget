@@ -80,7 +80,7 @@ export default function Footer() {
                         </a>
                     </div>
                 </div>
-                <div className="mt-8 pt-8 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center">
+                <div className="mt-8 pt-8 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center footer-margin">
                     <p className="text-sm text-gray-600">
                         © {new Date().getFullYear()} {t('footer.companyName')}. {t('footer.allRightsReserved')}
                     </p>

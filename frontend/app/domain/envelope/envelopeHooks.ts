@@ -14,11 +14,11 @@ export function useEnvelopes() {
   const [envelopeState, setEnvelopeState] = useState<EnvelopeState>({
     envelopesData: state.envelopesData,
     loading: false,
-    error: null,
+    errorEnvelope: null,
   })
 
   const setLoading = (loading: boolean) => setEnvelopeState(prev => ({ ...prev, loading }))
-  const setError = (error: string | null) => setEnvelopeState(prev => ({ ...prev, error }))
+  const setError = (errorEnvelope: string | null) => setEnvelopeState(prev => ({ ...prev, errorEnvelope }))
 
   const updateEnvelopeState = useCallback((updatedEnvelope: Envelope) => {
     setEnvelopeState(prev => ({
@@ -38,7 +38,6 @@ export function useEnvelopes() {
       const updatedEnvelopes = await api.envelopeQueries.listEnvelopes()
       setEnvelopeState(prev => ({ ...prev, envelopesData: updatedEnvelopes, loading: false }))
     } catch (err) {
-      console.error('Error refreshing envelopes:', err)
       setError('Failed to refresh envelopes')
       setLoading(false)
     }
@@ -48,7 +47,7 @@ export function useEnvelopes() {
     refreshEnvelopes()
   }, [refreshEnvelopes])
 
-  const pollForChanges = async (envelopeId: string, action: string, expectedChange: (envelope: Envelope | undefined) => boolean) => {
+  const pollForChanges = async (setValidMessage,envelopeId: string, action: string, expectedChange: (envelope: Envelope | undefined) => boolean) => {
     let retries = 0
     while (retries < MAX_RETRIES) {
       await new Promise(resolve => setTimeout(resolve, RETRY_INTERVAL))
@@ -57,10 +56,10 @@ export function useEnvelopes() {
         const updatedEnvelope = updatedEnvelopes.envelopes.find(env => env.uuid === envelopeId)
         if (expectedChange(updatedEnvelope)) {
           setEnvelopeState(prev => ({ ...prev, envelopesData: updatedEnvelopes, loading: false }))
+          setValidMessage(`Envelope ${action} confirmed`)
           return
         }
       } catch (err) {
-        console.error(`Error polling for ${action}:`, err)
       }
       retries++
     }
@@ -68,10 +67,9 @@ export function useEnvelopes() {
     setLoading(false)
   }
 
-  const createEnvelope = async (name: string, targetBudget: string) => {
-    setLoading(true)
-    setError(null)
-    const tempId = uuidv4()
+  const createEnvelope = async (name: string, targetBudget: string, setError,setValidMessage) => {
+    setLoading(true);
+    const tempId = uuidv4();
     const newEnvelope: Envelope = {
       uuid: tempId,
       name,
@@ -81,36 +79,36 @@ export function useEnvelopes() {
       userUuid: '',
       createdAt: new Date().toISOString(),
       deleted: false,
-      pending: true
-    }
+      pending: true,
+    };
 
-    setEnvelopeState(prev => ({
+    setEnvelopeState((prev) => ({
       ...prev,
       envelopesData: {
         ...prev.envelopesData,
-        envelopes: [...(prev.envelopesData?.envelopes || []), newEnvelope]
-      }
-    }))
+        envelopes: [...(prev.envelopesData?.envelopes || []), newEnvelope],
+      },
+    }));
 
     try {
-      await api.envelopeCommands.createEnvelope(newEnvelope)
-      pollForChanges(tempId, 'creation', (env) => env?.uuid === tempId && !env?.pending)
-    } catch (err) {
-      setError('Failed to create envelope')
-      setEnvelopeState(prev => ({
+      await api.envelopeCommands.createEnvelope(newEnvelope);
+      pollForChanges(setValidMessage,tempId, 'creation', (env) => env?.uuid === tempId && !env?.pending);
+    } catch (err: any) {
+      console.log(err);
+      setError(err.message);
+      setEnvelopeState((prev) => ({
         ...prev,
         envelopesData: {
           ...prev.envelopesData,
-          envelopes: prev.envelopesData?.envelopes.filter(env => env.uuid !== tempId) || []
-        }
-      }))
-      setLoading(false)
+          envelopes: prev.envelopesData?.envelopes.filter((env) => env.uuid !== tempId) || [],
+        },
+      }));
+      setLoading(false);
     }
-  }
+  };
 
-  const deleteEnvelope = async (envelopeId: string) => {
+  const deleteEnvelope = async (envelopeId: string,setError,setValidMessage) => {
     setLoading(true)
-    setError(null)
 
     setEnvelopeState(prev => ({
       ...prev,
@@ -124,9 +122,9 @@ export function useEnvelopes() {
 
     try {
       await api.envelopeCommands.deleteEnvelope(envelopeId)
-      pollForChanges(envelopeId, 'deletion', (env) => env === undefined)
+      pollForChanges(setValidMessage, envelopeId, 'deletion', (env) => env === undefined)
     } catch (err) {
-      setError('Failed to delete envelope')
+      setError(err.message);
       setEnvelopeState(prev => ({
         ...prev,
         envelopesData: {
@@ -140,9 +138,8 @@ export function useEnvelopes() {
     }
   }
 
-  const creditEnvelope = async (envelopeId: string, amount: string) => {
+  const creditEnvelope = async (envelopeId: string, amount: string,setError,setValidMessage ) => {
     setLoading(true)
-    setError(null)
     const updatedEnvelope = envelopeState.envelopesData?.envelopes.find(env => env.uuid === envelopeId)
     if (updatedEnvelope) {
       const newBudget = (parseFloat(updatedEnvelope.currentBudget) + parseFloat(amount)).toString()
@@ -150,11 +147,11 @@ export function useEnvelopes() {
     }
     try {
       await api.envelopeCommands.creditEnvelope(envelopeId, amount)
-      pollForChanges(envelopeId, 'credit', (env) =>
+      pollForChanges(setValidMessage, envelopeId, 'credit', (env) =>
           parseFloat(env?.currentBudget || '0') >= parseFloat(updatedEnvelope?.currentBudget || '0') + parseFloat(amount)
       )
     } catch (err) {
-      setError('Failed to credit envelope')
+      setError(err.message);
       if (updatedEnvelope) {
         updateEnvelopeState({ ...updatedEnvelope, pending: false })
       }
@@ -162,9 +159,8 @@ export function useEnvelopes() {
     }
   }
 
-  const debitEnvelope = async (envelopeId: string, amount: string) => {
+  const debitEnvelope = async (envelopeId: string, amount: string, setError, setValidMessage) => {
     setLoading(true)
-    setError(null)
     const updatedEnvelope = envelopeState.envelopesData?.envelopes.find(env => env.uuid === envelopeId)
     if (updatedEnvelope) {
       const newBudget = (parseFloat(updatedEnvelope.currentBudget) - parseFloat(amount)).toString()
@@ -172,11 +168,11 @@ export function useEnvelopes() {
     }
     try {
       await api.envelopeCommands.debitEnvelope(envelopeId, amount)
-      pollForChanges(envelopeId, 'debit', (env) =>
+      pollForChanges(setValidMessage, envelopeId, 'debit', (env) =>
           parseFloat(env?.currentBudget || '0') <= parseFloat(updatedEnvelope?.currentBudget || '0') - parseFloat(amount)
       )
     } catch (err) {
-      setError('Failed to debit envelope')
+      setError(err.message);
       if (updatedEnvelope) {
         updateEnvelopeState({ ...updatedEnvelope, pending: false })
       }
@@ -184,18 +180,17 @@ export function useEnvelopes() {
     }
   }
 
-  const updateEnvelopeName = async (envelopeId: string, name: string) => {
+  const updateEnvelopeName = async (envelopeId: string, name: string,setError,setValidMessage) => {
     setLoading(true)
-    setError(null)
     const updatedEnvelope = envelopeState.envelopesData?.envelopes.find(env => env.uuid === envelopeId)
     if (updatedEnvelope) {
       updateEnvelopeState({ ...updatedEnvelope, name, pending: true })
     }
     try {
       await api.envelopeCommands.nameEnvelope(envelopeId, name)
-      pollForChanges(envelopeId, 'name update', (env) => env?.name === name)
+      pollForChanges(setValidMessage,envelopeId, 'name update', (env) => env?.name === name)
     } catch (err) {
-      setError('Failed to update envelope name')
+      setError(err.message);
       if (updatedEnvelope) {
         updateEnvelopeState({ ...updatedEnvelope, pending: false })
       }

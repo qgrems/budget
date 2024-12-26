@@ -247,6 +247,12 @@ parameters:
 			path: src/EnvelopeManagement/Domain/Events/EnvelopeNamedEvent.php
 
 		-
+			message: '#^Method App\\EnvelopeManagement\\Domain\\Exceptions\\EnvelopeNameAlreadyExistsForUserException\:\:getStatusCode\(\) should return int but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/EnvelopeManagement/Domain/Exceptions/EnvelopeNameAlreadyExistsForUserException.php
+
+		-
 			message: '#^Method App\\EnvelopeManagement\\Domain\\Ports\\Inbound\\EnvelopeViewRepositoryInterface\:\:findBy\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -497,6 +503,12 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/SharedContext/EventStore/EventStoreInterface.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Symfony\\Component\\HttpFoundation\\Response\:\:setStatusCode\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SharedContext/Infrastructure/EventListener/ExceptionListener.php
 
 		-
 			message: '#^Method App\\SharedContext\\Infrastructure\\Persistence\\Repositories\\EventSourcedRepository\:\:get\(\) return type has no value type specified in iterable type array\.$#'

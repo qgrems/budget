@@ -29,8 +29,12 @@ final readonly class ExceptionListener
             'type' => $exception::class,
         ], Response::HTTP_BAD_REQUEST);
 
-        if ($exception instanceof HttpExceptionInterface) {
-            $response->setStatusCode($exception->getStatusCode());
+        if ($exception instanceof HttpExceptionInterface || $exception instanceof \LogicException) {
+            if (method_exists($exception, 'getStatusCode')) {
+                $response->setStatusCode($exception->getStatusCode());
+            } else {
+                $response->setStatusCode($exception->getCode());
+            }
         } else {
             $response->setStatusCode(JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }

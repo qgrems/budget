@@ -5,14 +5,15 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useUser } from '../domain/user/userHooks'
 import { useTranslation } from '../hooks/useTranslation'
+import {useError} from "../contexts/ErrorContext";
 
 export default function SignIn() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const { signIn, isAuthenticated, loading, error, hasEnvelopes } = useUser()
+  const { signIn, isAuthenticated, loading, hasEnvelopes } = useUser()
   const router = useRouter()
   const { t } = useTranslation()
-
+  const {error, setError} = useError()
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
       if (isAuthenticated) {
@@ -30,7 +31,7 @@ export default function SignIn() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const success = await signIn(email, password)
+    const success = await signIn(email, password,setError)
     if (success) {
       const userHasEnvelopes = await hasEnvelopes()
       if (userHasEnvelopes) {

@@ -7,6 +7,8 @@ import { useUser } from '../domain/user/userHooks'
 import { useTranslation } from '../hooks/useTranslation'
 import { TermsModal } from '../components/TermsModal'
 import { v4 as uuidv4 } from 'uuid'
+import EnvelopeManagement from "../components/EnvelopeManagement";
+import {useError} from "../contexts/ErrorContext";
 
 export default function SignUp() {
     const [firstname, setFirstname] = useState('')
@@ -17,10 +19,10 @@ export default function SignUp() {
     const [consentGiven, setConsentGiven] = useState(false)
     const [isTermsModalOpen, setIsTermsModalOpen] = useState(false)
     const [successMessage, setSuccessMessage] = useState('')
-    const { createUser, loading, error } = useUser()
+    const { createUser, loading } = useUser()
     const router = useRouter()
     const { t } = useTranslation()
-
+ const { error, setError } = useError()
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         if (password !== confirmPassword) {
@@ -28,7 +30,7 @@ export default function SignUp() {
             return
         }
         const uuid = uuidv4()
-        const success = await createUser({ uuid, firstname, lastname, email, password, consentGiven })
+        const success = await createUser({ uuid, firstname, lastname, email, password, consentGiven }, setError)
         if (success) {
             setSuccessMessage(t('signup.successMessage'))
             setTimeout(() => {
