@@ -12,6 +12,7 @@ use App\UserManagement\Domain\Events\UserCreatedEvent;
 use App\UserManagement\Domain\Events\UserPasswordResetRequestedEvent;
 use App\UserManagement\Domain\Exceptions\InvalidUserOperationException;
 use App\UserManagement\Domain\Exceptions\UserNotFoundException;
+use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserManagement\Domain\Ports\Outbound\PasswordHasherInterface;
 use App\UserManagement\Infrastructure\Persistence\Repositories\UserViewRepository;
 use App\UserManagement\Presentation\HTTP\DTOs\ResetUserPasswordInput;
@@ -22,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 class ResetUserPasswordCommandHandlerTest extends TestCase
 {
     private EventStoreInterface&MockObject $eventStore;
-    private UserViewRepository&MockObject $userViewRepository;
+    private UserViewRepositoryInterface&MockObject $userViewRepository;
     private PasswordHasherInterface&MockObject $passwordHasher;
     private EventSourcedRepository $eventSourcedRepository;
     private ResetUserPasswordCommandHandler $handler;
@@ -31,7 +32,7 @@ class ResetUserPasswordCommandHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->eventStore = $this->createMock(EventStoreInterface::class);
-        $this->userViewRepository = $this->createMock(UserViewRepository::class);
+        $this->userViewRepository = $this->createMock(UserViewRepositoryInterface::class);
         $this->passwordHasher = $this->createMock(PasswordHasherInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
         $this->handler = new ResetUserPasswordCommandHandler(

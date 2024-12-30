@@ -166,4 +166,39 @@ class UserViewTest extends TestCase
 
         $this->assertEquals($expected, $userView->jsonSerialize());
     }
+
+    public function testCreateFromRepository(): void
+    {
+        $userData = [
+            'id' => 1,
+            'uuid' => 'b7e685be-db83-4866-9f85-102fac30a50b',
+            'email' => 'john.doe@example.com',
+            'password' => 'password123',
+            'firstname' => 'John',
+            'lastname' => 'Doe',
+            'consent_given' => true,
+            'consent_date' => '2023-01-01T00:00:00+00:00',
+            'created_at' => '2023-01-01T00:00:00+00:00',
+            'updated_at' => '2023-01-01T00:00:00+00:00',
+            'roles' => json_encode(['ROLE_USER', 'ROLE_ADMIN']),
+            'password_reset_token' => 'reset-token-123',
+            'password_reset_token_expiry' => (new \DateTimeImmutable('+1 hour'))->format(\DateTimeInterface::ATOM),
+        ];
+
+        $userView = UserView::createFromRepository($userData);
+
+        $this->assertEquals($userData['id'], $userView->getId());
+        $this->assertEquals($userData['uuid'], $userView->getUuid());
+        $this->assertEquals($userData['email'], $userView->getEmail());
+        $this->assertEquals($userData['password'], $userView->getPassword());
+        $this->assertEquals($userData['firstname'], $userView->getFirstname());
+        $this->assertEquals($userData['lastname'], $userView->getLastname());
+        $this->assertEquals($userData['consent_given'], $userView->isConsentGiven());
+        $this->assertEquals($userData['consent_date'], $userView->getConsentDate()->format(\DateTimeInterface::ATOM));
+        $this->assertEquals($userData['created_at'], $userView->getCreatedAt()->format(\DateTimeInterface::ATOM));
+        $this->assertEquals($userData['updated_at'], $userView->getUpdatedAt()->format(\DateTimeInterface::ATOM));
+        $this->assertEquals(json_decode($userData['roles'], true), $userView->getRoles());
+        $this->assertEquals($userData['password_reset_token'], $userView->getPasswordResetToken());
+        $this->assertEquals($userData['password_reset_token_expiry'], $userView->getPasswordResetTokenExpiry()->format(\DateTimeInterface::ATOM));
+    }
 }

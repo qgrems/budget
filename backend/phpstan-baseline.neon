@@ -511,64 +511,22 @@ parameters:
 			path: src/SharedContext/Infrastructure/Persistence/Repositories/EventSourcedRepository.php
 
 		-
-			message: '#^Call to an undefined method App\\UserManagement\\Domain\\Ports\\Inbound\\UserViewRepositoryInterface\:\:findOneBy\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/UserManagement/Application/Handlers/CommandHandlers/RequestUserPasswordResetCommandHandler.php
-
-		-
-			message: '#^Cannot call method getUuid\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: src/UserManagement/Application/Handlers/CommandHandlers/RequestUserPasswordResetCommandHandler.php
-
-		-
-			message: '#^Parameter \#1 \$aggregateId of method App\\SharedContext\\Domain\\Ports\\Inbound\\EventSourcedRepositoryInterface\:\:get\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/UserManagement/Application/Handlers/CommandHandlers/RequestUserPasswordResetCommandHandler.php
-
-		-
-			message: '#^Parameter \#1 \$uuid of static method App\\UserManagement\\Domain\\ValueObjects\\UserId\:\:create\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/UserManagement/Application/Handlers/CommandHandlers/RequestUserPasswordResetCommandHandler.php
-
-		-
-			message: '#^Call to an undefined method App\\UserManagement\\Domain\\Ports\\Inbound\\UserViewRepositoryInterface\:\:findOneBy\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/UserManagement/Application/Handlers/CommandHandlers/ResetUserPasswordCommandHandler.php
-
-		-
 			message: '#^Parameter \#1 \$user of method App\\UserManagement\\Domain\\Ports\\Outbound\\PasswordHasherInterface\:\:hash\(\) expects Symfony\\Component\\Security\\Core\\User\\PasswordAuthenticatedUserInterface, App\\UserManagement\\Domain\\Ports\\Inbound\\UserViewInterface given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserManagement/Application/Handlers/CommandHandlers/ResetUserPasswordCommandHandler.php
 
 		-
-			message: '#^Call to an undefined method App\\UserManagement\\Domain\\Ports\\Inbound\\UserViewRepositoryInterface\:\:findOneBy\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/UserManagement/Application/Handlers/CommandHandlers/UpdateUserPasswordCommandHandler.php
-
-		-
-			message: '#^Parameter \#1 \$user of method App\\UserManagement\\Domain\\Ports\\Outbound\\PasswordHasherInterface\:\:hash\(\) expects Symfony\\Component\\Security\\Core\\User\\PasswordAuthenticatedUserInterface, mixed given\.$#'
+			message: '#^Parameter \#1 \$user of method App\\UserManagement\\Domain\\Ports\\Outbound\\PasswordHasherInterface\:\:hash\(\) expects Symfony\\Component\\Security\\Core\\User\\PasswordAuthenticatedUserInterface, App\\UserManagement\\Domain\\Ports\\Inbound\\UserViewInterface\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserManagement/Application/Handlers/CommandHandlers/UpdateUserPasswordCommandHandler.php
 
 		-
-			message: '#^Parameter \#1 \$user of method App\\UserManagement\\Domain\\Ports\\Outbound\\PasswordHasherInterface\:\:verify\(\) expects Symfony\\Component\\Security\\Core\\User\\PasswordAuthenticatedUserInterface, mixed given\.$#'
+			message: '#^Parameter \#1 \$user of method App\\UserManagement\\Domain\\Ports\\Outbound\\PasswordHasherInterface\:\:verify\(\) expects Symfony\\Component\\Security\\Core\\User\\PasswordAuthenticatedUserInterface, App\\UserManagement\\Domain\\Ports\\Inbound\\UserViewInterface\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserManagement/Application/Handlers/CommandHandlers/UpdateUserPasswordCommandHandler.php
-
-		-
-			message: '#^Call to an undefined method App\\UserManagement\\Domain\\Ports\\Inbound\\UserViewRepositoryInterface\:\:findOneBy\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/UserManagement/Domain/Aggregates/User.php
 
 		-
 			message: '#^Cannot access offset ''payload'' on mixed\.$#'
@@ -937,6 +895,48 @@ parameters:
 			path: src/UserManagement/Domain/Events/UserPasswordUpdatedEvent.php
 
 		-
+			message: '#^Method App\\UserManagement\\Domain\\Ports\\Inbound\\UserViewInterface\:\:createFromRepository\(\) has parameter \$user with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserManagement/Domain/Ports/Inbound/UserViewInterface.php
+
+		-
+			message: '#^Method App\\UserManagement\\Domain\\Ports\\Inbound\\UserViewRepositoryInterface\:\:findOneBy\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserManagement/Domain/Ports/Inbound/UserViewRepositoryInterface.php
+
+		-
+			message: '#^Method App\\UserManagement\\Domain\\Ports\\Inbound\\UserViewRepositoryInterface\:\:findOneBy\(\) has parameter \$orderBy with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserManagement/Domain/Ports/Inbound/UserViewRepositoryInterface.php
+
+		-
+			message: '#^Method App\\UserManagement\\Infrastructure\\Persistence\\Repositories\\UserViewRepository\:\:buildWhereClause\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserManagement/Infrastructure/Persistence/Repositories/UserViewRepository.php
+
+		-
+			message: '#^Method App\\UserManagement\\Infrastructure\\Persistence\\Repositories\\UserViewRepository\:\:findOneBy\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserManagement/Infrastructure/Persistence/Repositories/UserViewRepository.php
+
+		-
+			message: '#^Method App\\UserManagement\\Infrastructure\\Persistence\\Repositories\\UserViewRepository\:\:findOneBy\(\) has parameter \$orderBy with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserManagement/Infrastructure/Persistence/Repositories/UserViewRepository.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type DateTimeImmutable\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/UserManagement/Infrastructure/Persistence/Repositories/UserViewRepository.php
+
+		-
 			message: '#^Cannot access offset ''consentDate'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -979,26 +979,86 @@ parameters:
 			path: src/UserManagement/Infrastructure/Serializers/UserNormalizer.php
 
 		-
-			message: '#^Call to an undefined method App\\UserManagement\\Domain\\Ports\\Inbound\\UserViewRepositoryInterface\:\:findOneBy\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/UserManagement/ReadModels/Projections/UserProjection.php
-
-		-
-			message: '#^Method App\\UserManagement\\ReadModels\\Projections\\UserProjection\:\:getUserViewByEvent\(\) should return App\\UserManagement\\Domain\\Ports\\Inbound\\UserViewInterface\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: src/UserManagement/ReadModels/Projections/UserProjection.php
-
-		-
 			message: '#^Parameter \#1 \$roles of method App\\UserManagement\\ReadModels\\Views\\UserView\:\:setRoles\(\) expects array\<string\>, array given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserManagement/ReadModels/Projections/UserProjection.php
 
 		-
+			message: '#^Method App\\UserManagement\\ReadModels\\Views\\UserView\:\:createFromRepository\(\) has parameter \$user with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserManagement/ReadModels/Views/UserView.php
+
+		-
 			message: '#^Method App\\UserManagement\\ReadModels\\Views\\UserView\:\:jsonSerialize\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserManagement/ReadModels/Views/UserView.php
+
+		-
+			message: '#^Parameter \#1 \$datetime of class DateTime constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/ReadModels/Views/UserView.php
+
+		-
+			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/UserManagement/ReadModels/Views/UserView.php
+
+		-
+			message: '#^Parameter \#1 \$email of method App\\UserManagement\\ReadModels\\Views\\UserView\:\:setEmail\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/ReadModels/Views/UserView.php
+
+		-
+			message: '#^Parameter \#1 \$firstname of method App\\UserManagement\\ReadModels\\Views\\UserView\:\:setFirstname\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/ReadModels/Views/UserView.php
+
+		-
+			message: '#^Parameter \#1 \$id of method App\\UserManagement\\ReadModels\\Views\\UserView\:\:setId\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/ReadModels/Views/UserView.php
+
+		-
+			message: '#^Parameter \#1 \$json of function json_decode expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/ReadModels/Views/UserView.php
+
+		-
+			message: '#^Parameter \#1 \$lastname of method App\\UserManagement\\ReadModels\\Views\\UserView\:\:setLastname\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/ReadModels/Views/UserView.php
+
+		-
+			message: '#^Parameter \#1 \$password of method App\\UserManagement\\ReadModels\\Views\\UserView\:\:setPassword\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/ReadModels/Views/UserView.php
+
+		-
+			message: '#^Parameter \#1 \$passwordResetToken of method App\\UserManagement\\ReadModels\\Views\\UserView\:\:setPasswordResetToken\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/ReadModels/Views/UserView.php
+
+		-
+			message: '#^Parameter \#1 \$roles of method App\\UserManagement\\ReadModels\\Views\\UserView\:\:setRoles\(\) expects array\<string\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/ReadModels/Views/UserView.php
+
+		-
+			message: '#^Parameter \#1 \$uuid of method App\\UserManagement\\ReadModels\\Views\\UserView\:\:setUuid\(\) expects string, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/UserManagement/ReadModels/Views/UserView.php
 
@@ -1047,6 +1107,12 @@ parameters:
 		-
 			message: '#^Cannot call method format\(\) on DateTimeImmutable\|null\.$#'
 			identifier: method.nonObject
+			count: 2
+			path: tests/UserManagement/ReadModels/Views/UserViewTest.php
+
+		-
+			message: '#^Parameter \#1 \$json of function json_decode expects string, string\|false given\.$#'
+			identifier: argument.type
 			count: 1
 			path: tests/UserManagement/ReadModels/Views/UserViewTest.php
 

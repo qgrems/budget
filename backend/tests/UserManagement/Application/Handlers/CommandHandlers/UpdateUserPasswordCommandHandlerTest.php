@@ -10,8 +10,8 @@ use App\UserManagement\Application\Commands\UpdateUserPasswordCommand;
 use App\UserManagement\Application\Handlers\CommandHandlers\UpdateUserPasswordCommandHandler;
 use App\UserManagement\Domain\Events\UserCreatedEvent;
 use App\UserManagement\Domain\Exceptions\UserOldPasswordIsIncorrectException;
+use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserManagement\Domain\Ports\Outbound\PasswordHasherInterface;
-use App\UserManagement\Infrastructure\Persistence\Repositories\UserViewRepository;
 use App\UserManagement\Presentation\HTTP\DTOs\UpdateUserPasswordInput;
 use App\UserManagement\ReadModels\Views\UserView;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 class UpdateUserPasswordCommandHandlerTest extends TestCase
 {
     private EventStoreInterface&MockObject $eventStore;
-    private UserViewRepository&MockObject $userViewRepository;
+    private UserViewRepositoryInterface&MockObject $userViewRepository;
     private PasswordHasherInterface&MockObject $passwordHasher;
     private EventSourcedRepository $eventSourcedRepository;
     private UpdateUserPasswordCommandHandler $handler;
@@ -29,7 +29,7 @@ class UpdateUserPasswordCommandHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->eventStore = $this->createMock(EventStoreInterface::class);
-        $this->userViewRepository = $this->createMock(UserViewRepository::class);
+        $this->userViewRepository = $this->createMock(UserViewRepositoryInterface::class);
         $this->passwordHasher = $this->createMock(PasswordHasherInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
         $this->handler = new UpdateUserPasswordCommandHandler(

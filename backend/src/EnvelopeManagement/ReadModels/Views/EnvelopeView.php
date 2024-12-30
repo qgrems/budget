@@ -49,7 +49,8 @@ final class EnvelopeView implements EnvelopeViewInterface, \JsonSerializable
     #[\Override]
     public static function createFromRepository(array $envelope): self
     {
-        return (new self())->setCurrentBudget($envelope['current_budget'])
+        return new self()
+            ->setCurrentBudget($envelope['current_budget'])
             ->setTargetBudget($envelope['target_budget'])
             ->setName($envelope['name'])
             ->setIsDeleted((bool) $envelope['is_deleted'])

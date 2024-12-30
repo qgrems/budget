@@ -67,4 +67,6 @@ interface UserViewInterface
     public function getPasswordResetTokenExpiry(): ?\DateTimeImmutable;
 
     public function setPasswordResetTokenExpiry(?\DateTimeImmutable $passwordResetTokenExpiry): self;
+
+    public static function createFromRepository(array $user): self;
 }

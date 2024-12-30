@@ -11,7 +11,7 @@ use App\UserManagement\Application\Handlers\CommandHandlers\RequestUserPasswordR
 use App\UserManagement\Domain\Events\UserCreatedEvent;
 use App\UserManagement\Domain\Exceptions\UserNotFoundException;
 use App\UserManagement\Domain\Ports\Inbound\PasswordResetTokenGeneratorInterface;
-use App\UserManagement\Infrastructure\Persistence\Repositories\UserViewRepository;
+use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserManagement\Presentation\HTTP\DTOs\RequestUserPasswordResetInput;
 use App\UserManagement\ReadModels\Views\UserView;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 class RequestUserPasswordResetCommandHandlerTest extends TestCase
 {
     private EventStoreInterface&MockObject $eventStore;
-    private UserViewRepository&MockObject $userViewRepository;
+    private UserViewRepositoryInterface&MockObject $userViewRepository;
     private PasswordResetTokenGeneratorInterface&MockObject $passwordResetTokenGenerator;
     private EventSourcedRepository $eventSourcedRepository;
     private RequestUserPasswordResetCommandHandler $handler;
@@ -29,7 +29,7 @@ class RequestUserPasswordResetCommandHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->eventStore = $this->createMock(EventStoreInterface::class);
-        $this->userViewRepository = $this->createMock(UserViewRepository::class);
+        $this->userViewRepository = $this->createMock(UserViewRepositoryInterface::class);
         $this->passwordResetTokenGenerator = $this->createMock(PasswordResetTokenGeneratorInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
         $this->handler = new RequestUserPasswordResetCommandHandler(
