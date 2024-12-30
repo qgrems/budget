@@ -5,16 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\UserManagement\Application\Handlers\CommandHandlers;
 
 use App\UserManagement\Application\Commands\LogoutUserCommand;
-use App\UserManagement\Application\Commands\UpdateUserPasswordCommand;
 use App\UserManagement\Application\Handlers\CommandHandlers\LogoutUserCommandHandler;
-use App\UserManagement\Domain\Events\UserCreatedEvent;
-use App\UserManagement\Domain\Exceptions\UserOldPasswordIsIncorrectException;
 use App\UserManagement\Domain\Ports\Outbound\EntityManagerInterface;
 use App\UserManagement\Domain\Ports\Outbound\RefreshTokenManagerInterface;
 use App\UserManagement\Infrastructure\Entities\RefreshToken;
 use App\UserManagement\Presentation\HTTP\DTOs\LogoutUserInput;
-use App\UserManagement\Presentation\HTTP\DTOs\UpdateUserPasswordInput;
-use App\UserManagement\ReadModels\Views\UserView;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

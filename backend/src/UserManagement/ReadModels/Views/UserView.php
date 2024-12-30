@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ORM\Entity(repositoryClass: 'App\UserManagement\Infrastructure\Persistence\Repositories\UserViewRepository')]
+#[ORM\Entity]
 #[ORM\Table(name: 'user_view')]
 final class UserView implements UserViewInterface, UserInterface, PasswordAuthenticatedUserInterface, SharedUserInterface, \JsonSerializable
 {
@@ -262,6 +262,29 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
         $this->passwordResetTokenExpiry = $passwordResetTokenExpiry;
 
         return $this;
+    }
+
+    #[\Override]
+    public static function createFromRepository(array $user): self
+    {
+        return new self()
+            ->setId($user['id'])
+            ->setUuid($user['uuid'])
+            ->setEmail($user['email'])
+            ->setPassword($user['password'])
+            ->setFirstname($user['firstname'])
+            ->setLastname($user['lastname'])
+            ->setConsentGiven((bool) $user['consent_given'])
+            ->setConsentDate(new \DateTimeImmutable($user['consent_date']))
+            ->setCreatedAt(new \DateTimeImmutable($user['created_at']))
+            ->setUpdatedAt(new \DateTime($user['updated_at']))
+            ->setRoles(json_decode($user['roles'], true))
+            ->setPasswordResetToken($user['password_reset_token'])
+            ->setPasswordResetTokenExpiry(
+                $user['password_reset_token_expiry'] ?
+                    new \DateTimeImmutable($user['password_reset_token_expiry']) :
+                    null,
+            );
     }
 
     public function jsonSerialize(): array

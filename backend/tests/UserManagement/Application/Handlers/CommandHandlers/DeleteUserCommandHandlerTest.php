@@ -4,18 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\UserManagement\Application\Handlers\CommandHandlers;
 
-use App\EnvelopeManagement\Domain\Events\EnvelopeNamedEvent;
 use App\SharedContext\EventStore\EventStoreInterface;
 use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
-use App\UserManagement\Application\Commands\CreateUserCommand;
 use App\UserManagement\Application\Commands\DeleteUserCommand;
-use App\UserManagement\Application\Handlers\CommandHandlers\CreateUserCommandHandler;
 use App\UserManagement\Application\Handlers\CommandHandlers\DeleteUserCommandHandler;
 use App\UserManagement\Domain\Events\UserCreatedEvent;
-use App\UserManagement\Domain\Exceptions\UserAlreadyExistsException;
-use App\UserManagement\Domain\Ports\Outbound\PasswordHasherInterface;
-use App\UserManagement\Infrastructure\Persistence\Repositories\UserViewRepository;
-use App\UserManagement\Presentation\HTTP\DTOs\CreateUserInput;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
