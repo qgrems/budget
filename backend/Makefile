@@ -42,7 +42,7 @@ phpunit-coverage:
 	docker exec -it my_symfony_app ./vendor/bin/phpunit --coverage-html coverage
 
 phpstan:
-	docker exec -it my_symfony_app ./vendor/bin/phpstan analyse --level=max --generate-baseline
+	docker exec -it my_symfony_app ./vendor/bin/phpstan analyse --level=max --generate-baseline --memory-limit=1G
 
 rector:
 	docker exec -it my_symfony_app ./vendor/bin/rector process

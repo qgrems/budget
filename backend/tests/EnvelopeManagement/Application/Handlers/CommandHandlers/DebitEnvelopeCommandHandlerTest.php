@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\EnvelopeManagement\Application\Handlers\CommandHandlers;
 
-use App\EnvelopeManagement\Application\Commands\CreditEnvelopeCommand;
-use App\EnvelopeManagement\Application\Handlers\CommandHandlers\CreditEnvelopeCommandHandler;
+use App\EnvelopeManagement\Application\Commands\DebitEnvelopeCommand;
+use App\EnvelopeManagement\Application\Handlers\CommandHandlers\DebitEnvelopeCommandHandler;
 use App\EnvelopeManagement\Domain\Events\EnvelopeCreatedEvent;
 use App\EnvelopeManagement\Domain\Events\EnvelopeCreditedEvent;
 use App\EnvelopeManagement\Domain\Events\EnvelopeDebitedEvent;
@@ -14,15 +14,15 @@ use App\EnvelopeManagement\Domain\Events\EnvelopeNamedEvent;
 use App\EnvelopeManagement\Domain\Exceptions\CurrentBudgetException;
 use App\EnvelopeManagement\Domain\Exceptions\EnvelopeNotFoundException;
 use App\EnvelopeManagement\Domain\Exceptions\InvalidEnvelopeOperationException;
-use App\EnvelopeManagement\Presentation\HTTP\DTOs\CreditEnvelopeInput;
+use App\EnvelopeManagement\Presentation\HTTP\DTOs\DebitEnvelopeInput;
 use App\SharedContext\EventStore\EventStoreInterface;
 use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class CreditEnvelopeCommandHandlerTest extends TestCase
+class DebitEnvelopeCommandHandlerTest extends TestCase
 {
-    private CreditEnvelopeCommandHandler $creditEnvelopeCommandHandler;
+    private DebitEnvelopeCommandHandler $debitEnvelopeCommandHandler;
 
     private EventStoreInterface&MockObject $eventStore;
     private EventSourcedRepository $eventSourcedRepository;
@@ -33,18 +33,18 @@ class CreditEnvelopeCommandHandlerTest extends TestCase
         $this->eventStore = $this->createMock(EventStoreInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
 
-        $this->creditEnvelopeCommandHandler = new CreditEnvelopeCommandHandler(
+        $this->debitEnvelopeCommandHandler = new DebitEnvelopeCommandHandler(
             $this->eventSourcedRepository,
         );
     }
 
-    public function testCreditEnvelopeSuccess(): void
+    public function testDebitEnvelopeSuccess(): void
     {
-        $creditEnvelopeInput = new CreditEnvelopeInput('100.00');
-        $creditEnvelopeCommand = new CreditEnvelopeCommand(
-            $creditEnvelopeInput->getCreditMoney(),
+        $debitEnvelopeInput = new DebitEnvelopeInput('1.00');
+        $debitEnvelopeCommand = new DebitEnvelopeCommand(
+            $debitEnvelopeInput->getDebitMoney(),
             '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            'a871e446-ddcd-4e7a-9bf9-525bab84e566',
+            'a871e446-ddcd-4e7a-9bf9-525bab84e566'
         );
 
         $this->eventStore->expects($this->once())->method('load')
@@ -59,17 +59,6 @@ class CreditEnvelopeCommandHandlerTest extends TestCase
                         'occurredOn' => '2024-12-07T22:03:35+00:00',
                         'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                         'targetBudget' => '2000.00',
-                    ]),
-                ],
-                [
-                    'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                    'type' => EnvelopeNamedEvent::class,
-                    'occurred_on' => '2020-10-10T12:00:00Z',
-                    'payload' => json_encode([
-                        'name' => 'test2',
-                        'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
-                        'occurredOn' => '2024-12-07T22:03:35+00:00',
-                        'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                     ]),
                 ],
                 [
@@ -97,16 +86,16 @@ class CreditEnvelopeCommandHandlerTest extends TestCase
             ]);
         $this->eventStore->expects($this->once())->method('save');
 
-        $this->creditEnvelopeCommandHandler->__invoke($creditEnvelopeCommand);
+        $this->debitEnvelopeCommandHandler->__invoke($debitEnvelopeCommand);
     }
 
-    public function testCreditEnvelopeNotFoundFailure(): void
+    public function testDebitEnvelopeNotFoundFailure(): void
     {
-        $creditEnvelopeInput = new CreditEnvelopeInput('100.00');
-        $creditEnvelopeCommand = new CreditEnvelopeCommand(
-            $creditEnvelopeInput->getCreditMoney(),
-            '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            'a871e446-ddcd-4e7a-9bf9-525bab84e566',
+        $debitEnvelopeInput = new DebitEnvelopeInput('100');
+        $debitEnvelopeCommand = new DebitEnvelopeCommand(
+            $debitEnvelopeInput->getDebitMoney(),
+            '0099c0ce-3b53-4318-ba7b-994e437a859b',
+            'd26cc02e-99e7-428c-9d61-572dff3f84a7'
         );
 
         $this->eventStore->expects($this->once())->method('load')
@@ -115,16 +104,16 @@ class CreditEnvelopeCommandHandlerTest extends TestCase
 
         $this->expectException(EnvelopeNotFoundException::class);
 
-        $this->creditEnvelopeCommandHandler->__invoke($creditEnvelopeCommand);
+        $this->debitEnvelopeCommandHandler->__invoke($debitEnvelopeCommand);
     }
 
-    public function testCreditEnvelopeExceedsCreditLimit(): void
+    public function testDebitEnvelopeExceedsDebitLimit(): void
     {
-        $creditEnvelopeInput = new CreditEnvelopeInput('3000.00');
-        $creditEnvelopeCommand = new CreditEnvelopeCommand(
-            $creditEnvelopeInput->getCreditMoney(),
+        $debitEnvelopeInput = new DebitEnvelopeInput('100');
+        $debitEnvelopeCommand = new DebitEnvelopeCommand(
+            $debitEnvelopeInput->getDebitMoney(),
             '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            'a871e446-ddcd-4e7a-9bf9-525bab84e566',
+            'a871e446-ddcd-4e7a-9bf9-525bab84e566'
         );
 
         $this->eventStore->expects($this->once())->method('load')
@@ -143,10 +132,10 @@ class CreditEnvelopeCommandHandlerTest extends TestCase
                 ],
                 [
                     'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                    'type' => EnvelopeNamedEvent::class,
+                    'type' => EnvelopeCreditedEvent::class,
                     'occurred_on' => '2020-10-10T12:00:00Z',
                     'payload' => json_encode([
-                        'name' => 'test2',
+                        'creditMoney' => '5.47',
                         'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                         'occurredOn' => '2024-12-07T22:03:35+00:00',
                         'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
@@ -157,16 +146,17 @@ class CreditEnvelopeCommandHandlerTest extends TestCase
         $this->eventStore->expects($this->never())->method('save');
         $this->expectException(CurrentBudgetException::class);
 
-        $this->creditEnvelopeCommandHandler->__invoke($creditEnvelopeCommand);
+        $this->debitEnvelopeCommandHandler->__invoke($debitEnvelopeCommand);
     }
 
-    public function testCreditDeletedEnvelope(): void
+    public function testDebitDeletedEnvelope(): void
     {
-        $creditEnvelopeInput = new CreditEnvelopeInput('3000.00');
-        $creditEnvelopeCommand = new CreditEnvelopeCommand(
-            $creditEnvelopeInput->getCreditMoney(),
+        $debitEnvelopeInput = new DebitEnvelopeInput('3000.00');
+
+        $debitEnvelopeCommand = new DebitEnvelopeCommand(
+            $debitEnvelopeInput->getDebitMoney(),
             '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            'a871e446-ddcd-4e7a-9bf9-525bab84e566',
+            'a871e446-ddcd-4e7a-9bf9-525bab84e566'
         );
 
         $this->eventStore->expects($this->once())->method('load')
@@ -185,21 +175,10 @@ class CreditEnvelopeCommandHandlerTest extends TestCase
                 ],
                 [
                     'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                    'type' => EnvelopeNamedEvent::class,
-                    'occurred_on' => '2020-10-10T12:00:00Z',
-                    'payload' => json_encode([
-                        'name' => 'test2',
-                        'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
-                        'occurredOn' => '2024-12-07T22:03:35+00:00',
-                        'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                    ]),
-                ],
-                [
-                    'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                     'type' => EnvelopeDeletedEvent::class,
                     'occurred_on' => '2020-10-10T12:00:00Z',
                     'payload' => json_encode([
-                        'creditMoney' => '5.47',
+                        'debitMoney' => '5.47',
                         'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                         'occurredOn' => '2024-12-07T22:03:35+00:00',
                         'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
@@ -211,16 +190,16 @@ class CreditEnvelopeCommandHandlerTest extends TestCase
         $this->eventStore->expects($this->never())->method('save');
         $this->expectException(InvalidEnvelopeOperationException::class);
 
-        $this->creditEnvelopeCommandHandler->__invoke($creditEnvelopeCommand);
+        $this->debitEnvelopeCommandHandler->__invoke($debitEnvelopeCommand);
     }
 
-    public function testCreditEnvelopeWithWrongUser(): void
+    public function testDebitEnvelopeWithWrongUser(): void
     {
-        $creditEnvelopeInput = new CreditEnvelopeInput('3000.00');
-        $creditEnvelopeCommand = new CreditEnvelopeCommand(
-            $creditEnvelopeInput->getCreditMoney(),
+        $debitEnvelopeInput = new DebitEnvelopeInput('3000.00');
+        $debitEnvelopeCommand = new DebitEnvelopeCommand(
+            $debitEnvelopeInput->getDebitMoney(),
             '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            '0d6851a2-5123-40df-939b-8f043850fbf1',
+            '0d6851a2-5123-40df-939b-8f043850fbf1'
         );
 
         $this->eventStore->expects($this->once())->method('load')
@@ -253,6 +232,6 @@ class CreditEnvelopeCommandHandlerTest extends TestCase
         $this->eventStore->expects($this->never())->method('save');
         $this->expectException(\RuntimeException::class);
 
-        $this->creditEnvelopeCommandHandler->__invoke($creditEnvelopeCommand);
+        $this->debitEnvelopeCommandHandler->__invoke($debitEnvelopeCommand);
     }
 }

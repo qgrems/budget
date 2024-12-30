@@ -39,7 +39,7 @@ class UpdateUserLastnameCommandHandlerTest extends TestCase
                 [
                     'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
                     'type' => UserCreatedEvent::class,
-                    'occured_on' => '2020-10-10T12:00:00Z',
+                    'occurred_on' => '2020-10-10T12:00:00Z',
                     'payload' => json_encode([
                         'email' => 'test@gmail.com',
                         'roles' => ['ROLE_USER'],

@@ -138,7 +138,7 @@ class CreateEnvelopeCommandHandlerTest extends TestCase
                 [
                     'aggregate_id' => $createEnvelopeInput->getUuid(),
                     'type' => EnvelopeCreatedEvent::class,
-                    'occured_on' => '2020-10-10T12:00:00Z',
+                    'occurred_on' => '2020-10-10T12:00:00Z',
                     'payload' => json_encode([
                         'name' => 'test1',
                         'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',

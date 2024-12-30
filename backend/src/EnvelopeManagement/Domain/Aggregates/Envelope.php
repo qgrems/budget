@@ -142,6 +142,7 @@ final class Envelope
 
     public function delete(UserId $userId): void
     {
+        $this->assertNotDeleted();
         $this->assertOwnership($userId);
 
         $event = new EnvelopeDeletedEvent(

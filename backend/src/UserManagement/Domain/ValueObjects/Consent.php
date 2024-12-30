@@ -21,4 +21,9 @@ final readonly class Consent
     {
         return new self($consent);
     }
+
+    public function toBool(): bool
+    {
+        return $this->consent;
+    }
 }

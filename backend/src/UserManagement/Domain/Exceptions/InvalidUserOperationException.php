@@ -14,14 +14,6 @@ final class InvalidUserOperationException extends \LogicException
         parent::__construct($message, $code, $previous);
     }
 
-    public static function operationOnDeletedUser(): self
-    {
-        return new self(
-            'Cannot modify a deleted user.',
-            400,
-        );
-    }
-
     public static function operationOnResetUserPassword(): self
     {
         return new self(
