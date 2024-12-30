@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\EnvelopeManagement\Domain\Events;
 
 use App\SharedContext\Domain\Ports\Inbound\EventInterface;

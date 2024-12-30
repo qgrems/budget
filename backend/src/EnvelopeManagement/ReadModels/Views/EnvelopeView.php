@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\EnvelopeManagement\ReadModels\Views;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -50,7 +52,7 @@ final class EnvelopeView implements EnvelopeViewInterface, \JsonSerializable
         return (new self())->setCurrentBudget($envelope['current_budget'])
             ->setTargetBudget($envelope['target_budget'])
             ->setName($envelope['name'])
-            ->setIsDeleted($envelope['is_deleted'])
+            ->setIsDeleted((bool) $envelope['is_deleted'])
             ->setCreatedAt(new \DateTimeImmutable($envelope['created_at']))
             ->setUpdatedAt(new \DateTime($envelope['updated_at']))
             ->setTargetBudget($envelope['target_budget'])

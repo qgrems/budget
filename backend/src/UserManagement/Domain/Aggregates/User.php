@@ -76,27 +76,27 @@ final class User
     }
 
     public static function create(
-        string                      $userId,
-        string                      $email,
-        string                      $password,
-        string                      $firstname,
-        string                      $lastname,
-        bool                        $isConsentGiven,
+        UserId $userId,
+        Email $email,
+        Password $password,
+        Firstname $firstname,
+        Lastname $lastname,
+        Consent $isConsentGiven,
         UserViewRepositoryInterface $userViewRepository,
     ): self {
-        if ($userViewRepository->findOneBy(['email' => $email])) {
+        if ($userViewRepository->findOneBy(['email' => $email->toString()])) {
             throw new UserAlreadyExistsException(UserAlreadyExistsException::MESSAGE, 400);
         }
 
         $aggregate = new self();
 
         $event = new UserCreatedEvent(
-            $userId,
-            $email,
-            $password,
-            $firstname,
-            $lastname,
-            $isConsentGiven,
+            $userId->toString(),
+            $email->toString(),
+            $password->toString(),
+            $firstname->toString(),
+            $lastname->toString(),
+            $isConsentGiven->toBool(),
             $aggregate->roles,
         );
 
