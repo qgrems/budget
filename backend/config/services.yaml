@@ -48,9 +48,6 @@ services:
     App\EnvelopeManagement\Application\Handlers\QueryHandlers\ListEnvelopesQueryHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\EnvelopeManagement\Application\Handlers\QueryHandlers\GetEnvelopeByTitleQueryHandler:
-        tags: [ 'messenger.message_handler' ]
-
     App\EnvelopeManagement\ReadModels\Projections\EnvelopeProjection:
         tags: [ 'messenger.message_handler' ]
 

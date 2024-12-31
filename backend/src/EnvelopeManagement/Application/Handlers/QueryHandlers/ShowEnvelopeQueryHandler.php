@@ -19,15 +19,15 @@ final readonly class ShowEnvelopeQueryHandler
     /**
      * @throws EnvelopeNotFoundException
      */
-    public function __invoke(ShowEnvelopeQuery $getOneEnvelopeQuery): EnvelopeViewInterface
+    public function __invoke(ShowEnvelopeQuery $getOneEnvelopeQuery): array
     {
-        $envelope = $this->envelopeViewRepository->findOneBy([
+        $envelope = $this->envelopeViewRepository->findOneEnvelopeWithHistoryBy([
             'uuid' => $getOneEnvelopeQuery->getEnvelopeUuid(),
             'user_uuid' => $getOneEnvelopeQuery->getUserUuid(),
             'is_deleted' => false,
         ]);
 
-        if (!$envelope) {
+        if ($envelope === []) {
             throw new EnvelopeNotFoundException(EnvelopeNotFoundException::MESSAGE, 404);
         }
 

@@ -15,6 +15,8 @@ interface EnvelopeViewRepositoryInterface
 
     public function findOneBy(array $criteria, ?array $orderBy = null): ?EnvelopeViewInterface;
 
+    public function findOneEnvelopeWithHistoryBy(array $criteria, ?array $orderBy = null): array;
+
     public function findBy(
         array $criteria,
         ?array $orderBy = null,

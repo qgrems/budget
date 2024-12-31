@@ -7,14 +7,22 @@ use App\EnvelopeManagement\Domain\Events\EnvelopeCreditedEvent;
 use App\EnvelopeManagement\Domain\Events\EnvelopeDebitedEvent;
 use App\EnvelopeManagement\Domain\Events\EnvelopeDeletedEvent;
 use App\EnvelopeManagement\Domain\Events\EnvelopeNamedEvent;
+use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeHistoryViewRepositoryInterface;
 use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeViewRepositoryInterface;
+use App\EnvelopeManagement\ReadModels\Views\EnvelopeHistoryView;
 use App\EnvelopeManagement\ReadModels\Views\EnvelopeView;
 use App\EnvelopeManagement\ReadModels\Views\EnvelopeViewInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventInterface;
 
 final readonly class EnvelopeProjection
 {
-    public function __construct(private EnvelopeViewRepositoryInterface $envelopeViewRepository)
+    public const string CREDIT = 'credit';
+    public const string DEBIT = 'debit';
+
+    public function __construct(
+        private EnvelopeViewRepositoryInterface $envelopeViewRepository,
+        private EnvelopeHistoryViewRepositoryInterface $envelopeHistoryViewRepository,
+    )
     {
     }
 
@@ -58,6 +66,7 @@ final readonly class EnvelopeProjection
             floatval($envelopeView->getCurrentBudget()) + floatval($event->getCreditMoney())
         ));
         $this->envelopeViewRepository->save($envelopeView);
+        $this->saveEnvelopeHistory($event, $envelopeView);
     }
 
     private function handleEnvelopeDebitedEvent(EnvelopeDebitedEvent $event): void
@@ -73,6 +82,7 @@ final readonly class EnvelopeProjection
             floatval($envelopeView->getCurrentBudget()) - floatval($event->getDebitMoney())
         ));
         $this->envelopeViewRepository->save($envelopeView);
+        $this->saveEnvelopeHistory($event, $envelopeView);
     }
 
     private function handleEnvelopeNamedEvent(EnvelopeNamedEvent $event): void
@@ -101,10 +111,27 @@ final readonly class EnvelopeProjection
         $this->envelopeViewRepository->save($envelopeView);
     }
 
-    public function getEnvelopeViewByEvent(EventInterface $event): ?EnvelopeViewInterface
+    private function getEnvelopeViewByEvent(EventInterface $event): ?EnvelopeViewInterface
     {
         return $this->envelopeViewRepository->findOneBy(
             ['uuid' => $event->getAggregateId(), 'is_deleted' => false],
         );
+    }
+
+    public function saveEnvelopeHistory(EventInterface $event, EnvelopeViewInterface $envelopeView): void
+    {
+        $monetaryAmount = $event instanceof EnvelopeCreditedEvent ? $event->getCreditMoney() :
+            ($event instanceof EnvelopeDebitedEvent ? $event->getDebitMoney() : '0.00');
+        $type = $event instanceof EnvelopeCreditedEvent ? self::CREDIT :
+            ($event instanceof EnvelopeDebitedEvent ? self::DEBIT : '');
+
+        $envelopeHistoryView = EnvelopeHistoryView::create(
+            $event->getAggregateId(),
+            $event->occurredOn(),
+            $monetaryAmount,
+            $type,
+            $envelopeView->getUserUuid(),
+        );
+        $this->envelopeHistoryViewRepository->save($envelopeHistoryView);
     }
 }
