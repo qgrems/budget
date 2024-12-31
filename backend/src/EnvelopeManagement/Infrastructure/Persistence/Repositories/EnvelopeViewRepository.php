@@ -12,7 +12,7 @@ use App\EnvelopeManagement\ReadModels\Views\EnvelopesPaginatedInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 
-final class EnvelopeViewRepository implements EnvelopeViewRepositoryInterface
+final readonly class EnvelopeViewRepository implements EnvelopeViewRepositoryInterface
 {
     private Connection $connection;
 
@@ -75,6 +75,49 @@ final class EnvelopeViewRepository implements EnvelopeViewRepositoryInterface
      * @throws Exception
      */
     #[\Override]
+    public function findOneEnvelopeWithHistoryBy(array $criteria, ?array $orderBy = null): array
+    {
+        $sql = sprintf(
+            'SELECT ev.uuid, ev.created_at, ev.updated_at, ev.current_budget, ev.target_budget, ev.name, ev.user_uuid, ev.is_deleted, ehv.aggregate_id, ehv.created_at AS history_created_at, ehv.monetary_amount, ehv.transaction_type
+         FROM envelope_view ev
+         LEFT JOIN envelope_history_view ehv ON ev.uuid = ehv.aggregate_id
+         WHERE %s
+         ORDER BY ehv.created_at',
+            $this->buildWhereClauseWithAlias($criteria, 'ev')
+        );
+        $stmt = $this->connection->prepare($sql);
+        $result = $stmt->executeQuery($criteria)->fetchAllAssociative();
+
+        if (!$result) {
+            return [];
+        }
+
+        $envelopeData = $result[0];
+        unset(
+            $envelopeData['aggregate_id'],
+            $envelopeData['monetary_amount'],
+            $envelopeData['transaction_type'],
+            $envelopeData['history_created_at']
+        );
+        $historyData = array_map(function ($row) {
+            return [
+                'aggregate_id' => $row['aggregate_id'],
+                'created_at' => $row['history_created_at'],
+                'monetary_amount' => $row['monetary_amount'],
+                'transaction_type' => $row['transaction_type'],
+            ];
+        }, $result);
+
+        return [
+            'envelope' => $envelopeData,
+            'history' => $historyData,
+        ];
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[\Override]
     public function findBy(
         array $criteria,
         ?array $orderBy = null,
@@ -123,6 +166,15 @@ final class EnvelopeViewRepository implements EnvelopeViewRepositoryInterface
             ' AND ',
             array_map(fn ($key, $value) => null === $value ? sprintf('%s IS NULL', $key) :
                 sprintf('%s = :%s', $key, $key), array_keys($criteria), $criteria),
+        );
+    }
+
+    private function buildWhereClauseWithAlias(array $criteria, string $alias): string
+    {
+        return implode(
+            ' AND ',
+            array_map(fn ($key, $value) => null === $value ? sprintf('%s.%s IS NULL', $alias, $key) :
+                sprintf('%s.%s = :%s', $alias, $key, $key), array_keys($criteria), $criteria),
         );
     }
 

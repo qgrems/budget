@@ -7,6 +7,12 @@ parameters:
 			path: public/index.php
 
 		-
+			message: '#^Method App\\EnvelopeManagement\\Application\\Handlers\\QueryHandlers\\ShowEnvelopeQueryHandler\:\:__invoke\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/EnvelopeManagement/Application/Handlers/QueryHandlers/ShowEnvelopeQueryHandler.php
+
+		-
 			message: '#^Method App\\EnvelopeManagement\\Application\\Queries\\ListEnvelopesQuery\:\:__construct\(\) has parameter \$orderBy with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -271,6 +277,24 @@ parameters:
 			path: src/EnvelopeManagement/Domain/Ports/Inbound/EnvelopeViewRepositoryInterface.php
 
 		-
+			message: '#^Method App\\EnvelopeManagement\\Domain\\Ports\\Inbound\\EnvelopeViewRepositoryInterface\:\:findOneEnvelopeWithHistoryBy\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/EnvelopeManagement/Domain/Ports/Inbound/EnvelopeViewRepositoryInterface.php
+
+		-
+			message: '#^Method App\\EnvelopeManagement\\Domain\\Ports\\Inbound\\EnvelopeViewRepositoryInterface\:\:findOneEnvelopeWithHistoryBy\(\) has parameter \$orderBy with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/EnvelopeManagement/Domain/Ports/Inbound/EnvelopeViewRepositoryInterface.php
+
+		-
+			message: '#^Method App\\EnvelopeManagement\\Domain\\Ports\\Inbound\\EnvelopeViewRepositoryInterface\:\:findOneEnvelopeWithHistoryBy\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/EnvelopeManagement/Domain/Ports/Inbound/EnvelopeViewRepositoryInterface.php
+
+		-
 			message: '#^Method App\\EnvelopeManagement\\Domain\\Ports\\Outbound\\PublisherInterface\:\:publishEvents\(\) has parameter \$events with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -296,6 +320,12 @@ parameters:
 
 		-
 			message: '#^Method App\\EnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\EnvelopeViewRepository\:\:buildWhereClause\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/EnvelopeManagement/Infrastructure/Persistence/Repositories/EnvelopeViewRepository.php
+
+		-
+			message: '#^Method App\\EnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\EnvelopeViewRepository\:\:buildWhereClauseWithAlias\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/EnvelopeManagement/Infrastructure/Persistence/Repositories/EnvelopeViewRepository.php
@@ -337,6 +367,24 @@ parameters:
 			path: src/EnvelopeManagement/Infrastructure/Persistence/Repositories/EnvelopeViewRepository.php
 
 		-
+			message: '#^Method App\\EnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\EnvelopeViewRepository\:\:findOneEnvelopeWithHistoryBy\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/EnvelopeManagement/Infrastructure/Persistence/Repositories/EnvelopeViewRepository.php
+
+		-
+			message: '#^Method App\\EnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\EnvelopeViewRepository\:\:findOneEnvelopeWithHistoryBy\(\) has parameter \$orderBy with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/EnvelopeManagement/Infrastructure/Persistence/Repositories/EnvelopeViewRepository.php
+
+		-
+			message: '#^Method App\\EnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\EnvelopeViewRepository\:\:findOneEnvelopeWithHistoryBy\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/EnvelopeManagement/Infrastructure/Persistence/Repositories/EnvelopeViewRepository.php
+
+		-
 			message: '#^Method App\\EnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\EnvelopeViewRepository\:\:mapToEnvelopeView\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -347,6 +395,12 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: src/EnvelopeManagement/Infrastructure/Persistence/Repositories/EnvelopeViewRepository.php
+
+		-
+			message: '#^Method App\\EnvelopeManagement\\ReadModels\\Views\\EnvelopeHistoryView\:\:jsonSerialize\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/EnvelopeManagement/ReadModels/Views/EnvelopeHistoryView.php
 
 		-
 			message: '#^Method App\\EnvelopeManagement\\ReadModels\\Views\\EnvelopeView\:\:createFromRepository\(\) has parameter \$envelope with no value type specified in iterable type array\.$#'
@@ -1085,12 +1139,6 @@ parameters:
 			identifier: property.onlyWritten
 			count: 1
 			path: tests/EnvelopeManagement/Application/Handlers/QueryHandlers/ListEnvelopesQueryHandlerTest.php
-
-		-
-			message: '#^Property App\\Tests\\EnvelopeManagement\\Application\\Handlers\\QueryHandlers\\ShowEnvelopeQueryHandlerTest\:\:\$queryBus is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: tests/EnvelopeManagement/Application/Handlers/QueryHandlers/ShowEnvelopeQueryHandlerTest.php
 
 		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsString\(\) with string will always evaluate to true\.$#'

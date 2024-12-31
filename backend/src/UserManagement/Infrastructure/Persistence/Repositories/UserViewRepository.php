@@ -10,7 +10,7 @@ use App\UserManagement\ReadModels\Views\UserView;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 
-final class UserViewRepository implements UserViewRepositoryInterface
+final readonly class UserViewRepository implements UserViewRepositoryInterface
 {
     private Connection $connection;
 

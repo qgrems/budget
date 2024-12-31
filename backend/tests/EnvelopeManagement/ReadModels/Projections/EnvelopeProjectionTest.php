@@ -7,8 +7,11 @@ use App\EnvelopeManagement\Domain\Events\EnvelopeCreditedEvent;
 use App\EnvelopeManagement\Domain\Events\EnvelopeDebitedEvent;
 use App\EnvelopeManagement\Domain\Events\EnvelopeDeletedEvent;
 use App\EnvelopeManagement\Domain\Events\EnvelopeNamedEvent;
+use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeHistoryViewRepositoryInterface;
 use App\EnvelopeManagement\Domain\Ports\Inbound\EnvelopeViewRepositoryInterface;
+use App\EnvelopeManagement\Infrastructure\Persistence\Repositories\EnvelopeViewRepository;
 use App\EnvelopeManagement\ReadModels\Projections\EnvelopeProjection;
+use App\EnvelopeManagement\ReadModels\Views\EnvelopeHistoryView;
 use App\EnvelopeManagement\ReadModels\Views\EnvelopeView;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -16,12 +19,14 @@ use PHPUnit\Framework\TestCase;
 class EnvelopeProjectionTest extends TestCase
 {
     private EnvelopeViewRepositoryInterface&MockObject $envelopeViewRepository;
+    private EnvelopeHistoryViewRepositoryInterface&MockObject $envelopeHistoryViewRepository;
     private EnvelopeProjection $envelopeProjection;
 
     protected function setUp(): void
     {
         $this->envelopeViewRepository = $this->createMock(EnvelopeViewRepositoryInterface::class);
-        $this->envelopeProjection = new EnvelopeProjection($this->envelopeViewRepository);
+        $this->envelopeHistoryViewRepository = $this->createMock(EnvelopeHistoryViewRepositoryInterface::class);
+        $this->envelopeProjection = new EnvelopeProjection($this->envelopeViewRepository, $this->envelopeHistoryViewRepository);
     }
 
     public function testHandleEnvelopeCreatedEvent(): void
@@ -50,11 +55,23 @@ class EnvelopeProjectionTest extends TestCase
         $envelopeView = new EnvelopeView();
         $envelopeView->setUuid($event->getAggregateId());
         $envelopeView->setCurrentBudget('1000.00');
+        $envelopeView->setUserUuid('1ced5c7e-fd3a-4a36-808e-75ddc478f67b');
+        $envelopeHistory = new EnvelopeHistoryView();
+        $envelopeHistory
+            ->setTransactionType(EnvelopeProjection::CREDIT)
+            ->setAggregateId($event->getAggregateId())
+            ->setMonetaryAmount($event->getCreditMoney())
+            ->setUserUuid($envelopeView->getUserUuid())
+            ->setCreatedAt($event->occurredOn())
+        ;
 
         $this->envelopeViewRepository->expects($this->once())
             ->method('findOneBy')
             ->with(['uuid' => $event->getAggregateId(), 'is_deleted' => false])
             ->willReturn($envelopeView);
+        $this->envelopeHistoryViewRepository->expects($this->once())
+            ->method('save')
+            ->with($envelopeHistory);
 
         $this->envelopeProjection->__invoke($event);
     }
@@ -80,11 +97,23 @@ class EnvelopeProjectionTest extends TestCase
         $envelopeView = new EnvelopeView();
         $envelopeView->setUuid($event->getAggregateId());
         $envelopeView->setCurrentBudget('1000.00');
+        $envelopeView->setUserUuid('1ced5c7e-fd3a-4a36-808e-75ddc478f67b');
+        $envelopeHistory = new EnvelopeHistoryView();
+        $envelopeHistory
+            ->setTransactionType(EnvelopeProjection::DEBIT)
+            ->setAggregateId($event->getAggregateId())
+            ->setMonetaryAmount($event->getDebitMoney())
+            ->setUserUuid($envelopeView->getUserUuid())
+            ->setCreatedAt($event->occurredOn())
+        ;
 
         $this->envelopeViewRepository->expects($this->once())
             ->method('findOneBy')
             ->with(['uuid' => $event->getAggregateId(), 'is_deleted' => false])
             ->willReturn($envelopeView);
+        $this->envelopeHistoryViewRepository->expects($this->once())
+            ->method('save')
+            ->with($envelopeHistory);
 
         $this->envelopeProjection->__invoke($event);
     }
