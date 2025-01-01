@@ -1,7 +1,7 @@
 controllers_rest_envelope:
     resource:
-        path: ../src/EnvelopeManagement/Presentation/HTTP/Controllers/
-        namespace: App\EnvelopeManagement\Presentation\HTTP\Controllers
+        path: ../src/BudgetEnvelopeManagement/Presentation/HTTP/Controllers/
+        namespace: App\BudgetEnvelopeManagement\Presentation\HTTP\Controllers
     type: attribute
 
 controllers_rest_user:

@@ -25,9 +25,15 @@ doctrine:
             EnvelopeView:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/EnvelopeManagement/ReadModels/Views'
-                prefix: 'App\EnvelopeManagement\ReadModels\Views'
+                dir: '%kernel.project_dir%/src/BudgetEnvelopeManagement/ReadModels/Views'
+                prefix: 'App\BudgetEnvelopeManagement\ReadModels\Views'
                 alias: EnvelopeView
+            EventStore:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/SharedContext/Infrastructure/Entities'
+                prefix: 'App\SharedContext\Infrastructure\Entities'
+                alias: EventStore
             RefreshToken:
                 type: attribute
                 is_bundle: false

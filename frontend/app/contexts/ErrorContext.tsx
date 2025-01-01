@@ -15,11 +15,7 @@ export function ErrorProvider({children}: { children: ReactNode }) {
     const [error, setError] = useState<string>('');
 
     const addError = (error: string) => {
-        const errors = error.split('\n');
-
-        errors.forEach(e => {
-            setError(t(e));
-        });
+        setError(t(error));
 
         setTimeout(() => {
             setError('');

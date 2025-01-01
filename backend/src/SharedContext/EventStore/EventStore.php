@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\SharedContext\EventStore;
 
-use App\EnvelopeManagement\Domain\Ports\Outbound\PublisherInterface;
+use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 

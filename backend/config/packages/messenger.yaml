@@ -22,11 +22,11 @@ framework:
                         type: fanout
 
         routing:
-            'App\EnvelopeManagement\Domain\Events\EnvelopeCreatedEvent': async
-            'App\EnvelopeManagement\Domain\Events\EnvelopeNamedEvent': async
-            'App\EnvelopeManagement\Domain\Events\EnvelopeDebitedEvent': async
-            'App\EnvelopeManagement\Domain\Events\EnvelopeDeletedEvent': async
-            'App\EnvelopeManagement\Domain\Events\EnvelopeCreditedEvent': async
+            'App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeCreatedEvent': async
+            'App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeRenamedEvent': async
+            'App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDebitedEvent': async
+            'App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDeletedEvent': async
+            'App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeCreditedEvent': async
             'App\UserManagement\Domain\Events\UserCreatedEvent': async
             'App\UserManagement\Domain\Events\UserFirstnameUpdatedEvent': async
             'App\UserManagement\Domain\Events\UserLastnameUpdatedEvent': async
