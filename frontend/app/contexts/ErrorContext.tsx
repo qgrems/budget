@@ -1,6 +1,7 @@
 'use client'
 
 import {createContext, ReactNode, useContext, useState} from "react";
+import { useTranslation } from '../hooks/useTranslation'
 import ErrorModal from "../components/ErrorModal";
 
 type ErrorContextType = {
@@ -10,10 +11,15 @@ type ErrorContextType = {
 const ErrorContext = createContext<ErrorContextType | undefined>(undefined);
 
 export function ErrorProvider({children}: { children: ReactNode }) {
+    const { t } = useTranslation()
     const [error, setError] = useState<string>('');
 
     const addError = (error: string) => {
-        setError(error);
+        const errors = error.split('\n');
+
+        errors.forEach(e => {
+            setError(t(e));
+        });
 
         setTimeout(() => {
             setError('');
@@ -23,7 +29,7 @@ export function ErrorProvider({children}: { children: ReactNode }) {
     return (
         <ErrorContext.Provider value={{error, setError: addError}}>
             {children}
-            {error && <ErrorModal />}
+            {t(error) && <ErrorModal />}
         </ErrorContext.Provider>
     )
 }

@@ -17,7 +17,7 @@ final class TargetBudgetException extends \LogicException
     public static function isBelowZero(): self
     {
         return new self(
-            'Target budget must be greater than 0.',
+            'envelopes.targetBudgetIsBelowZero',
             400,
         );
     }

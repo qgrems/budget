@@ -10,7 +10,7 @@ final readonly class RequestUserPasswordResetInput
 {
     public function __construct(
         #[Assert\NotBlank]
-        #[Assert\Email(message: 'The email "{{ value }}" is not a valid email.')]
+        #[Assert\Email(message: 'users.emailInvalid')]
         private string $email
     ) {
     }

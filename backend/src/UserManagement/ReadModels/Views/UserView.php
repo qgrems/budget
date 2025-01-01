@@ -19,19 +19,19 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[ORM\Column(name: 'uuid', type: 'string', length: 100, unique: true)]
+    #[ORM\Column(name: 'uuid', type: 'string', length: 36, unique: true)]
     protected string $uuid;
 
-    #[ORM\Column(name: 'email', type: 'string', length: 255)]
+    #[ORM\Column(name: 'email', type: 'string', length: 320)]
     private string $email;
 
     #[ORM\Column(name: 'password', type: 'string', length: 255)]
     private string $password;
 
-    #[ORM\Column(name: 'firstname', type: 'string', length: 255)]
+    #[ORM\Column(name: 'firstname', type: 'string', length: 50)]
     private string $firstname;
 
-    #[ORM\Column(name: 'lastname', type: 'string', length: 255)]
+    #[ORM\Column(name: 'lastname', type: 'string', length: 50)]
     private string $lastname;
 
     #[ORM\Column(name: 'consent_given', type: 'boolean')]

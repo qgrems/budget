@@ -172,7 +172,7 @@ final class Envelope
             EnvelopeCreditedEvent::class => $this->applyCreditedEvent($event),
             EnvelopeDebitedEvent::class => $this->applyDebitedEvent($event),
             EnvelopeDeletedEvent::class => $this->applyDeletedEvent($event),
-            default => throw new \RuntimeException(sprintf('Unsupported event type: %s', get_class($event))),
+            default => throw new \RuntimeException('envelopes.unknownEvent'),
         };
     }
 
@@ -218,7 +218,7 @@ final class Envelope
     private function assertOwnership(UserId $userId): void
     {
         if (!$this->userId->equals($userId)) {
-            throw new \RuntimeException('User does not have permission to access this envelope.');
+            throw new \RuntimeException('envelopes.notOwner');
         }
     }
 

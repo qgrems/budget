@@ -77,7 +77,7 @@ class CreateEnvelopeCommandHandlerTest extends TestCase
         $this->eventStore->expects($this->never())->method('save');
 
         $this->expectException(TargetBudgetException::class);
-        $this->expectExceptionMessage('Target budget must be greater than 0.');
+        $this->expectExceptionMessage('envelopes.targetBudgetIsBelowZero');
 
         $this->createEnvelopeCommandHandler->__invoke($createEnvelopeCommand);
     }

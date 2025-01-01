@@ -17,7 +17,7 @@ final class CurrentBudgetException extends \LogicException
     public static function exceedsCreditLimit(): self
     {
         return new self(
-            'Credit limit exceeded.',
+            'envelopes.exceedsCreditLimit',
             400,
         );
     }
@@ -25,7 +25,7 @@ final class CurrentBudgetException extends \LogicException
     public static function exceedsDebitLimit(): self
     {
         return new self(
-            'Debit limit exceeded.',
+            'envelopes.exceedsDebitLimit',
             400,
         );
     }

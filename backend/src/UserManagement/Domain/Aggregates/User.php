@@ -209,7 +209,7 @@ final class User
             UserPasswordResetRequestedEvent::class => $this->applyUserPasswordResetRequested($event),
             UserPasswordResetEvent::class => $this->applyUserPasswordReset($event),
             UserDeletedEvent::class => $this->applyUserDeleted(),
-            default => throw new \RuntimeException(sprintf('Unsupported event type: %s', get_class($event))),
+            default => throw new \RuntimeException('users.unknownEvent'),
         };
     }
 
@@ -268,7 +268,7 @@ final class User
     private function assertOwnership(UserId $userId): void
     {
         if (!$this->userId->equals($userId)) {
-            throw new \RuntimeException('User does not have permission to access this user.');
+            throw new \RuntimeException('users.notOwner');
         }
     }
 

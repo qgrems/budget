@@ -12,9 +12,9 @@ final readonly class UpdateUserLastnameInput
         #[Assert\NotBlank]
         #[Assert\Length(
             min: 2,
-            max: 255,
-            minMessage: 'The first name must be at least {{ limit }} characters long.',
-            maxMessage: 'The first name cannot be longer than {{ limit }} characters.'
+            max: 50,
+            minMessage: 'users.lastnameMinLength',
+            maxMessage: 'users.lastnameMaxLength',
         )]
         public string $lastname,
     ) {

@@ -17,13 +17,15 @@ final readonly class CreateUserInput
         public string $uuid,
 
         #[Assert\NotBlank]
-        #[Assert\Email(message: 'The email "{{ value }}" is not a valid email.')]
+        #[Assert\Email(message: 'users.emailInvalid')]
         public string $email,
 
         #[Assert\NotBlank]
         #[Assert\Length(
             min: 8,
-            minMessage: 'The password must be at least {{ limit }} characters long.'
+            max: 50,
+            minMessage: 'users.passwordMinLength',
+            maxMessage: 'users.passwordMaxLength',
         )]
         #[Assert\PasswordStrength]
         public string $password,
@@ -31,24 +33,24 @@ final readonly class CreateUserInput
         #[Assert\NotBlank]
         #[Assert\Length(
             min: 2,
-            max: 255,
-            minMessage: 'The first name must be at least {{ limit }} characters long.',
-            maxMessage: 'The first name cannot be longer than {{ limit }} characters.'
+            max: 50,
+            minMessage: 'users.firstnameMinLength',
+            maxMessage: 'users.firstnameMaxLength',
         )]
         public string $firstname,
 
         #[Assert\NotBlank]
         #[Assert\Length(
             min: 2,
-            max: 255,
-            minMessage: 'The last name must be at least {{ limit }} characters long.',
-            maxMessage: 'The last name cannot be longer than {{ limit }} characters.'
+            max: 50,
+            minMessage: 'users.lastnameMinLength',
+            maxMessage: 'users.lastnameMaxLength',
         )]
         public string $lastname,
 
         #[Assert\NotNull]
-        #[Assert\IsTrue(message: 'Consent must be accepted.')]
-        #[Assert\Type(type: 'bool', message: 'The consent must be a boolean value.')]
+        #[Assert\IsTrue(message: 'users.consentNotGiven')]
+        #[Assert\Type(type: 'bool')]
         public bool $consentGiven,
     ) {
     }
