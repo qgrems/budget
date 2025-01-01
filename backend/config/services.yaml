@@ -51,28 +51,28 @@ services:
     App\BudgetEnvelopeManagement\ReadModels\Projections\BudgetEnvelopeProjection:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\Application\Handlers\CommandHandlers\CreateUserCommandHandler:
+    App\UserManagement\Application\Handlers\CommandHandlers\SignUpAUserCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\Application\Handlers\CommandHandlers\UpdateUserFirstnameCommandHandler:
+    App\UserManagement\Application\Handlers\CommandHandlers\UpdateAUserFirstnameCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\Application\Handlers\CommandHandlers\UpdateUserLastnameCommandHandler:
+    App\UserManagement\Application\Handlers\CommandHandlers\UpdateAUserLastnameCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\Application\Handlers\CommandHandlers\UpdateUserPasswordCommandHandler:
+    App\UserManagement\Application\Handlers\CommandHandlers\UpdateAUserPasswordCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\Application\Handlers\CommandHandlers\RequestUserPasswordResetCommandHandler:
+    App\UserManagement\Application\Handlers\CommandHandlers\RequestAUserPasswordResetCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\Application\Handlers\CommandHandlers\ResetUserPasswordCommandHandler:
+    App\UserManagement\Application\Handlers\CommandHandlers\ResetAUserPasswordCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\Application\Handlers\CommandHandlers\LogoutUserCommandHandler:
+    App\UserManagement\Application\Handlers\CommandHandlers\LogoutAUserCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\Application\Handlers\CommandHandlers\DeleteUserCommandHandler:
+    App\UserManagement\Application\Handlers\CommandHandlers\DeleteAUserCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
     App\UserManagement\ReadModels\Projections\UserProjection:

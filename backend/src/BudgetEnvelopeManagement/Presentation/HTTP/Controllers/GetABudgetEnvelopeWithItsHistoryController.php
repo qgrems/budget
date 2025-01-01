@@ -24,7 +24,7 @@ final readonly class GetABudgetEnvelopeWithItsHistoryController
 
     public function __invoke(
         string $uuid,
-        #[CurrentUser] SharedUserInterface $user
+        #[CurrentUser] SharedUserInterface $user,
     ): JsonResponse {
         return new JsonResponse(
             $this->queryBus->query(

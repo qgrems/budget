@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserManagement\ReadModels\Projections;
 
-use App\UserManagement\Domain\Events\UserCreatedEvent;
+use App\UserManagement\Domain\Events\UserSignedUpEvent;
 use App\UserManagement\Domain\Events\UserDeletedEvent;
 use App\UserManagement\Domain\Events\UserFirstnameUpdatedEvent;
 use App\UserManagement\Domain\Events\UserLastnameUpdatedEvent;
@@ -33,20 +33,20 @@ class UserProjectionTest extends TestCase
 
     public function testHandleUserCreatedEvent(): void
     {
-        $event = new UserCreatedEvent('b7e685be-db83-4866-9f85-102fac30a50b', 'john.doe@example.com', 'John', 'Doe', 'password123', true, ['ROLE_USER']);
+        $event = new UserSignedUpEvent('b7e685be-db83-4866-9f85-102fac30a50b', 'john.doe@example.com', 'John', 'Doe', 'password123', true, ['ROLE_USER']);
 
         $this->userViewRepository->expects($this->once())
             ->method('save')
             ->with($this->callback(function (UserView $view) use ($event) {
-                return $view->getUuid() === $event->getAggregateId() &&
-                    $view->getCreatedAt() == $event->occurredOn() &&
-                    $view->getUpdatedAt() == \DateTime::createFromImmutable($event->occurredOn()) &&
-                    $view->getEmail() === $event->getEmail() &&
-                    $view->getFirstName() === $event->getFirstName() &&
-                    $view->getLastName() === $event->getLastName() &&
-                    $view->getPassword() === $event->getPassword() &&
-                    $view->isConsentGiven() === $event->isConsentGiven() &&
-                    $view->getRoles() === $event->getRoles();
+                return $view->getUuid() === $event->getAggregateId()
+                    && $view->getCreatedAt() == $event->occurredOn()
+                    && $view->getUpdatedAt() == \DateTime::createFromImmutable($event->occurredOn())
+                    && $view->getEmail() === $event->getEmail()
+                    && $view->getFirstName() === $event->getFirstName()
+                    && $view->getLastName() === $event->getLastName()
+                    && $view->getPassword() === $event->getPassword()
+                    && $view->isConsentGiven() === $event->isConsentGiven()
+                    && $view->getRoles() === $event->getRoles();
             }));
 
         $this->userProjection->__invoke($event);

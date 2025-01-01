@@ -20,7 +20,7 @@ final readonly class ExceptionListener
     {
         $exception = $event->getThrowable();
 
-        if ($exception->getPrevious() !== null && !$exception instanceof UnprocessableEntityHttpException) {
+        if (null !== $exception->getPrevious() && !$exception instanceof UnprocessableEntityHttpException) {
             $exception = $exception->getPrevious();
         }
 

@@ -295,82 +295,82 @@ parameters:
 			path: src/BudgetEnvelopeManagement/Domain/Ports/Inbound/BudgetEnvelopeViewRepositoryInterface.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetBudgetEnvelopeViewRepository\:\:buildWhereClause\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetEnvelopeViewRepository\:\:buildWhereClause\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetBudgetEnvelopeViewRepository.php
+			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetBudgetEnvelopeViewRepository\:\:buildWhereClauseWithAlias\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetEnvelopeViewRepository\:\:buildWhereClauseWithAlias\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetBudgetEnvelopeViewRepository.php
+			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetBudgetEnvelopeViewRepository\:\:filterCriteria\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetEnvelopeViewRepository\:\:filterCriteria\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetBudgetEnvelopeViewRepository.php
+			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetBudgetEnvelopeViewRepository\:\:filterCriteria\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetEnvelopeViewRepository\:\:filterCriteria\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetBudgetEnvelopeViewRepository.php
+			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetBudgetEnvelopeViewRepository\:\:findBy\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetEnvelopeViewRepository\:\:findBy\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetBudgetEnvelopeViewRepository.php
+			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetBudgetEnvelopeViewRepository\:\:findBy\(\) has parameter \$orderBy with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetEnvelopeViewRepository\:\:findBy\(\) has parameter \$orderBy with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetBudgetEnvelopeViewRepository.php
+			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetBudgetEnvelopeViewRepository\:\:findOneBy\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetEnvelopeViewRepository\:\:findOneBy\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetBudgetEnvelopeViewRepository.php
+			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetBudgetEnvelopeViewRepository\:\:findOneBy\(\) has parameter \$orderBy with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetEnvelopeViewRepository\:\:findOneBy\(\) has parameter \$orderBy with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetBudgetEnvelopeViewRepository.php
+			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetBudgetEnvelopeViewRepository\:\:findOneEnvelopeWithHistoryBy\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetEnvelopeViewRepository\:\:findOneEnvelopeWithHistoryBy\(\) has parameter \$criteria with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetBudgetEnvelopeViewRepository.php
+			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetBudgetEnvelopeViewRepository\:\:findOneEnvelopeWithHistoryBy\(\) has parameter \$orderBy with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetEnvelopeViewRepository\:\:findOneEnvelopeWithHistoryBy\(\) has parameter \$orderBy with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetBudgetEnvelopeViewRepository.php
+			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetBudgetEnvelopeViewRepository\:\:findOneEnvelopeWithHistoryBy\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetEnvelopeViewRepository\:\:findOneEnvelopeWithHistoryBy\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetBudgetEnvelopeViewRepository.php
+			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetBudgetEnvelopeViewRepository\:\:mapToEnvelopeView\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetEnvelopeViewRepository\:\:mapToEnvelopeView\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetBudgetEnvelopeViewRepository.php
+			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
 
 		-
 			message: '#^Parameter \#3 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetBudgetEnvelopeViewRepository.php
+			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
 
 		-
 			message: '#^Method App\\BudgetEnvelopeManagement\\ReadModels\\Views\\BudgetEnvelopeHistoryView\:\:jsonSerialize\(\) return type has no value type specified in iterable type array\.$#'
@@ -604,19 +604,19 @@ parameters:
 			message: '#^Parameter \#1 \$user of method App\\UserManagement\\Domain\\Ports\\Outbound\\PasswordHasherInterface\:\:hash\(\) expects Symfony\\Component\\Security\\Core\\User\\PasswordAuthenticatedUserInterface, App\\UserManagement\\Domain\\Ports\\Inbound\\UserViewInterface given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/UserManagement/Application/Handlers/CommandHandlers/ResetUserPasswordCommandHandler.php
+			path: src/UserManagement/Application/Handlers/CommandHandlers/ResetAUserPasswordCommandHandler.php
 
 		-
 			message: '#^Parameter \#1 \$user of method App\\UserManagement\\Domain\\Ports\\Outbound\\PasswordHasherInterface\:\:hash\(\) expects Symfony\\Component\\Security\\Core\\User\\PasswordAuthenticatedUserInterface, App\\UserManagement\\Domain\\Ports\\Inbound\\UserViewInterface\|null given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/UserManagement/Application/Handlers/CommandHandlers/UpdateUserPasswordCommandHandler.php
+			path: src/UserManagement/Application/Handlers/CommandHandlers/UpdateAUserPasswordCommandHandler.php
 
 		-
 			message: '#^Parameter \#1 \$user of method App\\UserManagement\\Domain\\Ports\\Outbound\\PasswordHasherInterface\:\:verify\(\) expects Symfony\\Component\\Security\\Core\\User\\PasswordAuthenticatedUserInterface, App\\UserManagement\\Domain\\Ports\\Inbound\\UserViewInterface\|null given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/UserManagement/Application/Handlers/CommandHandlers/UpdateUserPasswordCommandHandler.php
+			path: src/UserManagement/Application/Handlers/CommandHandlers/UpdateAUserPasswordCommandHandler.php
 
 		-
 			message: '#^Cannot access offset ''payload'' on mixed\.$#'
@@ -725,84 +725,6 @@ parameters:
 			identifier: property.onlyWritten
 			count: 1
 			path: src/UserManagement/Domain/Aggregates/User.php
-
-		-
-			message: '#^Method App\\UserManagement\\Domain\\Events\\UserCreatedEvent\:\:__construct\(\) has parameter \$roles with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/UserManagement/Domain/Events/UserCreatedEvent.php
-
-		-
-			message: '#^Method App\\UserManagement\\Domain\\Events\\UserCreatedEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/UserManagement/Domain/Events/UserCreatedEvent.php
-
-		-
-			message: '#^Method App\\UserManagement\\Domain\\Events\\UserCreatedEvent\:\:getRoles\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/UserManagement/Domain/Events/UserCreatedEvent.php
-
-		-
-			message: '#^Method App\\UserManagement\\Domain\\Events\\UserCreatedEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/UserManagement/Domain/Events/UserCreatedEvent.php
-
-		-
-			message: '#^Parameter \#1 \$aggregateId of class App\\UserManagement\\Domain\\Events\\UserCreatedEvent constructor expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/UserManagement/Domain/Events/UserCreatedEvent.php
-
-		-
-			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/UserManagement/Domain/Events/UserCreatedEvent.php
-
-		-
-			message: '#^Parameter \#2 \$email of class App\\UserManagement\\Domain\\Events\\UserCreatedEvent constructor expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/UserManagement/Domain/Events/UserCreatedEvent.php
-
-		-
-			message: '#^Parameter \#3 \$password of class App\\UserManagement\\Domain\\Events\\UserCreatedEvent constructor expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/UserManagement/Domain/Events/UserCreatedEvent.php
-
-		-
-			message: '#^Parameter \#4 \$firstname of class App\\UserManagement\\Domain\\Events\\UserCreatedEvent constructor expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/UserManagement/Domain/Events/UserCreatedEvent.php
-
-		-
-			message: '#^Parameter \#5 \$lastname of class App\\UserManagement\\Domain\\Events\\UserCreatedEvent constructor expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/UserManagement/Domain/Events/UserCreatedEvent.php
-
-		-
-			message: '#^Parameter \#6 \$isConsentGiven of class App\\UserManagement\\Domain\\Events\\UserCreatedEvent constructor expects bool, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/UserManagement/Domain/Events/UserCreatedEvent.php
-
-		-
-			message: '#^Parameter \#7 \$roles of class App\\UserManagement\\Domain\\Events\\UserCreatedEvent constructor expects array, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/UserManagement/Domain/Events/UserCreatedEvent.php
-
-		-
-			message: '#^Property App\\UserManagement\\Domain\\Events\\UserCreatedEvent\:\:\$roles type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/UserManagement/Domain/Events/UserCreatedEvent.php
 
 		-
 			message: '#^Method App\\UserManagement\\Domain\\Events\\UserDeletedEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
@@ -985,6 +907,84 @@ parameters:
 			path: src/UserManagement/Domain/Events/UserPasswordUpdatedEvent.php
 
 		-
+			message: '#^Method App\\UserManagement\\Domain\\Events\\UserSignedUpEvent\:\:__construct\(\) has parameter \$roles with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserManagement/Domain/Events/UserSignedUpEvent.php
+
+		-
+			message: '#^Method App\\UserManagement\\Domain\\Events\\UserSignedUpEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserManagement/Domain/Events/UserSignedUpEvent.php
+
+		-
+			message: '#^Method App\\UserManagement\\Domain\\Events\\UserSignedUpEvent\:\:getRoles\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserManagement/Domain/Events/UserSignedUpEvent.php
+
+		-
+			message: '#^Method App\\UserManagement\\Domain\\Events\\UserSignedUpEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserManagement/Domain/Events/UserSignedUpEvent.php
+
+		-
+			message: '#^Parameter \#1 \$aggregateId of class App\\UserManagement\\Domain\\Events\\UserSignedUpEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/Domain/Events/UserSignedUpEvent.php
+
+		-
+			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/Domain/Events/UserSignedUpEvent.php
+
+		-
+			message: '#^Parameter \#2 \$email of class App\\UserManagement\\Domain\\Events\\UserSignedUpEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/Domain/Events/UserSignedUpEvent.php
+
+		-
+			message: '#^Parameter \#3 \$password of class App\\UserManagement\\Domain\\Events\\UserSignedUpEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/Domain/Events/UserSignedUpEvent.php
+
+		-
+			message: '#^Parameter \#4 \$firstname of class App\\UserManagement\\Domain\\Events\\UserSignedUpEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/Domain/Events/UserSignedUpEvent.php
+
+		-
+			message: '#^Parameter \#5 \$lastname of class App\\UserManagement\\Domain\\Events\\UserSignedUpEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/Domain/Events/UserSignedUpEvent.php
+
+		-
+			message: '#^Parameter \#6 \$isConsentGiven of class App\\UserManagement\\Domain\\Events\\UserSignedUpEvent constructor expects bool, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/Domain/Events/UserSignedUpEvent.php
+
+		-
+			message: '#^Parameter \#7 \$roles of class App\\UserManagement\\Domain\\Events\\UserSignedUpEvent constructor expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserManagement/Domain/Events/UserSignedUpEvent.php
+
+		-
+			message: '#^Property App\\UserManagement\\Domain\\Events\\UserSignedUpEvent\:\:\$roles type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserManagement/Domain/Events/UserSignedUpEvent.php
+
+		-
 			message: '#^Method App\\UserManagement\\Domain\\Ports\\Inbound\\UserViewInterface\:\:createFromRepository\(\) has parameter \$user with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1025,48 +1025,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: src/UserManagement/Infrastructure/Persistence/Repositories/UserViewRepository.php
-
-		-
-			message: '#^Cannot access offset ''consentDate'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/UserManagement/Infrastructure/Serializers/UserNormalizer.php
-
-		-
-			message: '#^Cannot access offset ''consentGiven'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/UserManagement/Infrastructure/Serializers/UserNormalizer.php
-
-		-
-			message: '#^Cannot access offset ''createdAt'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/UserManagement/Infrastructure/Serializers/UserNormalizer.php
-
-		-
-			message: '#^Cannot access offset ''roles'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/UserManagement/Infrastructure/Serializers/UserNormalizer.php
-
-		-
-			message: '#^Cannot access offset ''updatedAt'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/UserManagement/Infrastructure/Serializers/UserNormalizer.php
-
-		-
-			message: '#^Cannot access offset ''userIdentifier'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/UserManagement/Infrastructure/Serializers/UserNormalizer.php
-
-		-
-			message: '#^Method App\\UserManagement\\Infrastructure\\Serializers\\UserNormalizer\:\:normalize\(\) should return array\<string, mixed\> but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: src/UserManagement/Infrastructure/Serializers/UserNormalizer.php
 
 		-
 			message: '#^Parameter \#1 \$roles of method App\\UserManagement\\ReadModels\\Views\\UserView\:\:setRoles\(\) expects array\<string\>, array given\.$#'

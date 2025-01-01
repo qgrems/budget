@@ -15,7 +15,7 @@ final readonly class RefreshTokenManagerAdapter implements RefreshTokenManagerIn
     }
 
     #[\Override]
-    public function get(string $refreshToken): RefreshTokenInterface|null
+    public function get(string $refreshToken): ?RefreshTokenInterface
     {
         return $this->refreshTokenManager->get($refreshToken);
     }

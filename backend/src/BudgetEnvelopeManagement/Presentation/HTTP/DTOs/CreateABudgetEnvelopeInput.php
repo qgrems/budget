@@ -15,7 +15,6 @@ final readonly class CreateABudgetEnvelopeInput
             pattern: '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i',
         )]
         public string $uuid,
-
         #[Assert\NotBlank]
         #[Assert\Length(
             min: 1,
@@ -28,7 +27,6 @@ final readonly class CreateABudgetEnvelopeInput
             message: 'envelopes.nameInvalid'
         )]
         public string $name,
-
         #[Assert\NotBlank]
         #[Assert\Type(type: 'string')]
         #[Assert\Length(

@@ -24,7 +24,7 @@ final readonly class BudgetEnvelopeCreditMoney
         return new self($budgetEnvelopeCreditMoney);
     }
 
-    public function toString(): string
+    public function __toString(): string
     {
         return $this->budgetEnvelopeCreditMoney;
     }

@@ -30,7 +30,7 @@ final readonly class EventStore implements EventStoreInterface
             ->fetchAllAssociative();
 
         if (empty($events)) {
-            throw new \RuntimeException("envelope.error.not_found");
+            throw new \RuntimeException('envelope.error.not_found');
         }
 
         return $events;

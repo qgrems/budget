@@ -3,7 +3,7 @@
 namespace App\UserManagement\Domain\Aggregates;
 
 use App\SharedContext\Domain\Ports\Inbound\EventInterface;
-use App\UserManagement\Domain\Events\UserCreatedEvent;
+use App\UserManagement\Domain\Events\UserSignedUpEvent;
 use App\UserManagement\Domain\Events\UserDeletedEvent;
 use App\UserManagement\Domain\Events\UserFirstnameUpdatedEvent;
 use App\UserManagement\Domain\Events\UserLastnameUpdatedEvent;
@@ -84,18 +84,18 @@ final class User
         Consent $isConsentGiven,
         UserViewRepositoryInterface $userViewRepository,
     ): self {
-        if ($userViewRepository->findOneBy(['email' => $email->toString()])) {
+        if ($userViewRepository->findOneBy(['email' => (string) $email])) {
             throw new UserAlreadyExistsException(UserAlreadyExistsException::MESSAGE, 400);
         }
 
         $aggregate = new self();
 
-        $event = new UserCreatedEvent(
-            $userId->toString(),
-            $email->toString(),
-            $password->toString(),
-            $firstname->toString(),
-            $lastname->toString(),
+        $event = new UserSignedUpEvent(
+            (string) $userId,
+            (string) $email,
+            (string) $password,
+            (string) $firstname,
+            (string) $lastname,
             $isConsentGiven->toBool(),
             $aggregate->roles,
         );
@@ -111,8 +111,8 @@ final class User
         $this->assertOwnership($userId);
 
         $event = new UserFirstnameUpdatedEvent(
-            $this->userId->toString(),
-            $firstname->toString()
+            (string) $this->userId,
+            (string) $firstname,
         );
 
         $this->applyEvent($event);
@@ -124,8 +124,8 @@ final class User
         $this->assertOwnership($userId);
 
         $event = new UserLastnameUpdatedEvent(
-            $this->userId->toString(),
-            $lastname->toString()
+            (string) $this->userId,
+            (string) $lastname,
         );
 
         $this->applyEvent($event);
@@ -137,7 +137,7 @@ final class User
         $this->assertOwnership($userId);
 
         $event = new UserDeletedEvent(
-            $this->userId->toString(),
+            (string) $this->userId,
         );
 
         $this->applyEvent($event);
@@ -149,9 +149,9 @@ final class User
         $this->assertOwnership($userId);
 
         $event = new UserPasswordUpdatedEvent(
-            $this->userId->toString(),
-            $oldPassword->toString(),
-            $newPassword->toString()
+            (string) $this->userId,
+            (string) $oldPassword,
+            (string) $newPassword,
         );
 
         $this->applyEvent($event);
@@ -163,8 +163,8 @@ final class User
         $this->assertOwnership($userId);
 
         $event = new UserPasswordResetRequestedEvent(
-            $this->userId->toString(),
-            $passwordResetToken->toString(),
+            (string) $this->userId,
+            (string) $passwordResetToken,
             new \DateTimeImmutable('+1 hour'),
         );
 
@@ -181,8 +181,8 @@ final class User
         }
 
         $event = new UserPasswordResetEvent(
-            $this->userId->toString(),
-            $password->toString(),
+            (string) $this->userId,
+            (string) $password,
         );
 
         $this->applyEvent($event);
@@ -202,7 +202,7 @@ final class User
     private function applyEvent(EventInterface $event): void
     {
         match (get_class($event)) {
-            UserCreatedEvent::class => $this->applyCreatedEvent($event),
+            UserSignedUpEvent::class => $this->applyCreatedEvent($event),
             UserFirstnameUpdatedEvent::class => $this->applyFirstnameUpdated($event),
             UserLastnameUpdatedEvent::class => $this->applyLastnameUpdated($event),
             UserPasswordUpdatedEvent::class => $this->applyUserPasswordUpdated($event),
@@ -213,7 +213,7 @@ final class User
         };
     }
 
-    private function applyCreatedEvent(UserCreatedEvent $event): void
+    private function applyCreatedEvent(UserSignedUpEvent $event): void
     {
         $this->userId = UserId::create($event->getAggregateId());
         $this->email = Email::create($event->getEmail());

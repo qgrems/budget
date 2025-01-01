@@ -8,5 +8,5 @@ use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenInterface;
 
 interface RefreshTokenManagerInterface
 {
-    public function get(string $refreshToken): RefreshTokenInterface|null;
+    public function get(string $refreshToken): ?RefreshTokenInterface;
 }

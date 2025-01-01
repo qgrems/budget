@@ -8,7 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'budget_envelope_view')]
-#[ORM\Index(name: 'idx_envelope_view_user_uuid', columns: ['user_uuid'])]
+#[ORM\Index(name: 'idx_budget_envelope_view_user_uuid', columns: ['user_uuid'])]
+#[ORM\Index(name: 'idx_budget_envelope_view_uuid', columns: ['uuid'])]
 final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSerializable
 {
     #[ORM\Id]

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\UserManagement\ReadModels\Projections;
 
 use App\SharedContext\Domain\Ports\Inbound\EventInterface;
-use App\UserManagement\Domain\Events\UserCreatedEvent;
+use App\UserManagement\Domain\Events\UserSignedUpEvent;
 use App\UserManagement\Domain\Events\UserDeletedEvent;
 use App\UserManagement\Domain\Events\UserFirstnameUpdatedEvent;
 use App\UserManagement\Domain\Events\UserLastnameUpdatedEvent;
@@ -28,7 +28,7 @@ final readonly class UserProjection
     public function __invoke(EventInterface $event): void
     {
         match(true) {
-            $event instanceof UserCreatedEvent => $this->handleUserCreatedEvent($event),
+            $event instanceof UserSignedUpEvent => $this->handleUserCreatedEvent($event),
             $event instanceof UserFirstnameUpdatedEvent => $this->handleUserFirstnameUpdatedEvent($event),
             $event instanceof UserLastnameUpdatedEvent => $this->handleUserLastnameUpdatedEvent($event),
             $event instanceof UserPasswordResetEvent => $this->handleUserPasswordResetEvent($event),
@@ -38,8 +38,8 @@ final readonly class UserProjection
             default => null,
         };
     }
-    
-    private function handleUserCreatedEvent(UserCreatedEvent $event): void
+
+    private function handleUserCreatedEvent(UserSignedUpEvent $event): void
     {
         $this->userViewRepository->save(
             new UserView()
@@ -57,7 +57,7 @@ final readonly class UserProjection
                 ->setPasswordResetTokenExpiry(null)
         );
     }
-    
+
     private function handleUserFirstnameUpdatedEvent(UserFirstnameUpdatedEvent $event): void
     {
         $userView = $this->getUserViewByEvent($event);
@@ -70,7 +70,7 @@ final readonly class UserProjection
         $userView->setFirstName($event->getFirstName());
         $this->userViewRepository->save($userView);
     }
-    
+
     private function handleUserLastnameUpdatedEvent(UserLastnameUpdatedEvent $event): void
     {
         $userView = $this->getUserViewByEvent($event);
@@ -83,7 +83,7 @@ final readonly class UserProjection
         $userView->setLastName($event->getLastName());
         $this->userViewRepository->save($userView);
     }
-    
+
     private function handleUserPasswordResetEvent(UserPasswordResetEvent $event): void
     {
         $userView = $this->getUserViewByEvent($event);
@@ -96,7 +96,7 @@ final readonly class UserProjection
         $userView->setPassword($event->getPassword());
         $this->userViewRepository->save($userView);
     }
-    
+
     private function handleUserPasswordResetRequestedEvent(UserPasswordResetRequestedEvent $event): void
     {
         $userView = $this->getUserViewByEvent($event);
@@ -112,7 +112,7 @@ final readonly class UserProjection
         $this->userViewRepository->save($userView);
         $this->mailer->sendPasswordResetEmail($userView, $resetToken);
     }
-    
+
     private function handleUserPasswordUpdatedEvent(UserPasswordUpdatedEvent $event): void
     {
         $userView = $this->getUserViewByEvent($event);

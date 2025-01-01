@@ -15,7 +15,7 @@ final readonly class PasswordResetToken
         return new self($passwordResetToken);
     }
 
-    public function toString(): string
+    public function __toString(): string
     {
         return $this->passwordResetToken;
     }

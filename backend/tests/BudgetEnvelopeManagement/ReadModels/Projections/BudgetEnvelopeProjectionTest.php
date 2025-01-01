@@ -35,14 +35,14 @@ class BudgetEnvelopeProjectionTest extends TestCase
         $this->envelopeViewRepository->expects($this->once())
             ->method('save')
             ->with($this->callback(function (BudgetEnvelopeView $view) use ($event) {
-                return $view->getUuid() === $event->getAggregateId() &&
-                    $view->getCreatedAt() == $event->occurredOn() &&
-                    $view->getUpdatedAt() == \DateTime::createFromImmutable($event->occurredOn()) &&
-                    $view->isDeleted() === false &&
-                    $view->getTargetBudget() === $event->getTargetBudget() &&
-                    $view->getCurrentBudget() === '0.00' &&
-                    $view->getName() === $event->getName() &&
-                    $view->getUserUuid() === $event->getUserId();
+                return $view->getUuid() === $event->getAggregateId()
+                    && $view->getCreatedAt() == $event->occurredOn()
+                    && $view->getUpdatedAt() == \DateTime::createFromImmutable($event->occurredOn())
+                    && false === $view->isDeleted()
+                    && $view->getTargetBudget() === $event->getTargetBudget()
+                    && '0.00' === $view->getCurrentBudget()
+                    && $view->getName() === $event->getName()
+                    && $view->getUserUuid() === $event->getUserId();
             }));
 
         $this->budgetEnvelopeProjection->__invoke($event);
@@ -131,7 +131,6 @@ class BudgetEnvelopeProjectionTest extends TestCase
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
-
 
     public function testHandleEnvelopeNamedEvent(): void
     {

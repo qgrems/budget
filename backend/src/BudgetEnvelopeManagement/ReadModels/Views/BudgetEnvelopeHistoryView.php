@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'budget_envelope_history_view')]
-#[ORM\Index(name: 'idx_envelope_history_view_user_uuid', columns: ['user_uuid'])]
+#[ORM\Index(name: 'idx_budget_envelope_history_view_aggregate_id', columns: ['aggregate_id'])]
 final class BudgetEnvelopeHistoryView implements BudgetEnvelopeHistoryViewInterface, \JsonSerializable
 {
     #[ORM\Id]
@@ -42,7 +42,7 @@ final class BudgetEnvelopeHistoryView implements BudgetEnvelopeHistoryViewInterf
         \DateTimeImmutable $createdAt,
         string $monetaryAmount,
         string $transactionType,
-        string $userUuid
+        string $userUuid,
     ): self {
         return new self()
             ->setAggregateId($aggregateId)
@@ -50,7 +50,7 @@ final class BudgetEnvelopeHistoryView implements BudgetEnvelopeHistoryViewInterf
             ->setMonetaryAmount($monetaryAmount)
             ->setTransactionType($transactionType)
             ->setUserUuid($userUuid)
-            ;
+        ;
     }
 
     public function getId(): int
@@ -104,7 +104,6 @@ final class BudgetEnvelopeHistoryView implements BudgetEnvelopeHistoryViewInterf
 
         return $this;
     }
-
 
     #[\Override]
     public function getMonetaryAmount(): string
