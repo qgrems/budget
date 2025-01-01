@@ -13,7 +13,12 @@ final readonly class ResetUserPasswordInput
         private string $token,
 
         #[Assert\NotBlank]
-        #[Assert\Length(min: 8, minMessage: 'The new password must be at least {{ limit }} characters long.')]
+        #[Assert\Length(
+            min: 8,
+            max: 50,
+            minMessage: 'users.passwordMinLength',
+            maxMessage: 'users.passwordMaxLength',
+        )]
         #[Assert\PasswordStrength]
         private string $newPassword
     ) {

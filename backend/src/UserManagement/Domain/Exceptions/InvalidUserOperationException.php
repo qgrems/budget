@@ -17,7 +17,7 @@ final class InvalidUserOperationException extends \LogicException
     public static function operationOnResetUserPassword(): self
     {
         return new self(
-            'User password reset token is expired.',
+            'users.operationOnResetUserPassword',
             401,
         );
     }

@@ -13,12 +13,12 @@ final readonly class NameEnvelopeInput
         #[Assert\Length(
             min: 1,
             max: 50,
-            minMessage: 'The name must be at least 1 character long.',
-            maxMessage: 'The name must be at most 50 characters long.'
+            minMessage: 'envelopes.nameMinLength',
+            maxMessage: 'envelopes.nameMaxLength'
         )]
         #[Assert\Regex(
             pattern: '/^[\p{L}\p{N} ]+$/u',
-            message: 'The name can only contain letters (including letters with accents), numbers (0-9), and spaces. No special characters are allowed.'
+            message: 'envelopes.nameInvalid'
         )]
         public string $name,
     ) {

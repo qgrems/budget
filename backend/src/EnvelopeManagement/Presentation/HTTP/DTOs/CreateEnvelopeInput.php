@@ -20,12 +20,12 @@ final readonly class CreateEnvelopeInput
         #[Assert\Length(
             min: 1,
             max: 50,
-            minMessage: 'The name must be at least 1 character long.',
-            maxMessage: 'The name must be at most 50 characters long.'
+            minMessage: 'envelopes.nameMinLength',
+            maxMessage: 'envelopes.nameMaxLength'
         )]
         #[Assert\Regex(
             pattern: '/^[\p{L}\p{N} ]+$/u',
-            message: 'The name can only contain letters (including letters with accents), numbers (0-9), and spaces. No special characters are allowed.'
+            message: 'envelopes.nameInvalid'
         )]
         public string $name,
 
@@ -34,12 +34,12 @@ final readonly class CreateEnvelopeInput
         #[Assert\Length(
             min: 1,
             max: 13,
-            minMessage: 'The target budget must be at least 1 character long.',
-            maxMessage: 'The target budget must be at most 13 characters long.'
+            minMessage: 'envelopes.targetBudgetMinLength',
+            maxMessage: 'envelopes.targetBudgetMaxLength'
         )]
         #[Assert\Regex(
             pattern: '/^\d+(\.\d{2})?$/',
-            message: 'The target budget must be a string representing a number with up to two decimal places (e.g., "0.00").'
+            message: 'envelopes.targetBudgetInvalid'
         )]
         public string $targetBudget,
     ) {

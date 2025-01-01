@@ -14,12 +14,12 @@ final readonly class DebitEnvelopeInput
         #[Assert\Length(
             min: 1,
             max: 13,
-            minMessage: 'The debit money must be at least 1 character long.',
-            maxMessage: 'The debit money must be at most 13 characters long.'
+            minMessage: 'envelopes.debitMoneyMinLength',
+            maxMessage: 'envelopes.debitMoneyMaxLength'
         )]
         #[Assert\Regex(
             pattern: '/^\d+(\.\d{2})?$/',
-            message: 'The debit money must be a string representing a number with up to two decimal places (e.g., "0.00").'
+            message: 'envelopes.debitMoneyInvalid'
         )]
         public string $debitMoney,
     ) {

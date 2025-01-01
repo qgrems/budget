@@ -121,7 +121,7 @@ class ShowEnvelopeQueryHandlerTest extends TestCase
 
         $this->envelopeViewRepository->expects($this->once())->method('findOneEnvelopeWithHistoryBy')->willReturn([]);
         $this->expectException(EnvelopeNotFoundException::class);
-        $this->expectExceptionMessage('Envelope not found');
+        $this->expectExceptionMessage('envelopes.notFound');
 
         $this->showEnvelopeQueryHandler->__invoke($showEnvelopeQuery);
     }

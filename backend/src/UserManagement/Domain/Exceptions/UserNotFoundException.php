@@ -6,7 +6,7 @@ namespace App\UserManagement\Domain\Exceptions;
 
 final class UserNotFoundException extends \Exception
 {
-    public const string MESSAGE = 'User not found';
+    public const string MESSAGE = 'users.notFound';
 
     public function __construct(
         string $message,

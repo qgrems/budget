@@ -17,7 +17,7 @@ final class InvalidEnvelopeOperationException extends \LogicException
     public static function operationOnDeletedEnvelope(): self
     {
         return new self(
-            'Cannot modify a deleted envelope.',
+            'envelopes.operationOnDeletedEnvelope',
             400,
         );
     }

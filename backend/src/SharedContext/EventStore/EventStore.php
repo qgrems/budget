@@ -30,7 +30,7 @@ final readonly class EventStore implements EventStoreInterface
             ->fetchAllAssociative();
 
         if (empty($events)) {
-            throw new \RuntimeException("No events found for aggregate ID: $uuid");
+            throw new \RuntimeException("envelope.error.not_found");
         }
 
         return $events;
