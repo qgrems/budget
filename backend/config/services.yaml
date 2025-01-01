@@ -23,32 +23,32 @@ services:
         resource: '../src/UserManagement/Presentation/HTTP/Controllers'
         tags: [ 'controller.service_arguments' ]
 
-    App\EnvelopeManagement\Presentation\HTTP\Controllers\:
-        resource: '../src/EnvelopeManagement/Presentation/HTTP/Controllers'
+    App\BudgetEnvelopeManagement\Presentation\HTTP\Controllers\:
+        resource: '../src/BudgetEnvelopeManagement/Presentation/HTTP/Controllers'
         tags: [ 'controller.service_arguments' ]
 
-    App\EnvelopeManagement\Application\Handlers\CommandHandlers\CreateEnvelopeCommandHandler:
+    App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers\CreateABudgetEnvelopeCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\EnvelopeManagement\Application\Handlers\CommandHandlers\NameEnvelopeCommandHandler:
+    App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers\RenameABudgetEnvelopeCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\EnvelopeManagement\Application\Handlers\CommandHandlers\CreditEnvelopeCommandHandler:
+    App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers\CreditABudgetEnvelopeCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\EnvelopeManagement\Application\Handlers\CommandHandlers\DebitEnvelopeCommandHandler:
+    App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers\DebitABudgetEnvelopeCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\EnvelopeManagement\Application\Handlers\CommandHandlers\DeleteEnvelopeCommandHandler:
+    App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers\DeleteABudgetEnvelopeCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\EnvelopeManagement\Application\Handlers\QueryHandlers\ShowEnvelopeQueryHandler:
+    App\BudgetEnvelopeManagement\Application\Handlers\QueryHandlers\GetABudgetEnvelopeWithItsHistoryQueryHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\EnvelopeManagement\Application\Handlers\QueryHandlers\ListEnvelopesQueryHandler:
+    App\BudgetEnvelopeManagement\Application\Handlers\QueryHandlers\ListBudgetEnvelopesQueryHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\EnvelopeManagement\ReadModels\Projections\EnvelopeProjection:
+    App\BudgetEnvelopeManagement\ReadModels\Projections\BudgetEnvelopeProjection:
         tags: [ 'messenger.message_handler' ]
 
     App\UserManagement\Application\Handlers\CommandHandlers\CreateUserCommandHandler:

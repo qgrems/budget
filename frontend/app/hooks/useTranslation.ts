@@ -8,13 +8,16 @@ export function useTranslation() {
     const { language, setLanguage } = useLanguage()
 
     const t = useCallback((key: string) => {
-        const keys = key.split('.')
+        const keys = key?.split('.')
         let value: any = translations[language]
+        if (!keys) {
+            return value
+        }
         for (const k of keys) {
-            value = value[k]
             if (value === undefined) {
                 return key
             }
+            value = value[k]
         }
         return value
     }, [language])
