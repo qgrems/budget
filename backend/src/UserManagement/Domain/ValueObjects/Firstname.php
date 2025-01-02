@@ -22,7 +22,7 @@ final readonly class Firstname
         return new self($name);
     }
 
-    public function toString(): string
+    public function __toString(): string
     {
         return $this->name;
     }

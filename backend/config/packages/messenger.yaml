@@ -27,7 +27,7 @@ framework:
             'App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDebitedEvent': async
             'App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDeletedEvent': async
             'App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeCreditedEvent': async
-            'App\UserManagement\Domain\Events\UserCreatedEvent': async
+            'App\UserManagement\Domain\Events\UserSignedUpEvent': async
             'App\UserManagement\Domain\Events\UserFirstnameUpdatedEvent': async
             'App\UserManagement\Domain\Events\UserLastnameUpdatedEvent': async
             'App\UserManagement\Domain\Events\UserPasswordUpdatedEvent': async

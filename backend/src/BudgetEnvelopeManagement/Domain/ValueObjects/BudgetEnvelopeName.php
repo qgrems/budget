@@ -23,7 +23,7 @@ final readonly class BudgetEnvelopeName
         return new self($budgetEnvelopeName);
     }
 
-    public function toString(): string
+    public function __toString(): string
     {
         return $this->budgetEnvelopeName;
     }

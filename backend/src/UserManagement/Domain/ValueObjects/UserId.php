@@ -23,10 +23,10 @@ final readonly class UserId
 
     public function equals(UserId $userId): bool
     {
-        return $userId->toString() === $this->uuid;
+        return (string) $userId === $this->uuid;
     }
 
-    public function toString(): string
+    public function __toString(): string
     {
         return $this->uuid;
     }

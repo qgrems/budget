@@ -37,7 +37,7 @@ final readonly class BudgetEnvelopeCurrentBudget
         return new self($budgetEnvelopeCurrentBudget, $budgetEnvelopeTargetBudget);
     }
 
-    public function toString(): string
+    public function __toString(): string
     {
         return $this->budgetEnvelopeCurrentBudget;
     }

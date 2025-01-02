@@ -23,10 +23,10 @@ final readonly class BudgetEnvelopeUserId
 
     public function equals(BudgetEnvelopeUserId $budgetEnvelopeUserId): bool
     {
-        return $budgetEnvelopeUserId->toString() === $this->uuid;
+        return (string) $budgetEnvelopeUserId === $this->uuid;
     }
 
-    public function toString(): string
+    public function __toString(): string
     {
         return $this->uuid;
     }

@@ -57,10 +57,10 @@ final class BudgetEnvelope
     }
 
     public static function create(
-        string                                $budgetEnvelopeId,
-        string                                $userId,
-        string                                $targetBudget,
-        string                                $name,
+        string $budgetEnvelopeId,
+        string $userId,
+        string $targetBudget,
+        string $name,
         BudgetEnvelopeViewRepositoryInterface $budgetEnvelopeViewRepository,
     ): self {
         if ($budgetEnvelopeViewRepository->findOneBy(['user_uuid' => $userId, 'name' => $name, 'is_deleted' => false])) {
@@ -83,9 +83,9 @@ final class BudgetEnvelope
     }
 
     public function rename(
-        BudgetEnvelopeName                    $name,
-        BudgetEnvelopeUserId                  $userId,
-        BudgetEnvelopeId                      $budgetEnvelopeId,
+        BudgetEnvelopeName $name,
+        BudgetEnvelopeUserId $userId,
+        BudgetEnvelopeId $budgetEnvelopeId,
         BudgetEnvelopeViewRepositoryInterface $budgetEnvelopeViewRepository,
     ): void {
         $this->assertNotDeleted();
@@ -93,19 +93,19 @@ final class BudgetEnvelope
 
         $budgetEnvelope = $budgetEnvelopeViewRepository->findOneBy(
             [
-                'user_uuid' => $userId->toString(),
-                'name' => $name->toString(),
+                'user_uuid' => (string) $userId,
+                'name' => (string) $name,
                 'is_deleted' => false,
             ],
         );
 
-        if ($budgetEnvelope && $budgetEnvelope->getUuid() !== $budgetEnvelopeId->toString()) {
+        if ($budgetEnvelope && $budgetEnvelope->getUuid() !== (string) $budgetEnvelopeId) {
             throw new BudgetEnvelopeNameAlreadyExistsForUserException(BudgetEnvelopeNameAlreadyExistsForUserException::MESSAGE, 400);
         }
 
         $event = new BudgetEnvelopeRenamedEvent(
-            $this->budgetEnvelopeId->toString(),
-            $name->toString()
+            (string) $this->budgetEnvelopeId,
+            (string) $name,
         );
 
         $this->applyEvent($event);
@@ -118,8 +118,8 @@ final class BudgetEnvelope
         $this->assertOwnership($userId);
 
         $event = new BudgetEnvelopeCreditedEvent(
-            $this->budgetEnvelopeId->toString(),
-            $budgetEnvelopeCreditMoney->toString()
+            (string) $this->budgetEnvelopeId,
+            (string) $budgetEnvelopeCreditMoney,
         );
 
         $this->applyEvent($event);
@@ -132,8 +132,8 @@ final class BudgetEnvelope
         $this->assertOwnership($userId);
 
         $event = new BudgetEnvelopeDebitedEvent(
-            $this->budgetEnvelopeId->toString(),
-            $budgetEnvelopeDebitMoney->toString()
+            (string) $this->budgetEnvelopeId,
+            (string) $budgetEnvelopeDebitMoney,
         );
 
         $this->applyEvent($event);
@@ -146,7 +146,7 @@ final class BudgetEnvelope
         $this->assertOwnership($userId);
 
         $event = new BudgetEnvelopeDeletedEvent(
-            $this->budgetEnvelopeId->toString(),
+            (string) $this->budgetEnvelopeId,
             true,
         );
 
@@ -195,17 +195,17 @@ final class BudgetEnvelope
 
     private function applyCreditedEvent(BudgetEnvelopeCreditedEvent $event): void
     {
-        $newBudget = (floatval($this->budgetEnvelopeCurrentBudget->toString()) + floatval($event->getCreditMoney()));
+        $newBudget = (floatval((string) $this->budgetEnvelopeCurrentBudget) + floatval($event->getCreditMoney()));
 
-        $this->budgetEnvelopeCurrentBudget = BudgetEnvelopeCurrentBudget::create((string) $newBudget, $this->budgetEnvelopeTargetBudget->toString());
+        $this->budgetEnvelopeCurrentBudget = BudgetEnvelopeCurrentBudget::create((string) $newBudget, (string) $this->budgetEnvelopeTargetBudget);
         $this->updatedAt = new \DateTime();
     }
 
     private function applyDebitedEvent(BudgetEnvelopeDebitedEvent $event): void
     {
-        $newBudget = (floatval($this->budgetEnvelopeCurrentBudget->toString()) - floatval($event->getDebitMoney()));
+        $newBudget = (floatval((string) $this->budgetEnvelopeCurrentBudget) - floatval($event->getDebitMoney()));
 
-        $this->budgetEnvelopeCurrentBudget = BudgetEnvelopeCurrentBudget::create((string) $newBudget, $this->budgetEnvelopeTargetBudget->toString());
+        $this->budgetEnvelopeCurrentBudget = BudgetEnvelopeCurrentBudget::create((string) $newBudget, (string) $this->budgetEnvelopeTargetBudget);
         $this->updatedAt = new \DateTime();
     }
 

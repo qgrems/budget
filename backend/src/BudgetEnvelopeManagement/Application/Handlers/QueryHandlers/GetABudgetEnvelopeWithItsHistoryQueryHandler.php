@@ -26,7 +26,7 @@ final readonly class GetABudgetEnvelopeWithItsHistoryQueryHandler
             'is_deleted' => false,
         ]);
 
-        if ($budgetEnvelope === []) {
+        if ([] === $budgetEnvelope) {
             throw new BudgetEnvelopeNotFoundException(BudgetEnvelopeNotFoundException::MESSAGE, 404);
         }
 

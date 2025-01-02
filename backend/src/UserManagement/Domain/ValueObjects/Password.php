@@ -21,7 +21,7 @@ final readonly class Password
         return new self($password);
     }
 
-    public function toString(): string
+    public function __toString(): string
     {
         return $this->password;
     }

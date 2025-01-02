@@ -22,13 +22,12 @@ final readonly class BudgetEnvelopeProjection
     public function __construct(
         private BudgetEnvelopeViewRepositoryInterface $budgetEnvelopeViewRepository,
         private BudgetEnvelopeHistoryViewRepositoryInterface $budgetEnvelopeHistoryViewRepository,
-    )
-    {
+    ) {
     }
 
     public function __invoke(EventInterface $event): void
     {
-         match(true) {
+        match(true) {
             $event instanceof BudgetEnvelopeCreatedEvent => $this->handleEnvelopeCreatedEvent($event),
             $event instanceof BudgetEnvelopeCreditedEvent => $this->handleEnvelopeCreditedEvent($event),
             $event instanceof BudgetEnvelopeDebitedEvent => $this->handleEnvelopeDebitedEvent($event),

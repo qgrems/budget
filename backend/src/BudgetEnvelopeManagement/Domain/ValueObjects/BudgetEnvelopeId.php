@@ -21,7 +21,7 @@ final readonly class BudgetEnvelopeId
         return new self($uuid);
     }
 
-    public function toString(): string
+    public function __toString(): string
     {
         return $this->uuid;
     }
