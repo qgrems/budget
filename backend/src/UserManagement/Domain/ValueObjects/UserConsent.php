@@ -6,7 +6,7 @@ namespace App\UserManagement\Domain\ValueObjects;
 
 use Assert\Assert;
 
-final readonly class Consent
+final readonly class UserConsent
 {
     private function __construct(protected bool $consent)
     {
@@ -17,7 +17,7 @@ final readonly class Consent
         ;
     }
 
-    public static function create(bool $consent): self
+    public static function fromBool(bool $consent): self
     {
         return new self($consent);
     }

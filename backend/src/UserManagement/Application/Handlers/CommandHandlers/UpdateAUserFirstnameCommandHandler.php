@@ -7,8 +7,6 @@ namespace App\UserManagement\Application\Handlers\CommandHandlers;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\UserManagement\Application\Commands\UpdateAUserFirstnameCommand;
 use App\UserManagement\Domain\Aggregates\User;
-use App\UserManagement\Domain\ValueObjects\Firstname;
-use App\UserManagement\Domain\ValueObjects\UserId;
 
 final readonly class UpdateAUserFirstnameCommandHandler
 {
@@ -19,13 +17,11 @@ final readonly class UpdateAUserFirstnameCommandHandler
 
     public function __invoke(UpdateAUserFirstnameCommand $updateAUserFirstnameCommand): void
     {
-        $events = $this->eventSourcedRepository->get($updateAUserFirstnameCommand->getUuid());
+        $events = $this->eventSourcedRepository->get((string) $updateAUserFirstnameCommand->getUserId());
         $aggregate = User::reconstituteFromEvents(array_map(fn ($event) => $event, $events));
         $aggregate->updateFirstname(
-            Firstname::create(
-                $updateAUserFirstnameCommand->getFirstname(),
-            ),
-            UserId::create($updateAUserFirstnameCommand->getUuid()),
+            $updateAUserFirstnameCommand->getFirstname(),
+            $updateAUserFirstnameCommand->getUserId(),
         );
         $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
         $aggregate->clearUncommitedEvent();

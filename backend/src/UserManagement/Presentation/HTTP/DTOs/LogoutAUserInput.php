@@ -13,9 +13,4 @@ final readonly class LogoutAUserInput
         public string $refreshToken,
     ) {
     }
-
-    public function getRefreshToken(): string
-    {
-        return $this->refreshToken;
-    }
 }

@@ -6,7 +6,7 @@ namespace App\UserManagement\Domain\ValueObjects;
 
 use Assert\Assert;
 
-final readonly class Email
+final readonly class UserEmail
 {
     private function __construct(protected string $email)
     {
@@ -16,7 +16,7 @@ final readonly class Email
         ;
     }
 
-    public static function create(string $email): self
+    public static function fromString(string $email): self
     {
         return new self($email);
     }

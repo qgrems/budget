@@ -23,9 +23,4 @@ final readonly class RenameABudgetEnvelopeInput
         public string $name,
     ) {
     }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
 }

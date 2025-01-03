@@ -19,9 +19,4 @@ final readonly class UpdateAUserFirstnameInput
         public string $firstname,
     ) {
     }
-
-    public function getFirstname(): string
-    {
-        return $this->firstname;
-    }
 }

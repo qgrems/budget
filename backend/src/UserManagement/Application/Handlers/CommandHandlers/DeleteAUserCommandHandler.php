@@ -7,7 +7,6 @@ namespace App\UserManagement\Application\Handlers\CommandHandlers;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\UserManagement\Application\Commands\DeleteAUserCommand;
 use App\UserManagement\Domain\Aggregates\User;
-use App\UserManagement\Domain\ValueObjects\UserId;
 
 final readonly class DeleteAUserCommandHandler
 {
@@ -18,9 +17,9 @@ final readonly class DeleteAUserCommandHandler
 
     public function __invoke(DeleteAUserCommand $deleteAUserCommand): void
     {
-        $events = $this->eventSourcedRepository->get($deleteAUserCommand->getUuid());
+        $events = $this->eventSourcedRepository->get((string) $deleteAUserCommand->getUserId());
         $aggregate = User::reconstituteFromEvents(array_map(fn ($event) => $event, $events));
-        $aggregate->delete(UserId::create($deleteAUserCommand->getUuid()));
+        $aggregate->delete($deleteAUserCommand->getUserId());
         $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
         $aggregate->clearUncommitedEvent();
     }

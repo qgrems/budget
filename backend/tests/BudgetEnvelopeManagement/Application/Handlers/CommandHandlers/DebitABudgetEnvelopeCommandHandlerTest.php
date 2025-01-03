@@ -14,6 +14,9 @@ use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeRenamedEvent;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeCurrentBudgetException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeNotFoundException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\InvalidBudgetEnvelopeOperationException;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeDebitMoney;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\DebitABudgetEnvelopeInput;
 use App\SharedContext\EventStore\EventStoreInterface;
 use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
@@ -41,9 +44,9 @@ class DebitABudgetEnvelopeCommandHandlerTest extends TestCase
     {
         $debitABudgetEnvelopeInput = new DebitABudgetEnvelopeInput('1.00');
         $debitABudgetEnvelopeCommand = new DebitABudgetEnvelopeCommand(
-            $debitABudgetEnvelopeInput->getDebitMoney(),
-            '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            'a871e446-ddcd-4e7a-9bf9-525bab84e566'
+            BudgetEnvelopeDebitMoney::fromString($debitABudgetEnvelopeInput->debitMoney),
+            BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
+            BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
 
         $this->eventStore->expects($this->once())->method('load')
@@ -92,9 +95,9 @@ class DebitABudgetEnvelopeCommandHandlerTest extends TestCase
     {
         $debitABudgetEnvelopeInput = new DebitABudgetEnvelopeInput('100');
         $debitABudgetEnvelopeCommand = new DebitABudgetEnvelopeCommand(
-            $debitABudgetEnvelopeInput->getDebitMoney(),
-            '0099c0ce-3b53-4318-ba7b-994e437a859b',
-            'd26cc02e-99e7-428c-9d61-572dff3f84a7'
+            BudgetEnvelopeDebitMoney::fromString($debitABudgetEnvelopeInput->debitMoney),
+            BudgetEnvelopeId::fromString('0099c0ce-3b53-4318-ba7b-994e437a859b'),
+            BudgetEnvelopeUserId::fromString('d26cc02e-99e7-428c-9d61-572dff3f84a7'),
         );
 
         $this->eventStore->expects($this->once())->method('load')
@@ -110,9 +113,9 @@ class DebitABudgetEnvelopeCommandHandlerTest extends TestCase
     {
         $debitABudgetEnvelopeInput = new DebitABudgetEnvelopeInput('100');
         $debitABudgetEnvelopeCommand = new DebitABudgetEnvelopeCommand(
-            $debitABudgetEnvelopeInput->getDebitMoney(),
-            '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            'a871e446-ddcd-4e7a-9bf9-525bab84e566'
+            BudgetEnvelopeDebitMoney::fromString($debitABudgetEnvelopeInput->debitMoney),
+            BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
+            BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
 
         $this->eventStore->expects($this->once())->method('load')
@@ -153,9 +156,9 @@ class DebitABudgetEnvelopeCommandHandlerTest extends TestCase
         $debitABudgetEnvelopeInput = new DebitABudgetEnvelopeInput('3000.00');
 
         $debitABudgetEnvelopeCommand = new DebitABudgetEnvelopeCommand(
-            $debitABudgetEnvelopeInput->getDebitMoney(),
-            '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            'a871e446-ddcd-4e7a-9bf9-525bab84e566'
+            BudgetEnvelopeDebitMoney::fromString($debitABudgetEnvelopeInput->debitMoney),
+            BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
+            BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
 
         $this->eventStore->expects($this->once())->method('load')
@@ -196,9 +199,9 @@ class DebitABudgetEnvelopeCommandHandlerTest extends TestCase
     {
         $debitABudgetEnvelopeInput = new DebitABudgetEnvelopeInput('3000.00');
         $debitABudgetEnvelopeCommand = new DebitABudgetEnvelopeCommand(
-            $debitABudgetEnvelopeInput->getDebitMoney(),
-            '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            '0d6851a2-5123-40df-939b-8f043850fbf1'
+            BudgetEnvelopeDebitMoney::fromString($debitABudgetEnvelopeInput->debitMoney),
+            BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
+            BudgetEnvelopeUserId::fromString('0d6851a2-5123-40df-939b-8f043850fbf1'),
         );
 
         $this->eventStore->expects($this->once())->method('load')

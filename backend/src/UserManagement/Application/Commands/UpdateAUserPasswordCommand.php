@@ -5,28 +5,37 @@ declare(strict_types=1);
 namespace App\UserManagement\Application\Commands;
 
 use App\UserManagement\Domain\Ports\Inbound\CommandInterface;
+use App\UserManagement\Domain\ValueObjects\UserId;
+use App\UserManagement\Domain\ValueObjects\UserPassword;
 
 final readonly class UpdateAUserPasswordCommand implements CommandInterface
 {
+    private string $userOldPassword;
+    private string $userNewPassword;
+    private string $userId;
+
     public function __construct(
-        private string $oldPassword,
-        private string $newPassword,
-        private string $uuid,
+        UserPassword $userOldPassword,
+        UserPassword $userNewPassword,
+        UserId $userId,
     ) {
+        $this->userOldPassword = (string) $userOldPassword;
+        $this->userNewPassword = (string) $userNewPassword;
+        $this->userId = (string) $userId;
     }
 
-    public function getOldPassword(): string
+    public function getUserOldPassword(): UserPassword
     {
-        return $this->oldPassword;
+        return UserPassword::fromString($this->userOldPassword);
     }
 
-    public function getNewPassword(): string
+    public function getUserNewPassword(): UserPassword
     {
-        return $this->newPassword;
+        return UserPassword::fromString($this->userNewPassword);
     }
 
-    public function getUuid(): string
+    public function getUserId(): UserId
     {
-        return $this->uuid;
+        return UserId::fromString($this->userId);
     }
 }

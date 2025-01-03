@@ -9,6 +9,8 @@ use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedReposi
 use App\UserManagement\Application\Commands\UpdateAUserFirstnameCommand;
 use App\UserManagement\Application\Handlers\CommandHandlers\UpdateAUserFirstnameCommandHandler;
 use App\UserManagement\Domain\Events\UserSignedUpEvent;
+use App\UserManagement\Domain\ValueObjects\UserFirstname;
+use App\UserManagement\Domain\ValueObjects\UserId;
 use App\UserManagement\Presentation\HTTP\DTOs\UpdateAUserFirstnameInput;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +34,10 @@ class UpdateAUserFirstnameCommandHandlerTest extends TestCase
     public function testUpdateUserFirstnameSuccess(): void
     {
         $createUserInput = new UpdateAUserFirstnameInput('John');
-        $command = new UpdateAUserFirstnameCommand('7ac32191-3fa0-4477-8eb2-8dd3b0b7c836', $createUserInput->getFirstname());
+        $command = new UpdateAUserFirstnameCommand(
+            UserId::fromString('7ac32191-3fa0-4477-8eb2-8dd3b0b7c836'),
+            UserFirstname::fromString($createUserInput->firstname),
+        );
 
         $this->eventStore->expects($this->once())->method('load')->willReturn(
             [

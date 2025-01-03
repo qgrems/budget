@@ -6,8 +6,6 @@ namespace App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers;
 
 use App\BudgetEnvelopeManagement\Application\Commands\DebitABudgetEnvelopeCommand;
 use App\BudgetEnvelopeManagement\Domain\Aggregates\BudgetEnvelope;
-use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeDebitMoney;
-use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 
 final readonly class DebitABudgetEnvelopeCommandHandler
@@ -19,13 +17,11 @@ final readonly class DebitABudgetEnvelopeCommandHandler
 
     public function __invoke(DebitABudgetEnvelopeCommand $debitABudgetEnvelopeCommand): void
     {
-        $events = $this->eventSourcedRepository->get($debitABudgetEnvelopeCommand->getUuid());
+        $events = $this->eventSourcedRepository->get((string) $debitABudgetEnvelopeCommand->getBudgetEnvelopeId());
         $aggregate = BudgetEnvelope::reconstituteFromEvents(array_map(fn ($event) => $event, $events));
         $aggregate->debit(
-            BudgetEnvelopeDebitMoney::create(
-                $debitABudgetEnvelopeCommand->getDebitMoney(),
-            ),
-            BudgetEnvelopeUserId::create($debitABudgetEnvelopeCommand->getUserUuid()),
+            $debitABudgetEnvelopeCommand->getBudgetEnvelopeDebitMoney(),
+            $debitABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
         );
         $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
         $aggregate->clearUncommitedEvent();

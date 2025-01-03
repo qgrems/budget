@@ -6,6 +6,8 @@ namespace App\UserManagement\Presentation\HTTP\Controllers;
 
 use App\UserManagement\Application\Commands\ResetAUserPasswordCommand;
 use App\UserManagement\Domain\Ports\Outbound\CommandBusInterface;
+use App\UserManagement\Domain\ValueObjects\UserPassword;
+use App\UserManagement\Domain\ValueObjects\UserPasswordResetToken;
 use App\UserManagement\Presentation\HTTP\DTOs\ResetAUserPasswordInput;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,8 +30,8 @@ final readonly class ResetAUserPasswordController
     ): JsonResponse {
         $this->commandBus->execute(
             new ResetAUserPasswordCommand(
-                $resetAUserPasswordDto->getToken(),
-                $resetAUserPasswordDto->getNewPassword(),
+                UserPasswordResetToken::fromString($resetAUserPasswordDto->token),
+                UserPassword::fromString($resetAUserPasswordDto->newPassword),
             ),
         );
 

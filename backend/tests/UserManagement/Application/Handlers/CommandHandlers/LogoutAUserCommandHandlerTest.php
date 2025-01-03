@@ -34,7 +34,7 @@ class LogoutAUserCommandHandlerTest extends TestCase
     public function testLogoutUserSuccess(): void
     {
         $logoutUserInput = new LogoutAUserInput('refreshToken');
-        $command = new LogoutAUserCommand($logoutUserInput->getRefreshToken());
+        $command = new LogoutAUserCommand($logoutUserInput->refreshToken);
 
         $this->refreshTokenManager->method('get')->willReturn(new RefreshToken());
         $this->entityManager->expects($this->once())->method('remove');
@@ -46,7 +46,7 @@ class LogoutAUserCommandHandlerTest extends TestCase
     public function testLogoutUserWithWrongRefreshToken(): void
     {
         $logoutUserInput = new LogoutAUserInput('refreshToken');
-        $command = new LogoutAUserCommand($logoutUserInput->getRefreshToken());
+        $command = new LogoutAUserCommand($logoutUserInput->refreshToken);
 
         $this->refreshTokenManager->method('get')->willReturn(null);
         $this->entityManager->expects($this->never())->method('remove');

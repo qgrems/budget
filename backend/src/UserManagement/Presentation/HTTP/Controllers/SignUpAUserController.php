@@ -6,6 +6,12 @@ namespace App\UserManagement\Presentation\HTTP\Controllers;
 
 use App\UserManagement\Application\Commands\SignUpAUserCommand;
 use App\UserManagement\Domain\Ports\Outbound\CommandBusInterface;
+use App\UserManagement\Domain\ValueObjects\UserConsent;
+use App\UserManagement\Domain\ValueObjects\UserEmail;
+use App\UserManagement\Domain\ValueObjects\UserFirstname;
+use App\UserManagement\Domain\ValueObjects\UserId;
+use App\UserManagement\Domain\ValueObjects\UserLastname;
+use App\UserManagement\Domain\ValueObjects\UserPassword;
 use App\UserManagement\Presentation\HTTP\DTOs\SignUpAUserInput;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,16 +30,16 @@ final readonly class SignUpAUserController
      * @throws \Exception
      */
     public function __invoke(
-        #[MapRequestPayload] SignUpAUserInput $signUpAUserDto,
+        #[MapRequestPayload] SignUpAUserInput $signUpAUserInput,
     ): JsonResponse {
         $this->commandBus->execute(
             new SignUpAUserCommand(
-                $signUpAUserDto->getUuid(),
-                $signUpAUserDto->getEmail(),
-                $signUpAUserDto->getPassword(),
-                $signUpAUserDto->getFirstname(),
-                $signUpAUserDto->getLastname(),
-                $signUpAUserDto->isConsentGiven(),
+                UserId::fromString($signUpAUserInput->uuid),
+                UserEmail::fromString($signUpAUserInput->email),
+                UserPassword::fromString($signUpAUserInput->password),
+                UserFirstname::fromString($signUpAUserInput->firstname),
+                UserLastname::fromString($signUpAUserInput->lastname),
+                UserConsent::fromBool($signUpAUserInput->consentGiven),
             ),
         );
 

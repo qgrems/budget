@@ -32,9 +32,9 @@ final readonly class ListBudgetEnvelopesController
             $this->queryBus->query(
                 new ListBudgetEnvelopesQuery(
                     $user->getUuid(),
-                    $listBudgetEnvelopesDto->getOrderBy(),
-                    $listBudgetEnvelopesDto->getLimit(),
-                    $listBudgetEnvelopesDto->getOffset(),
+                    $listBudgetEnvelopesDto->orderBy,
+                    $listBudgetEnvelopesDto->limit,
+                    $listBudgetEnvelopesDto->offset,
                 ),
             ),
             Response::HTTP_OK,

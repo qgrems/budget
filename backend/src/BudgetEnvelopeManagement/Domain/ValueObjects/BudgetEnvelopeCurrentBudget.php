@@ -32,7 +32,7 @@ final readonly class BudgetEnvelopeCurrentBudget
         ;
     }
 
-    public static function create(string $budgetEnvelopeCurrentBudget, string $budgetEnvelopeTargetBudget): self
+    public static function fromString(string $budgetEnvelopeCurrentBudget, string $budgetEnvelopeTargetBudget): self
     {
         return new self($budgetEnvelopeCurrentBudget, $budgetEnvelopeTargetBudget);
     }

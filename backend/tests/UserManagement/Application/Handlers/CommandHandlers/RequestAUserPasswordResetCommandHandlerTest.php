@@ -12,6 +12,7 @@ use App\UserManagement\Domain\Events\UserSignedUpEvent;
 use App\UserManagement\Domain\Exceptions\UserNotFoundException;
 use App\UserManagement\Domain\Ports\Inbound\PasswordResetTokenGeneratorInterface;
 use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
+use App\UserManagement\Domain\ValueObjects\UserEmail;
 use App\UserManagement\Presentation\HTTP\DTOs\RequestAUserPasswordResetInput;
 use App\UserManagement\ReadModels\Views\UserView;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -42,7 +43,7 @@ class RequestAUserPasswordResetCommandHandlerTest extends TestCase
     public function testRequestUserPasswordResetSuccess(): void
     {
         $requestUserPasswordResetInput = new RequestAUserPasswordResetInput('test@mail.com');
-        $command = new RequestAUserPasswordResetCommand($requestUserPasswordResetInput->getEmail());
+        $command = new RequestAUserPasswordResetCommand(UserEmail::fromString($requestUserPasswordResetInput->email));
 
         $this->userViewRepository->method('findOneBy')->willReturn(
             new UserView()
@@ -83,7 +84,7 @@ class RequestAUserPasswordResetCommandHandlerTest extends TestCase
     public function testRequestUserPasswordResetWithUserNotFound(): void
     {
         $requestUserPasswordResetInput = new RequestAUserPasswordResetInput('test@mail.com');
-        $command = new RequestAUserPasswordResetCommand($requestUserPasswordResetInput->getEmail());
+        $command = new RequestAUserPasswordResetCommand(UserEmail::fromString($requestUserPasswordResetInput->email));
 
         $this->userViewRepository->method('findOneBy')->willReturn(
             null,

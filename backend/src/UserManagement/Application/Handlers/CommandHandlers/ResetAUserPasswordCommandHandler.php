@@ -11,7 +11,7 @@ use App\UserManagement\Domain\Exceptions\UserNotFoundException;
 use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserManagement\Domain\Ports\Inbound\UserViewInterface;
 use App\UserManagement\Domain\Ports\Outbound\PasswordHasherInterface;
-use App\UserManagement\Domain\ValueObjects\Password;
+use App\UserManagement\Domain\ValueObjects\UserPassword;
 use App\UserManagement\Domain\ValueObjects\UserId;
 
 final readonly class ResetAUserPasswordCommandHandler
@@ -27,7 +27,7 @@ final readonly class ResetAUserPasswordCommandHandler
     {
         $userView = $this->userViewRepository->findOneBy(
             [
-                'passwordResetToken' => $command->getResetToken(),
+                'passwordResetToken' => (string) $command->getUserPasswordResetToken(),
             ],
         );
 
@@ -38,10 +38,10 @@ final readonly class ResetAUserPasswordCommandHandler
         $events = $this->eventSourcedRepository->get($userView->getUuid());
         $aggregate = User::reconstituteFromEvents(array_map(fn ($event) => $event, $events));
         $aggregate->resetPassword(
-            Password::create(
-                $this->passwordHasher->hash($userView, $command->getNewPassword()),
+            UserPassword::fromString(
+                $this->passwordHasher->hash($userView, (string) $command->getUserNewPassword()),
             ),
-            UserId::create($userView->getUuid()),
+            UserId::fromString($userView->getUuid()),
         );
         $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
         $aggregate->clearUncommitedEvent();

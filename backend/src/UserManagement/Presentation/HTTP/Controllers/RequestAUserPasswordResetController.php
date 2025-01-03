@@ -6,6 +6,7 @@ namespace App\UserManagement\Presentation\HTTP\Controllers;
 
 use App\UserManagement\Application\Commands\RequestAUserPasswordResetCommand;
 use App\UserManagement\Domain\Ports\Outbound\CommandBusInterface;
+use App\UserManagement\Domain\ValueObjects\UserEmail;
 use App\UserManagement\Presentation\HTTP\DTOs\RequestAUserPasswordResetInput;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +27,9 @@ final readonly class RequestAUserPasswordResetController
     public function __invoke(
         #[MapRequestPayload] RequestAUserPasswordResetInput $requestAPasswordResetInput,
     ): JsonResponse {
-        $this->commandBus->execute(new RequestAUserPasswordResetCommand($requestAPasswordResetInput->getEmail()));
+        $this->commandBus->execute(new RequestAUserPasswordResetCommand(
+            UserEmail::fromString($requestAPasswordResetInput->email),
+        ));
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }

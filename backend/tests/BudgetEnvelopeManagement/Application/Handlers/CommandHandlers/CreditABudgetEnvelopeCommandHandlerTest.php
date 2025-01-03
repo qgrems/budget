@@ -14,6 +14,9 @@ use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeRenamedEvent;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeCurrentBudgetException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeNotFoundException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\InvalidBudgetEnvelopeOperationException;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeCreditMoney;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\CreditABudgetEnvelopeInput;
 use App\SharedContext\EventStore\EventStoreInterface;
 use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
@@ -41,9 +44,9 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
     {
         $creditABudgetEnvelopeInput = new CreditABudgetEnvelopeInput('100.00');
         $creditABudgetEnvelopeCommand = new CreditABudgetEnvelopeCommand(
-            $creditABudgetEnvelopeInput->getCreditMoney(),
-            '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            'a871e446-ddcd-4e7a-9bf9-525bab84e566',
+            BudgetEnvelopeCreditMoney::fromString($creditABudgetEnvelopeInput->creditMoney),
+            BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
+            BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
 
         $this->eventStore->expects($this->once())->method('load')
@@ -103,9 +106,9 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
     {
         $creditABudgetEnvelopeInput = new CreditABudgetEnvelopeInput('100.00');
         $creditABudgetEnvelopeCommand = new CreditABudgetEnvelopeCommand(
-            $creditABudgetEnvelopeInput->getCreditMoney(),
-            '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            'a871e446-ddcd-4e7a-9bf9-525bab84e566',
+            BudgetEnvelopeCreditMoney::fromString($creditABudgetEnvelopeInput->creditMoney),
+            BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
+            BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
 
         $this->eventStore->expects($this->once())->method('load')
@@ -121,9 +124,9 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
     {
         $creditABudgetEnvelopeInput = new CreditABudgetEnvelopeInput('3000.00');
         $creditABudgetEnvelopeCommand = new CreditABudgetEnvelopeCommand(
-            $creditABudgetEnvelopeInput->getCreditMoney(),
-            '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            'a871e446-ddcd-4e7a-9bf9-525bab84e566',
+            BudgetEnvelopeCreditMoney::fromString($creditABudgetEnvelopeInput->creditMoney),
+            BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
+            BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
 
         $this->eventStore->expects($this->once())->method('load')
@@ -163,9 +166,9 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
     {
         $creditABudgetEnvelopeInput = new CreditABudgetEnvelopeInput('3000.00');
         $creditABudgetEnvelopeCommand = new CreditABudgetEnvelopeCommand(
-            $creditABudgetEnvelopeInput->getCreditMoney(),
-            '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            'a871e446-ddcd-4e7a-9bf9-525bab84e566',
+            BudgetEnvelopeCreditMoney::fromString($creditABudgetEnvelopeInput->creditMoney),
+            BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
+            BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
 
         $this->eventStore->expects($this->once())->method('load')
@@ -217,9 +220,9 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
     {
         $creditABudgetEnvelopeInput = new CreditABudgetEnvelopeInput('3000.00');
         $creditABudgetEnvelopeCommand = new CreditABudgetEnvelopeCommand(
-            $creditABudgetEnvelopeInput->getCreditMoney(),
-            '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            '0d6851a2-5123-40df-939b-8f043850fbf1',
+            BudgetEnvelopeCreditMoney::fromString($creditABudgetEnvelopeInput->creditMoney),
+            BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
+            BudgetEnvelopeUserId::fromString('0d6851a2-5123-40df-939b-8f043850fbf1'),
         );
 
         $this->eventStore->expects($this->once())->method('load')

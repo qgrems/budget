@@ -33,7 +33,7 @@ final readonly class LogoutAUserController
     ): JsonResponse {
         $this->commandBus->execute(
             new LogoutAUserCommand(
-                $logoutAUserInput->getRefreshToken(),
+                $logoutAUserInput->refreshToken,
             ),
         );
 

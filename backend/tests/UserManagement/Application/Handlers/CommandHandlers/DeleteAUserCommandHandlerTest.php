@@ -9,6 +9,7 @@ use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedReposi
 use App\UserManagement\Application\Commands\DeleteAUserCommand;
 use App\UserManagement\Application\Handlers\CommandHandlers\DeleteAUserCommandHandler;
 use App\UserManagement\Domain\Events\UserSignedUpEvent;
+use App\UserManagement\Domain\ValueObjects\UserId;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -30,7 +31,7 @@ class DeleteAUserCommandHandlerTest extends TestCase
 
     public function testDeleteUserSuccess(): void
     {
-        $command = new DeleteAUserCommand('10a33b8c-853a-4df8-8fc9-e8bb00b78da4');
+        $command = new DeleteAUserCommand(UserId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'));
 
         $this->eventStore->expects($this->once())->method('load')->willReturn(
             [
@@ -59,7 +60,7 @@ class DeleteAUserCommandHandlerTest extends TestCase
 
     public function testDeleteUserWithWrongUser(): void
     {
-        $command = new DeleteAUserCommand('7ac32191-3fa0-4477-8eb2-8dd3b0b7c836');
+        $command = new DeleteAUserCommand(UserId::fromString('7ac32191-3fa0-4477-8eb2-8dd3b0b7c836'));
 
         $this->eventStore->expects($this->once())->method('load')->willReturn(
             [

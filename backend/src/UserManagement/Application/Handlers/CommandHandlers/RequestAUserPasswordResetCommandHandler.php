@@ -10,7 +10,7 @@ use App\UserManagement\Domain\Aggregates\User;
 use App\UserManagement\Domain\Exceptions\UserNotFoundException;
 use App\UserManagement\Domain\Ports\Inbound\PasswordResetTokenGeneratorInterface;
 use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
-use App\UserManagement\Domain\ValueObjects\PasswordResetToken;
+use App\UserManagement\Domain\ValueObjects\UserPasswordResetToken;
 use App\UserManagement\Domain\ValueObjects\UserId;
 
 final readonly class RequestAUserPasswordResetCommandHandler
@@ -24,7 +24,7 @@ final readonly class RequestAUserPasswordResetCommandHandler
 
     public function __invoke(RequestAUserPasswordResetCommand $requestAUserPasswordResetCommand): void
     {
-        $userView = $this->userViewRepository->findOneBy(['email' => $requestAUserPasswordResetCommand->getEmail()]);
+        $userView = $this->userViewRepository->findOneBy(['email' => (string) $requestAUserPasswordResetCommand->getUserEmail()]);
 
         if (!$userView) {
             throw new UserNotFoundException(UserNotFoundException::MESSAGE, 404);
@@ -33,8 +33,8 @@ final readonly class RequestAUserPasswordResetCommandHandler
         $events = $this->eventSourcedRepository->get($userView->getUuid());
         $aggregate = User::reconstituteFromEvents(array_map(fn ($event) => $event, $events));
         $aggregate->setPasswordResetToken(
-            PasswordResetToken::create($this->passwordResetTokenGenerator->generate()),
-            UserId::create($userView->getUuid()),
+            UserPasswordResetToken::fromString($this->passwordResetTokenGenerator->generate()),
+            UserId::fromString($userView->getUuid()),
         );
         $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
         $aggregate->clearUncommitedEvent();

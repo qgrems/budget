@@ -9,8 +9,11 @@ use App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers\CreateABud
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeCreatedEvent;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeAlreadyExistsException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeNameAlreadyExistsForUserException;
-use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeTargetBudgetException;
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeName;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeTargetBudget;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\CreateABudgetEnvelopeInput;
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeView;
 use App\SharedContext\EventStore\EventStoreInterface;
@@ -46,37 +49,14 @@ class CreateABudgetEnvelopeCommandHandlerTest extends TestCase
             '200.00'
         );
         $createABudgetEnvelopeCommand = new CreateABudgetEnvelopeCommand(
-            $createABudgetEnvelopeInput->getUuid(),
-            'd26cc02e-99e7-428c-9d61-572dff3f84a7',
-            $createABudgetEnvelopeInput->getName(),
-            $createABudgetEnvelopeInput->getTargetBudget(),
+            BudgetEnvelopeId::fromString($createABudgetEnvelopeInput->uuid),
+            BudgetEnvelopeUserId::fromString('d26cc02e-99e7-428c-9d61-572dff3f84a7'),
+            BudgetEnvelopeName::fromString($createABudgetEnvelopeInput->name),
+            BudgetEnvelopeTargetBudget::fromString($createABudgetEnvelopeInput->targetBudget),
         );
 
         $this->eventStore->expects($this->once())->method('load')->willThrowException(new \RuntimeException());
         $this->eventStore->expects($this->once())->method('save');
-
-        $this->createABudgetEnvelopeCommandHandler->__invoke($createABudgetEnvelopeCommand);
-    }
-
-    public function testCreateEnvelopeWithNegativeTargetBudgetFailure(): void
-    {
-        $createABudgetEnvelopeInput = new CreateABudgetEnvelopeInput(
-            '0099c0ce-3b53-4318-ba7b-994e437a859b',
-            'test name',
-            '-200.00'
-        );
-        $createABudgetEnvelopeCommand = new CreateABudgetEnvelopeCommand(
-            $createABudgetEnvelopeInput->getUuid(),
-            'd26cc02e-99e7-428c-9d61-572dff3f84a7',
-            $createABudgetEnvelopeInput->getName(),
-            $createABudgetEnvelopeInput->getTargetBudget(),
-        );
-
-        $this->eventStore->expects($this->once())->method('load')->willThrowException(new \RuntimeException());
-        $this->eventStore->expects($this->never())->method('save');
-
-        $this->expectException(BudgetEnvelopeTargetBudgetException::class);
-        $this->expectExceptionMessage('envelopes.targetBudgetIsBelowZero');
 
         $this->createABudgetEnvelopeCommandHandler->__invoke($createABudgetEnvelopeCommand);
     }
@@ -86,13 +66,13 @@ class CreateABudgetEnvelopeCommandHandlerTest extends TestCase
         $createABudgetEnvelopeInput = new CreateABudgetEnvelopeInput(
             '0099c0ce-3b53-4318-ba7b-994e437a859b',
             'test name',
-            '-200.00'
+            '200.00'
         );
         $createABudgetEnvelopeCommand = new CreateABudgetEnvelopeCommand(
-            $createABudgetEnvelopeInput->getUuid(),
-            'd26cc02e-99e7-428c-9d61-572dff3f84a7',
-            $createABudgetEnvelopeInput->getName(),
-            $createABudgetEnvelopeInput->getTargetBudget(),
+            BudgetEnvelopeId::fromString($createABudgetEnvelopeInput->uuid),
+            BudgetEnvelopeUserId::fromString('d26cc02e-99e7-428c-9d61-572dff3f84a7'),
+            BudgetEnvelopeName::fromString($createABudgetEnvelopeInput->name),
+            BudgetEnvelopeTargetBudget::fromString($createABudgetEnvelopeInput->targetBudget),
         );
 
         $envelopeView = BudgetEnvelopeView::createFromRepository(
@@ -123,26 +103,26 @@ class CreateABudgetEnvelopeCommandHandlerTest extends TestCase
         $createABudgetEnvelopeInput = new CreateABudgetEnvelopeInput(
             '0099c0ce-3b53-4318-ba7b-994e437a859b',
             'test name',
-            '-200.00'
+            '200.00'
         );
         $createABudgetEnvelopeCommand = new CreateABudgetEnvelopeCommand(
-            $createABudgetEnvelopeInput->getUuid(),
-            'd26cc02e-99e7-428c-9d61-572dff3f84a7',
-            $createABudgetEnvelopeInput->getName(),
-            $createABudgetEnvelopeInput->getTargetBudget(),
+            BudgetEnvelopeId::fromString($createABudgetEnvelopeInput->uuid),
+            BudgetEnvelopeUserId::fromString('d26cc02e-99e7-428c-9d61-572dff3f84a7'),
+            BudgetEnvelopeName::fromString($createABudgetEnvelopeInput->name),
+            BudgetEnvelopeTargetBudget::fromString($createABudgetEnvelopeInput->targetBudget),
         );
 
         $this->eventStore->expects($this->once())->method('load')->willReturn(
             [
                 [
-                    'aggregate_id' => $createABudgetEnvelopeInput->getUuid(),
+                    'aggregate_id' => $createABudgetEnvelopeInput->uuid,
                     'type' => BudgetEnvelopeCreatedEvent::class,
                     'occurred_on' => '2020-10-10T12:00:00Z',
                     'payload' => json_encode([
                         'name' => 'test1',
                         'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                         'occurredOn' => '2024-12-07T22:03:35+00:00',
-                        'aggregateId' => $createABudgetEnvelopeInput->getUuid(),
+                        'aggregateId' => $createABudgetEnvelopeInput->uuid,
                         'targetBudget' => '20.00',
                     ]),
                 ],

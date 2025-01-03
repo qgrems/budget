@@ -6,6 +6,8 @@ namespace App\BudgetEnvelopeManagement\Presentation\HTTP\Controllers;
 
 use App\BudgetEnvelopeManagement\Application\Commands\DeleteABudgetEnvelopeCommand;
 use App\BudgetEnvelopeManagement\Domain\Ports\Outbound\CommandBusInterface;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\SharedContext\Domain\Ports\Inbound\SharedUserInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +27,10 @@ final readonly class DeleteABudgetEnvelopeController
         string $uuid,
         #[CurrentUser] SharedUserInterface $user,
     ): JsonResponse {
-        $this->commandBus->execute(new DeleteABudgetEnvelopeCommand($uuid, $user->getUuid()));
+        $this->commandBus->execute(new DeleteABudgetEnvelopeCommand(
+            BudgetEnvelopeId::fromString($uuid),
+            BudgetEnvelopeUserId::fromString($user->getUuid()),
+        ));
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }

@@ -10,8 +10,7 @@ use App\UserManagement\Domain\Aggregates\User;
 use App\UserManagement\Domain\Exceptions\UserOldPasswordIsIncorrectException;
 use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserManagement\Domain\Ports\Outbound\PasswordHasherInterface;
-use App\UserManagement\Domain\ValueObjects\Password;
-use App\UserManagement\Domain\ValueObjects\UserId;
+use App\UserManagement\Domain\ValueObjects\UserPassword;
 
 final readonly class UpdateAUserPasswordCommandHandler
 {
@@ -27,22 +26,20 @@ final readonly class UpdateAUserPasswordCommandHandler
      */
     public function __invoke(UpdateAUserPasswordCommand $updateAUserPasswordCommand): void
     {
-        $events = $this->eventSourcedRepository->get($updateAUserPasswordCommand->getUuid());
+        $events = $this->eventSourcedRepository->get((string) $updateAUserPasswordCommand->getUserId());
         $aggregate = User::reconstituteFromEvents(array_map(fn ($event) => $event, $events));
-        $userView = $this->userViewRepository->findOneBy(['uuid' => $updateAUserPasswordCommand->getUuid()]);
+        $userView = $this->userViewRepository->findOneBy(['uuid' => (string) $updateAUserPasswordCommand->getUserId()]);
 
-        if (!$this->passwordHasher->verify($userView, $updateAUserPasswordCommand->getOldPassword())) {
+        if (!$this->passwordHasher->verify($userView, (string) $updateAUserPasswordCommand->getUserOldPassword())) {
             throw new UserOldPasswordIsIncorrectException(UserOldPasswordIsIncorrectException::MESSAGE, 400);
         }
 
         $aggregate->updatePassword(
-            Password::create(
-                $updateAUserPasswordCommand->getOldPassword(),
+            $updateAUserPasswordCommand->getUserOldPassword(),
+            UserPassword::fromString(
+                $this->passwordHasher->hash($userView, (string) $updateAUserPasswordCommand->getUserNewPassword()),
             ),
-            Password::create(
-                $this->passwordHasher->hash($userView, $updateAUserPasswordCommand->getNewPassword()),
-            ),
-            UserId::create($updateAUserPasswordCommand->getUuid()),
+            $updateAUserPasswordCommand->getUserId(),
         );
         $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
         $aggregate->clearUncommitedEvent();

@@ -6,6 +6,8 @@ namespace App\UserManagement\Presentation\HTTP\Controllers;
 
 use App\UserManagement\Application\Commands\UpdateAUserPasswordCommand;
 use App\UserManagement\Domain\Ports\Outbound\CommandBusInterface;
+use App\UserManagement\Domain\ValueObjects\UserId;
+use App\UserManagement\Domain\ValueObjects\UserPassword;
 use App\UserManagement\Presentation\HTTP\DTOs\UpdateAUserPasswordInput;
 use App\UserManagement\ReadModels\Views\UserView;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,9 +34,9 @@ final readonly class UpdateAUserPasswordController
         #[MapRequestPayload] UpdateAUserPasswordInput $updateAUserPasswordInput,
     ): JsonResponse {
         $this->commandBus->execute(new UpdateAUserPasswordCommand(
-            $updateAUserPasswordInput->getOldPassword(),
-            $updateAUserPasswordInput->getNewPassword(),
-            $currentUser->getUuid(),
+            UserPassword::fromString($updateAUserPasswordInput->oldPassword),
+            UserPassword::fromString($updateAUserPasswordInput->newPassword),
+            UserId::fromString($currentUser->getUuid()),
         ));
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
