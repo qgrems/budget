@@ -6,6 +6,9 @@ namespace App\BudgetEnvelopeManagement\Presentation\HTTP\Controllers;
 
 use App\BudgetEnvelopeManagement\Application\Commands\CreditABudgetEnvelopeCommand;
 use App\BudgetEnvelopeManagement\Domain\Ports\Outbound\CommandBusInterface;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeCreditMoney;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\CreditABudgetEnvelopeInput;
 use App\SharedContext\Domain\Ports\Inbound\SharedUserInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,9 +34,9 @@ final readonly class CreditABudgetEnvelopeController
     ): JsonResponse {
         $this->commandBus->execute(
             new CreditABudgetEnvelopeCommand(
-                $creditABudgetEnvelopeInput->getCreditMoney(),
-                $uuid,
-                $user->getUuid(),
+                BudgetEnvelopeCreditMoney::fromString($creditABudgetEnvelopeInput->creditMoney),
+                BudgetEnvelopeId::fromString($uuid),
+                BudgetEnvelopeUserId::fromString($user->getUuid()),
             ),
         );
 

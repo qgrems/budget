@@ -6,17 +6,17 @@ namespace App\UserManagement\Domain\ValueObjects;
 
 use Assert\Assert;
 
-final readonly class Password
+final readonly class UserPassword
 {
     private function __construct(protected string $password)
     {
         Assert::that($password)
-            ->notBlank('Password should not be blank.')
+            ->notBlank('UserPassword should not be blank.')
             ->minLength(8, 'The password must be at least 8 characters long.')
         ;
     }
 
-    public static function create(string $password): self
+    public static function fromString(string $password): self
     {
         return new self($password);
     }

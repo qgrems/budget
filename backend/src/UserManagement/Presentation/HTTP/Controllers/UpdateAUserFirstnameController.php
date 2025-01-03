@@ -7,6 +7,8 @@ namespace App\UserManagement\Presentation\HTTP\Controllers;
 use App\UserManagement\Application\Commands\UpdateAUserFirstnameCommand;
 use App\UserManagement\Domain\Ports\Inbound\UserViewInterface;
 use App\UserManagement\Domain\Ports\Outbound\CommandBusInterface;
+use App\UserManagement\Domain\ValueObjects\UserFirstname;
+use App\UserManagement\Domain\ValueObjects\UserId;
 use App\UserManagement\Presentation\HTTP\DTOs\UpdateAUserFirstnameInput;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,8 +35,8 @@ final readonly class UpdateAUserFirstnameController
     ): JsonResponse {
         $this->commandBus->execute(
             new UpdateAUserFirstnameCommand(
-                $currentUser->getUuid(),
-                $updateAUserFirstnameInput->getFirstname(),
+                UserId::fromString($currentUser->getUuid()),
+                UserFirstname::fromString($updateAUserFirstnameInput->firstname),
             ),
         );
 

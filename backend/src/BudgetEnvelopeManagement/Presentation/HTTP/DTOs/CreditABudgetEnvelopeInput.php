@@ -24,9 +24,4 @@ final readonly class CreditABudgetEnvelopeInput
         public string $creditMoney,
     ) {
     }
-
-    public function getCreditMoney(): string
-    {
-        return $this->creditMoney;
-    }
 }

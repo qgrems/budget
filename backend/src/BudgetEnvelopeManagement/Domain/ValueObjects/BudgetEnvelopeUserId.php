@@ -16,7 +16,7 @@ final readonly class BudgetEnvelopeUserId
         ;
     }
 
-    public static function create(string $uuid): self
+    public static function fromString(string $uuid): self
     {
         return new self($uuid);
     }

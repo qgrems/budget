@@ -7,7 +7,6 @@ namespace App\Tests\BudgetEnvelopeManagement\Application\Handlers\QueryHandlers;
 use App\BudgetEnvelopeManagement\Application\Handlers\QueryHandlers\ListBudgetEnvelopesQueryHandler;
 use App\BudgetEnvelopeManagement\Application\Queries\ListBudgetEnvelopesQuery;
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
-use App\BudgetEnvelopeManagement\Domain\Ports\Outbound\QueryBusInterface;
 use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\ListBudgetEnvelopesInput;
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopesPaginated;
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeView;
@@ -17,14 +16,12 @@ use PHPUnit\Framework\TestCase;
 class ListBudgetEnvelopesQueryHandlerTest extends TestCase
 {
     private ListBudgetEnvelopesQueryHandler $listBudgetEnvelopesQueryHandler;
-    private QueryBusInterface&MockObject $queryBus;
     private BudgetEnvelopeViewRepositoryInterface&MockObject $envelopeViewRepository;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->envelopeViewRepository = $this->createMock(BudgetEnvelopeViewRepositoryInterface::class);
-        $this->queryBus = $this->createMock(QueryBusInterface::class);
 
         $this->listBudgetEnvelopesQueryHandler = new ListBudgetEnvelopesQueryHandler(
             $this->envelopeViewRepository,
@@ -49,9 +46,9 @@ class ListBudgetEnvelopesQueryHandlerTest extends TestCase
         $listBudgetEnvelopesInput = new ListBudgetEnvelopesInput([], 10, 0);
         $listBudgetEnvelopesQuery = new ListBudgetEnvelopesQuery(
             'd26cc02e-99e7-428c-9d61-572dff3f84a7',
-            $listBudgetEnvelopesInput->getOrderBy(),
-            $listBudgetEnvelopesInput->getLimit(),
-            $listBudgetEnvelopesInput->getOffset(),
+            $listBudgetEnvelopesInput->orderBy,
+            $listBudgetEnvelopesInput->limit,
+            $listBudgetEnvelopesInput->offset,
         );
 
         $this->envelopeViewRepository->expects($this->once())->method('findBy')->willReturn($envelopePaginated);

@@ -11,12 +11,7 @@ final readonly class RequestAUserPasswordResetInput
     public function __construct(
         #[Assert\NotBlank]
         #[Assert\Email(message: 'users.emailInvalid')]
-        private string $email,
+        public string $email,
     ) {
-    }
-
-    public function getEmail(): string
-    {
-        return $this->email;
     }
 }

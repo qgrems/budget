@@ -6,7 +6,7 @@ namespace App\UserManagement\Domain\ValueObjects;
 
 use Assert\Assert;
 
-final readonly class Lastname
+final readonly class UserLastname
 {
     private function __construct(protected string $name)
     {
@@ -17,7 +17,7 @@ final readonly class Lastname
         ;
     }
 
-    public static function create(string $name): self
+    public static function fromString(string $name): self
     {
         return new self($name);
     }

@@ -6,6 +6,9 @@ namespace App\BudgetEnvelopeManagement\Presentation\HTTP\Controllers;
 
 use App\BudgetEnvelopeManagement\Application\Commands\DebitABudgetEnvelopeCommand;
 use App\BudgetEnvelopeManagement\Domain\Ports\Outbound\CommandBusInterface;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeDebitMoney;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\DebitABudgetEnvelopeInput;
 use App\SharedContext\Domain\Ports\Inbound\SharedUserInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,9 +34,9 @@ final readonly class DebitABudgetEnvelopeController
     ): JsonResponse {
         $this->commandBus->execute(
             new DebitABudgetEnvelopeCommand(
-                $debitABudgetEnvelopeInput->getDebitMoney(),
-                $uuid,
-                $user->getUuid(),
+                BudgetEnvelopeDebitMoney::fromString($debitABudgetEnvelopeInput->debitMoney),
+                BudgetEnvelopeId::fromString($uuid),
+                BudgetEnvelopeUserId::fromString($user->getUuid()),
             ),
         );
 

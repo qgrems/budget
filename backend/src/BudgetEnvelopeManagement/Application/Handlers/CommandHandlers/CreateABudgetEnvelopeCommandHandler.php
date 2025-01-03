@@ -21,13 +21,13 @@ final readonly class CreateABudgetEnvelopeCommandHandler
     public function __invoke(CreateABudgetEnvelopeCommand $createABudgetEnvelopeCommand): void
     {
         try {
-            $this->eventSourcedRepository->get($createABudgetEnvelopeCommand->getUuid());
+            $this->eventSourcedRepository->get((string) $createABudgetEnvelopeCommand->getBudgetEnvelopeId());
         } catch (\RuntimeException $exception) {
             $aggregate = BudgetEnvelope::create(
-                $createABudgetEnvelopeCommand->getUuid(),
-                $createABudgetEnvelopeCommand->getUserUuid(),
-                $createABudgetEnvelopeCommand->getTargetBudget(),
-                $createABudgetEnvelopeCommand->getName(),
+                $createABudgetEnvelopeCommand->getBudgetEnvelopeId(),
+                $createABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
+                $createABudgetEnvelopeCommand->getBudgetEnvelopeTargetBudget(),
+                $createABudgetEnvelopeCommand->getBudgetEnvelopeName(),
                 $this->budgetEnvelopeViewRepository,
             );
             $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());

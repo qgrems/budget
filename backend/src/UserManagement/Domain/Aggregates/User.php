@@ -13,27 +13,27 @@ use App\UserManagement\Domain\Events\UserPasswordUpdatedEvent;
 use App\UserManagement\Domain\Exceptions\InvalidUserOperationException;
 use App\UserManagement\Domain\Exceptions\UserAlreadyExistsException;
 use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
-use App\UserManagement\Domain\ValueObjects\Consent;
-use App\UserManagement\Domain\ValueObjects\Email;
-use App\UserManagement\Domain\ValueObjects\Firstname;
-use App\UserManagement\Domain\ValueObjects\PasswordResetToken;
+use App\UserManagement\Domain\ValueObjects\UserConsent;
+use App\UserManagement\Domain\ValueObjects\UserEmail;
+use App\UserManagement\Domain\ValueObjects\UserFirstname;
+use App\UserManagement\Domain\ValueObjects\UserPasswordResetToken;
 use App\UserManagement\Domain\ValueObjects\UserId;
-use App\UserManagement\Domain\ValueObjects\Lastname;
-use App\UserManagement\Domain\ValueObjects\Password;
+use App\UserManagement\Domain\ValueObjects\UserLastname;
+use App\UserManagement\Domain\ValueObjects\UserPassword;
 
 final class User
 {
     private UserId $userId;
 
-    private Email $email;
+    private UserEmail $email;
 
-    private Password $password;
+    private UserPassword $password;
 
-    private Firstname $firstname;
+    private UserFirstname $firstname;
 
-    private Lastname $lastname;
+    private UserLastname $lastname;
 
-    private Consent $consentGiven;
+    private UserConsent $consentGiven;
 
     private \DateTimeImmutable $consentDate;
 
@@ -43,7 +43,7 @@ final class User
 
     private array $roles;
 
-    private ?PasswordResetToken $passwordResetToken;
+    private ?UserPasswordResetToken $passwordResetToken;
 
     private ?\DateTimeImmutable $passwordResetTokenExpiry;
 
@@ -51,13 +51,13 @@ final class User
 
     private function __construct()
     {
-        $this->email = Email::create('init@mail.com');
-        $this->password = Password::create('HAdFD97Xp[T!crjHi^Y%');
-        $this->firstname = Firstname::create('init');
-        $this->lastname = Lastname::create('init');
+        $this->email = UserEmail::fromString('init@mail.com');
+        $this->password = UserPassword::fromString('HAdFD97Xp[T!crjHi^Y%');
+        $this->firstname = UserFirstname::fromString('init');
+        $this->lastname = UserLastname::fromString('init');
         $this->updatedAt = new \DateTime();
         $this->createdAt = new \DateTimeImmutable();
-        $this->consentGiven = Consent::create(true);
+        $this->consentGiven = UserConsent::fromBool(true);
         $this->consentDate = new \DateTimeImmutable();
         $this->roles = ['ROLE_USER'];
         $this->passwordResetToken = null;
@@ -77,11 +77,11 @@ final class User
 
     public static function create(
         UserId $userId,
-        Email $email,
-        Password $password,
-        Firstname $firstname,
-        Lastname $lastname,
-        Consent $isConsentGiven,
+        UserEmail $email,
+        UserPassword $password,
+        UserFirstname $firstname,
+        UserLastname $lastname,
+        UserConsent $isConsentGiven,
         UserViewRepositoryInterface $userViewRepository,
     ): self {
         if ($userViewRepository->findOneBy(['email' => (string) $email])) {
@@ -106,7 +106,7 @@ final class User
         return $aggregate;
     }
 
-    public function updateFirstname(Firstname $firstname, UserId $userId): void
+    public function updateFirstname(UserFirstname $firstname, UserId $userId): void
     {
         $this->assertOwnership($userId);
 
@@ -119,7 +119,7 @@ final class User
         $this->recordEvent($event);
     }
 
-    public function updateLastname(Lastname $lastname, UserId $userId): void
+    public function updateLastname(UserLastname $lastname, UserId $userId): void
     {
         $this->assertOwnership($userId);
 
@@ -144,7 +144,7 @@ final class User
         $this->recordEvent($event);
     }
 
-    public function updatePassword(Password $oldPassword, Password $newPassword, UserId $userId): void
+    public function updatePassword(UserPassword $oldPassword, UserPassword $newPassword, UserId $userId): void
     {
         $this->assertOwnership($userId);
 
@@ -158,7 +158,7 @@ final class User
         $this->recordEvent($event);
     }
 
-    public function setPasswordResetToken(PasswordResetToken $passwordResetToken, UserId $userId): void
+    public function setPasswordResetToken(UserPasswordResetToken $passwordResetToken, UserId $userId): void
     {
         $this->assertOwnership($userId);
 
@@ -172,7 +172,7 @@ final class User
         $this->recordEvent($event);
     }
 
-    public function resetPassword(Password $password, UserId $userId): void
+    public function resetPassword(UserPassword $password, UserId $userId): void
     {
         $this->assertOwnership($userId);
 
@@ -215,14 +215,14 @@ final class User
 
     private function applyCreatedEvent(UserSignedUpEvent $event): void
     {
-        $this->userId = UserId::create($event->getAggregateId());
-        $this->email = Email::create($event->getEmail());
-        $this->password = Password::create($event->getPassword());
-        $this->firstname = Firstname::create($event->getFirstname());
-        $this->lastname = Lastname::create($event->getLastname());
-        $this->updatedAt = new \DateTime();
-        $this->createdAt = new \DateTimeImmutable();
-        $this->consentGiven = Consent::create($event->isConsentGiven());
+        $this->userId = UserId::fromString($event->getAggregateId());
+        $this->email = UserEmail::fromString($event->getEmail());
+        $this->password = UserPassword::fromString($event->getPassword());
+        $this->firstname = UserFirstname::fromString($event->getFirstname());
+        $this->lastname = UserLastname::fromString($event->getLastname());
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn());
+        $this->createdAt = $event->occurredOn();
+        $this->consentGiven = UserConsent::fromBool($event->isConsentGiven());
         $this->consentDate = new \DateTimeImmutable();
         $this->roles = ['ROLE_USER'];
         $this->passwordResetToken = null;
@@ -231,33 +231,33 @@ final class User
 
     private function applyFirstnameUpdated(UserFirstnameUpdatedEvent $event): void
     {
-        $this->firstname = Firstname::create($event->getFirstname());
-        $this->updatedAt = new \DateTime();
+        $this->firstname = UserFirstname::fromString($event->getFirstname());
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn());
     }
 
     private function applyLastnameUpdated(UserLastnameUpdatedEvent $event): void
     {
-        $this->lastname = Lastname::create($event->getLastname());
-        $this->updatedAt = new \DateTime();
+        $this->lastname = UserLastname::fromString($event->getLastname());
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn());
     }
 
     private function applyUserPasswordUpdated(UserPasswordUpdatedEvent $event): void
     {
-        $this->password = Password::create($event->getNewPassword());
-        $this->updatedAt = new \DateTime();
+        $this->password = UserPassword::fromString($event->getNewPassword());
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn());
     }
 
     private function applyUserPasswordResetRequested(UserPasswordResetRequestedEvent $event): void
     {
-        $this->passwordResetToken = PasswordResetToken::create($event->getPasswordResetToken());
+        $this->passwordResetToken = UserPasswordResetToken::fromString($event->getPasswordResetToken());
         $this->passwordResetTokenExpiry = $event->getPasswordResetTokenExpiry();
-        $this->updatedAt = new \DateTime();
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn());
     }
 
     private function applyUserPasswordReset(UserPasswordResetEvent $event): void
     {
-        $this->password = Password::create($event->getPassword());
-        $this->updatedAt = new \DateTime();
+        $this->password = UserPassword::fromString($event->getPassword());
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn());
     }
 
     private function applyUserDeleted(): void

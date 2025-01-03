@@ -16,7 +16,7 @@ final readonly class UpdateAUserPasswordInput
             minMessage: 'users.passwordMinLength',
             maxMessage: 'users.passwordMaxLength',
         )]
-        private string $oldPassword,
+        public string $oldPassword,
         #[Assert\NotBlank]
         #[Assert\Length(
             min: 8,
@@ -25,17 +25,7 @@ final readonly class UpdateAUserPasswordInput
             maxMessage: 'users.passwordMaxLength',
         )]
         #[Assert\PasswordStrength]
-        private string $newPassword,
+        public string $newPassword,
     ) {
-    }
-
-    public function getOldPassword(): string
-    {
-        return $this->oldPassword;
-    }
-
-    public function getNewPassword(): string
-    {
-        return $this->newPassword;
     }
 }

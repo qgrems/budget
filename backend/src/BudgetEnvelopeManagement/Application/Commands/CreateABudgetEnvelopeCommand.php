@@ -5,34 +5,47 @@ declare(strict_types=1);
 namespace App\BudgetEnvelopeManagement\Application\Commands;
 
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\CommandInterface;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeName;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeTargetBudget;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 
 final readonly class CreateABudgetEnvelopeCommand implements CommandInterface
 {
+    private string $budgetEnvelopeId;
+    private string $budgetEnvelopeUserId;
+    private string $budgetEnvelopeName;
+    private string $budgetEnvelopeTargetBudget;
+
     public function __construct(
-        private string $uuid,
-        private string $userUuid,
-        private string $name,
-        private string $targetBudget,
+        BudgetEnvelopeId $budgetEnvelopeId,
+        BudgetEnvelopeUserId $budgetEnvelopeUserId,
+        BudgetEnvelopeName $budgetEnvelopeName,
+        BudgetEnvelopeTargetBudget $budgetEnvelopeTargetBudget,
     ) {
+        $this->budgetEnvelopeId = (string) $budgetEnvelopeId;
+        $this->budgetEnvelopeUserId = (string) $budgetEnvelopeUserId;
+        $this->budgetEnvelopeName = (string) $budgetEnvelopeName;
+        $this->budgetEnvelopeTargetBudget = (string) $budgetEnvelopeTargetBudget;
     }
 
-    public function getUserUuid(): string
+    public function getBudgetEnvelopeUserId(): BudgetEnvelopeUserId
     {
-        return $this->userUuid;
+        return BudgetEnvelopeUserId::fromString($this->budgetEnvelopeUserId);
     }
 
-    public function getUuid(): string
+    public function getBudgetEnvelopeId(): BudgetEnvelopeId
     {
-        return $this->uuid;
+        return BudgetEnvelopeId::fromString($this->budgetEnvelopeId);
     }
 
-    public function getName(): string
+    public function getBudgetEnvelopeName(): BudgetEnvelopeName
     {
-        return $this->name;
+        return BudgetEnvelopeName::fromString($this->budgetEnvelopeName);
     }
 
-    public function getTargetBudget(): string
+    public function getBudgetEnvelopeTargetBudget(): BudgetEnvelopeTargetBudget
     {
-        return $this->targetBudget;
+        return BudgetEnvelopeTargetBudget::fromString($this->budgetEnvelopeTargetBudget);
     }
 }

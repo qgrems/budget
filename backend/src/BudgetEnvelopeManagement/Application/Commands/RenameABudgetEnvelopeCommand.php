@@ -5,28 +5,38 @@ declare(strict_types=1);
 namespace App\BudgetEnvelopeManagement\Application\Commands;
 
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\CommandInterface;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeName;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 
 final readonly class RenameABudgetEnvelopeCommand implements CommandInterface
 {
+    private string $budgetEnvelopeName;
+    private string $budgetEnvelopeId;
+    private string $budgetEnvelopeUserId;
+
     public function __construct(
-        private string $name,
-        private string $uuid,
-        private string $userUuid,
+        BudgetEnvelopeName $budgetEnvelopeName,
+        BudgetEnvelopeId $budgetEnvelopeId,
+        BudgetEnvelopeUserId $budgetEnvelopeUserId,
     ) {
+        $this->budgetEnvelopeName = (string) $budgetEnvelopeName;
+        $this->budgetEnvelopeId = (string) $budgetEnvelopeId;
+        $this->budgetEnvelopeUserId = (string) $budgetEnvelopeUserId;
     }
 
-    public function getName(): string
+    public function getBudgetEnvelopeName(): BudgetEnvelopeName
     {
-        return $this->name;
+        return BudgetEnvelopeName::fromString($this->budgetEnvelopeName);
     }
 
-    public function getUserUuid(): string
+    public function getBudgetEnvelopeUserId(): BudgetEnvelopeUserId
     {
-        return $this->userUuid;
+        return BudgetEnvelopeUserId::fromString($this->budgetEnvelopeUserId);
     }
 
-    public function getUuid(): string
+    public function getBudgetEnvelopeId(): BudgetEnvelopeId
     {
-        return $this->uuid;
+        return BudgetEnvelopeId::fromString($this->budgetEnvelopeId);
     }
 }

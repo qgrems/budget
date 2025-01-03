@@ -1129,12 +1129,6 @@ parameters:
 			path: tests/BudgetEnvelopeManagement/Application/Handlers/CommandHandlers/RenameABudgetEnvelopeCommandHandlerTest.php
 
 		-
-			message: '#^Property App\\Tests\\BudgetEnvelopeManagement\\Application\\Handlers\\QueryHandlers\\ListBudgetEnvelopesQueryHandlerTest\:\:\$queryBus is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: tests/BudgetEnvelopeManagement/Application/Handlers/QueryHandlers/ListBudgetEnvelopesQueryHandlerTest.php
-
-		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsString\(\) with string will always evaluate to true\.$#'
 			identifier: method.alreadyNarrowedType
 			count: 1

@@ -6,6 +6,9 @@ namespace App\BudgetEnvelopeManagement\Presentation\HTTP\Controllers;
 
 use App\BudgetEnvelopeManagement\Application\Commands\RenameABudgetEnvelopeCommand;
 use App\BudgetEnvelopeManagement\Domain\Ports\Outbound\CommandBusInterface;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeName;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\RenameABudgetEnvelopeInput;
 use App\SharedContext\Domain\Ports\Inbound\SharedUserInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,9 +34,9 @@ final readonly class RenameABudgetEnvelopeController
     ): JsonResponse {
         $this->commandBus->execute(
             new RenameABudgetEnvelopeCommand(
-                $renameABudgetEnvelopeInput->getName(),
-                $uuid,
-                $user->getUuid(),
+                BudgetEnvelopeName::fromString($renameABudgetEnvelopeInput->name),
+                BudgetEnvelopeId::fromString($uuid),
+                BudgetEnvelopeUserId::fromString($user->getUuid()),
             ),
         );
 

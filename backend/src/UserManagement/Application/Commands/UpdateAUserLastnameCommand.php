@@ -5,22 +5,29 @@ declare(strict_types=1);
 namespace App\UserManagement\Application\Commands;
 
 use App\UserManagement\Domain\Ports\Inbound\CommandInterface;
+use App\UserManagement\Domain\ValueObjects\UserId;
+use App\UserManagement\Domain\ValueObjects\UserLastname;
 
 final readonly class UpdateAUserLastnameCommand implements CommandInterface
 {
+    private string $userId;
+    private string $userLastname;
+
     public function __construct(
-        private string $uuid,
-        private string $lastName,
+        UserId $userId,
+        UserLastname $userLastname,
     ) {
+        $this->userId = (string) $userId;
+        $this->userLastname = (string) $userLastname;
     }
 
-    public function getUuid(): string
+    public function getUserId(): UserId
     {
-        return $this->uuid;
+        return UserId::fromString($this->userId);
     }
 
-    public function getLastname(): string
+    public function getUserLastname(): UserLastname
     {
-        return $this->lastName;
+        return UserLastname::fromString($this->userLastname);
     }
 }

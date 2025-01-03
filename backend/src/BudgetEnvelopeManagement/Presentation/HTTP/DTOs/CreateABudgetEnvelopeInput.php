@@ -42,19 +42,4 @@ final readonly class CreateABudgetEnvelopeInput
         public string $targetBudget,
     ) {
     }
-
-    public function getUuid(): string
-    {
-        return $this->uuid;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getTargetBudget(): string
-    {
-        return $this->targetBudget;
-    }
 }

@@ -24,9 +24,4 @@ final readonly class DebitABudgetEnvelopeInput
         public string $debitMoney,
     ) {
     }
-
-    public function getDebitMoney(): string
-    {
-        return $this->debitMoney;
-    }
 }

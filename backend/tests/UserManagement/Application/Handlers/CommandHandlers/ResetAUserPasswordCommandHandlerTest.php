@@ -14,6 +14,8 @@ use App\UserManagement\Domain\Exceptions\InvalidUserOperationException;
 use App\UserManagement\Domain\Exceptions\UserNotFoundException;
 use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserManagement\Domain\Ports\Outbound\PasswordHasherInterface;
+use App\UserManagement\Domain\ValueObjects\UserPassword;
+use App\UserManagement\Domain\ValueObjects\UserPasswordResetToken;
 use App\UserManagement\Presentation\HTTP\DTOs\ResetAUserPasswordInput;
 use App\UserManagement\ReadModels\Views\UserView;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -45,8 +47,8 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
     {
         $resetUserPasswordInput = new ResetAUserPasswordInput('token', 'password');
         $command = new ResetAUserPasswordCommand(
-            $resetUserPasswordInput->getToken(),
-            $resetUserPasswordInput->getNewPassword(),
+            UserPasswordResetToken::fromString($resetUserPasswordInput->token),
+            UserPassword::fromString($resetUserPasswordInput->newPassword),
         );
 
         $this->userViewRepository->method('findOneBy')->willReturn(
@@ -100,8 +102,8 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
     {
         $resetUserPasswordInput = new ResetAUserPasswordInput('token', 'password');
         $command = new ResetAUserPasswordCommand(
-            $resetUserPasswordInput->getToken(),
-            $resetUserPasswordInput->getNewPassword(),
+            UserPasswordResetToken::fromString($resetUserPasswordInput->token),
+            UserPassword::fromString($resetUserPasswordInput->newPassword),
         );
 
         $this->userViewRepository->method('findOneBy')->willReturn(
@@ -116,8 +118,8 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
     {
         $resetUserPasswordInput = new ResetAUserPasswordInput('token', 'password');
         $command = new ResetAUserPasswordCommand(
-            $resetUserPasswordInput->getToken(),
-            $resetUserPasswordInput->getNewPassword(),
+            UserPasswordResetToken::fromString($resetUserPasswordInput->token),
+            UserPassword::fromString($resetUserPasswordInput->newPassword),
         );
 
         $this->userViewRepository->method('findOneBy')->willReturn(

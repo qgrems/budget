@@ -7,6 +7,7 @@ namespace App\UserManagement\Presentation\HTTP\Controllers;
 use App\UserManagement\Application\Commands\DeleteAUserCommand;
 use App\UserManagement\Domain\Ports\Inbound\UserViewInterface;
 use App\UserManagement\Domain\Ports\Outbound\CommandBusInterface;
+use App\UserManagement\Domain\ValueObjects\UserId;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -28,7 +29,7 @@ final readonly class DeleteAUserController
     public function __invoke(
         #[CurrentUser] UserViewInterface $currentUser,
     ): JsonResponse {
-        $this->commandBus->execute(new DeleteAUserCommand($currentUser->getUuid()));
+        $this->commandBus->execute(new DeleteAUserCommand(UserId::fromString($currentUser->getUuid())));
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }

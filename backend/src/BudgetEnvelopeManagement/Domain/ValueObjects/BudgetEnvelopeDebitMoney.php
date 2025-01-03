@@ -19,7 +19,7 @@ final readonly class BudgetEnvelopeDebitMoney
         ;
     }
 
-    public static function create(string $budgetEnvelopeDebitMoney): self
+    public static function fromString(string $budgetEnvelopeDebitMoney): self
     {
         return new self($budgetEnvelopeDebitMoney);
     }

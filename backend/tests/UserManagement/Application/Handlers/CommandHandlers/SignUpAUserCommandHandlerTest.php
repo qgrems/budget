@@ -11,6 +11,12 @@ use App\UserManagement\Application\Handlers\CommandHandlers\SignUpAUserCommandHa
 use App\UserManagement\Domain\Exceptions\UserAlreadyExistsException;
 use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserManagement\Domain\Ports\Outbound\PasswordHasherInterface;
+use App\UserManagement\Domain\ValueObjects\UserConsent;
+use App\UserManagement\Domain\ValueObjects\UserEmail;
+use App\UserManagement\Domain\ValueObjects\UserFirstname;
+use App\UserManagement\Domain\ValueObjects\UserId;
+use App\UserManagement\Domain\ValueObjects\UserLastname;
+use App\UserManagement\Domain\ValueObjects\UserPassword;
 use App\UserManagement\Presentation\HTTP\DTOs\SignUpAUserInput;
 use App\UserManagement\ReadModels\Views\UserView;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -40,14 +46,14 @@ class SignUpAUserCommandHandlerTest extends TestCase
 
     public function testCreateUserSuccess(): void
     {
-        $createUserInput = new SignUpAUserInput('7ac32191-3fa0-4477-8eb2-8dd3b0b7c836', 'test@example.com', 'password', 'John', 'Doe', true);
+        $signUpAUserInput = new SignUpAUserInput('7ac32191-3fa0-4477-8eb2-8dd3b0b7c836', 'test@example.com', 'password', 'John', 'Doe', true);
         $command = new SignUpAUserCommand(
-            $createUserInput->getUuid(),
-            $createUserInput->getEmail(),
-            $createUserInput->getPassword(),
-            $createUserInput->getFirstname(),
-            $createUserInput->getLastname(),
-            $createUserInput->isConsentGiven(),
+            UserId::fromString($signUpAUserInput->uuid),
+            UserEmail::fromString($signUpAUserInput->email),
+            UserPassword::fromString($signUpAUserInput->password),
+            UserFirstname::fromString($signUpAUserInput->firstname),
+            UserLastname::fromString($signUpAUserInput->lastname),
+            UserConsent::fromBool($signUpAUserInput->consentGiven),
         );
 
         $this->eventStore->expects($this->once())->method('load')->willThrowException(new \RuntimeException());
@@ -59,14 +65,14 @@ class SignUpAUserCommandHandlerTest extends TestCase
 
     public function testCreateUserWithSameOldUserUuid(): void
     {
-        $createUserInput = new SignUpAUserInput('7ac32191-3fa0-4477-8eb2-8dd3b0b7c836', 'test@example.com', 'password', 'John', 'Doe', true);
+        $signUpAUserInput = new SignUpAUserInput('7ac32191-3fa0-4477-8eb2-8dd3b0b7c836', 'test@example.com', 'password', 'John', 'Doe', true);
         $command = new SignUpAUserCommand(
-            $createUserInput->getUuid(),
-            $createUserInput->getEmail(),
-            $createUserInput->getPassword(),
-            $createUserInput->getFirstname(),
-            $createUserInput->getLastname(),
-            $createUserInput->isConsentGiven(),
+            UserId::fromString($signUpAUserInput->uuid),
+            UserEmail::fromString($signUpAUserInput->email),
+            UserPassword::fromString($signUpAUserInput->password),
+            UserFirstname::fromString($signUpAUserInput->firstname),
+            UserLastname::fromString($signUpAUserInput->lastname),
+            UserConsent::fromBool($signUpAUserInput->consentGiven),
         );
 
         $this->eventStore->expects($this->once())->method('load')->willReturn([]);
@@ -78,7 +84,7 @@ class SignUpAUserCommandHandlerTest extends TestCase
 
     public function testCreateUserAlreadyExists(): void
     {
-        $createUserInput = new SignUpAUserInput(
+        $signUpAUserInput = new SignUpAUserInput(
             '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
             'test@example.com',
             'password',
@@ -87,12 +93,12 @@ class SignUpAUserCommandHandlerTest extends TestCase
             true,
         );
         $command = new SignUpAUserCommand(
-            $createUserInput->getUuid(),
-            $createUserInput->getEmail(),
-            $createUserInput->getPassword(),
-            $createUserInput->getFirstname(),
-            $createUserInput->getLastname(),
-            $createUserInput->isConsentGiven(),
+            UserId::fromString($signUpAUserInput->uuid),
+            UserEmail::fromString($signUpAUserInput->email),
+            UserPassword::fromString($signUpAUserInput->password),
+            UserFirstname::fromString($signUpAUserInput->firstname),
+            UserLastname::fromString($signUpAUserInput->lastname),
+            UserConsent::fromBool($signUpAUserInput->consentGiven),
         );
 
         $this->eventStore->expects($this->once())->method('load')->willThrowException(new \RuntimeException());

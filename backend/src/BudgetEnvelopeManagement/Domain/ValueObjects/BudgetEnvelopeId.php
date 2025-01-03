@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\BudgetEnvelopeManagement\Domain\ValueObjects;
 
+use App\SharedContext\Domain\Ports\Inbound\AggregateIdInterface;
 use Assert\Assert;
 
-final readonly class BudgetEnvelopeId
+final readonly class BudgetEnvelopeId implements AggregateIdInterface
 {
     private function __construct(protected string $uuid)
     {
@@ -16,7 +17,7 @@ final readonly class BudgetEnvelopeId
         ;
     }
 
-    public static function create(string $uuid): self
+    public static function fromString(string $uuid): self
     {
         return new self($uuid);
     }

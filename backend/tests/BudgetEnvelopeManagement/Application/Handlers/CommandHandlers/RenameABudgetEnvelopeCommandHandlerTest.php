@@ -10,6 +10,9 @@ use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeCreatedEvent;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeNameAlreadyExistsForUserException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeNotFoundException;
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeName;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\RenameABudgetEnvelopeInput;
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeView;
 use App\SharedContext\EventStore\EventStoreInterface;
@@ -43,9 +46,9 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
             'test',
         );
         $renameABudgetEnvelopeCommand = new RenameABudgetEnvelopeCommand(
-            $renameABudgetEnvelopeInput->getName(),
-            '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            'a871e446-ddcd-4e7a-9bf9-525bab84e566',
+            BudgetEnvelopeName::fromString($renameABudgetEnvelopeInput->name),
+            BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
+            BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
 
         $this->eventStore->expects($this->once())->method('load')
@@ -74,9 +77,9 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
             'test',
         );
         $renameABudgetEnvelopeCommand = new RenameABudgetEnvelopeCommand(
-            $renameABudgetEnvelopeInput->getName(),
-            '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            'a871e446-ddcd-4e7a-9bf9-525bab84e566'
+            BudgetEnvelopeName::fromString($renameABudgetEnvelopeInput->name),
+            BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
+            BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
 
         $this->eventStore->expects($this->once())->method('load')
@@ -121,9 +124,9 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
             'test',
         );
         $renameABudgetEnvelopeCommand = new RenameABudgetEnvelopeCommand(
-            $renameABudgetEnvelopeInput->getName(),
-            '0099c0ce-3b53-4318-ba7b-994e437a859b',
-            'd26cc02e-99e7-428c-9d61-572dff3f84a7'
+            BudgetEnvelopeName::fromString($renameABudgetEnvelopeInput->name),
+            BudgetEnvelopeId::fromString('0099c0ce-3b53-4318-ba7b-994e437a859b'),
+            BudgetEnvelopeUserId::fromString('d26cc02e-99e7-428c-9d61-572dff3f84a7'),
         );
 
         $this->eventStore->expects($this->once())->method('load')
@@ -141,9 +144,9 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
             'test',
         );
         $renameABudgetEnvelopeCommand = new RenameABudgetEnvelopeCommand(
-            $renameABudgetEnvelopeInput->getName(),
-            '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-            '0d6851a2-5123-40df-939b-8f043850fbf1'
+            BudgetEnvelopeName::fromString($renameABudgetEnvelopeInput->name),
+            BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
+            BudgetEnvelopeUserId::fromString('0d6851a2-5123-40df-939b-8f043850fbf1'),
         );
 
         $this->eventStore->expects($this->once())->method('load')

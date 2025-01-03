@@ -10,7 +10,7 @@ final readonly class ResetAUserPasswordInput
 {
     public function __construct(
         #[Assert\NotBlank]
-        private string $token,
+        public string $token,
         #[Assert\NotBlank]
         #[Assert\Length(
             min: 8,
@@ -19,17 +19,7 @@ final readonly class ResetAUserPasswordInput
             maxMessage: 'users.passwordMaxLength',
         )]
         #[Assert\PasswordStrength]
-        private string $newPassword,
+        public string $newPassword,
     ) {
-    }
-
-    public function getToken(): string
-    {
-        return $this->token;
-    }
-
-    public function getNewPassword(): string
-    {
-        return $this->newPassword;
     }
 }

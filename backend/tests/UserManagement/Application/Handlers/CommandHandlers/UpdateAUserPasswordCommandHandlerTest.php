@@ -12,6 +12,8 @@ use App\UserManagement\Domain\Events\UserSignedUpEvent;
 use App\UserManagement\Domain\Exceptions\UserOldPasswordIsIncorrectException;
 use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserManagement\Domain\Ports\Outbound\PasswordHasherInterface;
+use App\UserManagement\Domain\ValueObjects\UserId;
+use App\UserManagement\Domain\ValueObjects\UserPassword;
 use App\UserManagement\Presentation\HTTP\DTOs\UpdateAUserPasswordInput;
 use App\UserManagement\ReadModels\Views\UserView;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -42,7 +44,11 @@ class UpdateAUserPasswordCommandHandlerTest extends TestCase
     public function testUpdateUserPasswordSuccess(): void
     {
         $updateUserPasswordInput = new UpdateAUserPasswordInput('password', '87654321');
-        $command = new UpdateAUserPasswordCommand($updateUserPasswordInput->getOldPassword(), $updateUserPasswordInput->getNewPassword(), '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836');
+        $command = new UpdateAUserPasswordCommand(
+            UserPassword::fromString($updateUserPasswordInput->oldPassword),
+            UserPassword::fromString($updateUserPasswordInput->newPassword),
+            UserId::fromString('7ac32191-3fa0-4477-8eb2-8dd3b0b7c836'),
+        );
 
         $this->eventStore->expects($this->once())->method('load')->willReturn(
             [
@@ -82,8 +88,12 @@ class UpdateAUserPasswordCommandHandlerTest extends TestCase
 
     public function testUpdateUserPasswordWithFakeOldPassword(): void
     {
-        $updateUserPasswordInput = new UpdateAUserPasswordInput('fake', '87654321');
-        $command = new UpdateAUserPasswordCommand($updateUserPasswordInput->getOldPassword(), $updateUserPasswordInput->getNewPassword(), '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836');
+        $updateUserPasswordInput = new UpdateAUserPasswordInput('fakeoldpassword', '87654321');
+        $command = new UpdateAUserPasswordCommand(
+            UserPassword::fromString($updateUserPasswordInput->oldPassword),
+            UserPassword::fromString($updateUserPasswordInput->newPassword),
+            UserId::fromString('7ac32191-3fa0-4477-8eb2-8dd3b0b7c836'),
+        );
 
         $this->eventStore->expects($this->once())->method('load')->willReturn(
             [
