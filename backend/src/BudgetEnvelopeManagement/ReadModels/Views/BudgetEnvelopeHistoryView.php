@@ -37,19 +37,14 @@ final class BudgetEnvelopeHistoryView implements BudgetEnvelopeHistoryViewInterf
     }
 
     #[\Override]
-    public static function create(
-        string $aggregateId,
-        \DateTimeImmutable $createdAt,
-        string $monetaryAmount,
-        string $transactionType,
-        string $userUuid,
-    ): self {
+    public static function fromRepository(array $budgetEnvelopeHistory): self
+    {
         return new self()
-            ->setAggregateId($aggregateId)
-            ->setCreatedAt($createdAt)
-            ->setMonetaryAmount($monetaryAmount)
-            ->setTransactionType($transactionType)
-            ->setUserUuid($userUuid)
+            ->setMonetaryAmount($budgetEnvelopeHistory['monetary_amount'])
+            ->setTransactionType($budgetEnvelopeHistory['transaction_type'])
+            ->setCreatedAt(new \DateTimeImmutable($budgetEnvelopeHistory['created_at']))
+            ->setAggregateId($budgetEnvelopeHistory['aggregate_id'])
+            ->setUserUuid($budgetEnvelopeHistory['user_uuid'])
         ;
     }
 
@@ -136,11 +131,9 @@ final class BudgetEnvelopeHistoryView implements BudgetEnvelopeHistoryViewInterf
     public function jsonSerialize(): array
     {
         return [
-            'aggregate_id' => $this->aggregateId,
             'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
             'monetary_amount' => $this->monetaryAmount,
             'transaction_type' => $this->transactionType,
-            'user_uuid' => $this->userUuid,
         ];
     }
 }

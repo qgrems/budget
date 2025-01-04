@@ -21,8 +21,8 @@ final readonly class GetABudgetEnvelopeWithItsHistoryQueryHandler
     public function __invoke(GetABudgetEnvelopeWithItsHistoryQuery $getABudgetEnvelopeWithItsHistoryQuery): array
     {
         $budgetEnvelope = $this->budgetEnvelopeViewRepository->findOneEnvelopeWithHistoryBy([
-            'uuid' => $getABudgetEnvelopeWithItsHistoryQuery->getEnvelopeUuid(),
-            'user_uuid' => $getABudgetEnvelopeWithItsHistoryQuery->getUserUuid(),
+            'uuid' => (string) $getABudgetEnvelopeWithItsHistoryQuery->getBudgetEnvelopeId(),
+            'user_uuid' => (string) $getABudgetEnvelopeWithItsHistoryQuery->getBudgetEnvelopeUserId(),
             'is_deleted' => false,
         ]);
 

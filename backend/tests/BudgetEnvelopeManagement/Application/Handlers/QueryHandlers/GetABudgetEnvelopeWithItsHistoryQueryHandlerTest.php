@@ -8,6 +8,8 @@ use App\BudgetEnvelopeManagement\Application\Handlers\QueryHandlers\GetABudgetEn
 use App\BudgetEnvelopeManagement\Application\Queries\GetABudgetEnvelopeWithItsHistoryQuery;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeNotFoundException;
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeManagement\ReadModels\Projections\BudgetEnvelopeProjection;
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeView;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -30,7 +32,7 @@ class GetABudgetEnvelopeWithItsHistoryQueryHandlerTest extends TestCase
 
     public function testGetABudgetEnvelopeWithItsHistorySuccess(): void
     {
-        $envelopeView = BudgetEnvelopeView::createFromRepository(
+        $envelopeView = BudgetEnvelopeView::fromRepository(
             [
                 'uuid' => 'be0c3a86-c3c9-467f-b675-3f519fd96111',
                 'name' => 'Electricity',
@@ -43,8 +45,8 @@ class GetABudgetEnvelopeWithItsHistoryQueryHandlerTest extends TestCase
             ],
         );
         $getABudgetEnvelopeWithItsHistoryQuery = new GetABudgetEnvelopeWithItsHistoryQuery(
-            $envelopeView->getUuid(),
-            'd26cc02e-99e7-428c-9d61-572dff3f84a7',
+            BudgetEnvelopeId::fromString($envelopeView->getUuid()),
+            BudgetEnvelopeUserId::fromString('d26cc02e-99e7-428c-9d61-572dff3f84a7'),
         );
         $envelopeHistoryCreatedAt = new \DateTimeImmutable();
         $envelopeCreatedAt = new \DateTime()->format('Y-m-d H:i:s');
@@ -101,7 +103,7 @@ class GetABudgetEnvelopeWithItsHistoryQueryHandlerTest extends TestCase
 
     public function testGetABudgetEnvelopeWithItsHistoryReturnsNull(): void
     {
-        $envelopeView = BudgetEnvelopeView::createFromRepository(
+        $envelopeView = BudgetEnvelopeView::fromRepository(
             [
                 'uuid' => 'be0c3a86-c3c9-467f-b675-3f519fd96111',
                 'name' => 'Electricity',
@@ -114,8 +116,8 @@ class GetABudgetEnvelopeWithItsHistoryQueryHandlerTest extends TestCase
             ],
         );
         $getABudgetEnvelopeWithItsHistoryQuery = new GetABudgetEnvelopeWithItsHistoryQuery(
-            $envelopeView->getUuid(),
-            'd26cc02e-99e7-428c-9d61-572dff3f84a7',
+            BudgetEnvelopeId::fromString($envelopeView->getUuid()),
+            BudgetEnvelopeUserId::fromString('d26cc02e-99e7-428c-9d61-572dff3f84a7'),
         );
 
         $this->envelopeViewRepository->expects($this->once())->method('findOneEnvelopeWithHistoryBy')->willReturn([]);

@@ -361,7 +361,13 @@ parameters:
 			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetEnvelopeViewRepository\:\:mapToEnvelopeView\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetEnvelopeViewRepository\:\:mapToBudgetEnvelopeHistoryView\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeManagement\\Infrastructure\\Persistence\\Repositories\\BudgetEnvelopeViewRepository\:\:mapToBudgetEnvelopeView\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
@@ -373,13 +379,55 @@ parameters:
 			path: src/BudgetEnvelopeManagement/Infrastructure/Persistence/Repositories/BudgetEnvelopeViewRepository.php
 
 		-
+			message: '#^Method App\\BudgetEnvelopeManagement\\ReadModels\\Views\\BudgetEnvelopeHistoryView\:\:fromRepository\(\) has parameter \$budgetEnvelopeHistory with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeManagement/ReadModels/Views/BudgetEnvelopeHistoryView.php
+
+		-
 			message: '#^Method App\\BudgetEnvelopeManagement\\ReadModels\\Views\\BudgetEnvelopeHistoryView\:\:jsonSerialize\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/BudgetEnvelopeManagement/ReadModels/Views/BudgetEnvelopeHistoryView.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\ReadModels\\Views\\BudgetEnvelopeView\:\:createFromRepository\(\) has parameter \$budgetEnvelope with no value type specified in iterable type array\.$#'
+			message: '#^Parameter \#1 \$aggregateId of method App\\BudgetEnvelopeManagement\\ReadModels\\Views\\BudgetEnvelopeHistoryView\:\:setAggregateId\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/BudgetEnvelopeManagement/ReadModels/Views/BudgetEnvelopeHistoryView.php
+
+		-
+			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/BudgetEnvelopeManagement/ReadModels/Views/BudgetEnvelopeHistoryView.php
+
+		-
+			message: '#^Parameter \#1 \$monetaryAmount of method App\\BudgetEnvelopeManagement\\ReadModels\\Views\\BudgetEnvelopeHistoryView\:\:setMonetaryAmount\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/BudgetEnvelopeManagement/ReadModels/Views/BudgetEnvelopeHistoryView.php
+
+		-
+			message: '#^Parameter \#1 \$transactionType of method App\\BudgetEnvelopeManagement\\ReadModels\\Views\\BudgetEnvelopeHistoryView\:\:setTransactionType\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/BudgetEnvelopeManagement/ReadModels/Views/BudgetEnvelopeHistoryView.php
+
+		-
+			message: '#^Parameter \#1 \$userUuid of method App\\BudgetEnvelopeManagement\\ReadModels\\Views\\BudgetEnvelopeHistoryView\:\:setUserUuid\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/BudgetEnvelopeManagement/ReadModels/Views/BudgetEnvelopeHistoryView.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeManagement\\ReadModels\\Views\\BudgetEnvelopeHistoryViewInterface\:\:fromRepository\(\) has parameter \$budgetEnvelopeHistory with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeManagement/ReadModels/Views/BudgetEnvelopeHistoryViewInterface.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeManagement\\ReadModels\\Views\\BudgetEnvelopeView\:\:fromRepository\(\) has parameter \$budgetEnvelope with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/BudgetEnvelopeManagement/ReadModels/Views/BudgetEnvelopeView.php
@@ -433,7 +481,7 @@ parameters:
 			path: src/BudgetEnvelopeManagement/ReadModels/Views/BudgetEnvelopeView.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\ReadModels\\Views\\BudgetEnvelopeViewInterface\:\:createFromRepository\(\) has parameter \$budgetEnvelope with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeManagement\\ReadModels\\Views\\BudgetEnvelopeViewInterface\:\:fromRepository\(\) has parameter \$budgetEnvelope with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/BudgetEnvelopeManagement/ReadModels/Views/BudgetEnvelopeViewInterface.php

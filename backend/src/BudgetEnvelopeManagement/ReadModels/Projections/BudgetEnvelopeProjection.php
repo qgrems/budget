@@ -54,7 +54,9 @@ final readonly class BudgetEnvelopeProjection
 
     private function handleEnvelopeCreditedEvent(BudgetEnvelopeCreditedEvent $event): void
     {
-        $budgetEnvelopeView = $this->getEnvelopeViewByEvent($event);
+        $budgetEnvelopeView = $this->budgetEnvelopeViewRepository->findOneBy(
+            ['uuid' => $event->getAggregateId(), 'is_deleted' => false],
+        );
 
         if (!$budgetEnvelopeView instanceof BudgetEnvelopeViewInterface) {
             return;
@@ -70,7 +72,9 @@ final readonly class BudgetEnvelopeProjection
 
     private function handleEnvelopeDebitedEvent(BudgetEnvelopeDebitedEvent $event): void
     {
-        $budgetEnvelopeView = $this->getEnvelopeViewByEvent($event);
+        $budgetEnvelopeView = $this->budgetEnvelopeViewRepository->findOneBy(
+            ['uuid' => $event->getAggregateId(), 'is_deleted' => false],
+        );
 
         if (!$budgetEnvelopeView instanceof BudgetEnvelopeViewInterface) {
             return;
@@ -86,7 +90,9 @@ final readonly class BudgetEnvelopeProjection
 
     private function handleEnvelopeNamedEvent(BudgetEnvelopeRenamedEvent $event): void
     {
-        $budgetEnvelopeView = $this->getEnvelopeViewByEvent($event);
+        $budgetEnvelopeView = $this->budgetEnvelopeViewRepository->findOneBy(
+            ['uuid' => $event->getAggregateId(), 'is_deleted' => false],
+        );
 
         if (!$budgetEnvelopeView instanceof BudgetEnvelopeViewInterface) {
             return;
@@ -99,7 +105,9 @@ final readonly class BudgetEnvelopeProjection
 
     private function handleEnvelopeDeletedEvent(BudgetEnvelopeDeletedEvent $event): void
     {
-        $budgetEnvelopeView = $this->getEnvelopeViewByEvent($event);
+        $budgetEnvelopeView = $this->budgetEnvelopeViewRepository->findOneBy(
+            ['uuid' => $event->getAggregateId(), 'is_deleted' => false],
+        );
 
         if (!$budgetEnvelopeView instanceof BudgetEnvelopeViewInterface) {
             return;
@@ -110,13 +118,6 @@ final readonly class BudgetEnvelopeProjection
         $this->budgetEnvelopeViewRepository->save($budgetEnvelopeView);
     }
 
-    private function getEnvelopeViewByEvent(EventInterface $event): ?BudgetEnvelopeViewInterface
-    {
-        return $this->budgetEnvelopeViewRepository->findOneBy(
-            ['uuid' => $event->getAggregateId(), 'is_deleted' => false],
-        );
-    }
-
     public function saveEnvelopeHistory(EventInterface $event, BudgetEnvelopeViewInterface $budgetEnvelopeView): void
     {
         $monetaryAmount = $event instanceof BudgetEnvelopeCreditedEvent ? $event->getCreditMoney() :
@@ -124,13 +125,13 @@ final readonly class BudgetEnvelopeProjection
         $type = $event instanceof BudgetEnvelopeCreditedEvent ? self::CREDIT :
             ($event instanceof BudgetEnvelopeDebitedEvent ? self::DEBIT : '');
 
-        $budgetEnvelopeHistoryView = BudgetEnvelopeHistoryView::create(
-            $event->getAggregateId(),
-            $event->occurredOn(),
-            $monetaryAmount,
-            $type,
-            $budgetEnvelopeView->getUserUuid(),
+        $this->budgetEnvelopeHistoryViewRepository->save(
+            new BudgetEnvelopeHistoryView()
+                ->setAggregateId($event->getAggregateId())
+                ->setCreatedAt($event->occurredOn())
+                ->setMonetaryAmount($monetaryAmount)
+                ->setTransactionType($type)
+                ->setUserUuid($budgetEnvelopeView->getUserUuid()),
         );
-        $this->budgetEnvelopeHistoryViewRepository->save($budgetEnvelopeHistoryView);
     }
 }

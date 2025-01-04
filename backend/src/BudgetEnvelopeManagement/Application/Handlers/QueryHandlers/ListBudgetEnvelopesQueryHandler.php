@@ -19,7 +19,7 @@ final readonly class ListBudgetEnvelopesQueryHandler
     {
         return $this->budgetEnvelopesRepository->findBy(
             [
-                'user_uuid' => $listBudgetEnvelopesQuery->getUserUuid(),
+                'user_uuid' => (string) $listBudgetEnvelopesQuery->getBudgetEnvelopeUserId(),
                 'is_deleted' => false,
             ],
             $listBudgetEnvelopesQuery->getOrderBy(),

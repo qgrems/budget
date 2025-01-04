@@ -7,6 +7,7 @@ namespace App\Tests\BudgetEnvelopeManagement\Application\Handlers\QueryHandlers;
 use App\BudgetEnvelopeManagement\Application\Handlers\QueryHandlers\ListBudgetEnvelopesQueryHandler;
 use App\BudgetEnvelopeManagement\Application\Queries\ListBudgetEnvelopesQuery;
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\ListBudgetEnvelopesInput;
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopesPaginated;
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeView;
@@ -30,7 +31,7 @@ class ListBudgetEnvelopesQueryHandlerTest extends TestCase
 
     public function testListBudgetEnvelopesSuccess(): void
     {
-        $envelopeView = BudgetEnvelopeView::createFromRepository(
+        $envelopeView = BudgetEnvelopeView::fromRepository(
             [
                 'uuid' => 'be0c3a86-c3c9-467f-b675-3f519fd96111',
                 'name' => 'Electricity',
@@ -45,7 +46,7 @@ class ListBudgetEnvelopesQueryHandlerTest extends TestCase
         $envelopePaginated = new BudgetEnvelopesPaginated([$envelopeView], 1);
         $listBudgetEnvelopesInput = new ListBudgetEnvelopesInput([], 10, 0);
         $listBudgetEnvelopesQuery = new ListBudgetEnvelopesQuery(
-            'd26cc02e-99e7-428c-9d61-572dff3f84a7',
+            BudgetEnvelopeUserId::fromString('d26cc02e-99e7-428c-9d61-572dff3f84a7'),
             $listBudgetEnvelopesInput->orderBy,
             $listBudgetEnvelopesInput->limit,
             $listBudgetEnvelopesInput->offset,
