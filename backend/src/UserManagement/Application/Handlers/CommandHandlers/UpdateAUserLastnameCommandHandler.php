@@ -18,7 +18,7 @@ final readonly class UpdateAUserLastnameCommandHandler
     public function __invoke(UpdateAUserLastnameCommand $updateAUserLastnameCommand): void
     {
         $events = $this->eventSourcedRepository->get((string) $updateAUserLastnameCommand->getUserId());
-        $aggregate = User::reconstituteFromEvents(array_map(fn ($event) => $event, $events));
+        $aggregate = User::fromEvents(array_map(fn ($event) => $event, $events));
         $aggregate->updateLastname(
             $updateAUserLastnameCommand->getUserLastname(),
             $updateAUserLastnameCommand->getUserId(),

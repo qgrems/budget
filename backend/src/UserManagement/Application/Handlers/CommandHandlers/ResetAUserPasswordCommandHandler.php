@@ -36,7 +36,7 @@ final readonly class ResetAUserPasswordCommandHandler
         }
 
         $events = $this->eventSourcedRepository->get($userView->getUuid());
-        $aggregate = User::reconstituteFromEvents(array_map(fn ($event) => $event, $events));
+        $aggregate = User::fromEvents(array_map(fn ($event) => $event, $events));
         $aggregate->resetPassword(
             UserPassword::fromString(
                 $this->passwordHasher->hash($userView, (string) $command->getUserNewPassword()),

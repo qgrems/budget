@@ -18,7 +18,7 @@ final readonly class DebitABudgetEnvelopeCommandHandler
     public function __invoke(DebitABudgetEnvelopeCommand $debitABudgetEnvelopeCommand): void
     {
         $events = $this->eventSourcedRepository->get((string) $debitABudgetEnvelopeCommand->getBudgetEnvelopeId());
-        $aggregate = BudgetEnvelope::reconstituteFromEvents(array_map(fn ($event) => $event, $events));
+        $aggregate = BudgetEnvelope::fromEvents(array_map(fn ($event) => $event, $events));
         $aggregate->debit(
             $debitABudgetEnvelopeCommand->getBudgetEnvelopeDebitMoney(),
             $debitABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),

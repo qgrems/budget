@@ -27,7 +27,7 @@ final readonly class UpdateAUserPasswordCommandHandler
     public function __invoke(UpdateAUserPasswordCommand $updateAUserPasswordCommand): void
     {
         $events = $this->eventSourcedRepository->get((string) $updateAUserPasswordCommand->getUserId());
-        $aggregate = User::reconstituteFromEvents(array_map(fn ($event) => $event, $events));
+        $aggregate = User::fromEvents(array_map(fn ($event) => $event, $events));
         $userView = $this->userViewRepository->findOneBy(['uuid' => (string) $updateAUserPasswordCommand->getUserId()]);
 
         if (!$this->passwordHasher->verify($userView, (string) $updateAUserPasswordCommand->getUserOldPassword())) {

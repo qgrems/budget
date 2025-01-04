@@ -43,13 +43,13 @@ parameters:
 			path: src/BudgetEnvelopeManagement/Domain/Aggregates/BudgetEnvelope.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\Domain\\Aggregates\\BudgetEnvelope\:\:getUncommittedEvents\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeManagement\\Domain\\Aggregates\\BudgetEnvelope\:\:fromEvents\(\) has parameter \$events with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/BudgetEnvelopeManagement/Domain/Aggregates/BudgetEnvelope.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeManagement\\Domain\\Aggregates\\BudgetEnvelope\:\:reconstituteFromEvents\(\) has parameter \$events with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeManagement\\Domain\\Aggregates\\BudgetEnvelope\:\:getUncommittedEvents\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/BudgetEnvelopeManagement/Domain/Aggregates/BudgetEnvelope.php
@@ -685,13 +685,13 @@ parameters:
 			path: src/UserManagement/Domain/Aggregates/User.php
 
 		-
-			message: '#^Method App\\UserManagement\\Domain\\Aggregates\\User\:\:getUncommittedEvents\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method App\\UserManagement\\Domain\\Aggregates\\User\:\:fromEvents\(\) has parameter \$events with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/UserManagement/Domain/Aggregates/User.php
 
 		-
-			message: '#^Method App\\UserManagement\\Domain\\Aggregates\\User\:\:reconstituteFromEvents\(\) has parameter \$events with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\UserManagement\\Domain\\Aggregates\\User\:\:getUncommittedEvents\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/UserManagement/Domain/Aggregates/User.php

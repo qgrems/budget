@@ -18,7 +18,7 @@ final readonly class DeleteAUserCommandHandler
     public function __invoke(DeleteAUserCommand $deleteAUserCommand): void
     {
         $events = $this->eventSourcedRepository->get((string) $deleteAUserCommand->getUserId());
-        $aggregate = User::reconstituteFromEvents(array_map(fn ($event) => $event, $events));
+        $aggregate = User::fromEvents(array_map(fn ($event) => $event, $events));
         $aggregate->delete($deleteAUserCommand->getUserId());
         $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
         $aggregate->clearUncommitedEvent();
