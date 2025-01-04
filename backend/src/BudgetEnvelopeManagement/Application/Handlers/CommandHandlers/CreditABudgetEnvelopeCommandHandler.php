@@ -18,7 +18,7 @@ final readonly class CreditABudgetEnvelopeCommandHandler
     public function __invoke(CreditABudgetEnvelopeCommand $creditABudgetEnvelopeCommand): void
     {
         $events = $this->eventSourcedRepository->get((string) $creditABudgetEnvelopeCommand->getBudgetEnvelopeId());
-        $aggregate = BudgetEnvelope::reconstituteFromEvents(array_map(fn ($event) => $event, $events));
+        $aggregate = BudgetEnvelope::fromEvents(array_map(fn ($event) => $event, $events));
         $aggregate->credit(
             $creditABudgetEnvelopeCommand->getBudgetEnvelopeCreditMoney(),
             $creditABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),

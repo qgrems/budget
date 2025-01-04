@@ -35,18 +35,9 @@ final class BudgetEnvelope
 
     private function __construct()
     {
-        $this->budgetEnvelopeCurrentBudget = BudgetEnvelopeCurrentBudget::fromString(
-            '0.00',
-            '100.00',
-        );
-        $this->budgetEnvelopeTargetBudget = BudgetEnvelopeTargetBudget::fromString('100.00');
-        $this->budgetEnvelopeName = BudgetEnvelopeName::fromString('init');
-        $this->updatedAt = new \DateTime();
-        $this->createdAt = new \DateTimeImmutable();
-        $this->isDeleted = false;
     }
 
-    public static function reconstituteFromEvents(array $events): self
+    public static function fromEvents(array $events): self
     {
         $aggregate = new self();
 
@@ -193,6 +184,7 @@ final class BudgetEnvelope
         );
         $this->createdAt = $event->occurredOn();
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn());
+        $this->isDeleted = false;
     }
 
     private function applyNamedEvent(BudgetEnvelopeRenamedEvent $event): void

@@ -41,7 +41,7 @@ final class User
 
     private \DateTime $updatedAt;
 
-    private array $roles;
+    private array $roles = ['ROLE_USER'];
 
     private ?UserPasswordResetToken $passwordResetToken;
 
@@ -51,20 +51,9 @@ final class User
 
     private function __construct()
     {
-        $this->email = UserEmail::fromString('init@mail.com');
-        $this->password = UserPassword::fromString('HAdFD97Xp[T!crjHi^Y%');
-        $this->firstname = UserFirstname::fromString('init');
-        $this->lastname = UserLastname::fromString('init');
-        $this->updatedAt = new \DateTime();
-        $this->createdAt = new \DateTimeImmutable();
-        $this->consentGiven = UserConsent::fromBool(true);
-        $this->consentDate = new \DateTimeImmutable();
-        $this->roles = ['ROLE_USER'];
-        $this->passwordResetToken = null;
-        $this->passwordResetTokenExpiry = null;
     }
 
-    public static function reconstituteFromEvents(array $events): self
+    public static function fromEvents(array $events): self
     {
         $aggregate = new self();
 

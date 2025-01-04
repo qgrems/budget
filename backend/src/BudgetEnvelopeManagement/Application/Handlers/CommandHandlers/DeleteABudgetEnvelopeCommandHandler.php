@@ -18,7 +18,7 @@ final readonly class DeleteABudgetEnvelopeCommandHandler
     public function __invoke(DeleteABudgetEnvelopeCommand $deleteABudgetEnvelopeCommand): void
     {
         $events = $this->eventSourcedRepository->get((string) $deleteABudgetEnvelopeCommand->getBudgetEnvelopeId());
-        $aggregate = BudgetEnvelope::reconstituteFromEvents(array_map(fn ($event) => $event, $events));
+        $aggregate = BudgetEnvelope::fromEvents(array_map(fn ($event) => $event, $events));
         $aggregate->delete($deleteABudgetEnvelopeCommand->getBudgetEnvelopeUserId());
         $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
         $aggregate->clearUncommitedEvent();
