@@ -14,9 +14,9 @@ interface BudgetEnvelopeViewInterface
 
     public function getUpdatedAt(): \DateTime;
 
-    public function getCurrentBudget(): string;
+    public function getCurrentAmount(): string;
 
-    public function getTargetBudget(): string;
+    public function getTargetedAmount(): string;
 
     public function getName(): string;
 
@@ -30,9 +30,9 @@ interface BudgetEnvelopeViewInterface
 
     public function setUpdatedAt(\DateTime $updatedAt): self;
 
-    public function setCurrentBudget(string $currentBudget): self;
+    public function setCurrentAmount(string $currentAmount): self;
 
-    public function setTargetBudget(string $targetBudget): self;
+    public function setTargetedAmount(string $targetedAmount): self;
 
     public function setName(string $name): self;
 

@@ -6,19 +6,15 @@ namespace App\BudgetEnvelopeManagement\Domain\Events;
 
 use App\SharedContext\Domain\Ports\Inbound\EventInterface;
 
-final class BudgetEnvelopeCreatedEvent implements EventInterface
+final class BudgetEnvelopeTargetedAmountUpdatedEvent implements EventInterface
 {
     private string $aggregateId;
-    private string $userId;
-    private string $name;
     private string $targetedAmount;
     private \DateTimeImmutable $occurredOn;
 
-    public function __construct(string $aggregateId, string $userId, string $name, string $targetedAmount)
+    public function __construct(string $aggregateId, string $targetedAmount)
     {
         $this->aggregateId = $aggregateId;
-        $this->userId = $userId;
-        $this->name = $name;
         $this->targetedAmount = $targetedAmount;
         $this->occurredOn = new \DateTimeImmutable();
     }
@@ -27,16 +23,6 @@ final class BudgetEnvelopeCreatedEvent implements EventInterface
     public function getAggregateId(): string
     {
         return $this->aggregateId;
-    }
-
-    public function getUserId(): string
-    {
-        return $this->userId;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     public function getTargetedAmount(): string
@@ -55,8 +41,6 @@ final class BudgetEnvelopeCreatedEvent implements EventInterface
     {
         return [
             'aggregateId' => $this->aggregateId,
-            'userId' => $this->userId,
-            'name' => $this->name,
             'targetedAmount' => $this->targetedAmount,
             'occurredOn' => $this->occurredOn->format(\DateTimeInterface::ATOM),
         ];
@@ -65,7 +49,7 @@ final class BudgetEnvelopeCreatedEvent implements EventInterface
     #[\Override]
     public static function fromArray(array $data): self
     {
-        $event = new self($data['aggregateId'], $data['userId'], $data['name'], $data['targetedAmount']);
+        $event = new self($data['aggregateId'], $data['targetedAmount']);
         $event->occurredOn = new \DateTimeImmutable($data['occurredOn']);
 
         return $event;

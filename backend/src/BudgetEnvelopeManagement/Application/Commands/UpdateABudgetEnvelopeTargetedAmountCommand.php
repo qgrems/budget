@@ -6,27 +6,28 @@ namespace App\BudgetEnvelopeManagement\Application\Commands;
 
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\CommandInterface;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
-use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeName;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 
-final readonly class CreateABudgetEnvelopeCommand implements CommandInterface
+final readonly class UpdateABudgetEnvelopeTargetedAmountCommand implements CommandInterface
 {
+    private string $budgetEnvelopeTargetedAmount;
     private string $budgetEnvelopeId;
     private string $budgetEnvelopeUserId;
-    private string $budgetEnvelopeName;
-    private string $budgetEnvelopeTargetedAmount;
 
     public function __construct(
+        BudgetEnvelopeTargetedAmount $budgetEnvelopeTargetedAmount,
         BudgetEnvelopeId $budgetEnvelopeId,
         BudgetEnvelopeUserId $budgetEnvelopeUserId,
-        BudgetEnvelopeName $budgetEnvelopeName,
-        BudgetEnvelopeTargetedAmount $budgetEnvelopeTargetedAmount,
     ) {
+        $this->budgetEnvelopeTargetedAmount = (string) $budgetEnvelopeTargetedAmount;
         $this->budgetEnvelopeId = (string) $budgetEnvelopeId;
         $this->budgetEnvelopeUserId = (string) $budgetEnvelopeUserId;
-        $this->budgetEnvelopeName = (string) $budgetEnvelopeName;
-        $this->budgetEnvelopeTargetedAmount = (string) $budgetEnvelopeTargetedAmount;
+    }
+
+    public function getBudgetEnvelopeTargetedAmount(): BudgetEnvelopeTargetedAmount
+    {
+        return BudgetEnvelopeTargetedAmount::fromString($this->budgetEnvelopeTargetedAmount, '0.00');
     }
 
     public function getBudgetEnvelopeUserId(): BudgetEnvelopeUserId
@@ -37,15 +38,5 @@ final readonly class CreateABudgetEnvelopeCommand implements CommandInterface
     public function getBudgetEnvelopeId(): BudgetEnvelopeId
     {
         return BudgetEnvelopeId::fromString($this->budgetEnvelopeId);
-    }
-
-    public function getBudgetEnvelopeName(): BudgetEnvelopeName
-    {
-        return BudgetEnvelopeName::fromString($this->budgetEnvelopeName);
-    }
-
-    public function getBudgetEnvelopeTargetedAmount(): BudgetEnvelopeTargetedAmount
-    {
-        return BudgetEnvelopeTargetedAmount::fromString($this->budgetEnvelopeTargetedAmount, '0.00');
     }
 }

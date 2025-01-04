@@ -67,14 +67,14 @@ export function useEnvelopes() {
     setLoading(false)
   }
 
-  const createEnvelope = async (name: string, targetBudget: string, setError,setValidMessage) => {
+  const createEnvelope = async (name: string, targetedAmount: string, setError,setValidMessage) => {
     setLoading(true);
     const tempId = uuidv4();
     const newEnvelope: Envelope = {
       uuid: tempId,
       name,
-      targetBudget,
-      currentBudget: '0',
+      targetedAmount,
+      currentAmount: '0',
       updatedAt: new Date().toISOString(),
       userUuid: '',
       createdAt: new Date().toISOString(),
@@ -142,13 +142,13 @@ export function useEnvelopes() {
     setLoading(true)
     const updatedEnvelope = envelopeState.envelopesData?.envelopes.find(env => env.uuid === envelopeId)
     if (updatedEnvelope) {
-      const newBudget = (parseFloat(updatedEnvelope.currentBudget) + parseFloat(amount)).toString()
-      updateEnvelopeState({ ...updatedEnvelope, currentBudget: newBudget, pending: true })
+      const newBudget = (parseFloat(updatedEnvelope.currentAmount) + parseFloat(amount)).toString()
+      updateEnvelopeState({ ...updatedEnvelope, currentAmount: newBudget, pending: true })
     }
     try {
       await api.envelopeCommands.creditEnvelope(envelopeId, amount)
       pollForChanges(setValidMessage, envelopeId, 'credit', (env) =>
-          parseFloat(env?.currentBudget || '0') >= parseFloat(updatedEnvelope?.currentBudget || '0') + parseFloat(amount)
+          parseFloat(env?.currentAmount || '0') >= parseFloat(updatedEnvelope?.currentAmount || '0') + parseFloat(amount)
       )
     } catch (err) {
       setError(err.message);
@@ -163,13 +163,13 @@ export function useEnvelopes() {
     setLoading(true)
     const updatedEnvelope = envelopeState.envelopesData?.envelopes.find(env => env.uuid === envelopeId)
     if (updatedEnvelope) {
-      const newBudget = (parseFloat(updatedEnvelope.currentBudget) - parseFloat(amount)).toString()
-      updateEnvelopeState({ ...updatedEnvelope, currentBudget: newBudget, pending: true })
+      const newBudget = (parseFloat(updatedEnvelope.currentAmount) - parseFloat(amount)).toString()
+      updateEnvelopeState({ ...updatedEnvelope, currentAmount: newBudget, pending: true })
     }
     try {
       await api.envelopeCommands.debitEnvelope(envelopeId, amount)
       pollForChanges(setValidMessage, envelopeId, 'debit', (env) =>
-          parseFloat(env?.currentBudget || '0') <= parseFloat(updatedEnvelope?.currentBudget || '0') - parseFloat(amount)
+          parseFloat(env?.currentAmount || '0') <= parseFloat(updatedEnvelope?.currentAmount || '0') - parseFloat(amount)
       )
     } catch (err) {
       setError(err.message);

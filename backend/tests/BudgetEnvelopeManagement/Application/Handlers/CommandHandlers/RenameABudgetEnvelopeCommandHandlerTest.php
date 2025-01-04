@@ -62,7 +62,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
                         'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                         'occurredOn' => '2024-12-07T22:03:35+00:00',
                         'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                        'targetBudget' => '2000.00',
+                        'targetedAmount' => '2000.00',
                     ]),
                 ],
             ]);
@@ -93,7 +93,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
                         'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                         'occurredOn' => '2024-12-07T22:03:35+00:00',
                         'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                        'targetBudget' => '2000.00',
+                        'targetedAmount' => '2000.00',
                     ]),
                 ],
             ]);
@@ -103,8 +103,8 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
                 [
                     'uuid' => 'be0c3a86-c3c9-467f-b675-3f519fd96111',
                     'name' => 'test',
-                    'target_budget' => '300.00',
-                    'current_budget' => '150.00',
+                    'targeted_amount' => '300.00',
+                    'current_amount' => '150.00',
                     'user_uuid' => 'd26cc02e-99e7-428c-9d61-572dff3f84a7',
                     'created_at' => (new \DateTime())->format('Y-m-d H:i:s'),
                     'updated_at' => (new \DateTime())->format('Y-m-d H:i:s'),
@@ -160,7 +160,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
                         'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                         'occurredOn' => '2024-12-07T22:03:35+00:00',
                         'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                        'targetBudget' => '2000.00',
+                        'targetedAmount' => '2000.00',
                     ]),
                 ],
             ]);

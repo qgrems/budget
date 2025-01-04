@@ -36,8 +36,8 @@ class GetABudgetEnvelopeWithItsHistoryQueryHandlerTest extends TestCase
             [
                 'uuid' => 'be0c3a86-c3c9-467f-b675-3f519fd96111',
                 'name' => 'Electricity',
-                'target_budget' => '300.00',
-                'current_budget' => '150.00',
+                'targeted_amount' => '300.00',
+                'current_amount' => '150.00',
                 'user_uuid' => 'd26cc02e-99e7-428c-9d61-572dff3f84a7',
                 'created_at' => new \DateTime()->format('Y-m-d H:i:s'),
                 'updated_at' => new \DateTime()->format('Y-m-d H:i:s'),
@@ -57,8 +57,8 @@ class GetABudgetEnvelopeWithItsHistoryQueryHandlerTest extends TestCase
                     'envelope' => [
                         'uuid' => 'be0c3a86-c3c9-467f-b675-3f519fd96111',
                         'name' => 'Electricity',
-                        'target_budget' => '300.00',
-                        'current_budget' => '150.00',
+                        'targeted_amount' => '300.00',
+                        'current_amount' => '150.00',
                         'user_uuid' => 'd26cc02e-99e7-428c-9d61-572dff3f84a7',
                         'created_at' => $envelopeCreatedAt,
                         'updated_at' => $envelopeCreatedAt,
@@ -82,8 +82,8 @@ class GetABudgetEnvelopeWithItsHistoryQueryHandlerTest extends TestCase
             'envelope' => [
                 'uuid' => 'be0c3a86-c3c9-467f-b675-3f519fd96111',
                 'name' => 'Electricity',
-                'target_budget' => '300.00',
-                'current_budget' => '150.00',
+                'targeted_amount' => '300.00',
+                'current_amount' => '150.00',
                 'user_uuid' => 'd26cc02e-99e7-428c-9d61-572dff3f84a7',
                 'created_at' => $envelopeCreatedAt,
                 'updated_at' => $envelopeCreatedAt,
@@ -107,8 +107,8 @@ class GetABudgetEnvelopeWithItsHistoryQueryHandlerTest extends TestCase
             [
                 'uuid' => 'be0c3a86-c3c9-467f-b675-3f519fd96111',
                 'name' => 'Electricity',
-                'target_budget' => '300.00',
-                'current_budget' => '150.00',
+                'targeted_amount' => '300.00',
+                'current_amount' => '150.00',
                 'user_uuid' => 'd26cc02e-99e7-428c-9d61-572dff3f84a7',
                 'created_at' => new \DateTime()->format('Y-m-d H:i:s'),
                 'updated_at' => new \DateTime()->format('Y-m-d H:i:s'),

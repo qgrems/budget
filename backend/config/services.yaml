@@ -42,6 +42,9 @@ services:
     App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers\DeleteABudgetEnvelopeCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
+    App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers\UpdateABudgetEnvelopeTargetedAmountCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
     App\BudgetEnvelopeManagement\Application\Handlers\QueryHandlers\GetABudgetEnvelopeWithItsHistoryQueryHandler:
         tags: [ 'messenger.message_handler' ]
 

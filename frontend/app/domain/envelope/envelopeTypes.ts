@@ -1,8 +1,8 @@
 export interface Envelope {
   uuid: string
   updatedAt: string
-  currentBudget: string
-  targetBudget: string
+  currentAmount: string
+  targetedAmount: string
   name: string
   userUuid: string
   createdAt: string

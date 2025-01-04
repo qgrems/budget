@@ -26,7 +26,7 @@ final readonly class CreateABudgetEnvelopeCommandHandler
             $aggregate = BudgetEnvelope::create(
                 $createABudgetEnvelopeCommand->getBudgetEnvelopeId(),
                 $createABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
-                $createABudgetEnvelopeCommand->getBudgetEnvelopeTargetBudget(),
+                $createABudgetEnvelopeCommand->getBudgetEnvelopeTargetedAmount(),
                 $createABudgetEnvelopeCommand->getBudgetEnvelopeName(),
                 $this->budgetEnvelopeViewRepository,
             );

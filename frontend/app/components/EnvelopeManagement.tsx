@@ -71,11 +71,11 @@ export default function EnvelopeManagement() {
         return `${integerPart}.${decimalPart}`;
     };
 
-    const handleCreditEnvelope = (id: string, currentBudget: string, targetBudget: string) => {
+    const handleCreditEnvelope = (id: string, currentAmount: string, targetedAmount: string) => {
         if (amounts[id]) {
             const formattedAmount = formatAmount(amounts[id]);
-            const maxCredit = (parseFloat(targetBudget) - parseFloat(currentBudget)).toFixed(2);
-            if (validateAmount(formattedAmount, currentBudget, targetBudget, true)) {
+            const maxCredit = (parseFloat(targetedAmount) - parseFloat(currentAmount)).toFixed(2);
+            if (validateAmount(formattedAmount, currentAmount, targetedAmount, true)) {
                 creditEnvelope(id, formattedAmount,setError,setValidMessage);
                 handleAmountChange(id, '');
                 setErrorMessage(null);
@@ -84,11 +84,11 @@ export default function EnvelopeManagement() {
             }
         }
     };
-    const handleDebitEnvelope = (id: string, currentBudget: string) => {
+    const handleDebitEnvelope = (id: string, currentAmount: string) => {
         if (amounts[id]) {
             const formattedAmount = formatAmount(amounts[id]);
-            const maxDebit = parseFloat(currentBudget).toFixed(2);
-            if (validateAmount(formattedAmount, currentBudget, '0', false)) {
+            const maxDebit = parseFloat(currentAmount).toFixed(2);
+            if (validateAmount(formattedAmount, currentAmount, '0', false)) {
                 debitEnvelope(id, formattedAmount,setError,setValidMessage);
                 handleAmountChange(id, '');
                 setErrorMessage(null);
@@ -170,15 +170,15 @@ export default function EnvelopeManagement() {
         return !/^\d{1,10}(\.\d{0,2})?$/.test(value);
     };
     console.log(envelopesData)
-    const validateAmount = (amount: string, currentBudget: string, targetBudget: string, isCredit: boolean): boolean => {
+    const validateAmount = (amount: string, currentAmount: string, targetedAmount: string, isCredit: boolean): boolean => {
         const amountFloat = parseFloat(amount)
-        const currentBudgetFloat = parseFloat(currentBudget)
-        const targetBudgetFloat = parseFloat(targetBudget)
+        const currentAmountFloat = parseFloat(currentAmount)
+        const targetedAmountFloat = parseFloat(targetedAmount)
 
         if (isCredit) {
-            return currentBudgetFloat + amountFloat <= targetBudgetFloat
+            return currentAmountFloat + amountFloat <= targetedAmountFloat
         } else {
-            return currentBudgetFloat - amountFloat >= 0
+            return currentAmountFloat - amountFloat >= 0
         }
     }
     return (
@@ -253,10 +253,10 @@ export default function EnvelopeManagement() {
                                 <div className="flex justify-between items-center mb-4">
                                     <div>
                                         <p className="text-lg md:text-xl font-semibold">
-                                            ${parseFloat(envelope.currentBudget).toFixed(2)}
+                                            ${parseFloat(envelope.currentAmount).toFixed(2)}
                                         </p>
                                         <p className="text-xs md:text-sm text-muted-foreground">
-                                            {t('envelopes.of')} ${parseFloat(envelope.targetBudget).toFixed(2)}
+                                            {t('envelopes.of')} ${parseFloat(envelope.targetedAmount).toFixed(2)}
                                         </p>
                                     </div>
                                     <div className="w-16 h-16 md:w-20 md:h-20 neomorphic-circle flex items-center justify-center">
@@ -264,8 +264,8 @@ export default function EnvelopeManagement() {
                                             <PieChart>
                                                 <Pie
                                                     data={[
-                                                        { name: 'Used', value: parseFloat(envelope.currentBudget) },
-                                                        { name: 'Remaining', value: parseFloat(envelope.targetBudget) - parseFloat(envelope.currentBudget) }
+                                                        { name: 'Used', value: parseFloat(envelope.currentAmount) },
+                                                        { name: 'Remaining', value: parseFloat(envelope.targetedAmount) - parseFloat(envelope.currentAmount) }
                                                     ]}
                                                     cx="50%"
                                                     cy="50%"
@@ -295,14 +295,14 @@ export default function EnvelopeManagement() {
                                                 disabled={envelope.pending || !!pendingActions[envelope.uuid]}
                                             />
                                             <button
-                                                onClick={() => handleCreditEnvelope(envelope.uuid, envelope.currentBudget, envelope.targetBudget)}
+                                                onClick={() => handleCreditEnvelope(envelope.uuid, envelope.currentAmount, envelope.targetedAmount)}
                                                 className="w-1/4 p-1 md:p-2 neomorphic-button text-green-500 text-xs md:text-sm font-semibold"
                                                 disabled={envelope.pending || !!pendingActions[envelope.uuid] || isInvalidInput(amounts[envelope.uuid] || '') || !amounts[envelope.uuid]}
                                             >
                                                 {t('envelopes.credit')}
                                             </button>
                                             <button
-                                                onClick={() => handleDebitEnvelope(envelope.uuid, envelope.currentBudget)}
+                                                onClick={() => handleDebitEnvelope(envelope.uuid, envelope.currentAmount)}
                                                 className="w-1/4 p-1 md:p-2 neomorphic-button text-red-500 text-xs md:text-sm font-semibold"
                                                 disabled={envelope.pending || !!pendingActions[envelope.uuid] || isInvalidInput(amounts[envelope.uuid] || '') || !amounts[envelope.uuid]}
                                             >
@@ -353,7 +353,7 @@ export default function EnvelopeManagement() {
                                 inputMode="decimal"
                                 value={newEnvelopeTarget}
                                 onChange={(e) => handleAmountChange('new', e.target.value, true)}
-                                placeholder={t('envelopes.targetBudget')}
+                                placeholder={t('envelopes.targetedAmount')}
                                 className="w-full p-2 md:p-3 neomorphic-input"
                             />
                         </div>

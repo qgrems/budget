@@ -9,15 +9,16 @@ use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeCreditedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDebitedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDeletedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeRenamedEvent;
+use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeTargetedAmountUpdatedEvent;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeNameAlreadyExistsForUserException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\InvalidBudgetEnvelopeOperationException;
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeCreditMoney;
-use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeCurrentBudget;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeCurrentAmount;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeDebitMoney;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeName;
-use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeTargetBudget;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\SharedContext\Domain\Ports\Inbound\EventInterface;
 
@@ -25,8 +26,8 @@ final class BudgetEnvelope
 {
     private BudgetEnvelopeId $budgetEnvelopeId;
     private BudgetEnvelopeUserId $userId;
-    private BudgetEnvelopeCurrentBudget $budgetEnvelopeCurrentBudget;
-    private BudgetEnvelopeTargetBudget $budgetEnvelopeTargetBudget;
+    private BudgetEnvelopeCurrentAmount $budgetEnvelopeCurrentAmount;
+    private BudgetEnvelopeTargetedAmount $budgetEnvelopeTargetedAmount;
     private BudgetEnvelopeName $budgetEnvelopeName;
     private \DateTime $updatedAt;
     private \DateTimeImmutable $createdAt;
@@ -51,7 +52,7 @@ final class BudgetEnvelope
     public static function create(
         BudgetEnvelopeId $budgetEnvelopeId,
         BudgetEnvelopeUserId $budgetEnvelopeUserId,
-        BudgetEnvelopeTargetBudget $budgetEnvelopeTargetBudget,
+        BudgetEnvelopeTargetedAmount $budgetEnvelopeTargetedAmount,
         BudgetEnvelopeName $budgetEnvelopeName,
         BudgetEnvelopeViewRepositoryInterface $budgetEnvelopeViewRepository,
     ): self {
@@ -69,7 +70,7 @@ final class BudgetEnvelope
             (string) $budgetEnvelopeId,
             (string) $budgetEnvelopeUserId,
             (string) $budgetEnvelopeName,
-            (string) $budgetEnvelopeTargetBudget,
+            (string) $budgetEnvelopeTargetedAmount,
         );
 
         $aggregate->applyEvent($event);
@@ -150,6 +151,20 @@ final class BudgetEnvelope
         $this->recordEvent($event);
     }
 
+    public function updateTargetedAmount(BudgetEnvelopeTargetedAmount $budgetEnvelopeTargetedAmount, BudgetEnvelopeUserId $userId): void
+    {
+        $this->assertNotDeleted();
+        $this->assertOwnership($userId);
+
+        $event = new BudgetEnvelopeTargetedAmountUpdatedEvent(
+            (string) $this->budgetEnvelopeId,
+            (string) $budgetEnvelopeTargetedAmount,
+        );
+
+        $this->applyEvent($event);
+        $this->recordEvent($event);
+    }
+
     public function getUncommittedEvents(): array
     {
         return $this->uncommittedEvents;
@@ -168,6 +183,7 @@ final class BudgetEnvelope
             BudgetEnvelopeCreditedEvent::class => $this->applyCreditedEvent($event),
             BudgetEnvelopeDebitedEvent::class => $this->applyDebitedEvent($event),
             BudgetEnvelopeDeletedEvent::class => $this->applyDeletedEvent($event),
+            BudgetEnvelopeTargetedAmountUpdatedEvent::class => $this->applyTargetedAmountUpdatedEvent($event),
             default => throw new \RuntimeException('envelopes.unknownEvent'),
         };
     }
@@ -177,10 +193,13 @@ final class BudgetEnvelope
         $this->budgetEnvelopeId = BudgetEnvelopeId::fromString($event->getAggregateId());
         $this->userId = BudgetEnvelopeUserId::fromString($event->getUserId());
         $this->budgetEnvelopeName = BudgetEnvelopeName::fromString($event->getName());
-        $this->budgetEnvelopeTargetBudget = BudgetEnvelopeTargetBudget::fromString($event->getTargetBudget());
-        $this->budgetEnvelopeCurrentBudget = BudgetEnvelopeCurrentBudget::fromString(
+        $this->budgetEnvelopeTargetedAmount = BudgetEnvelopeTargetedAmount::fromString(
+            $event->getTargetedAmount(),
             '0.00',
-            $event->getTargetBudget(),
+        );
+        $this->budgetEnvelopeCurrentAmount = BudgetEnvelopeCurrentAmount::fromString(
+            '0.00',
+            $event->getTargetedAmount(),
         );
         $this->createdAt = $event->occurredOn();
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn());
@@ -195,22 +214,22 @@ final class BudgetEnvelope
 
     private function applyCreditedEvent(BudgetEnvelopeCreditedEvent $event): void
     {
-        $newBudget = (floatval((string) $this->budgetEnvelopeCurrentBudget) + floatval($event->getCreditMoney()));
+        $newBudget = (floatval((string) $this->budgetEnvelopeCurrentAmount) + floatval($event->getCreditMoney()));
 
-        $this->budgetEnvelopeCurrentBudget = BudgetEnvelopeCurrentBudget::fromString(
+        $this->budgetEnvelopeCurrentAmount = BudgetEnvelopeCurrentAmount::fromString(
             (string) $newBudget,
-            (string) $this->budgetEnvelopeTargetBudget,
+            (string) $this->budgetEnvelopeTargetedAmount,
         );
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn());
     }
 
     private function applyDebitedEvent(BudgetEnvelopeDebitedEvent $event): void
     {
-        $newBudget = (floatval((string) $this->budgetEnvelopeCurrentBudget) - floatval($event->getDebitMoney()));
+        $newBudget = (floatval((string) $this->budgetEnvelopeCurrentAmount) - floatval($event->getDebitMoney()));
 
-        $this->budgetEnvelopeCurrentBudget = BudgetEnvelopeCurrentBudget::fromString(
+        $this->budgetEnvelopeCurrentAmount = BudgetEnvelopeCurrentAmount::fromString(
             (string) $newBudget,
-            (string) $this->budgetEnvelopeTargetBudget,
+            (string) $this->budgetEnvelopeTargetedAmount,
         );
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn());
     }
@@ -218,6 +237,15 @@ final class BudgetEnvelope
     private function applyDeletedEvent(BudgetEnvelopeDeletedEvent $event): void
     {
         $this->isDeleted = $event->isDeleted();
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn());
+    }
+
+    private function applyTargetedAmountUpdatedEvent(BudgetEnvelopeTargetedAmountUpdatedEvent $event): void
+    {
+        $this->budgetEnvelopeTargetedAmount = BudgetEnvelopeTargetedAmount::fromString(
+            $event->getTargetedAmount(),
+            (string) $this->budgetEnvelopeCurrentAmount,
+        );
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn());
     }
 

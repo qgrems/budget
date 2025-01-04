@@ -11,7 +11,7 @@ use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeCreditedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDebitedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDeletedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeRenamedEvent;
-use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeCurrentBudgetException;
+use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeCurrentAmountException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeNotFoundException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\InvalidBudgetEnvelopeOperationException;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeCreditMoney;
@@ -40,7 +40,7 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
         );
     }
 
-    public function testcreditABudgetEnvelopeSuccess(): void
+    public function testCreditABudgetEnvelopeSuccess(): void
     {
         $creditABudgetEnvelopeInput = new CreditABudgetEnvelopeInput('100.00');
         $creditABudgetEnvelopeCommand = new CreditABudgetEnvelopeCommand(
@@ -60,7 +60,7 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
                         'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                         'occurredOn' => '2024-12-07T22:03:35+00:00',
                         'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                        'targetBudget' => '2000.00',
+                        'targetedAmount' => '2000.00',
                     ]),
                 ],
                 [
@@ -140,7 +140,7 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
                         'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                         'occurredOn' => '2024-12-07T22:03:35+00:00',
                         'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                        'targetBudget' => '2000.00',
+                        'targetedAmount' => '2000.00',
                     ]),
                 ],
                 [
@@ -157,7 +157,7 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
             ]);
 
         $this->eventStore->expects($this->never())->method('save');
-        $this->expectException(BudgetEnvelopeCurrentBudgetException::class);
+        $this->expectException(BudgetEnvelopeCurrentAmountException::class);
 
         $this->creditABudgetEnvelopeCommandHandler->__invoke($creditABudgetEnvelopeCommand);
     }
@@ -182,7 +182,7 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
                         'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                         'occurredOn' => '2024-12-07T22:03:35+00:00',
                         'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                        'targetBudget' => '2000.00',
+                        'targetedAmount' => '2000.00',
                     ]),
                 ],
                 [
@@ -236,7 +236,7 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
                         'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                         'occurredOn' => '2024-12-07T22:03:35+00:00',
                         'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                        'targetBudget' => '2000.00',
+                        'targetedAmount' => '2000.00',
                     ]),
                 ],
                 [

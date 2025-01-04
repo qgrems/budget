@@ -32,14 +32,14 @@ final readonly class CreateABudgetEnvelopeInput
         #[Assert\Length(
             min: 1,
             max: 13,
-            minMessage: 'envelopes.targetBudgetMinLength',
-            maxMessage: 'envelopes.targetBudgetMaxLength'
+            minMessage: 'envelopes.targetedAmountMinLength',
+            maxMessage: 'envelopes.targetedAmountMaxLength'
         )]
         #[Assert\Regex(
             pattern: '/^\d+(\.\d{2})?$/',
-            message: 'envelopes.targetBudgetInvalid'
+            message: 'envelopes.targetedAmountInvalid'
         )]
-        public string $targetBudget,
+        public string $targetedAmount,
     ) {
     }
 }
