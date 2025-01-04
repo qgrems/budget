@@ -26,11 +26,11 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
     #[ORM\Column(name: 'updated_at', type: 'datetime')]
     private \DateTime $updatedAt;
 
-    #[ORM\Column(name: 'current_budget', type: 'string', length: 13)]
-    private string $currentBudget;
+    #[ORM\Column(name: 'current_amount', type: 'string', length: 13)]
+    private string $currentAmount;
 
-    #[ORM\Column(name: 'target_budget', type: 'string', length: 13)]
-    private string $targetBudget;
+    #[ORM\Column(name: 'targeted_amount', type: 'string', length: 13)]
+    private string $targetedAmount;
 
     #[ORM\Column(name: 'name', type: 'string', length: 50)]
     private string $name;
@@ -51,13 +51,13 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
     public static function fromRepository(array $budgetEnvelope): self
     {
         return new self()
-            ->setCurrentBudget($budgetEnvelope['current_budget'])
-            ->setTargetBudget($budgetEnvelope['target_budget'])
+            ->setCurrentAmount($budgetEnvelope['current_amount'])
+            ->setTargetedAmount($budgetEnvelope['targeted_amount'])
             ->setName($budgetEnvelope['name'])
             ->setIsDeleted((bool) $budgetEnvelope['is_deleted'])
             ->setCreatedAt(new \DateTimeImmutable($budgetEnvelope['created_at']))
             ->setUpdatedAt(new \DateTime($budgetEnvelope['updated_at']))
-            ->setTargetBudget($budgetEnvelope['target_budget'])
+            ->setTargetedAmount($budgetEnvelope['targeted_amount'])
             ->setUuid($budgetEnvelope['uuid'])
             ->setUserUuid($budgetEnvelope['user_uuid'])
         ;
@@ -118,29 +118,29 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
     }
 
     #[\Override]
-    public function getTargetBudget(): string
+    public function getTargetedAmount(): string
     {
-        return $this->targetBudget;
+        return $this->targetedAmount;
     }
 
     #[\Override]
-    public function setTargetBudget(string $targetBudget): self
+    public function setTargetedAmount(string $targetedAmount): self
     {
-        $this->targetBudget = $targetBudget;
+        $this->targetedAmount = $targetedAmount;
 
         return $this;
     }
 
     #[\Override]
-    public function getCurrentBudget(): string
+    public function getCurrentAmount(): string
     {
-        return $this->currentBudget;
+        return $this->currentAmount;
     }
 
     #[\Override]
-    public function setCurrentBudget(string $currentBudget): self
+    public function setCurrentAmount(string $currentAmount): self
     {
-        $this->currentBudget = $currentBudget;
+        $this->currentAmount = $currentAmount;
 
         return $this;
     }
@@ -191,8 +191,8 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
     {
         return [
             'uuid' => $this->uuid,
-            'currentBudget' => $this->currentBudget,
-            'targetBudget' => $this->targetBudget,
+            'currentAmount' => $this->currentAmount,
+            'targetedAmount' => $this->targetedAmount,
             'name' => $this->name,
         ];
     }

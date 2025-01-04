@@ -7,6 +7,7 @@ use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeCreditedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDebitedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDeletedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeRenamedEvent;
+use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeTargetedAmountUpdatedEvent;
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeHistoryViewRepositoryInterface;
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeHistoryView;
@@ -33,6 +34,7 @@ final readonly class BudgetEnvelopeProjection
             $event instanceof BudgetEnvelopeDebitedEvent => $this->handleEnvelopeDebitedEvent($event),
             $event instanceof BudgetEnvelopeRenamedEvent => $this->handleEnvelopeNamedEvent($event),
             $event instanceof BudgetEnvelopeDeletedEvent => $this->handleEnvelopeDeletedEvent($event),
+            $event instanceof BudgetEnvelopeTargetedAmountUpdatedEvent => $this->handleEnvelopeTargetedAmountUpdatedEvent($event),
             default => null,
         };
     }
@@ -45,8 +47,8 @@ final readonly class BudgetEnvelopeProjection
                 ->setCreatedAt($event->occurredOn())
                 ->setUpdatedAt(\DateTime::createFromImmutable($event->occurredOn()))
                 ->setIsDeleted(false)
-                ->setTargetBudget($event->getTargetBudget())
-                ->setCurrentBudget('0.00')
+                ->setTargetedAmount($event->getTargetedAmount())
+                ->setCurrentAmount('0.00')
                 ->setName($event->getName())
                 ->setUserUuid($event->getUserId())
         );
@@ -63,8 +65,8 @@ final readonly class BudgetEnvelopeProjection
         }
 
         $budgetEnvelopeView->setUpdatedAt(\DateTime::createFromImmutable($event->occurredOn()));
-        $budgetEnvelopeView->setCurrentBudget((string) (
-            floatval($budgetEnvelopeView->getCurrentBudget()) + floatval($event->getCreditMoney())
+        $budgetEnvelopeView->setCurrentAmount((string) (
+            floatval($budgetEnvelopeView->getCurrentAmount()) + floatval($event->getCreditMoney())
         ));
         $this->budgetEnvelopeViewRepository->save($budgetEnvelopeView);
         $this->saveEnvelopeHistory($event, $budgetEnvelopeView);
@@ -81,8 +83,8 @@ final readonly class BudgetEnvelopeProjection
         }
 
         $budgetEnvelopeView->setUpdatedAt(\DateTime::createFromImmutable($event->occurredOn()));
-        $budgetEnvelopeView->setCurrentBudget((string) (
-            floatval($budgetEnvelopeView->getCurrentBudget()) - floatval($event->getDebitMoney())
+        $budgetEnvelopeView->setCurrentAmount((string) (
+            floatval($budgetEnvelopeView->getCurrentAmount()) - floatval($event->getDebitMoney())
         ));
         $this->budgetEnvelopeViewRepository->save($budgetEnvelopeView);
         $this->saveEnvelopeHistory($event, $budgetEnvelopeView);
@@ -115,6 +117,21 @@ final readonly class BudgetEnvelopeProjection
 
         $budgetEnvelopeView->setUpdatedAt(\DateTime::createFromImmutable($event->occurredOn()));
         $budgetEnvelopeView->setIsDeleted(true);
+        $this->budgetEnvelopeViewRepository->save($budgetEnvelopeView);
+    }
+
+    private function handleEnvelopeTargetedAmountUpdatedEvent(BudgetEnvelopeTargetedAmountUpdatedEvent $event): void
+    {
+        $budgetEnvelopeView = $this->budgetEnvelopeViewRepository->findOneBy(
+            ['uuid' => $event->getAggregateId(), 'is_deleted' => false],
+        );
+
+        if (!$budgetEnvelopeView instanceof BudgetEnvelopeViewInterface) {
+            return;
+        }
+
+        $budgetEnvelopeView->setUpdatedAt(\DateTime::createFromImmutable($event->occurredOn()));
+        $budgetEnvelopeView->setTargetedAmount($event->getTargetedAmount());
         $this->budgetEnvelopeViewRepository->save($budgetEnvelopeView);
     }
 

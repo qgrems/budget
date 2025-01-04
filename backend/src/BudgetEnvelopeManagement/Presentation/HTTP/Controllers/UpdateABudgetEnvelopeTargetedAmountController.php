@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\BudgetEnvelopeManagement\Presentation\HTTP\Controllers;
 
-use App\BudgetEnvelopeManagement\Application\Commands\CreateABudgetEnvelopeCommand;
+use App\BudgetEnvelopeManagement\Application\Commands\UpdateABudgetEnvelopeTargetedAmountCommand;
 use App\BudgetEnvelopeManagement\Domain\Ports\Outbound\CommandBusInterface;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
-use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeName;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
-use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\CreateABudgetEnvelopeInput;
+use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\UpdateABudgetEnvelopeTargetedAmountInput;
 use App\SharedContext\Domain\Ports\Inbound\SharedUserInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,9 +18,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/api/envelopes/new', name: 'app_budget_envelope_new', methods: ['POST'])]
+#[Route('/api/envelopes/{uuid}/update-target-budget', name: 'app_budget_envelope_update_targeted_amount', methods: ['POST'])]
 #[IsGranted('ROLE_USER')]
-final readonly class CreateABudgetEnvelopeController
+final readonly class UpdateABudgetEnvelopeTargetedAmountController
 {
     public function __construct(
         private CommandBusInterface $commandBus,
@@ -29,18 +28,18 @@ final readonly class CreateABudgetEnvelopeController
     }
 
     public function __invoke(
-        #[MapRequestPayload] CreateABudgetEnvelopeInput $createABudgetEnvelopeInput,
+        #[MapRequestPayload] UpdateABudgetEnvelopeTargetedAmountInput $updateABudgetEnvelopeTargetedAmountInput,
+        string $uuid,
         #[CurrentUser] SharedUserInterface $user,
     ): JsonResponse {
         $this->commandBus->execute(
-            new CreateABudgetEnvelopeCommand(
-                BudgetEnvelopeId::fromString($createABudgetEnvelopeInput->uuid),
-                BudgetEnvelopeUserId::fromString($user->getUuid()),
-                BudgetEnvelopeName::fromString($createABudgetEnvelopeInput->name),
+            new UpdateABudgetEnvelopeTargetedAmountCommand(
                 BudgetEnvelopeTargetedAmount::fromString(
-                    $createABudgetEnvelopeInput->targetedAmount,
-                    '0.00',
+                    $updateABudgetEnvelopeTargetedAmountInput->targetedAmount,
+                    $updateABudgetEnvelopeTargetedAmountInput->currentAmount,
                 ),
+                BudgetEnvelopeId::fromString($uuid),
+                BudgetEnvelopeUserId::fromString($user->getUuid()),
             ),
         );
 

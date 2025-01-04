@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\BudgetEnvelopeManagement\Domain\Exceptions;
 
-final class BudgetEnvelopeCurrentBudgetException extends \LogicException
+final class BudgetEnvelopeCurrentAmountException extends \LogicException
 {
     private function __construct(
         string $message,

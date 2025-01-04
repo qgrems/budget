@@ -8,6 +8,9 @@ export function useTranslation() {
     const { language, setLanguage } = useLanguage()
 
     const t = useCallback((key: string) => {
+        if (typeof key !== 'string') {
+            return key;
+        }
         const keys = key?.split('.')
         let value: any = translations[language]
         if (!keys) {

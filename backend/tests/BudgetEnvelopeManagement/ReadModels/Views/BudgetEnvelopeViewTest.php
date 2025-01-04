@@ -13,14 +13,14 @@ class BudgetEnvelopeViewTest extends TestCase
     {
         $envelopeView = new BudgetEnvelopeView();
         $envelopeView->setUuid('b7e685be-db83-4866-9f85-102fac30a50b')
-            ->setCurrentBudget('500.00')
-            ->setTargetBudget('1000.00')
+            ->setCurrentAmount('500.00')
+            ->setTargetedAmount('1000.00')
             ->setName('Test Envelope');
 
         $expected = [
             'uuid' => 'b7e685be-db83-4866-9f85-102fac30a50b',
-            'currentBudget' => '500.00',
-            'targetBudget' => '1000.00',
+            'currentAmount' => '500.00',
+            'targetedAmount' => '1000.00',
             'name' => 'Test Envelope',
         ];
 

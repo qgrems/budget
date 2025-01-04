@@ -12,7 +12,7 @@ use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeNameAlreadyExis
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeName;
-use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeTargetBudget;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\CreateABudgetEnvelopeInput;
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeView;
@@ -52,7 +52,10 @@ class CreateABudgetEnvelopeCommandHandlerTest extends TestCase
             BudgetEnvelopeId::fromString($createABudgetEnvelopeInput->uuid),
             BudgetEnvelopeUserId::fromString('d26cc02e-99e7-428c-9d61-572dff3f84a7'),
             BudgetEnvelopeName::fromString($createABudgetEnvelopeInput->name),
-            BudgetEnvelopeTargetBudget::fromString($createABudgetEnvelopeInput->targetBudget),
+            BudgetEnvelopeTargetedAmount::fromString(
+                $createABudgetEnvelopeInput->targetedAmount,
+                '0.00',
+            ),
         );
 
         $this->eventStore->expects($this->once())->method('load')->willThrowException(new \RuntimeException());
@@ -72,15 +75,18 @@ class CreateABudgetEnvelopeCommandHandlerTest extends TestCase
             BudgetEnvelopeId::fromString($createABudgetEnvelopeInput->uuid),
             BudgetEnvelopeUserId::fromString('d26cc02e-99e7-428c-9d61-572dff3f84a7'),
             BudgetEnvelopeName::fromString($createABudgetEnvelopeInput->name),
-            BudgetEnvelopeTargetBudget::fromString($createABudgetEnvelopeInput->targetBudget),
+            BudgetEnvelopeTargetedAmount::fromString(
+                $createABudgetEnvelopeInput->targetedAmount,
+                '0.00',
+            ),
         );
 
         $envelopeView = BudgetEnvelopeView::fromRepository(
             [
                 'uuid' => 'be0c3a86-c3c9-467f-b675-3f519fd96111',
                 'name' => 'another envelope name',
-                'target_budget' => '300.00',
-                'current_budget' => '150.00',
+                'targeted_amount' => '300.00',
+                'current_amount' => '150.00',
                 'user_uuid' => 'd26cc02e-99e7-428c-9d61-572dff3f84a7',
                 'created_at' => (new \DateTime())->format('Y-m-d H:i:s'),
                 'updated_at' => (new \DateTime())->format('Y-m-d H:i:s'),
@@ -109,7 +115,10 @@ class CreateABudgetEnvelopeCommandHandlerTest extends TestCase
             BudgetEnvelopeId::fromString($createABudgetEnvelopeInput->uuid),
             BudgetEnvelopeUserId::fromString('d26cc02e-99e7-428c-9d61-572dff3f84a7'),
             BudgetEnvelopeName::fromString($createABudgetEnvelopeInput->name),
-            BudgetEnvelopeTargetBudget::fromString($createABudgetEnvelopeInput->targetBudget),
+            BudgetEnvelopeTargetedAmount::fromString(
+                $createABudgetEnvelopeInput->targetedAmount,
+                '0.00',
+            ),
         );
 
         $this->eventStore->expects($this->once())->method('load')->willReturn(
@@ -123,7 +132,7 @@ class CreateABudgetEnvelopeCommandHandlerTest extends TestCase
                         'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                         'occurredOn' => '2024-12-07T22:03:35+00:00',
                         'aggregateId' => $createABudgetEnvelopeInput->uuid,
-                        'targetBudget' => '20.00',
+                        'targetedAmount' => '20.00',
                     ]),
                 ],
             ],

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\BudgetEnvelopeManagement\Domain\Exceptions;
 
-final class BudgetEnvelopeTargetBudgetException extends \LogicException
+final class BudgetEnvelopeTargetedAmountException extends \LogicException
 {
     private function __construct(
         string $message,
@@ -17,7 +17,15 @@ final class BudgetEnvelopeTargetBudgetException extends \LogicException
     public static function isBelowZero(): self
     {
         return new self(
-            'envelopes.targetBudgetIsBelowZero',
+            'envelopes.targetedAmountIsBelowZero',
+            400,
+        );
+    }
+
+    public static function isBelowCurrentAmount(): self
+    {
+        return new self(
+            'envelopes.targetedAmountIsBelowCurrentAmount',
             400,
         );
     }

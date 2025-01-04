@@ -15,8 +15,8 @@ export default function DashboardGraph({ envelopesData }: DashboardGraphProps) {
 
     const data = envelopesData.envelopes.map(envelope => ({
         name: envelope.name,
-        current: parseFloat(envelope.currentBudget),
-        target: parseFloat(envelope.targetBudget)
+        current: parseFloat(envelope.currentAmount),
+        target: parseFloat(envelope.targetedAmount)
     }))
 
     return (
@@ -44,8 +44,8 @@ export default function DashboardGraph({ envelopesData }: DashboardGraphProps) {
                     <YAxis tick={{ fontSize: 12 }} />
                     <Tooltip />
                     <Legend wrapperStyle={{ fontSize: 12 }} />
-                    <Bar dataKey="current" fill="#8884d8" name={t('dashboard.currentBudget')} />
-                    <Bar dataKey="target" fill="#82ca9d" name={t('dashboard.targetBudget')} />
+                    <Bar dataKey="current" fill="#8884d8" name={t('dashboard.currentAmount')} />
+                    <Bar dataKey="target" fill="#82ca9d" name={t('dashboard.targetedAmount')} />
                 </BarChart>
             </ResponsiveContainer>
         </div>

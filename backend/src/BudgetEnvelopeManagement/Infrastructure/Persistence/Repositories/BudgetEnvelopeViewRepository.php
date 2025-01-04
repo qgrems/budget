@@ -30,12 +30,12 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
     public function save(BudgetEnvelopeViewInterface $budgetEnvelope): void
     {
         $this->connection->executeStatement('
-    INSERT INTO budget_envelope_view (uuid, created_at, updated_at, current_budget, target_budget, name, user_uuid, is_deleted)
-    VALUES (:uuid, :created_at, :updated_at, :current_budget, :target_budget, :name, :user_uuid, :is_deleted)
+    INSERT INTO budget_envelope_view (uuid, created_at, updated_at, current_amount, targeted_amount, name, user_uuid, is_deleted)
+    VALUES (:uuid, :created_at, :updated_at, :current_amount, :targeted_amount, :name, :user_uuid, :is_deleted)
     ON DUPLICATE KEY UPDATE
         updated_at = VALUES(updated_at),
-        current_budget = VALUES(current_budget),
-        target_budget = VALUES(target_budget),
+        current_amount = VALUES(current_amount),
+        targeted_amount = VALUES(targeted_amount),
         name = VALUES(name),
         user_uuid = VALUES(user_uuid),
         is_deleted = VALUES(is_deleted)
@@ -43,8 +43,8 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
             'uuid' => $budgetEnvelope->getUuid(),
             'created_at' => $budgetEnvelope->getCreatedAt()->format(\DateTimeImmutable::ATOM),
             'updated_at' => $budgetEnvelope->getUpdatedAt()->format(\DateTime::ATOM),
-            'current_budget' => $budgetEnvelope->getCurrentBudget(),
-            'target_budget' => $budgetEnvelope->getTargetBudget(),
+            'current_amount' => $budgetEnvelope->getCurrentAmount(),
+            'targeted_amount' => $budgetEnvelope->getTargetedAmount(),
             'name' => $budgetEnvelope->getName(),
             'user_uuid' => $budgetEnvelope->getUserUuid(),
             'is_deleted' => $budgetEnvelope->isDeleted() ? 1 : 0,
@@ -80,7 +80,7 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
     public function findOneEnvelopeWithHistoryBy(array $criteria, ?array $orderBy = null): array
     {
         $sql = sprintf(
-            'SELECT ev.uuid, ev.created_at, ev.updated_at, ev.current_budget, ev.target_budget, ev.name, ev.user_uuid, ev.is_deleted, ehv.aggregate_id, ehv.created_at AS history_created_at, ehv.monetary_amount, ehv.transaction_type
+            'SELECT ev.uuid, ev.created_at, ev.updated_at, ev.current_amount, ev.targeted_amount, ev.name, ev.user_uuid, ev.is_deleted, ehv.aggregate_id, ehv.created_at AS history_created_at, ehv.monetary_amount, ehv.transaction_type
          FROM budget_envelope_view ev
          LEFT JOIN budget_envelope_history_view ehv ON ev.uuid = ehv.aggregate_id
          WHERE %s

@@ -7,6 +7,7 @@ use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeCreditedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDebitedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDeletedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeRenamedEvent;
+use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeTargetedAmountUpdatedEvent;
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeHistoryViewRepositoryInterface;
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
 use App\BudgetEnvelopeManagement\ReadModels\Projections\BudgetEnvelopeProjection;
@@ -39,8 +40,8 @@ class BudgetEnvelopeProjectionTest extends TestCase
                     && $view->getCreatedAt() == $event->occurredOn()
                     && $view->getUpdatedAt() == \DateTime::createFromImmutable($event->occurredOn())
                     && false === $view->isDeleted()
-                    && $view->getTargetBudget() === $event->getTargetBudget()
-                    && '0.00' === $view->getCurrentBudget()
+                    && $view->getTargetedAmount() === $event->getTargetedAmount()
+                    && '0.00' === $view->getCurrentAmount()
                     && $view->getName() === $event->getName()
                     && $view->getUserUuid() === $event->getUserId();
             }));
@@ -53,7 +54,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
         $event = new BudgetEnvelopeCreditedEvent('b7e685be-db83-4866-9f85-102fac30a50b', '500.00');
         $envelopeView = new BudgetEnvelopeView();
         $envelopeView->setUuid($event->getAggregateId());
-        $envelopeView->setCurrentBudget('1000.00');
+        $envelopeView->setCurrentAmount('1000.00');
         $envelopeView->setUserUuid('1ced5c7e-fd3a-4a36-808e-75ddc478f67b');
         $envelopeHistory = new BudgetEnvelopeHistoryView();
         $envelopeHistory
@@ -80,7 +81,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
         $event = new BudgetEnvelopeCreditedEvent('b7e685be-db83-4866-9f85-102fac30a50b', '500.00');
         $envelopeView = new BudgetEnvelopeView();
         $envelopeView->setUuid($event->getAggregateId());
-        $envelopeView->setCurrentBudget('1000.00');
+        $envelopeView->setCurrentAmount('1000.00');
 
         $this->envelopeViewRepository->expects($this->once())
             ->method('findOneBy')
@@ -95,7 +96,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
         $event = new BudgetEnvelopeDebitedEvent('b7e685be-db83-4866-9f85-102fac30a50b', '500.00');
         $envelopeView = new BudgetEnvelopeView();
         $envelopeView->setUuid($event->getAggregateId());
-        $envelopeView->setCurrentBudget('1000.00');
+        $envelopeView->setCurrentAmount('1000.00');
         $envelopeView->setUserUuid('1ced5c7e-fd3a-4a36-808e-75ddc478f67b');
         $envelopeHistory = new BudgetEnvelopeHistoryView();
         $envelopeHistory
@@ -122,7 +123,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
         $event = new BudgetEnvelopeDebitedEvent('b7e685be-db83-4866-9f85-102fac30a50b', '500.00');
         $envelopeView = new BudgetEnvelopeView();
         $envelopeView->setUuid($event->getAggregateId());
-        $envelopeView->setCurrentBudget('1000.00');
+        $envelopeView->setCurrentAmount('1000.00');
 
         $this->envelopeViewRepository->expects($this->once())
             ->method('findOneBy')
@@ -184,6 +185,21 @@ class BudgetEnvelopeProjectionTest extends TestCase
             ->method('findOneBy')
             ->with(['uuid' => $event->getAggregateId(), 'is_deleted' => false])
             ->willReturn(null);
+
+        $this->budgetEnvelopeProjection->__invoke($event);
+    }
+
+    public function testHandleEnvelopeTargetedAmountUpdatedEvent(): void
+    {
+        $event = new BudgetEnvelopeTargetedAmountUpdatedEvent('b7e685be-db83-4866-9f85-102fac30a50b', '1000.00');
+        $envelopeView = new BudgetEnvelopeView();
+        $envelopeView->setUuid($event->getAggregateId());
+        $envelopeView->setTargetedAmount('500.00');
+
+        $this->envelopeViewRepository->expects($this->once())
+            ->method('findOneBy')
+            ->with(['uuid' => $event->getAggregateId(), 'is_deleted' => false])
+            ->willReturn($envelopeView);
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
