@@ -6,7 +6,7 @@ namespace App\BudgetEnvelopeManagement\ReadModels\Views;
 
 interface BudgetEnvelopeViewInterface
 {
-    public static function createFromRepository(array $budgetEnvelope): self;
+    public static function fromRepository(array $budgetEnvelope): self;
 
     public function getUuid(): string;
 

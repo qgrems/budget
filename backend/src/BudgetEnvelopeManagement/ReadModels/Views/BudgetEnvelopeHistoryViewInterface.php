@@ -26,11 +26,5 @@ interface BudgetEnvelopeHistoryViewInterface
 
     public function setTransactionType(string $transactionType): self;
 
-    public static function create(
-        string $aggregateId,
-        \DateTimeImmutable $createdAt,
-        string $monetaryAmount,
-        string $transactionType,
-        string $userUuid,
-    ): self;
+    public static function fromRepository(array $budgetEnvelopeHistory): self;
 }

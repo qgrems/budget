@@ -9,22 +9,23 @@ use PHPUnit\Framework\TestCase;
 
 class BudgetEnvelopeHistoryViewTest extends TestCase
 {
-    public function testCreate(): void
+    public function testFromRepository(): void
     {
-        $aggregateId = '28b708ef-3192-421f-a94f-706d40bd0479';
-        $createdAt = new \DateTimeImmutable('2024-12-31 00:19:44');
-        $monetaryAmount = '400.00';
-        $transactionType = 'credit';
-        $userUuid = '12ebaf73-7722-4013-b31f-9450a4105492';
+        $data = [
+            'aggregate_id' => '28b708ef-3192-421f-a94f-706d40bd0479',
+            'created_at' => '2024-12-31 00:19:44',
+            'monetary_amount' => '400.00',
+            'transaction_type' => 'credit',
+            'user_uuid' => '12ebaf73-7722-4013-b31f-9450a4105492',
+        ];
 
-        $historyView = BudgetEnvelopeHistoryView::create($aggregateId, $createdAt, $monetaryAmount, $transactionType, $userUuid);
+        $historyView = BudgetEnvelopeHistoryView::fromRepository($data);
 
-        $this->assertInstanceOf(BudgetEnvelopeHistoryView::class, $historyView);
-        $this->assertEquals($aggregateId, $historyView->getAggregateId());
-        $this->assertEquals($createdAt, $historyView->getCreatedAt());
-        $this->assertEquals($monetaryAmount, $historyView->getMonetaryAmount());
-        $this->assertEquals($transactionType, $historyView->getTransactionType());
-        $this->assertEquals($userUuid, $historyView->getUserUuid());
+        $this->assertEquals($data['aggregate_id'], $historyView->getAggregateId());
+        $this->assertEquals(new \DateTimeImmutable($data['created_at']), $historyView->getCreatedAt());
+        $this->assertEquals($data['monetary_amount'], $historyView->getMonetaryAmount());
+        $this->assertEquals($data['transaction_type'], $historyView->getTransactionType());
+        $this->assertEquals($data['user_uuid'], $historyView->getUserUuid());
     }
 
     public function testSettersAndGetters(): void
@@ -57,22 +58,18 @@ class BudgetEnvelopeHistoryViewTest extends TestCase
 
     public function testJsonSerialize(): void
     {
-        $aggregateId = '28b708ef-3192-421f-a94f-706d40bd0479';
         $createdAt = new \DateTimeImmutable('2024-12-31 00:19:44');
-        $monetaryAmount = '400.00';
-        $transactionType = 'credit';
-        $userUuid = '12ebaf73-7722-4013-b31f-9450a4105492';
+        $historyView = new BudgetEnvelopeHistoryView()
+            ->setMonetaryAmount('400.00')
+            ->setTransactionType('credit')
+            ->setCreatedAt($createdAt);
 
-        $historyView = BudgetEnvelopeHistoryView::create($aggregateId, $createdAt, $monetaryAmount, $transactionType, $userUuid);
-
-        $expectedJson = [
-            'aggregate_id' => $aggregateId,
+        $expected = [
             'created_at' => $createdAt->format('Y-m-d H:i:s'),
-            'monetary_amount' => $monetaryAmount,
-            'transaction_type' => $transactionType,
-            'user_uuid' => $userUuid,
+            'monetary_amount' => '400.00',
+            'transaction_type' => 'credit',
         ];
 
-        $this->assertEquals($expectedJson, $historyView->jsonSerialize());
+        $this->assertEquals($expected, $historyView->jsonSerialize());
     }
 }

@@ -48,7 +48,7 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
     }
 
     #[\Override]
-    public static function createFromRepository(array $budgetEnvelope): self
+    public static function fromRepository(array $budgetEnvelope): self
     {
         return new self()
             ->setCurrentBudget($budgetEnvelope['current_budget'])

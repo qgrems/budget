@@ -5,20 +5,29 @@ declare(strict_types=1);
 namespace App\BudgetEnvelopeManagement\Application\Queries;
 
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\QueryInterface;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 
 final readonly class GetABudgetEnvelopeWithItsHistoryQuery implements QueryInterface
 {
-    public function __construct(private string $budgetEnvelopeUuid, private string $userUuid)
-    {
+    private string $budgetEnvelopeId;
+    private string $budgetEnvelopeUserId;
+
+    public function __construct(
+        BudgetEnvelopeId $budgetEnvelopeId,
+        BudgetEnvelopeUserId $budgetEnvelopeUserId,
+    ) {
+        $this->budgetEnvelopeId = (string) $budgetEnvelopeId;
+        $this->budgetEnvelopeUserId = (string) $budgetEnvelopeUserId;
     }
 
-    public function getEnvelopeUuid(): string
+    public function getBudgetEnvelopeId(): BudgetEnvelopeId
     {
-        return $this->budgetEnvelopeUuid;
+        return BudgetEnvelopeId::fromString($this->budgetEnvelopeId);
     }
 
-    public function getUserUuid(): string
+    public function getBudgetEnvelopeUserId(): BudgetEnvelopeUserId
     {
-        return $this->userUuid;
+        return BudgetEnvelopeUserId::fromString($this->budgetEnvelopeUserId);
     }
 }

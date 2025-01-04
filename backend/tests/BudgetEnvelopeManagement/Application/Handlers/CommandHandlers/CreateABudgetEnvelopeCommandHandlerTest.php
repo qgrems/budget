@@ -75,7 +75,7 @@ class CreateABudgetEnvelopeCommandHandlerTest extends TestCase
             BudgetEnvelopeTargetBudget::fromString($createABudgetEnvelopeInput->targetBudget),
         );
 
-        $envelopeView = BudgetEnvelopeView::createFromRepository(
+        $envelopeView = BudgetEnvelopeView::fromRepository(
             [
                 'uuid' => 'be0c3a86-c3c9-467f-b675-3f519fd96111',
                 'name' => 'another envelope name',

@@ -5,20 +5,24 @@ declare(strict_types=1);
 namespace App\BudgetEnvelopeManagement\Application\Queries;
 
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\QueryInterface;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 
 final readonly class ListBudgetEnvelopesQuery implements QueryInterface
 {
+    private string $budgetEnvelopeUserId;
+
     public function __construct(
-        private string $userUuid,
+        BudgetEnvelopeUserId $budgetEnvelopeUserId,
         private ?array $orderBy = null,
         private ?int $limit = null,
         private ?int $offset = null,
     ) {
+        $this->budgetEnvelopeUserId = (string) $budgetEnvelopeUserId;
     }
 
-    public function getUserUuid(): string
+    public function getBudgetEnvelopeUserId(): BudgetEnvelopeUserId
     {
-        return $this->userUuid;
+        return BudgetEnvelopeUserId::fromString($this->budgetEnvelopeUserId);
     }
 
     public function getOrderBy(): ?array

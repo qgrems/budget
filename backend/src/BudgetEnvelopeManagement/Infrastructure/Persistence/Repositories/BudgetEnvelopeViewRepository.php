@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\BudgetEnvelopeManagement\Infrastructure\Persistence\Repositories;
 
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
+use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeHistoryView;
+use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeHistoryViewInterface;
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeView;
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeViewInterface;
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopesPaginated;
@@ -68,7 +70,7 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
         $stmt = $this->connection->prepare($sql);
         $result = $stmt->executeQuery($criteria)->fetchAssociative();
 
-        return $result ? BudgetEnvelopeView::createFromRepository($result) : null;
+        return $result ? BudgetEnvelopeView::fromRepository($result) : null;
     }
 
     /**
@@ -99,18 +101,21 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
             $budgetEnvelopeData['transaction_type'],
             $budgetEnvelopeData['history_created_at']
         );
-        $historyData = array_map(function ($row) {
-            return [
-                'aggregate_id' => $row['aggregate_id'],
-                'created_at' => $row['history_created_at'],
-                'monetary_amount' => $row['monetary_amount'],
-                'transaction_type' => $row['transaction_type'],
-            ];
-        }, $result);
 
         return [
-            'envelope' => $budgetEnvelopeData,
-            'history' => $historyData,
+            'envelope' => BudgetEnvelopeView::fromRepository($budgetEnvelopeData),
+            'history' => array_map(
+                [$this, 'mapToBudgetEnvelopeHistoryView'],
+                array_map(function ($row) {
+                    return [
+                        'aggregate_id' => $row['aggregate_id'],
+                        'user_uuid' => $row['user_uuid'],
+                        'created_at' => $row['history_created_at'],
+                        'monetary_amount' => $row['monetary_amount'],
+                        'transaction_type' => $row['transaction_type'],
+                    ];
+                }, $result)
+            ),
         ];
     }
 
@@ -155,7 +160,7 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
         $count = $query->rowCount();
 
         return new BudgetEnvelopesPaginated(
-            array_map([$this, 'mapToEnvelopeView'], $results),
+            array_map([$this, 'mapToBudgetEnvelopeView'], $results),
             $count,
         );
     }
@@ -183,8 +188,13 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
         return array_filter($criteria, fn ($value) => null !== $value);
     }
 
-    private function mapToEnvelopeView(array $data): BudgetEnvelopeViewInterface
+    private function mapToBudgetEnvelopeView(array $data): BudgetEnvelopeViewInterface
     {
-        return BudgetEnvelopeView::createFromRepository($data);
+        return BudgetEnvelopeView::fromRepository($data);
+    }
+
+    private function mapToBudgetEnvelopeHistoryView(array $data): BudgetEnvelopeHistoryViewInterface
+    {
+        return BudgetEnvelopeHistoryView::fromRepository($data);
     }
 }

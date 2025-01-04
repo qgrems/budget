@@ -25,11 +25,11 @@ final class BudgetEnvelope
 {
     private BudgetEnvelopeId $budgetEnvelopeId;
     private BudgetEnvelopeUserId $userId;
-    private \DateTime $updatedAt;
-    private \DateTimeImmutable $createdAt;
     private BudgetEnvelopeCurrentBudget $budgetEnvelopeCurrentBudget;
     private BudgetEnvelopeTargetBudget $budgetEnvelopeTargetBudget;
     private BudgetEnvelopeName $budgetEnvelopeName;
+    private \DateTime $updatedAt;
+    private \DateTimeImmutable $createdAt;
     private bool $isDeleted;
     private array $uncommittedEvents = [];
 
@@ -90,7 +90,7 @@ final class BudgetEnvelope
     public function rename(
         BudgetEnvelopeName $budgetEnvelopeName,
         BudgetEnvelopeUserId $budgetEnvelopeUserId,
-        BudgetEnvelopeId  $budgetEnvelopeId,
+        BudgetEnvelopeId $budgetEnvelopeId,
         BudgetEnvelopeViewRepositoryInterface $budgetEnvelopeViewRepository,
     ): void {
         $this->assertNotDeleted();

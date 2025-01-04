@@ -99,7 +99,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
             ]);
 
         $this->envelopeViewRepository->expects($this->once())->method('findOneBy')->willReturn(
-            BudgetEnvelopeView::createFromRepository(
+            BudgetEnvelopeView::fromRepository(
                 [
                     'uuid' => 'be0c3a86-c3c9-467f-b675-3f519fd96111',
                     'name' => 'test',

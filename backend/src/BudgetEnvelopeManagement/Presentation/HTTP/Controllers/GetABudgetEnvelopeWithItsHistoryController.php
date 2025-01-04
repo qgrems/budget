@@ -6,6 +6,8 @@ namespace App\BudgetEnvelopeManagement\Presentation\HTTP\Controllers;
 
 use App\BudgetEnvelopeManagement\Application\Queries\GetABudgetEnvelopeWithItsHistoryQuery;
 use App\BudgetEnvelopeManagement\Domain\Ports\Outbound\QueryBusInterface;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\SharedContext\Domain\Ports\Inbound\SharedUserInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,8 +31,8 @@ final readonly class GetABudgetEnvelopeWithItsHistoryController
         return new JsonResponse(
             $this->queryBus->query(
                 new GetABudgetEnvelopeWithItsHistoryQuery(
-                    $uuid,
-                    $user->getUuid(),
+                    BudgetEnvelopeId::fromString($uuid),
+                    BudgetEnvelopeUserId::fromString($user->getUuid()),
                 ),
             ),
             Response::HTTP_OK,
