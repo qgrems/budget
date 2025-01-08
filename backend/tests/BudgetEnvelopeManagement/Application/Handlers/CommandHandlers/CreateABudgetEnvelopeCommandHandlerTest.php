@@ -18,6 +18,7 @@ use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\CreateABudgetEnvelopeInp
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeView;
 use App\SharedContext\EventStore\EventStoreInterface;
 use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
+use App\Tests\CreateEventGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -58,7 +59,7 @@ class CreateABudgetEnvelopeCommandHandlerTest extends TestCase
             ),
         );
 
-        $this->eventStore->expects($this->once())->method('load')->willThrowException(new \RuntimeException());
+        $this->eventStore->expects($this->once())->method('load')->willReturn(CreateEventGenerator::create([]));
         $this->eventStore->expects($this->once())->method('save');
 
         $this->createABudgetEnvelopeCommandHandler->__invoke($createABudgetEnvelopeCommand);
@@ -94,7 +95,6 @@ class CreateABudgetEnvelopeCommandHandlerTest extends TestCase
             ]
         );
 
-        $this->eventStore->expects($this->once())->method('load')->willThrowException(new \RuntimeException());
         $this->envelopeViewRepository->expects($this->once())->method('findOneBy')->willReturn($envelopeView);
         $this->eventStore->expects($this->never())->method('save');
 
@@ -122,20 +122,22 @@ class CreateABudgetEnvelopeCommandHandlerTest extends TestCase
         );
 
         $this->eventStore->expects($this->once())->method('load')->willReturn(
-            [
+            CreateEventGenerator::create(
                 [
-                    'aggregate_id' => $createABudgetEnvelopeInput->uuid,
-                    'type' => BudgetEnvelopeCreatedEvent::class,
-                    'occurred_on' => '2020-10-10T12:00:00Z',
-                    'payload' => json_encode([
-                        'name' => 'test1',
-                        'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
-                        'occurredOn' => '2024-12-07T22:03:35+00:00',
-                        'aggregateId' => $createABudgetEnvelopeInput->uuid,
-                        'targetedAmount' => '20.00',
-                    ]),
+                    [
+                        'aggregate_id' => $createABudgetEnvelopeInput->uuid,
+                        'type' => BudgetEnvelopeCreatedEvent::class,
+                        'occurred_on' => '2020-10-10T12:00:00Z',
+                        'payload' => json_encode([
+                            'name' => 'test1',
+                            'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
+                            'occurredOn' => '2024-12-07T22:03:35+00:00',
+                            'aggregateId' => $createABudgetEnvelopeInput->uuid,
+                            'targetedAmount' => '20.00',
+                        ]),
+                    ],
                 ],
-            ],
+            ),
         );
         $this->eventStore->expects($this->never())->method('save');
 

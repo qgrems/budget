@@ -17,13 +17,16 @@ final readonly class DebitABudgetEnvelopeCommandHandler
 
     public function __invoke(DebitABudgetEnvelopeCommand $debitABudgetEnvelopeCommand): void
     {
-        $events = $this->eventSourcedRepository->get((string) $debitABudgetEnvelopeCommand->getBudgetEnvelopeId());
-        $aggregate = BudgetEnvelope::fromEvents(array_map(fn ($event) => $event, $events));
+        $aggregate = BudgetEnvelope::fromEvents(
+            $this->eventSourcedRepository->get(
+                (string) $debitABudgetEnvelopeCommand->getBudgetEnvelopeId(),
+            ),
+        );
         $aggregate->debit(
             $debitABudgetEnvelopeCommand->getBudgetEnvelopeDebitMoney(),
             $debitABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
         );
-        $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
-        $aggregate->clearUncommitedEvent();
+        $this->eventSourcedRepository->save($aggregate->raisedEvents());
+        $aggregate->clearRaisedEvents();
     }
 }

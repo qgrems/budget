@@ -21,9 +21,12 @@ use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeName;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\SharedContext\Domain\Ports\Inbound\EventInterface;
+use App\SharedContext\Traits\EventsCapability;
 
 final class BudgetEnvelope
 {
+    use EventsCapability;
+
     private BudgetEnvelopeId $budgetEnvelopeId;
     private BudgetEnvelopeUserId $userId;
     private BudgetEnvelopeCurrentAmount $budgetEnvelopeCurrentAmount;
@@ -32,18 +35,17 @@ final class BudgetEnvelope
     private \DateTime $updatedAt;
     private \DateTimeImmutable $createdAt;
     private bool $isDeleted;
-    private array $uncommittedEvents = [];
 
     private function __construct()
     {
     }
 
-    public static function fromEvents(array $events): self
+    public static function fromEvents(\Generator $events): self
     {
         $aggregate = new self();
 
         foreach ($events as $event) {
-            $aggregate->applyEvent($event['type']::fromArray(json_decode($event['payload'], true)));
+            $aggregate->apply($event['type']::fromArray(json_decode($event['payload'], true)));
         }
 
         return $aggregate;
@@ -64,17 +66,15 @@ final class BudgetEnvelope
             throw new BudgetEnvelopeNameAlreadyExistsForUserException(BudgetEnvelopeNameAlreadyExistsForUserException::MESSAGE, 400);
         }
 
-        $aggregate = new self();
-
-        $event = new BudgetEnvelopeCreatedEvent(
+        $budgetEnvelopeCreatedEvent = new BudgetEnvelopeCreatedEvent(
             (string) $budgetEnvelopeId,
             (string) $budgetEnvelopeUserId,
             (string) $budgetEnvelopeName,
             (string) $budgetEnvelopeTargetedAmount,
         );
-
-        $aggregate->applyEvent($event);
-        $aggregate->recordEvent($event);
+        $aggregate = new self();
+        $aggregate->apply($budgetEnvelopeCreatedEvent);
+        $aggregate->raise($budgetEnvelopeCreatedEvent);
 
         return $aggregate;
     }
@@ -87,7 +87,6 @@ final class BudgetEnvelope
     ): void {
         $this->assertNotDeleted();
         $this->assertOwnership($budgetEnvelopeUserId);
-
         $budgetEnvelope = $budgetEnvelopeViewRepository->findOneBy(
             [
                 'user_uuid' => (string) $budgetEnvelopeUserId,
@@ -100,13 +99,12 @@ final class BudgetEnvelope
             throw new BudgetEnvelopeNameAlreadyExistsForUserException(BudgetEnvelopeNameAlreadyExistsForUserException::MESSAGE, 400);
         }
 
-        $event = new BudgetEnvelopeRenamedEvent(
+        $budgetEnvelopeRenamedEvent = new BudgetEnvelopeRenamedEvent(
             (string) $this->budgetEnvelopeId,
             (string) $budgetEnvelopeName,
         );
-
-        $this->applyEvent($event);
-        $this->recordEvent($event);
+        $this->apply($budgetEnvelopeRenamedEvent);
+        $this->raise($budgetEnvelopeRenamedEvent);
     }
 
     public function credit(BudgetEnvelopeCreditMoney $budgetEnvelopeCreditMoney, BudgetEnvelopeUserId $userId): void
@@ -114,13 +112,13 @@ final class BudgetEnvelope
         $this->assertNotDeleted();
         $this->assertOwnership($userId);
 
-        $event = new BudgetEnvelopeCreditedEvent(
+        $budgetEnvelopeCreditedEvent = new BudgetEnvelopeCreditedEvent(
             (string) $this->budgetEnvelopeId,
             (string) $budgetEnvelopeCreditMoney,
         );
 
-        $this->applyEvent($event);
-        $this->recordEvent($event);
+        $this->apply($budgetEnvelopeCreditedEvent);
+        $this->raise($budgetEnvelopeCreditedEvent);
     }
 
     public function debit(BudgetEnvelopeDebitMoney $budgetEnvelopeDebitMoney, BudgetEnvelopeUserId $userId): void
@@ -128,13 +126,13 @@ final class BudgetEnvelope
         $this->assertNotDeleted();
         $this->assertOwnership($userId);
 
-        $event = new BudgetEnvelopeDebitedEvent(
+        $budgetEnvelopeDeditedEvent = new BudgetEnvelopeDebitedEvent(
             (string) $this->budgetEnvelopeId,
             (string) $budgetEnvelopeDebitMoney,
         );
 
-        $this->applyEvent($event);
-        $this->recordEvent($event);
+        $this->apply($budgetEnvelopeDeditedEvent);
+        $this->raise($budgetEnvelopeDeditedEvent);
     }
 
     public function delete(BudgetEnvelopeUserId $userId): void
@@ -142,13 +140,13 @@ final class BudgetEnvelope
         $this->assertNotDeleted();
         $this->assertOwnership($userId);
 
-        $event = new BudgetEnvelopeDeletedEvent(
+        $budgetEnvelopeDeletedEvent = new BudgetEnvelopeDeletedEvent(
             (string) $this->budgetEnvelopeId,
             true,
         );
 
-        $this->applyEvent($event);
-        $this->recordEvent($event);
+        $this->apply($budgetEnvelopeDeletedEvent);
+        $this->raise($budgetEnvelopeDeletedEvent);
     }
 
     public function updateTargetedAmount(BudgetEnvelopeTargetedAmount $budgetEnvelopeTargetedAmount, BudgetEnvelopeUserId $userId): void
@@ -156,26 +154,16 @@ final class BudgetEnvelope
         $this->assertNotDeleted();
         $this->assertOwnership($userId);
 
-        $event = new BudgetEnvelopeTargetedAmountUpdatedEvent(
+        $budgetEnvelopeTargetedAmountUpdatedEvent = new BudgetEnvelopeTargetedAmountUpdatedEvent(
             (string) $this->budgetEnvelopeId,
             (string) $budgetEnvelopeTargetedAmount,
         );
 
-        $this->applyEvent($event);
-        $this->recordEvent($event);
+        $this->apply($budgetEnvelopeTargetedAmountUpdatedEvent);
+        $this->raise($budgetEnvelopeTargetedAmountUpdatedEvent);
     }
 
-    public function getUncommittedEvents(): array
-    {
-        return $this->uncommittedEvents;
-    }
-
-    public function clearUncommitedEvent(): void
-    {
-        $this->uncommittedEvents = [];
-    }
-
-    private function applyEvent(EventInterface $event): void
+    private function apply(EventInterface $event): void
     {
         match (get_class($event)) {
             BudgetEnvelopeCreatedEvent::class => $this->applyCreatedEvent($event),
@@ -261,10 +249,5 @@ final class BudgetEnvelope
         if ($this->isDeleted) {
             throw InvalidBudgetEnvelopeOperationException::operationOnDeletedEnvelope();
         }
-    }
-
-    private function recordEvent(EventInterface $event): void
-    {
-        $this->uncommittedEvents[] = $event;
     }
 }

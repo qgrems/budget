@@ -3,6 +3,7 @@
 namespace App\UserManagement\Domain\Aggregates;
 
 use App\SharedContext\Domain\Ports\Inbound\EventInterface;
+use App\SharedContext\Traits\EventsCapability;
 use App\UserManagement\Domain\Events\UserSignedUpEvent;
 use App\UserManagement\Domain\Events\UserDeletedEvent;
 use App\UserManagement\Domain\Events\UserFirstnameUpdatedEvent;
@@ -23,42 +24,31 @@ use App\UserManagement\Domain\ValueObjects\UserPassword;
 
 final class User
 {
+    use EventsCapability;
+
     private UserId $userId;
-
     private UserEmail $email;
-
     private UserPassword $password;
-
     private UserFirstname $firstname;
-
     private UserLastname $lastname;
-
     private UserConsent $consentGiven;
-
     private \DateTimeImmutable $consentDate;
-
     private \DateTimeImmutable $createdAt;
-
     private \DateTime $updatedAt;
-
     private array $roles = ['ROLE_USER'];
-
     private ?UserPasswordResetToken $passwordResetToken;
-
     private ?\DateTimeImmutable $passwordResetTokenExpiry;
-
-    private array $uncommittedEvents = [];
 
     private function __construct()
     {
     }
 
-    public static function fromEvents(array $events): self
+    public static function fromEvents(\Generator $events): self
     {
         $aggregate = new self();
 
         foreach ($events as $event) {
-            $aggregate->applyEvent($event['type']::fromArray(json_decode($event['payload'], true)));
+            $aggregate->apply($event['type']::fromArray(json_decode($event['payload'], true)));
         }
 
         return $aggregate;
@@ -79,7 +69,7 @@ final class User
 
         $aggregate = new self();
 
-        $event = new UserSignedUpEvent(
+        $userSignedUpEvent = new UserSignedUpEvent(
             (string) $userId,
             (string) $email,
             (string) $password,
@@ -89,8 +79,8 @@ final class User
             $aggregate->roles,
         );
 
-        $aggregate->applyEvent($event);
-        $aggregate->recordEvent($event);
+        $aggregate->apply($userSignedUpEvent);
+        $aggregate->raise($userSignedUpEvent);
 
         return $aggregate;
     }
@@ -99,66 +89,66 @@ final class User
     {
         $this->assertOwnership($userId);
 
-        $event = new UserFirstnameUpdatedEvent(
+        $userFirstnameUpdatedEvent = new UserFirstnameUpdatedEvent(
             (string) $this->userId,
             (string) $firstname,
         );
 
-        $this->applyEvent($event);
-        $this->recordEvent($event);
+        $this->apply($userFirstnameUpdatedEvent);
+        $this->raise($userFirstnameUpdatedEvent);
     }
 
     public function updateLastname(UserLastname $lastname, UserId $userId): void
     {
         $this->assertOwnership($userId);
 
-        $event = new UserLastnameUpdatedEvent(
+        $userLastnameUpdatedEvent = new UserLastnameUpdatedEvent(
             (string) $this->userId,
             (string) $lastname,
         );
 
-        $this->applyEvent($event);
-        $this->recordEvent($event);
+        $this->apply($userLastnameUpdatedEvent);
+        $this->raise($userLastnameUpdatedEvent);
     }
 
     public function delete(UserId $userId): void
     {
         $this->assertOwnership($userId);
 
-        $event = new UserDeletedEvent(
+        $userDeletedEvent = new UserDeletedEvent(
             (string) $this->userId,
         );
 
-        $this->applyEvent($event);
-        $this->recordEvent($event);
+        $this->apply($userDeletedEvent);
+        $this->raise($userDeletedEvent);
     }
 
     public function updatePassword(UserPassword $oldPassword, UserPassword $newPassword, UserId $userId): void
     {
         $this->assertOwnership($userId);
 
-        $event = new UserPasswordUpdatedEvent(
+        $userPasswordUpdatedEvent = new UserPasswordUpdatedEvent(
             (string) $this->userId,
             (string) $oldPassword,
             (string) $newPassword,
         );
 
-        $this->applyEvent($event);
-        $this->recordEvent($event);
+        $this->apply($userPasswordUpdatedEvent);
+        $this->raise($userPasswordUpdatedEvent);
     }
 
     public function setPasswordResetToken(UserPasswordResetToken $passwordResetToken, UserId $userId): void
     {
         $this->assertOwnership($userId);
 
-        $event = new UserPasswordResetRequestedEvent(
+        $userPasswordResetRequestedEvent = new UserPasswordResetRequestedEvent(
             (string) $this->userId,
             (string) $passwordResetToken,
             new \DateTimeImmutable('+1 hour'),
         );
 
-        $this->applyEvent($event);
-        $this->recordEvent($event);
+        $this->apply($userPasswordResetRequestedEvent);
+        $this->raise($userPasswordResetRequestedEvent);
     }
 
     public function resetPassword(UserPassword $password, UserId $userId): void
@@ -169,26 +159,16 @@ final class User
             throw InvalidUserOperationException::operationOnResetUserPassword();
         }
 
-        $event = new UserPasswordResetEvent(
+        $userPasswordResetEvent = new UserPasswordResetEvent(
             (string) $this->userId,
             (string) $password,
         );
 
-        $this->applyEvent($event);
-        $this->recordEvent($event);
+        $this->apply($userPasswordResetEvent);
+        $this->raise($userPasswordResetEvent);
     }
 
-    public function getUncommittedEvents(): array
-    {
-        return $this->uncommittedEvents;
-    }
-
-    public function clearUncommitedEvent(): void
-    {
-        $this->uncommittedEvents = [];
-    }
-
-    private function applyEvent(EventInterface $event): void
+    private function apply(EventInterface $event): void
     {
         match (get_class($event)) {
             UserSignedUpEvent::class => $this->applyCreatedEvent($event),
@@ -259,10 +239,5 @@ final class User
         if (!$this->userId->equals($userId)) {
             throw new \RuntimeException('users.notOwner');
         }
-    }
-
-    private function recordEvent(EventInterface $event): void
-    {
-        $this->uncommittedEvents[] = $event;
     }
 }

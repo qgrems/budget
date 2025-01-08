@@ -17,10 +17,13 @@ final readonly class DeleteAUserCommandHandler
 
     public function __invoke(DeleteAUserCommand $deleteAUserCommand): void
     {
-        $events = $this->eventSourcedRepository->get((string) $deleteAUserCommand->getUserId());
-        $aggregate = User::fromEvents(array_map(fn ($event) => $event, $events));
+        $aggregate = User::fromEvents(
+            $this->eventSourcedRepository->get(
+                (string) $deleteAUserCommand->getUserId(),
+            ),
+        );
         $aggregate->delete($deleteAUserCommand->getUserId());
-        $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
-        $aggregate->clearUncommitedEvent();
+        $this->eventSourcedRepository->save($aggregate->raisedEvents());
+        $aggregate->clearRaisedEvents();
     }
 }

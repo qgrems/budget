@@ -18,22 +18,16 @@ final readonly class EventStore implements EventStoreInterface
      * @throws Exception
      */
     #[\Override]
-    public function load(string $uuid): array
+    public function load(string $uuid): \Generator
     {
-        $events = $this->connection->createQueryBuilder()
-            ->select('*')
+        yield from $this->connection->createQueryBuilder()
+            ->select('aggregate_id', 'type', 'payload', 'occurred_on')
             ->from('event_store')
             ->where('aggregate_id = :id')
             ->setParameter('id', $uuid)
             ->orderBy('occurred_on', 'ASC')
             ->executeQuery()
-            ->fetchAllAssociative();
-
-        if (empty($events)) {
-            throw new \RuntimeException('envelope.error.not_found');
-        }
-
-        return $events;
+            ->iterateAssociative();
     }
 
     #[\Override]

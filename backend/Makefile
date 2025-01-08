@@ -49,3 +49,5 @@ rector:
 
 cs-fixer:
 	docker exec -it my_symfony_app ./vendor/bin/php-cs-fixer fix
+
+# export PHP_CS_FIXER_IGNORE_ENV=1 && ./vendor/bin/php-cs-fixer fix

@@ -17,13 +17,16 @@ final readonly class UpdateAUserLastnameCommandHandler
 
     public function __invoke(UpdateAUserLastnameCommand $updateAUserLastnameCommand): void
     {
-        $events = $this->eventSourcedRepository->get((string) $updateAUserLastnameCommand->getUserId());
-        $aggregate = User::fromEvents(array_map(fn ($event) => $event, $events));
+        $aggregate = User::fromEvents(
+            $this->eventSourcedRepository->get(
+                (string) $updateAUserLastnameCommand->getUserId(),
+            ),
+        );
         $aggregate->updateLastname(
             $updateAUserLastnameCommand->getUserLastname(),
             $updateAUserLastnameCommand->getUserId(),
         );
-        $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
-        $aggregate->clearUncommitedEvent();
+        $this->eventSourcedRepository->save($aggregate->raisedEvents());
+        $aggregate->clearRaisedEvents();
     }
 }

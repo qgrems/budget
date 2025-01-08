@@ -30,13 +30,16 @@ final readonly class RequestAUserPasswordResetCommandHandler
             throw new UserNotFoundException(UserNotFoundException::MESSAGE, 404);
         }
 
-        $events = $this->eventSourcedRepository->get($userView->getUuid());
-        $aggregate = User::fromEvents(array_map(fn ($event) => $event, $events));
+        $aggregate = User::fromEvents(
+            $this->eventSourcedRepository->get(
+                $userView->getUuid(),
+            ),
+        );
         $aggregate->setPasswordResetToken(
             UserPasswordResetToken::fromString($this->passwordResetTokenGenerator->generate()),
             UserId::fromString($userView->getUuid()),
         );
-        $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
-        $aggregate->clearUncommitedEvent();
+        $this->eventSourcedRepository->save($aggregate->raisedEvents());
+        $aggregate->clearRaisedEvents();
     }
 }
