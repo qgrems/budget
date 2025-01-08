@@ -6,6 +6,7 @@ namespace App\Tests\UserManagement\Application\Handlers\CommandHandlers;
 
 use App\SharedContext\EventStore\EventStoreInterface;
 use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
+use App\Tests\CreateEventGenerator;
 use App\UserManagement\Application\Commands\ResetAUserPasswordCommand;
 use App\UserManagement\Application\Handlers\CommandHandlers\ResetAUserPasswordCommandHandler;
 use App\UserManagement\Domain\Events\UserSignedUpEvent;
@@ -62,35 +63,37 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
         );
 
         $this->eventStore->expects($this->once())->method('load')->willReturn(
-            [
+            CreateEventGenerator::create(
                 [
-                    'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                    'type' => UserSignedUpEvent::class,
-                    'occurred_on' => new \DateTimeImmutable()->format(\DateTime::ATOM),
-                    'payload' => json_encode([
-                        'email' => 'test@mail.com',
-                        'password' => 'password',
-                        'firstname' => 'Test firstName',
-                        'lastname' => 'Test lastName',
-                        'isConsentGiven' => true,
-                        'isDeleted' => false,
-                        'occurredOn' => new \DateTimeImmutable()->format(\DateTime::ATOM),
-                        'aggregateId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                        'roles' => ['ROLE_USER'],
-                    ]),
+                    [
+                        'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
+                        'type' => UserSignedUpEvent::class,
+                        'occurred_on' => new \DateTimeImmutable()->format(\DateTime::ATOM),
+                        'payload' => json_encode([
+                            'email' => 'test@mail.com',
+                            'password' => 'password',
+                            'firstname' => 'Test firstName',
+                            'lastname' => 'Test lastName',
+                            'isConsentGiven' => true,
+                            'isDeleted' => false,
+                            'occurredOn' => new \DateTimeImmutable()->format(\DateTime::ATOM),
+                            'aggregateId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
+                            'roles' => ['ROLE_USER'],
+                        ]),
+                    ],
+                    [
+                        'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
+                        'type' => UserPasswordResetRequestedEvent::class,
+                        'occurred_on' => new \DateTimeImmutable()->format(\DateTime::ATOM),
+                        'payload' => json_encode([
+                            'aggregateId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
+                            'passwordResetToken' => 'token',
+                            'passwordResetTokenExpiry' => new \DateTimeImmutable('+1 day')->format(\DateTime::ATOM),
+                            'occurredOn' => new \DateTimeImmutable()->format(\DateTime::ATOM),
+                        ]),
+                    ],
                 ],
-                [
-                    'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                    'type' => UserPasswordResetRequestedEvent::class,
-                    'occurred_on' => new \DateTimeImmutable()->format(\DateTime::ATOM),
-                    'payload' => json_encode([
-                        'aggregateId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                        'passwordResetToken' => 'token',
-                        'passwordResetTokenExpiry' => new \DateTimeImmutable('+1 day')->format(\DateTime::ATOM),
-                        'occurredOn' => new \DateTimeImmutable()->format(\DateTime::ATOM),
-                    ]),
-                ],
-            ],
+            ),
         );
         $this->passwordHasher->method('hash')->willReturn('hashed-new-password');
         $this->eventStore->expects($this->once())->method('save');
@@ -133,24 +136,26 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
         );
 
         $this->eventStore->expects($this->once())->method('load')->willReturn(
-            [
+            CreateEventGenerator::create(
                 [
-                    'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                    'type' => UserSignedUpEvent::class,
-                    'occurred_on' => new \DateTimeImmutable()->format(\DateTime::ATOM),
-                    'payload' => json_encode([
-                        'email' => 'test@mail.com',
-                        'password' => 'password',
-                        'firstname' => 'Test firstName',
-                        'lastname' => 'Test lastName',
-                        'isConsentGiven' => true,
-                        'isDeleted' => false,
-                        'occurredOn' => new \DateTimeImmutable()->format(\DateTime::ATOM),
-                        'aggregateId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                        'roles' => ['ROLE_USER'],
-                    ]),
+                    [
+                        'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
+                        'type' => UserSignedUpEvent::class,
+                        'occurred_on' => new \DateTimeImmutable()->format(\DateTime::ATOM),
+                        'payload' => json_encode([
+                            'email' => 'test@mail.com',
+                            'password' => 'password',
+                            'firstname' => 'Test firstName',
+                            'lastname' => 'Test lastName',
+                            'isConsentGiven' => true,
+                            'isDeleted' => false,
+                            'occurredOn' => new \DateTimeImmutable()->format(\DateTime::ATOM),
+                            'aggregateId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
+                            'roles' => ['ROLE_USER'],
+                        ]),
+                    ],
                 ],
-            ],
+            ),
         );
         $this->passwordHasher->method('hash')->willReturn('hashed-new-password');
 

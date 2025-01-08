@@ -12,7 +12,7 @@ final readonly class EventSourcedRepository implements EventSourcedRepositoryInt
     }
 
     #[\Override]
-    public function get(string $aggregateId): array
+    public function get(string $aggregateId): \Generator
     {
         return $this->eventStore->load($aggregateId);
     }

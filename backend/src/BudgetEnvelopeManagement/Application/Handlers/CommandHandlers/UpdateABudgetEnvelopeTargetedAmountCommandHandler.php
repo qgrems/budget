@@ -17,13 +17,16 @@ final readonly class UpdateABudgetEnvelopeTargetedAmountCommandHandler
 
     public function __invoke(UpdateABudgetEnvelopeTargetedAmountCommand $updateABudgetEnvelopeTargetedAmountCommand): void
     {
-        $events = $this->eventSourcedRepository->get((string) $updateABudgetEnvelopeTargetedAmountCommand->getBudgetEnvelopeId());
-        $aggregate = BudgetEnvelope::fromEvents(array_map(fn ($event) => $event, $events));
+        $aggregate = BudgetEnvelope::fromEvents(
+            $this->eventSourcedRepository->get(
+                (string) $updateABudgetEnvelopeTargetedAmountCommand->getBudgetEnvelopeId(),
+            ),
+        );
         $aggregate->updateTargetedAmount(
             $updateABudgetEnvelopeTargetedAmountCommand->getBudgetEnvelopeTargetedAmount(),
             $updateABudgetEnvelopeTargetedAmountCommand->getBudgetEnvelopeUserId(),
         );
-        $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
-        $aggregate->clearUncommitedEvent();
+        $this->eventSourcedRepository->save($aggregate->raisedEvents());
+        $aggregate->clearRaisedEvents();
     }
 }

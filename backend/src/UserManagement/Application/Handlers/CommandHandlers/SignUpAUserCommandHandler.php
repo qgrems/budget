@@ -24,24 +24,22 @@ final readonly class SignUpAUserCommandHandler
 
     public function __invoke(SignUpAUserCommand $signUpAUserCommand): void
     {
-        try {
-            $this->eventSourcedRepository->get((string) $signUpAUserCommand->getUserId());
-        } catch (\RuntimeException $exception) {
-            $aggregate = User::create(
-                $signUpAUserCommand->getUserId(),
-                $signUpAUserCommand->getUserEmail(),
-                UserPassword::fromString($this->userPasswordHasher->hash(new UserView(), (string) $signUpAUserCommand->getUserPassword())),
-                $signUpAUserCommand->getUserFirstname(),
-                $signUpAUserCommand->getUserLastname(),
-                $signUpAUserCommand->isUserConsentGiven(),
-                $this->userViewRepository,
-            );
-            $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
-            $aggregate->clearUncommitedEvent();
+        $events = $this->eventSourcedRepository->get((string) $signUpAUserCommand->getUserId());
 
-            return;
+        if ($events->current()) {
+            throw new UserAlreadyExistsException(UserAlreadyExistsException::MESSAGE, 400);
         }
 
-        throw new UserAlreadyExistsException(UserAlreadyExistsException::MESSAGE, 400);
+        $aggregate = User::create(
+            $signUpAUserCommand->getUserId(),
+            $signUpAUserCommand->getUserEmail(),
+            UserPassword::fromString($this->userPasswordHasher->hash(new UserView(), (string) $signUpAUserCommand->getUserPassword())),
+            $signUpAUserCommand->getUserFirstname(),
+            $signUpAUserCommand->getUserLastname(),
+            $signUpAUserCommand->isUserConsentGiven(),
+            $this->userViewRepository,
+        );
+        $this->eventSourcedRepository->save($aggregate->raisedEvents());
+        $aggregate->clearRaisedEvents();
     }
 }

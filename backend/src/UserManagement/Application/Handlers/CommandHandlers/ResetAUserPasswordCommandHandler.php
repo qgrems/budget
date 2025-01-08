@@ -35,15 +35,18 @@ final readonly class ResetAUserPasswordCommandHandler
             throw new UserNotFoundException(UserNotFoundException::MESSAGE, 404);
         }
 
-        $events = $this->eventSourcedRepository->get($userView->getUuid());
-        $aggregate = User::fromEvents(array_map(fn ($event) => $event, $events));
+        $aggregate = User::fromEvents(
+            $this->eventSourcedRepository->get(
+                $userView->getUuid(),
+            ),
+        );
         $aggregate->resetPassword(
             UserPassword::fromString(
                 $this->passwordHasher->hash($userView, (string) $command->getUserNewPassword()),
             ),
             UserId::fromString($userView->getUuid()),
         );
-        $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
-        $aggregate->clearUncommitedEvent();
+        $this->eventSourcedRepository->save($aggregate->raisedEvents());
+        $aggregate->clearRaisedEvents();
     }
 }

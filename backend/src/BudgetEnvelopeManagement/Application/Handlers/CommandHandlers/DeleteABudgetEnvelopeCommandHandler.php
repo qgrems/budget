@@ -17,10 +17,13 @@ final readonly class DeleteABudgetEnvelopeCommandHandler
 
     public function __invoke(DeleteABudgetEnvelopeCommand $deleteABudgetEnvelopeCommand): void
     {
-        $events = $this->eventSourcedRepository->get((string) $deleteABudgetEnvelopeCommand->getBudgetEnvelopeId());
-        $aggregate = BudgetEnvelope::fromEvents(array_map(fn ($event) => $event, $events));
+        $aggregate = BudgetEnvelope::fromEvents(
+            $this->eventSourcedRepository->get(
+                (string) $deleteABudgetEnvelopeCommand->getBudgetEnvelopeId(),
+            ),
+        );
         $aggregate->delete($deleteABudgetEnvelopeCommand->getBudgetEnvelopeUserId());
-        $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
-        $aggregate->clearUncommitedEvent();
+        $this->eventSourcedRepository->save($aggregate->raisedEvents());
+        $aggregate->clearRaisedEvents();
     }
 }

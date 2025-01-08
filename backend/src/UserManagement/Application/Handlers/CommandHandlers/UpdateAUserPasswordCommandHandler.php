@@ -26,9 +26,14 @@ final readonly class UpdateAUserPasswordCommandHandler
      */
     public function __invoke(UpdateAUserPasswordCommand $updateAUserPasswordCommand): void
     {
-        $events = $this->eventSourcedRepository->get((string) $updateAUserPasswordCommand->getUserId());
-        $aggregate = User::fromEvents(array_map(fn ($event) => $event, $events));
-        $userView = $this->userViewRepository->findOneBy(['uuid' => (string) $updateAUserPasswordCommand->getUserId()]);
+        $aggregate = User::fromEvents(
+            $this->eventSourcedRepository->get(
+                (string) $updateAUserPasswordCommand->getUserId(),
+            ),
+        );
+        $userView = $this->userViewRepository->findOneBy(
+            ['uuid' => (string) $updateAUserPasswordCommand->getUserId()],
+        );
 
         if (!$this->passwordHasher->verify($userView, (string) $updateAUserPasswordCommand->getUserOldPassword())) {
             throw new UserOldPasswordIsIncorrectException(UserOldPasswordIsIncorrectException::MESSAGE, 400);
@@ -41,7 +46,7 @@ final readonly class UpdateAUserPasswordCommandHandler
             ),
             $updateAUserPasswordCommand->getUserId(),
         );
-        $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
-        $aggregate->clearUncommitedEvent();
+        $this->eventSourcedRepository->save($aggregate->raisedEvents());
+        $aggregate->clearRaisedEvents();
     }
 }

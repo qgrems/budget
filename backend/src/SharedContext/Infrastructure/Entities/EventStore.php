@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 #[ORM\Table(name: 'event_store')]
 #[ORM\Index(name: 'idx_aggregate_id', columns: ['aggregate_id'])]
+#[ORM\Index(name: 'idx_occurred_on', columns: ['occurred_on'])]
 class EventStore
 {
     #[ORM\Id]

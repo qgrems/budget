@@ -19,15 +19,18 @@ final readonly class RenameABudgetEnvelopeCommandHandler
 
     public function __invoke(RenameABudgetEnvelopeCommand $renameABudgetEnvelopeCommand): void
     {
-        $events = $this->eventSourcedRepository->get((string) $renameABudgetEnvelopeCommand->getBudgetEnvelopeId());
-        $aggregate = BudgetEnvelope::fromEvents(array_map(fn ($event) => $event, $events));
+        $aggregate = BudgetEnvelope::fromEvents(
+            $this->eventSourcedRepository->get(
+                (string) $renameABudgetEnvelopeCommand->getBudgetEnvelopeId(),
+            ),
+        );
         $aggregate->rename(
             $renameABudgetEnvelopeCommand->getBudgetEnvelopeName(),
             $renameABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
             $renameABudgetEnvelopeCommand->getBudgetEnvelopeId(),
             $this->budgetEnvelopeViewRepository,
         );
-        $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
-        $aggregate->clearUncommitedEvent();
+        $this->eventSourcedRepository->save($aggregate->raisedEvents());
+        $aggregate->clearRaisedEvents();
     }
 }

@@ -20,22 +20,20 @@ final readonly class CreateABudgetEnvelopeCommandHandler
 
     public function __invoke(CreateABudgetEnvelopeCommand $createABudgetEnvelopeCommand): void
     {
-        try {
-            $this->eventSourcedRepository->get((string) $createABudgetEnvelopeCommand->getBudgetEnvelopeId());
-        } catch (\RuntimeException $exception) {
-            $aggregate = BudgetEnvelope::create(
-                $createABudgetEnvelopeCommand->getBudgetEnvelopeId(),
-                $createABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
-                $createABudgetEnvelopeCommand->getBudgetEnvelopeTargetedAmount(),
-                $createABudgetEnvelopeCommand->getBudgetEnvelopeName(),
-                $this->budgetEnvelopeViewRepository,
-            );
-            $this->eventSourcedRepository->save($aggregate->getUncommittedEvents());
-            $aggregate->clearUncommitedEvent();
+        $events = $this->eventSourcedRepository->get((string) $createABudgetEnvelopeCommand->getBudgetEnvelopeId());
 
-            return;
+        if ($events->current()) {
+            throw new BudgetEnvelopeAlreadyExistsException(BudgetEnvelopeAlreadyExistsException::MESSAGE, 400);
         }
 
-        throw new BudgetEnvelopeAlreadyExistsException(BudgetEnvelopeAlreadyExistsException::MESSAGE, 400);
+        $aggregate = BudgetEnvelope::create(
+            $createABudgetEnvelopeCommand->getBudgetEnvelopeId(),
+            $createABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
+            $createABudgetEnvelopeCommand->getBudgetEnvelopeTargetedAmount(),
+            $createABudgetEnvelopeCommand->getBudgetEnvelopeName(),
+            $this->budgetEnvelopeViewRepository,
+        );
+        $this->eventSourcedRepository->save($aggregate->raisedEvents());
+        $aggregate->clearRaisedEvents();
     }
 }
