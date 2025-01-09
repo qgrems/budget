@@ -84,7 +84,7 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
          FROM budget_envelope_view ev
          LEFT JOIN budget_envelope_history_view ehv ON ev.uuid = ehv.aggregate_id
          WHERE %s
-         ORDER BY ehv.created_at',
+         ORDER BY ehv.created_at DESC',
             $this->buildWhereClauseWithAlias($criteria, 'ev')
         );
         $stmt = $this->connection->prepare($sql);
@@ -104,7 +104,7 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
 
         return [
             'envelope' => BudgetEnvelopeView::fromRepository($budgetEnvelopeData),
-            'history' => array_map(
+            'history' => count($result) > 1 ? array_map(
                 [$this, 'mapToBudgetEnvelopeHistoryView'],
                 array_map(function ($row) {
                     return [
@@ -115,7 +115,7 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
                         'transaction_type' => $row['transaction_type'],
                     ];
                 }, $result)
-            ),
+            ) : [],
         ];
     }
 

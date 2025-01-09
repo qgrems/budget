@@ -17,3 +17,17 @@ export interface EnvelopeState {
   loading: boolean
   errorEnvelope: string | null
 }
+
+export interface EnvelopeDetails {
+  envelope: {
+    uuid: string;
+    currentAmount: string;
+    targetedAmount: string;
+    name: string;
+  };
+  history: Array<{
+    created_at: string;
+    monetary_amount: string;
+    transaction_type: 'credit' | 'debit';
+  }>;
+}

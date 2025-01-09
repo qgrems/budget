@@ -2,7 +2,7 @@
 
 import { useUser } from '../domain/user/userHooks'
 import EnvelopeManagement from '../components/EnvelopeManagement'
-import {useEnvelopes} from "../domain/envelope/envelopeHooks";
+import { ErrorProvider } from '../contexts/ErrorContext';
 
 export default function EnvelopesPage() {
   const { user, loading } = useUser()
@@ -18,8 +18,10 @@ export default function EnvelopesPage() {
   }
 
   return (
-      <div>
-        <EnvelopeManagement />
-      </div>
+      <ErrorProvider>
+        <div>
+          <EnvelopeManagement />
+        </div>
+      </ErrorProvider>
   )
 }

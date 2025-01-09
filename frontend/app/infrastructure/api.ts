@@ -55,8 +55,14 @@ export const api = {
     debitEnvelope: (envelopeId: string, amount: string) => fetchWithAuth(`/envelopes/${envelopeId}/debit`, { method: 'POST', body: JSON.stringify({ debitMoney: amount }) }),
     deleteEnvelope: (envelopeId: string) => fetchWithAuth(`/envelopes/${envelopeId}`, { method: 'DELETE' }),
     nameEnvelope: (envelopeId: string, name: string) => fetchWithAuth(`/envelopes/${envelopeId}/name`, { method: 'POST', body: JSON.stringify({ name }) }),
+    updateTargetBudget: (envelopeId: string, targetedAmount: string, currentAmount: string) =>
+        fetchWithAuth(`/envelopes/${envelopeId}/update-target-budget`, {
+          method: 'POST',
+          body: JSON.stringify({ targetedAmount, currentAmount })
+        }),
   },
   envelopeQueries: {
     listEnvelopes: () => fetchWithAuth('/envelopes'),
+    getEnvelopeDetails: (uuid: string) => fetchWithAuth(`/envelopes/${uuid}`),
   },
 }
