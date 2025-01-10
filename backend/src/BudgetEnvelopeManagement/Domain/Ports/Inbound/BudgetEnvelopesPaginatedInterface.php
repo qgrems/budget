@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\BudgetEnvelopeManagement\ReadModels\Views;
+namespace App\BudgetEnvelopeManagement\Domain\Ports\Inbound;
 
 interface BudgetEnvelopesPaginatedInterface
 {

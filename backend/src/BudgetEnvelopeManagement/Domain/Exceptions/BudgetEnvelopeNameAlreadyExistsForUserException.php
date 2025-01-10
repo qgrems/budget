@@ -9,8 +9,8 @@ final class BudgetEnvelopeNameAlreadyExistsForUserException extends \LogicExcept
     public const string MESSAGE = 'envelopes.nameAlreadyExistsForUser';
 
     public function __construct(
-        string $message,
-        int $code,
+        string $message = self::MESSAGE,
+        int $code = 400,
         ?\Throwable $previous = null,
     ) {
         parent::__construct($message, $code, $previous);

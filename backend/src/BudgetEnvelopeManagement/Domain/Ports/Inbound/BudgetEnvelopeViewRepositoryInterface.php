@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\BudgetEnvelopeManagement\Domain\Ports\Inbound;
 
-use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopesPaginatedInterface;
-use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeViewInterface;
-
 interface BudgetEnvelopeViewRepositoryInterface
 {
     public function save(BudgetEnvelopeViewInterface $budgetEnvelope): void;

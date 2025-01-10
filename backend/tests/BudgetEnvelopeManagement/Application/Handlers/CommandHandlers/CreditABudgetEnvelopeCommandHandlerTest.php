@@ -12,13 +12,14 @@ use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDebitedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDeletedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeRenamedEvent;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeCurrentAmountException;
+use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeIsNotOwnedByUserException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeNotFoundException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\InvalidBudgetEnvelopeOperationException;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeCreditMoney;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\CreditABudgetEnvelopeInput;
-use App\SharedContext\EventStore\EventStoreInterface;
+use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -117,7 +118,7 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
         );
 
         $this->eventStore->expects($this->once())->method('load')
-            ->willThrowException(new BudgetEnvelopeNotFoundException(BudgetEnvelopeNotFoundException::MESSAGE, 404));
+            ->willThrowException(new BudgetEnvelopeNotFoundException());
         $this->eventStore->expects($this->never())->method('save');
 
         $this->expectException(BudgetEnvelopeNotFoundException::class);
@@ -270,7 +271,7 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
             );
 
         $this->eventStore->expects($this->never())->method('save');
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(BudgetEnvelopeIsNotOwnedByUserException::class);
 
         $this->creditABudgetEnvelopeCommandHandler->__invoke($creditABudgetEnvelopeCommand);
     }

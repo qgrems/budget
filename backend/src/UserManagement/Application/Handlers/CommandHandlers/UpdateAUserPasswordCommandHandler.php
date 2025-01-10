@@ -36,7 +36,7 @@ final readonly class UpdateAUserPasswordCommandHandler
         );
 
         if (!$this->passwordHasher->verify($userView, (string) $updateAUserPasswordCommand->getUserOldPassword())) {
-            throw new UserOldPasswordIsIncorrectException(UserOldPasswordIsIncorrectException::MESSAGE, 400);
+            throw new UserOldPasswordIsIncorrectException();
         }
 
         $aggregate->updatePassword(

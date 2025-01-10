@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\UserManagement\Application\Handlers\CommandHandlers;
 
-use App\SharedContext\EventStore\EventStoreInterface;
+use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use App\UserManagement\Application\Commands\DeleteAUserCommand;
 use App\UserManagement\Application\Handlers\CommandHandlers\DeleteAUserCommandHandler;
 use App\UserManagement\Domain\Events\UserSignedUpEvent;
+use App\UserManagement\Domain\Exceptions\UserIsNotOwnedByUserException;
 use App\UserManagement\Domain\ValueObjects\UserId;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -88,7 +89,7 @@ class DeleteAUserCommandHandlerTest extends TestCase
             ),
         );
         $this->eventStore->expects($this->never())->method('save');
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(UserIsNotOwnedByUserException::class);
 
         $this->handler->__invoke($command);
     }

@@ -9,8 +9,8 @@ final class BudgetEnvelopeNotFoundException extends \Exception
     public const string MESSAGE = 'envelopes.notFound';
 
     public function __construct(
-        string $message,
-        int $code,
+        string $message = self::MESSAGE,
+        int $code = 404,
         ?\Throwable $previous = null,
     ) {
         parent::__construct($message, $code, $previous);

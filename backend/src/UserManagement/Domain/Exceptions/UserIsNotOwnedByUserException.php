@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\BudgetEnvelopeManagement\Domain\Exceptions;
+namespace App\UserManagement\Domain\Exceptions;
 
-final class BudgetEnvelopeAlreadyExistsException extends \LogicException
+final class UserIsNotOwnedByUserException extends \LogicException
 {
-    public const string MESSAGE = 'envelopes.alreadyExists';
+    public const string MESSAGE = 'users.notOwner';
 
     public function __construct(
         string $message = self::MESSAGE,

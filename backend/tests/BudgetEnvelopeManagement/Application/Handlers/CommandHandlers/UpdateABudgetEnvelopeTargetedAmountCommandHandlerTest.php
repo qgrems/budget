@@ -11,14 +11,15 @@ use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeCreditedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDebitedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDeletedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeRenamedEvent;
+use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeIsNotOwnedByUserException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeNotFoundException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeTargetedAmountException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\InvalidBudgetEnvelopeOperationException;
-use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\UpdateABudgetEnvelopeTargetedAmountInput;
-use App\SharedContext\EventStore\EventStoreInterface;
+use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -47,7 +48,7 @@ class UpdateABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
         $updateABudgetEnvelopeTargetedAmountCommand = new UpdateABudgetEnvelopeTargetedAmountCommand(
             BudgetEnvelopeTargetedAmount::fromString(
                 $updateABudgetEnvelopeTargetedAmountInput->targetedAmount,
-                '0.00',
+                $updateABudgetEnvelopeTargetedAmountInput->currentAmount,
             ),
             BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
             BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
@@ -116,14 +117,14 @@ class UpdateABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
         $updateABudgetEnvelopeTargetedAmountCommand = new UpdateABudgetEnvelopeTargetedAmountCommand(
             BudgetEnvelopeTargetedAmount::fromString(
                 $updateABudgetEnvelopeTargetedAmountInput->targetedAmount,
-                '0.00',
+                $updateABudgetEnvelopeTargetedAmountInput->currentAmount,
             ),
             BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
             BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
 
         $this->eventStore->expects($this->once())->method('load')
-            ->willThrowException(new BudgetEnvelopeNotFoundException(BudgetEnvelopeNotFoundException::MESSAGE, 404));
+            ->willThrowException(new BudgetEnvelopeNotFoundException());
         $this->eventStore->expects($this->never())->method('save');
 
         $this->expectException(BudgetEnvelopeNotFoundException::class);
@@ -186,7 +187,7 @@ class UpdateABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
         $updateABudgetEnvelopeTargetedAmountCommand = new UpdateABudgetEnvelopeTargetedAmountCommand(
             BudgetEnvelopeTargetedAmount::fromString(
                 $updateABudgetEnvelopeTargetedAmountInput->targetedAmount,
-                '0.00',
+                $updateABudgetEnvelopeTargetedAmountInput->currentAmount,
             ),
             BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
             BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
@@ -230,13 +231,27 @@ class UpdateABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
         $this->updateABudgetEnvelopeTargetedAmountCommandHandler->__invoke($updateABudgetEnvelopeTargetedAmountCommand);
     }
 
+    public function testUpdateABudgetEnvelopeTargetedAmountBelowZero(): void
+    {
+        $this->expectException(BudgetEnvelopeTargetedAmountException::class);
+
+        new UpdateABudgetEnvelopeTargetedAmountCommand(
+            BudgetEnvelopeTargetedAmount::fromString(
+                '-3000.00',
+                '0.00',
+            ),
+            BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
+            BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
+        );
+    }
+
     public function testUpdateABudgetEnvelopeTargetedAmountWithWrongUser(): void
     {
         $updateABudgetEnvelopeTargetedAmountInput = new UpdateABudgetEnvelopeTargetedAmountInput('3000.00', '0.00');
         $updateABudgetEnvelopeTargetedAmountCommand = new UpdateABudgetEnvelopeTargetedAmountCommand(
             BudgetEnvelopeTargetedAmount::fromString(
                 $updateABudgetEnvelopeTargetedAmountInput->targetedAmount,
-                '0.00',
+                $updateABudgetEnvelopeTargetedAmountInput->currentAmount,
             ),
             BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
             BudgetEnvelopeUserId::fromString('0d6851a2-5123-40df-939b-8f043850fbf1'),
@@ -274,7 +289,7 @@ class UpdateABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
             );
 
         $this->eventStore->expects($this->never())->method('save');
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(BudgetEnvelopeIsNotOwnedByUserException::class);
 
         $this->updateABudgetEnvelopeTargetedAmountCommandHandler->__invoke($updateABudgetEnvelopeTargetedAmountCommand);
     }

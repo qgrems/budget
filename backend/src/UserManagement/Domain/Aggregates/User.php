@@ -13,6 +13,7 @@ use App\UserManagement\Domain\Events\UserPasswordResetRequestedEvent;
 use App\UserManagement\Domain\Events\UserPasswordUpdatedEvent;
 use App\UserManagement\Domain\Exceptions\InvalidUserOperationException;
 use App\UserManagement\Domain\Exceptions\UserAlreadyExistsException;
+use App\UserManagement\Domain\Exceptions\UserIsNotOwnedByUserException;
 use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserManagement\Domain\ValueObjects\UserConsent;
 use App\UserManagement\Domain\ValueObjects\UserEmail;
@@ -64,7 +65,7 @@ final class User
         UserViewRepositoryInterface $userViewRepository,
     ): self {
         if ($userViewRepository->findOneBy(['email' => (string) $email])) {
-            throw new UserAlreadyExistsException(UserAlreadyExistsException::MESSAGE, 400);
+            throw new UserAlreadyExistsException();
         }
 
         $aggregate = new self();
@@ -85,8 +86,10 @@ final class User
         return $aggregate;
     }
 
-    public function updateFirstname(UserFirstname $firstname, UserId $userId): void
-    {
+    public function updateFirstname(
+        UserFirstname $firstname,
+        UserId $userId,
+    ): void {
         $this->assertOwnership($userId);
 
         $userFirstnameUpdatedEvent = new UserFirstnameUpdatedEvent(
@@ -98,8 +101,10 @@ final class User
         $this->raise($userFirstnameUpdatedEvent);
     }
 
-    public function updateLastname(UserLastname $lastname, UserId $userId): void
-    {
+    public function updateLastname(
+        UserLastname $lastname,
+        UserId $userId,
+    ): void {
         $this->assertOwnership($userId);
 
         $userLastnameUpdatedEvent = new UserLastnameUpdatedEvent(
@@ -123,8 +128,11 @@ final class User
         $this->raise($userDeletedEvent);
     }
 
-    public function updatePassword(UserPassword $oldPassword, UserPassword $newPassword, UserId $userId): void
-    {
+    public function updatePassword(
+        UserPassword $oldPassword,
+        UserPassword $newPassword,
+        UserId $userId,
+    ): void {
         $this->assertOwnership($userId);
 
         $userPasswordUpdatedEvent = new UserPasswordUpdatedEvent(
@@ -137,8 +145,10 @@ final class User
         $this->raise($userPasswordUpdatedEvent);
     }
 
-    public function setPasswordResetToken(UserPasswordResetToken $passwordResetToken, UserId $userId): void
-    {
+    public function setPasswordResetToken(
+        UserPasswordResetToken $passwordResetToken,
+        UserId $userId,
+    ): void {
         $this->assertOwnership($userId);
 
         $userPasswordResetRequestedEvent = new UserPasswordResetRequestedEvent(
@@ -151,8 +161,10 @@ final class User
         $this->raise($userPasswordResetRequestedEvent);
     }
 
-    public function resetPassword(UserPassword $password, UserId $userId): void
-    {
+    public function resetPassword(
+        UserPassword $password,
+        UserId $userId,
+    ): void {
         $this->assertOwnership($userId);
 
         if ($this->passwordResetTokenExpiry < new \DateTimeImmutable()) {
@@ -237,7 +249,7 @@ final class User
     private function assertOwnership(UserId $userId): void
     {
         if (!$this->userId->equals($userId)) {
-            throw new \RuntimeException('users.notOwner');
+            throw new UserIsNotOwnedByUserException('users.notOwner');
         }
     }
 }
