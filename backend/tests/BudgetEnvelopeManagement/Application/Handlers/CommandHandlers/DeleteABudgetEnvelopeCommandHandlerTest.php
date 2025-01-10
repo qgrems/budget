@@ -9,10 +9,11 @@ use App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers\DeleteABud
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeCreatedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDeletedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeRenamedEvent;
+use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeIsNotOwnedByUserException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\InvalidBudgetEnvelopeOperationException;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
-use App\SharedContext\EventStore\EventStoreInterface;
+use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -148,7 +149,7 @@ class DeleteABudgetEnvelopeCommandHandlerTest extends TestCase
             );
 
         $this->eventStore->expects($this->never())->method('save');
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(BudgetEnvelopeIsNotOwnedByUserException::class);
 
         $this->deleteABudgetEnvelopeCommandHandler->__invoke($deleteABudgetEnvelopeCommand);
     }

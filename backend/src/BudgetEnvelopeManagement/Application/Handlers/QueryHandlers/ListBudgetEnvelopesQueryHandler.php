@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\BudgetEnvelopeManagement\Application\Handlers\QueryHandlers;
 
 use App\BudgetEnvelopeManagement\Application\Queries\ListBudgetEnvelopesQuery;
+use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopesPaginatedInterface;
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
-use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopesPaginatedInterface;
 
 final readonly class ListBudgetEnvelopesQueryHandler
 {

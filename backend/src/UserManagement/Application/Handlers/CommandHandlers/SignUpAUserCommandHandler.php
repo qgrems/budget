@@ -27,7 +27,7 @@ final readonly class SignUpAUserCommandHandler
         $events = $this->eventSourcedRepository->get((string) $signUpAUserCommand->getUserId());
 
         if ($events->current()) {
-            throw new UserAlreadyExistsException(UserAlreadyExistsException::MESSAGE, 400);
+            throw new UserAlreadyExistsException();
         }
 
         $aggregate = User::create(

@@ -10,8 +10,10 @@ use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDebitedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDeletedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeRenamedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeTargetedAmountUpdatedEvent;
+use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeIsNotOwnedByUserException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeNameAlreadyExistsForUserException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\InvalidBudgetEnvelopeOperationException;
+use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeViewInterface;
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeCreditMoney;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeCurrentAmount;
@@ -63,7 +65,7 @@ final class BudgetEnvelope
             'name' => (string) $budgetEnvelopeName,
             'is_deleted' => false,
         ])) {
-            throw new BudgetEnvelopeNameAlreadyExistsForUserException(BudgetEnvelopeNameAlreadyExistsForUserException::MESSAGE, 400);
+            throw new BudgetEnvelopeNameAlreadyExistsForUserException();
         }
 
         $budgetEnvelopeCreatedEvent = new BudgetEnvelopeCreatedEvent(
@@ -95,8 +97,11 @@ final class BudgetEnvelope
             ],
         );
 
-        if ($budgetEnvelope && $budgetEnvelope->getUuid() !== (string) $budgetEnvelopeId) {
-            throw new BudgetEnvelopeNameAlreadyExistsForUserException(BudgetEnvelopeNameAlreadyExistsForUserException::MESSAGE, 400);
+        if (
+            $budgetEnvelope instanceof BudgetEnvelopeViewInterface
+            && $budgetEnvelope->getUuid() !== (string) $budgetEnvelopeId
+        ) {
+            throw new BudgetEnvelopeNameAlreadyExistsForUserException();
         }
 
         $budgetEnvelopeRenamedEvent = new BudgetEnvelopeRenamedEvent(
@@ -107,8 +112,10 @@ final class BudgetEnvelope
         $this->raise($budgetEnvelopeRenamedEvent);
     }
 
-    public function credit(BudgetEnvelopeCreditMoney $budgetEnvelopeCreditMoney, BudgetEnvelopeUserId $userId): void
-    {
+    public function credit(
+        BudgetEnvelopeCreditMoney $budgetEnvelopeCreditMoney,
+        BudgetEnvelopeUserId $userId,
+    ): void {
         $this->assertNotDeleted();
         $this->assertOwnership($userId);
 
@@ -121,8 +128,10 @@ final class BudgetEnvelope
         $this->raise($budgetEnvelopeCreditedEvent);
     }
 
-    public function debit(BudgetEnvelopeDebitMoney $budgetEnvelopeDebitMoney, BudgetEnvelopeUserId $userId): void
-    {
+    public function debit(
+        BudgetEnvelopeDebitMoney $budgetEnvelopeDebitMoney,
+        BudgetEnvelopeUserId $userId,
+    ): void {
         $this->assertNotDeleted();
         $this->assertOwnership($userId);
 
@@ -149,8 +158,10 @@ final class BudgetEnvelope
         $this->raise($budgetEnvelopeDeletedEvent);
     }
 
-    public function updateTargetedAmount(BudgetEnvelopeTargetedAmount $budgetEnvelopeTargetedAmount, BudgetEnvelopeUserId $userId): void
-    {
+    public function updateTargetedAmount(
+        BudgetEnvelopeTargetedAmount $budgetEnvelopeTargetedAmount,
+        BudgetEnvelopeUserId $userId,
+    ): void {
         $this->assertNotDeleted();
         $this->assertOwnership($userId);
 
@@ -167,7 +178,7 @@ final class BudgetEnvelope
     {
         match (get_class($event)) {
             BudgetEnvelopeCreatedEvent::class => $this->applyCreatedEvent($event),
-            BudgetEnvelopeRenamedEvent::class => $this->applyNamedEvent($event),
+            BudgetEnvelopeRenamedEvent::class => $this->applyRenamedEvent($event),
             BudgetEnvelopeCreditedEvent::class => $this->applyCreditedEvent($event),
             BudgetEnvelopeDebitedEvent::class => $this->applyDebitedEvent($event),
             BudgetEnvelopeDeletedEvent::class => $this->applyDeletedEvent($event),
@@ -194,7 +205,7 @@ final class BudgetEnvelope
         $this->isDeleted = false;
     }
 
-    private function applyNamedEvent(BudgetEnvelopeRenamedEvent $event): void
+    private function applyRenamedEvent(BudgetEnvelopeRenamedEvent $event): void
     {
         $this->budgetEnvelopeName = BudgetEnvelopeName::fromString($event->getName());
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn());
@@ -240,7 +251,7 @@ final class BudgetEnvelope
     private function assertOwnership(BudgetEnvelopeUserId $userId): void
     {
         if (!$this->userId->equals($userId)) {
-            throw new \RuntimeException('envelopes.notOwner');
+            throw BudgetEnvelopeIsNotOwnedByUserException::isNotOwnedByUser();
         }
     }
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\SharedContext\EventStore;
+namespace App\SharedContext\Domain\Ports\Inbound;
 
 interface EventStoreInterface
 {

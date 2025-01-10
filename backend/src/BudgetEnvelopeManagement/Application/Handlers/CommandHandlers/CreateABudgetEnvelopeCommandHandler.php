@@ -23,7 +23,7 @@ final readonly class CreateABudgetEnvelopeCommandHandler
         $events = $this->eventSourcedRepository->get((string) $createABudgetEnvelopeCommand->getBudgetEnvelopeId());
 
         if ($events->current()) {
-            throw new BudgetEnvelopeAlreadyExistsException(BudgetEnvelopeAlreadyExistsException::MESSAGE, 400);
+            throw new BudgetEnvelopeAlreadyExistsException();
         }
 
         $aggregate = BudgetEnvelope::create(

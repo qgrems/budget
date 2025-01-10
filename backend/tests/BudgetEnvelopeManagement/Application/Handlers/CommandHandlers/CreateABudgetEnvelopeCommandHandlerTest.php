@@ -16,7 +16,7 @@ use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeTargetedAmoun
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\CreateABudgetEnvelopeInput;
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeView;
-use App\SharedContext\EventStore\EventStoreInterface;
+use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use PHPUnit\Framework\MockObject\MockObject;

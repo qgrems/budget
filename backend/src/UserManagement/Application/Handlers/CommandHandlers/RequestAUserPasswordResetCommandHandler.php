@@ -27,7 +27,7 @@ final readonly class RequestAUserPasswordResetCommandHandler
         $userView = $this->userViewRepository->findOneBy(['email' => (string) $requestAUserPasswordResetCommand->getUserEmail()]);
 
         if (!$userView) {
-            throw new UserNotFoundException(UserNotFoundException::MESSAGE, 404);
+            throw new UserNotFoundException();
         }
 
         $aggregate = User::fromEvents(

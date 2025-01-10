@@ -9,10 +9,10 @@ use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDeletedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeRenamedEvent;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeTargetedAmountUpdatedEvent;
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeHistoryViewRepositoryInterface;
+use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeViewInterface;
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeHistoryView;
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeView;
-use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeViewInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventInterface;
 
 final readonly class BudgetEnvelopeProjection

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\BudgetEnvelopeManagement\ReadModels\Views;
 
+use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopesPaginatedInterface;
+
 final class BudgetEnvelopesPaginated implements BudgetEnvelopesPaginatedInterface, \jsonSerializable
 {
     /** @var array<object> */

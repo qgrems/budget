@@ -32,7 +32,7 @@ final readonly class ResetAUserPasswordCommandHandler
         );
 
         if (!$userView instanceof UserViewInterface) {
-            throw new UserNotFoundException(UserNotFoundException::MESSAGE, 404);
+            throw new UserNotFoundException();
         }
 
         $aggregate = User::fromEvents(

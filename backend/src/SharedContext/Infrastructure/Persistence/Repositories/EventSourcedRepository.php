@@ -3,7 +3,7 @@
 namespace App\SharedContext\Infrastructure\Persistence\Repositories;
 
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
-use App\SharedContext\EventStore\EventStoreInterface;
+use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 
 final readonly class EventSourcedRepository implements EventSourcedRepositoryInterface
 {

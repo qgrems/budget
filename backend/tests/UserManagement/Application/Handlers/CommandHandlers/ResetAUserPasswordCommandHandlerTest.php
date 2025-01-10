@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\UserManagement\Application\Handlers\CommandHandlers;
 
-use App\SharedContext\EventStore\EventStoreInterface;
+use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use App\UserManagement\Application\Commands\ResetAUserPasswordCommand;
 use App\UserManagement\Application\Handlers\CommandHandlers\ResetAUserPasswordCommandHandler;
-use App\UserManagement\Domain\Events\UserSignedUpEvent;
 use App\UserManagement\Domain\Events\UserPasswordResetRequestedEvent;
+use App\UserManagement\Domain\Events\UserSignedUpEvent;
 use App\UserManagement\Domain\Exceptions\InvalidUserOperationException;
 use App\UserManagement\Domain\Exceptions\UserNotFoundException;
 use App\UserManagement\Domain\Ports\Inbound\UserViewRepositoryInterface;

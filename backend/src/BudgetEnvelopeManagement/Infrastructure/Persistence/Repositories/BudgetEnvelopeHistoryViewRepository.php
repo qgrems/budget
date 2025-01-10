@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\BudgetEnvelopeManagement\Infrastructure\Persistence\Repositories;
 
+use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeHistoryViewInterface;
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeHistoryViewRepositoryInterface;
-use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeHistoryViewInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 

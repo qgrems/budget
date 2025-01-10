@@ -7,6 +7,7 @@ namespace App\Tests\BudgetEnvelopeManagement\Application\Handlers\CommandHandler
 use App\BudgetEnvelopeManagement\Application\Commands\RenameABudgetEnvelopeCommand;
 use App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers\RenameABudgetEnvelopeCommandHandler;
 use App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeCreatedEvent;
+use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeIsNotOwnedByUserException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeNameAlreadyExistsForUserException;
 use App\BudgetEnvelopeManagement\Domain\Exceptions\BudgetEnvelopeNotFoundException;
 use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
@@ -15,7 +16,7 @@ use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeName;
 use App\BudgetEnvelopeManagement\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeManagement\Presentation\HTTP\DTOs\RenameABudgetEnvelopeInput;
 use App\BudgetEnvelopeManagement\ReadModels\Views\BudgetEnvelopeView;
-use App\SharedContext\EventStore\EventStoreInterface;
+use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -139,7 +140,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
         );
 
         $this->eventStore->expects($this->once())->method('load')
-            ->willThrowException(new BudgetEnvelopeNotFoundException(BudgetEnvelopeNotFoundException::MESSAGE, 404));
+            ->willThrowException(new BudgetEnvelopeNotFoundException());
         $this->eventStore->expects($this->never())->method('save');
 
         $this->expectException(BudgetEnvelopeNotFoundException::class);
@@ -179,7 +180,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
             );
 
         $this->eventStore->expects($this->never())->method('save');
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(BudgetEnvelopeIsNotOwnedByUserException::class);
 
         $this->renameABudgetEnvelopeCommandHandler->__invoke($renameABudgetEnvelopeCommand);
     }
