@@ -19,14 +19,14 @@ doctrine:
             UserView:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/UserManagement/ReadModels/Views'
-                prefix: 'App\UserManagement\ReadModels\Views'
+                dir: '%kernel.project_dir%/src/UserContext/ReadModels/Views'
+                prefix: 'App\UserContext\ReadModels\Views'
                 alias: UserView
             EnvelopeView:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/BudgetEnvelopeManagement/ReadModels/Views'
-                prefix: 'App\BudgetEnvelopeManagement\ReadModels\Views'
+                dir: '%kernel.project_dir%/src/BudgetEnvelopeContext/ReadModels/Views'
+                prefix: 'App\BudgetEnvelopeContext\ReadModels\Views'
                 alias: EnvelopeView
             EventStore:
                 type: attribute
@@ -37,8 +37,8 @@ doctrine:
             RefreshToken:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/UserManagement/Infrastructure/Entities'
-                prefix: 'App\UserManagement\Infrastructure\Entities'
+                dir: '%kernel.project_dir%/src/UserContext/Infrastructure/Entities'
+                prefix: 'App\UserContext\Infrastructure\Entities'
                 alias: RefreshToken
         controller_resolver:
             auto_mapping: false

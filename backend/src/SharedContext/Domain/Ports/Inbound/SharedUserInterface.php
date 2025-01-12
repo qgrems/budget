@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\SharedContext\Domain\Ports\Inbound;
 
-use App\BudgetEnvelopeManagement\Domain\Ports\Inbound\UserInterface;
+use App\BudgetEnvelopeContext\Domain\Ports\Inbound\UserInterface;
 
 interface SharedUserInterface extends UserInterface
 {

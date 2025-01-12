@@ -22,17 +22,23 @@ framework:
                         type: fanout
 
         routing:
-            'App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeCreatedEvent': async
-            'App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeRenamedEvent': async
-            'App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDebitedEvent': async
-            'App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeDeletedEvent': async
-            'App\BudgetEnvelopeManagement\Domain\Events\BudgetEnvelopeCreditedEvent': async
-            'App\UserManagement\Domain\Events\UserSignedUpEvent': async
-            'App\UserManagement\Domain\Events\UserFirstnameUpdatedEvent': async
-            'App\UserManagement\Domain\Events\UserLastnameUpdatedEvent': async
-            'App\UserManagement\Domain\Events\UserPasswordUpdatedEvent': async
-            'App\UserManagement\Domain\Events\UserPasswordResetRequestedEvent': async
-            'App\UserManagement\Domain\Events\UserPasswordResetEvent': async
+            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreatedEvent': async
+            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedEvent': async
+            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDebitedEvent': async
+            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDeletedEvent': async
+            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRenamedEvent': async
+            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeReplayedEvent': async
+            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRewoundEvent': async
+            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeTargetedAmountUpdatedEvent': async
+            'App\UserContext\Domain\Events\UserDeletedEvent': async
+            'App\UserContext\Domain\Events\UserFirstnameUpdatedEvent': async
+            'App\UserContext\Domain\Events\UserLastnameUpdatedEvent': async
+            'App\UserContext\Domain\Events\UserPasswordResetEvent': async
+            'App\UserContext\Domain\Events\UserPasswordResetRequestedEvent': async
+            'App\UserContext\Domain\Events\UserPasswordUpdatedEvent': async
+            'App\UserContext\Domain\Events\UserSignedUpEvent': async
+            'App\UserContext\Domain\Events\UserReplayedEvent': async
+            'App\UserContext\Domain\Events\UserRewoundEvent': async
 
 # when@test:
 #    framework:

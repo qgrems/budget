@@ -6,7 +6,7 @@ namespace App\SharedContext\Domain\Ports\Inbound;
 
 interface EventStoreInterface
 {
-    public function load(string $uuid): \Generator;
+    public function load(string $uuid, ?\DateTimeImmutable $desiredDateTime = null): \Generator;
 
     public function save(array $events): void;
 }
