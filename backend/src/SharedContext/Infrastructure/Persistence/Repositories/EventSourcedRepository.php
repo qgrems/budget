@@ -12,14 +12,14 @@ final readonly class EventSourcedRepository implements EventSourcedRepositoryInt
     }
 
     #[\Override]
-    public function get(string $aggregateId): \Generator
+    public function get(string $aggregateId, ?\DateTimeImmutable $desiredDateTime = null): \Generator
     {
-        return $this->eventStore->load($aggregateId);
+        return $this->eventStore->load($aggregateId, $desiredDateTime);
     }
 
     #[\Override]
-    public function save(array $uncommittedEvents): void
+    public function save(array $raisedEvents): void
     {
-        $this->eventStore->save($uncommittedEvents);
+        $this->eventStore->save($raisedEvents);
     }
 }

@@ -8,7 +8,7 @@ services:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
-            - '../src/UserManagement/Infrastructure/Entity/'
+            - '../src/UserContext/Infrastructure/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'
 
@@ -19,66 +19,81 @@ services:
             $user: '%env(RABBITMQ_USER)%'
             $password: '%env(RABBITMQ_PASSWORD)%'
 
-    App\UserManagement\Presentation\HTTP\Controllers\:
-        resource: '../src/UserManagement/Presentation/HTTP/Controllers'
+    App\UserContext\Presentation\HTTP\Controllers\:
+        resource: '../src/UserContext/Presentation/HTTP/Controllers'
         tags: [ 'controller.service_arguments' ]
 
-    App\BudgetEnvelopeManagement\Presentation\HTTP\Controllers\:
-        resource: '../src/BudgetEnvelopeManagement/Presentation/HTTP/Controllers'
+    App\BudgetEnvelopeContext\Presentation\HTTP\Controllers\:
+        resource: '../src/BudgetEnvelopeContext/Presentation/HTTP/Controllers'
         tags: [ 'controller.service_arguments' ]
 
-    App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers\CreateABudgetEnvelopeCommandHandler:
+    App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\CreateABudgetEnvelopeCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers\RenameABudgetEnvelopeCommandHandler:
+    App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\RenameABudgetEnvelopeCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers\CreditABudgetEnvelopeCommandHandler:
+    App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\CreditABudgetEnvelopeCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers\DebitABudgetEnvelopeCommandHandler:
+    App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\DebitABudgetEnvelopeCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers\DeleteABudgetEnvelopeCommandHandler:
+    App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\DeleteABudgetEnvelopeCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\BudgetEnvelopeManagement\Application\Handlers\CommandHandlers\UpdateABudgetEnvelopeTargetedAmountCommandHandler:
+    App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\ReplayABudgetEnvelopeEventsCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\BudgetEnvelopeManagement\Application\Handlers\QueryHandlers\GetABudgetEnvelopeWithItsHistoryQueryHandler:
+    App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\RewindABudgetEnvelopeFromEventsCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\BudgetEnvelopeManagement\Application\Handlers\QueryHandlers\ListBudgetEnvelopesQueryHandler:
+    App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\UpdateABudgetEnvelopeTargetedAmountCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\BudgetEnvelopeManagement\ReadModels\Projections\BudgetEnvelopeProjection:
+    App\BudgetEnvelopeContext\Application\Handlers\QueryHandlers\GetABudgetEnvelopeWithItsHistoryQueryHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\Application\Handlers\CommandHandlers\SignUpAUserCommandHandler:
+    App\BudgetEnvelopeContext\Application\Handlers\QueryHandlers\ListBudgetEnvelopesQueryHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\Application\Handlers\CommandHandlers\UpdateAUserFirstnameCommandHandler:
+    App\BudgetEnvelopeContext\ReadModels\Projections\BudgetEnvelopeProjection:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\Application\Handlers\CommandHandlers\UpdateAUserLastnameCommandHandler:
+    App\BudgetEnvelopeContext\ReadModels\Projections\BudgetEnvelopeHistoryProjection:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\Application\Handlers\CommandHandlers\UpdateAUserPasswordCommandHandler:
+    App\UserContext\Application\Handlers\CommandHandlers\SignUpAUserCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\Application\Handlers\CommandHandlers\RequestAUserPasswordResetCommandHandler:
+    App\UserContext\Application\Handlers\CommandHandlers\UpdateAUserFirstnameCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\Application\Handlers\CommandHandlers\ResetAUserPasswordCommandHandler:
+    App\UserContext\Application\Handlers\CommandHandlers\UpdateAUserLastnameCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\Application\Handlers\CommandHandlers\LogoutAUserCommandHandler:
+    App\UserContext\Application\Handlers\CommandHandlers\UpdateAUserPasswordCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\Application\Handlers\CommandHandlers\DeleteAUserCommandHandler:
+    App\UserContext\Application\Handlers\CommandHandlers\RequestAUserPasswordResetCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\UserManagement\ReadModels\Projections\UserProjection:
+    App\UserContext\Application\Handlers\CommandHandlers\ResetAUserPasswordCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\UserContext\Application\Handlers\CommandHandlers\LogoutAUserCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\UserContext\Application\Handlers\CommandHandlers\DeleteAUserCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\UserContext\Application\Handlers\CommandHandlers\ReplayAUserEventsCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\UserContext\Application\Handlers\CommandHandlers\RewindAUserFromEventsCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\UserContext\ReadModels\Projections\UserProjection:
         tags: [ 'messenger.message_handler' ]
 
     Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface:

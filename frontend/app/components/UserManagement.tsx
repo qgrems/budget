@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useUser } from '../domain/user/userHooks'
 import {useValidMessage} from "../contexts/ValidContext";
 
-export default function UserManagement() {
+export default function UserContext() {
   const { user, createUser, editUser, requestPasswordReset, resetPassword, changePassword, loading, error } = useUser()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
