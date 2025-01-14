@@ -6,7 +6,7 @@ namespace App\Tests\BudgetEnvelopeContext\Application\Handlers\CommandHandlers;
 
 use App\BudgetEnvelopeContext\Application\Commands\CreateABudgetEnvelopeCommand;
 use App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\CreateABudgetEnvelopeCommandHandler;
-use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreatedEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreatedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeAlreadyExistsException;
 use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeNameAlreadyExistsForUserException;
 use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
@@ -17,7 +17,7 @@ use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeContext\Presentation\HTTP\DTOs\CreateABudgetEnvelopeInput;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeView;
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
-use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
+use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -126,7 +126,7 @@ class CreateABudgetEnvelopeCommandHandlerTest extends TestCase
                 [
                     [
                         'aggregate_id' => $createABudgetEnvelopeInput->uuid,
-                        'type' => BudgetEnvelopeCreatedEvent::class,
+                        'type' => BudgetEnvelopeCreatedDomainEvent::class,
                         'occurred_on' => '2020-10-10T12:00:00Z',
                         'payload' => json_encode([
                             'name' => 'test1',

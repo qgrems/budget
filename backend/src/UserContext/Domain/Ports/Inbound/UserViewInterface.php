@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\UserContext\Domain\Ports\Inbound;
 
-use App\SharedContext\Domain\Ports\Inbound\EventInterface;
-use App\UserContext\Domain\Events\UserSignedUpEvent;
+use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
+use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 
 interface UserViewInterface
 {
     public static function fromRepository(array $user): self;
 
-    public static function fromUserSignedUpEvent(UserSignedUpEvent $userSignedUpEvent): self;
+    public static function fromUserSignedUpDomainEvent(UserSignedUpDomainEvent $userSignedUpDomainEvent): self;
 
     public function fromEvents(\Generator $events): void;
 
-    public function fromEvent(EventInterface $event): void;
+    public function fromEvent(DomainEventInterface $event): void;
 
     public function getPassword(): ?string;
 

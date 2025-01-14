@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\UserContext\ReadModels\Views;
 
-use App\SharedContext\Domain\Ports\Inbound\EventInterface;
+use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
 use App\SharedContext\Domain\Ports\Inbound\SharedUserInterface;
-use App\UserContext\Domain\Events\UserFirstnameUpdatedEvent;
-use App\UserContext\Domain\Events\UserLastnameUpdatedEvent;
-use App\UserContext\Domain\Events\UserPasswordResetEvent;
-use App\UserContext\Domain\Events\UserPasswordResetRequestedEvent;
-use App\UserContext\Domain\Events\UserPasswordUpdatedEvent;
-use App\UserContext\Domain\Events\UserReplayedEvent;
-use App\UserContext\Domain\Events\UserRewoundEvent;
-use App\UserContext\Domain\Events\UserSignedUpEvent;
+use App\UserContext\Domain\Events\UserFirstnameUpdatedDomainEvent;
+use App\UserContext\Domain\Events\UserLastnameUpdatedDomainEvent;
+use App\UserContext\Domain\Events\UserPasswordResetDomainEvent;
+use App\UserContext\Domain\Events\UserPasswordResetRequestedDomainEvent;
+use App\UserContext\Domain\Events\UserPasswordUpdatedDomainEvent;
+use App\UserContext\Domain\Events\UserReplayedDomainEvent;
+use App\UserContext\Domain\Events\UserRewoundDomainEvent;
+use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 use App\UserContext\Domain\Ports\Inbound\UserViewInterface;
 use App\UserContext\Domain\ValueObjects\UserConsent;
 use App\UserContext\Domain\ValueObjects\UserEmail;
@@ -123,19 +123,19 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
         );
     }
 
-    public static function fromUserSignedUpEvent(UserSignedUpEvent $userSignedUpEvent): self
+    public static function fromUserSignedUpDomainEvent(UserSignedUpDomainEvent $userSignedUpDomainEvent): self
     {
         return new self(
-            UserId::fromString($userSignedUpEvent->aggregateId),
-            UserEmail::fromString($userSignedUpEvent->email),
-            UserPassword::fromString($userSignedUpEvent->password),
-            UserFirstname::fromString($userSignedUpEvent->firstname),
-            UserLastname::fromString($userSignedUpEvent->lastname),
-            UserConsent::fromBool($userSignedUpEvent->isConsentGiven),
-            $userSignedUpEvent->occurredOn,
-            $userSignedUpEvent->occurredOn,
-            \DateTime::createFromImmutable($userSignedUpEvent->occurredOn),
-            $userSignedUpEvent->roles,
+            UserId::fromString($userSignedUpDomainEvent->aggregateId),
+            UserEmail::fromString($userSignedUpDomainEvent->email),
+            UserPassword::fromString($userSignedUpDomainEvent->password),
+            UserFirstname::fromString($userSignedUpDomainEvent->firstname),
+            UserLastname::fromString($userSignedUpDomainEvent->lastname),
+            UserConsent::fromBool($userSignedUpDomainEvent->isConsentGiven),
+            $userSignedUpDomainEvent->occurredOn,
+            $userSignedUpDomainEvent->occurredOn,
+            \DateTime::createFromImmutable($userSignedUpDomainEvent->occurredOn),
+            $userSignedUpDomainEvent->roles,
         );
     }
 
@@ -146,7 +146,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
         }
     }
 
-    public function fromEvent(EventInterface $event): void
+    public function fromEvent(DomainEventInterface $event): void
     {
         $this->apply($event);
     }
@@ -190,87 +190,91 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
         ];
     }
 
-    private function apply(EventInterface $event): void
+    private function apply(DomainEventInterface $event): void
     {
         match (get_class($event)) {
-            UserSignedUpEvent::class => $this->applyUserCreatedEvent($event),
-            UserFirstnameUpdatedEvent::class => $this->applyFirstnameUpdated($event),
-            UserLastnameUpdatedEvent::class => $this->applyLastnameUpdated($event),
-            UserPasswordUpdatedEvent::class => $this->applyUserPasswordUpdated($event),
-            UserPasswordResetRequestedEvent::class => $this->applyUserPasswordResetRequested($event),
-            UserPasswordResetEvent::class => $this->applyUserPasswordReset($event),
-            UserReplayedEvent::class => $this->applyUserReplayedEvent($event),
-            UserRewoundEvent::class => $this->applyUserRewoundEvent($event),
+            UserSignedUpDomainEvent::class => $this->applyUserSignedUpDomainEvent($event),
+            UserFirstnameUpdatedDomainEvent::class => $this->applyUserFirstnameUpdatedDomainEvent($event),
+            UserLastnameUpdatedDomainEvent::class => $this->applyUserLastnameUpdatedDomainEvent($event),
+            UserPasswordUpdatedDomainEvent::class => $this->applyUserPasswordUpdatedDomainEvent($event),
+            UserPasswordResetRequestedDomainEvent::class => $this->applyUserPasswordResetRequestedDomainEvent($event),
+            UserPasswordResetDomainEvent::class => $this->applyUserPasswordResetDomainEvent($event),
+            UserReplayedDomainEvent::class => $this->applyUserReplayedDomainEvent($event),
+            UserRewoundDomainEvent::class => $this->applyUserRewoundDomainEvent($event),
             default => throw new \RuntimeException('users.unknownEvent'),
         };
     }
 
-    private function applyUserCreatedEvent(UserSignedUpEvent $event): void
+    private function applyUserSignedUpDomainEvent(UserSignedUpDomainEvent $userSignedUpDomainEvent): void
     {
-        $this->uuid = $event->aggregateId;
-        $this->email = $event->email;
-        $this->password = $event->password;
-        $this->firstname = $event->firstname;
-        $this->lastname = $event->lastname;
-        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
-        $this->createdAt = $event->occurredOn;
-        $this->consentGiven = $event->isConsentGiven;
+        $this->uuid = $userSignedUpDomainEvent->aggregateId;
+        $this->email = $userSignedUpDomainEvent->email;
+        $this->password = $userSignedUpDomainEvent->password;
+        $this->firstname = $userSignedUpDomainEvent->firstname;
+        $this->lastname = $userSignedUpDomainEvent->lastname;
+        $this->updatedAt = \DateTime::createFromImmutable($userSignedUpDomainEvent->occurredOn);
+        $this->createdAt = $userSignedUpDomainEvent->occurredOn;
+        $this->consentGiven = $userSignedUpDomainEvent->isConsentGiven;
         $this->consentDate = new \DateTimeImmutable();
         $this->roles = ['ROLE_USER'];
         $this->passwordResetToken = null;
         $this->passwordResetTokenExpiry = null;
     }
 
-    private function applyFirstnameUpdated(UserFirstnameUpdatedEvent $event): void
-    {
-        $this->firstname = $event->firstname;
-        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+    private function applyUserFirstnameUpdatedDomainEvent(
+        UserFirstnameUpdatedDomainEvent $userFirstnameUpdatedDomainEvent,
+    ): void {
+        $this->firstname = $userFirstnameUpdatedDomainEvent->firstname;
+        $this->updatedAt = \DateTime::createFromImmutable($userFirstnameUpdatedDomainEvent->occurredOn);
     }
 
-    private function applyLastnameUpdated(UserLastnameUpdatedEvent $event): void
-    {
-        $this->lastname = $event->lastname;
-        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+    private function applyUserLastnameUpdatedDomainEvent(
+        UserLastnameUpdatedDomainEvent $userLastnameUpdatedDomainEvent,
+    ): void {
+        $this->lastname = $userLastnameUpdatedDomainEvent->lastname;
+        $this->updatedAt = \DateTime::createFromImmutable($userLastnameUpdatedDomainEvent->occurredOn);
     }
 
-    private function applyUserPasswordUpdated(UserPasswordUpdatedEvent $event): void
-    {
-        $this->password = $event->newPassword;
-        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+    private function applyUserPasswordUpdatedDomainEvent(
+        UserPasswordUpdatedDomainEvent $userPasswordUpdatedDomainEvent,
+    ): void {
+        $this->password = $userPasswordUpdatedDomainEvent->newPassword;
+        $this->updatedAt = \DateTime::createFromImmutable($userPasswordUpdatedDomainEvent->occurredOn);
     }
 
-    private function applyUserPasswordResetRequested(UserPasswordResetRequestedEvent $event): void
-    {
-        $this->passwordResetToken = $event->passwordResetToken;
-        $this->passwordResetTokenExpiry = $event->passwordResetTokenExpiry;
-        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+    private function applyUserPasswordResetRequestedDomainEvent(
+        UserPasswordResetRequestedDomainEvent $passwordResetRequestedDomainEvent,
+    ): void {
+        $this->passwordResetToken = $passwordResetRequestedDomainEvent->passwordResetToken;
+        $this->passwordResetTokenExpiry = $passwordResetRequestedDomainEvent->passwordResetTokenExpiry;
+        $this->updatedAt = \DateTime::createFromImmutable($passwordResetRequestedDomainEvent->occurredOn);
     }
 
-    private function applyUserPasswordReset(UserPasswordResetEvent $event): void
+    private function applyUserPasswordResetDomainEvent(UserPasswordResetDomainEvent $userPasswordResetDomainEvent): void
     {
-        $this->password = $event->password;
-        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+        $this->password = $userPasswordResetDomainEvent->password;
+        $this->updatedAt = \DateTime::createFromImmutable($userPasswordResetDomainEvent->occurredOn);
     }
 
-    private function applyUserReplayedEvent(UserReplayedEvent $event): void
+    private function applyUserReplayedDomainEvent(UserReplayedDomainEvent $userReplayedDomainEvent): void
     {
-        $this->firstname = $event->firstname;
-        $this->lastname = $event->lastname;
-        $this->email = $event->email;
-        $this->password = $event->password;
-        $this->consentGiven = $event->isConsentGiven;
-        $this->consentDate = $event->consentDate;
-        $this->updatedAt = $event->updatedAt;
+        $this->firstname = $userReplayedDomainEvent->firstname;
+        $this->lastname = $userReplayedDomainEvent->lastname;
+        $this->email = $userReplayedDomainEvent->email;
+        $this->password = $userReplayedDomainEvent->password;
+        $this->consentGiven = $userReplayedDomainEvent->isConsentGiven;
+        $this->consentDate = $userReplayedDomainEvent->consentDate;
+        $this->updatedAt = $userReplayedDomainEvent->updatedAt;
     }
 
-    private function applyUserRewoundEvent(UserRewoundEvent $event): void
+    private function applyUserRewoundDomainEvent(UserRewoundDomainEvent $userRewoundDomainEvent): void
     {
-        $this->firstname = $event->firstname;
-        $this->lastname = $event->lastname;
-        $this->email = $event->email;
-        $this->password = $event->password;
-        $this->consentGiven = $event->isConsentGiven;
-        $this->consentDate = $event->consentDate;
-        $this->updatedAt = $event->updatedAt;
+        $this->firstname = $userRewoundDomainEvent->firstname;
+        $this->lastname = $userRewoundDomainEvent->lastname;
+        $this->email = $userRewoundDomainEvent->email;
+        $this->password = $userRewoundDomainEvent->password;
+        $this->consentGiven = $userRewoundDomainEvent->isConsentGiven;
+        $this->consentDate = $userRewoundDomainEvent->consentDate;
+        $this->updatedAt = $userRewoundDomainEvent->updatedAt;
     }
 }

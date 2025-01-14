@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
-use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
+use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use App\UserContext\Application\Commands\ResetAUserPasswordCommand;
 use App\UserContext\Application\Handlers\CommandHandlers\ResetAUserPasswordCommandHandler;
-use App\UserContext\Domain\Events\UserPasswordResetRequestedEvent;
-use App\UserContext\Domain\Events\UserSignedUpEvent;
+use App\UserContext\Domain\Events\UserPasswordResetRequestedDomainEvent;
+use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 use App\UserContext\Domain\Exceptions\InvalidUserOperationException;
 use App\UserContext\Domain\Exceptions\UserNotFoundException;
+use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserContext\Domain\Ports\Outbound\PasswordHasherInterface;
 use App\UserContext\Domain\ValueObjects\UserConsent;
@@ -30,6 +31,7 @@ use PHPUnit\Framework\TestCase;
 class ResetAUserPasswordCommandHandlerTest extends TestCase
 {
     private EventStoreInterface&MockObject $eventStore;
+    private EventEncryptorInterface&MockObject $eventEncryptor;
     private UserViewRepositoryInterface&MockObject $userViewRepository;
     private PasswordHasherInterface&MockObject $passwordHasher;
     private EventSourcedRepository $eventSourcedRepository;
@@ -42,10 +44,12 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
         $this->userViewRepository = $this->createMock(UserViewRepositoryInterface::class);
         $this->passwordHasher = $this->createMock(PasswordHasherInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
+        $this->eventEncryptor = $this->createMock(EventEncryptorInterface::class);
         $this->handler = new ResetAUserPasswordCommandHandler(
             $this->userViewRepository,
             $this->eventSourcedRepository,
             $this->passwordHasher,
+            $this->eventEncryptor,
         );
     }
 
@@ -77,7 +81,7 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
                 [
                     [
                         'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                        'type' => UserSignedUpEvent::class,
+                        'type' => UserSignedUpDomainEvent::class,
                         'occurred_on' => new \DateTimeImmutable()->format(\DateTime::ATOM),
                         'payload' => json_encode([
                             'email' => 'test@mail.com',
@@ -93,7 +97,7 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
                     ],
                     [
                         'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                        'type' => UserPasswordResetRequestedEvent::class,
+                        'type' => UserPasswordResetRequestedDomainEvent::class,
                         'occurred_on' => new \DateTimeImmutable()->format(\DateTime::ATOM),
                         'payload' => json_encode([
                             'aggregateId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
@@ -105,6 +109,11 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
                 ],
             ),
         );
+
+        $this->eventEncryptor->expects($this->any())->method('decrypt')->willReturnCallback(
+            static fn (UserSignedUpDomainEvent|UserPasswordResetRequestedDomainEvent $event) => $event,
+        );
+
         $this->passwordHasher->method('hash')->willReturn('hashed-new-password');
         $this->eventStore->expects($this->once())->method('save');
 
@@ -155,7 +164,7 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
                 [
                     [
                         'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                        'type' => UserSignedUpEvent::class,
+                        'type' => UserSignedUpDomainEvent::class,
                         'occurred_on' => new \DateTimeImmutable()->format(\DateTime::ATOM),
                         'payload' => json_encode([
                             'email' => 'test@mail.com',
@@ -172,6 +181,19 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
                 ],
             ),
         );
+
+        $this->eventEncryptor->expects($this->once())->method('decrypt')->willReturn(
+            new UserSignedUpDomainEvent(
+                '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
+                'test@mail.com',
+                'password',
+                'Test firstName',
+                'Test lastName',
+                true,
+                ['ROLE_USER'],
+            ),
+        );
+
         $this->passwordHasher->method('hash')->willReturn('hashed-new-password');
 
         $this->expectException(InvalidUserOperationException::class);

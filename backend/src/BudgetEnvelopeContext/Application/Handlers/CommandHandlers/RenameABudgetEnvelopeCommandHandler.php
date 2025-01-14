@@ -30,7 +30,7 @@ final readonly class RenameABudgetEnvelopeCommandHandler
             $renameABudgetEnvelopeCommand->getBudgetEnvelopeId(),
             $this->budgetEnvelopeViewRepository,
         );
-        $this->eventSourcedRepository->save($aggregate->raisedEvents());
-        $aggregate->clearRaisedEvents();
+        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());
+        $aggregate->clearRaisedDomainEvents();
     }
 }

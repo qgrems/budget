@@ -6,12 +6,12 @@ namespace App\Tests\BudgetEnvelopeContext\Application\Handlers\CommandHandlers;
 
 use App\BudgetEnvelopeContext\Application\Commands\RewindABudgetEnvelopeFromEventsCommand;
 use App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\RewindABudgetEnvelopeFromEventsCommandHandler;
-use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreatedEvent;
-use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreatedDomainEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
-use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
+use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -42,7 +42,7 @@ class RewindABudgetEnvelopeFromEventsCommandHandlerTest extends TestCase
             [
                 [
                     'aggregate_id' => '3e6a6763-4c4d-4648-bc3f-e9447dbed12c',
-                    'type' => BudgetEnvelopeCreatedEvent::class,
+                    'type' => BudgetEnvelopeCreatedDomainEvent::class,
                     'occurred_on' => '2020-10-10T12:00:00Z',
                     'payload' => json_encode([
                         'name' => 'test1',
@@ -54,7 +54,7 @@ class RewindABudgetEnvelopeFromEventsCommandHandlerTest extends TestCase
                 ],
                 [
                     'aggregate_id' => '3e6a6763-4c4d-4648-bc3f-e9447dbed12c',
-                    'type' => BudgetEnvelopeCreditedEvent::class,
+                    'type' => BudgetEnvelopeCreditedDomainEvent::class,
                     'occurred_on' => '2024-12-07T22:03:35+00:00',
                     'payload' => json_encode([
                         'creditMoney' => '5.47',

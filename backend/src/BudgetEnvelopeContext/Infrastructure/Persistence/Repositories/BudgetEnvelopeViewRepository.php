@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\BudgetEnvelopeContext\Infrastructure\Persistence\Repositories;
 
-use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeHistoryViewInterface;
+use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeLedgerEntryViewInterface;
 use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopesPaginatedInterface;
 use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeViewInterface;
 use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
-use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeHistoryView;
+use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeLedgerEntryView;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopesPaginated;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeView;
 use Doctrine\DBAL\Connection;
@@ -77,12 +77,12 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
      * @throws Exception
      */
     #[\Override]
-    public function findOneEnvelopeWithHistoryBy(array $criteria, ?array $orderBy = null): array
+    public function findOneEnvelopeWithItsLedgerBy(array $criteria, ?array $orderBy = null): array
     {
         $sql = sprintf(
-            'SELECT ev.uuid, ev.created_at, ev.updated_at, ev.current_amount, ev.targeted_amount, ev.name, ev.user_uuid, ev.is_deleted, ehv.budget_envelope_uuid, ehv.created_at AS history_created_at, ehv.monetary_amount, ehv.transaction_type
+            'SELECT ev.uuid, ev.created_at, ev.updated_at, ev.current_amount, ev.targeted_amount, ev.name, ev.user_uuid, ev.is_deleted, ehv.budget_envelope_uuid, ehv.created_at AS ledger_created_at, ehv.monetary_amount, ehv.entry_type
          FROM budget_envelope_view ev
-         LEFT JOIN budget_envelope_history_view ehv ON ev.uuid = ehv.budget_envelope_uuid
+         LEFT JOIN budget_envelope_ledger_entry_view ehv ON ev.uuid = ehv.budget_envelope_uuid
          WHERE %s
          ORDER BY ehv.created_at DESC',
             $this->buildWhereClauseWithAlias($criteria, 'ev')
@@ -98,21 +98,21 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
         unset(
             $budgetEnvelopeData['budget_envelope_uuid'],
             $budgetEnvelopeData['monetary_amount'],
-            $budgetEnvelopeData['transaction_type'],
-            $budgetEnvelopeData['history_created_at']
+            $budgetEnvelopeData['entry_type'],
+            $budgetEnvelopeData['ledger_created_at']
         );
 
         return [
             'envelope' => BudgetEnvelopeView::fromRepository($budgetEnvelopeData),
-            'history' => count($result) > 1 ? array_map(
-                [$this, 'mapToBudgetEnvelopeHistoryView'],
+            'ledger' => null !== $result[0]['ledger_created_at'] ? array_map(
+                [$this, 'mapToBudgetEnvelopeLedgerView'],
                 array_map(function ($row) {
                     return [
                         'aggregate_id' => $row['budget_envelope_uuid'],
                         'user_uuid' => $row['user_uuid'],
-                        'created_at' => $row['history_created_at'],
+                        'created_at' => $row['ledger_created_at'],
                         'monetary_amount' => $row['monetary_amount'],
-                        'transaction_type' => $row['transaction_type'],
+                        'entry_type' => $row['entry_type'],
                     ];
                 }, $result)
             ) : [],
@@ -193,8 +193,8 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
         return BudgetEnvelopeView::fromRepository($data);
     }
 
-    private function mapToBudgetEnvelopeHistoryView(array $data): BudgetEnvelopeHistoryViewInterface
+    private function mapToBudgetEnvelopeLedgerView(array $data): BudgetEnvelopeLedgerEntryViewInterface
     {
-        return BudgetEnvelopeHistoryView::fromRepository($data);
+        return BudgetEnvelopeLedgerEntryView::fromRepository($data);
     }
 }

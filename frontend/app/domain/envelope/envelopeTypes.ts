@@ -25,9 +25,9 @@ export interface EnvelopeDetails {
     targetedAmount: string;
     name: string;
   };
-  history: Array<{
+  ledger: Array<{
     created_at: string;
     monetary_amount: string;
-    transaction_type: 'credit' | 'debit';
+    entry_type: 'credit' | 'debit';
   }>;
 }

@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
-use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
+use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use App\UserContext\Application\Commands\UpdateAUserPasswordCommand;
 use App\UserContext\Application\Handlers\CommandHandlers\UpdateAUserPasswordCommandHandler;
-use App\UserContext\Domain\Events\UserSignedUpEvent;
+use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 use App\UserContext\Domain\Exceptions\UserOldPasswordIsIncorrectException;
+use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserContext\Domain\Ports\Outbound\PasswordHasherInterface;
 use App\UserContext\Domain\ValueObjects\UserConsent;
@@ -27,6 +28,7 @@ use PHPUnit\Framework\TestCase;
 class UpdateAUserPasswordCommandHandlerTest extends TestCase
 {
     private EventStoreInterface&MockObject $eventStore;
+    private EventEncryptorInterface&MockObject $eventEncryptor;
     private UserViewRepositoryInterface&MockObject $userViewRepository;
     private PasswordHasherInterface&MockObject $passwordHasher;
     private EventSourcedRepository $eventSourcedRepository;
@@ -36,6 +38,7 @@ class UpdateAUserPasswordCommandHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->eventStore = $this->createMock(EventStoreInterface::class);
+        $this->eventEncryptor = $this->createMock(EventEncryptorInterface::class);
         $this->userViewRepository = $this->createMock(UserViewRepositoryInterface::class);
         $this->passwordHasher = $this->createMock(PasswordHasherInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
@@ -43,6 +46,7 @@ class UpdateAUserPasswordCommandHandlerTest extends TestCase
             $this->eventSourcedRepository,
             $this->userViewRepository,
             $this->passwordHasher,
+            $this->eventEncryptor,
         );
     }
 
@@ -60,7 +64,7 @@ class UpdateAUserPasswordCommandHandlerTest extends TestCase
                 [
                     [
                         'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                        'type' => UserSignedUpEvent::class,
+                        'type' => UserSignedUpDomainEvent::class,
                         'occurred_on' => '2020-10-10T12:00:00Z',
                         'payload' => json_encode([
                             'email' => 'test@mail.com',
@@ -75,6 +79,18 @@ class UpdateAUserPasswordCommandHandlerTest extends TestCase
                         ]),
                     ],
                 ],
+            ),
+        );
+
+        $this->eventEncryptor->expects($this->once())->method('decrypt')->willReturn(
+            new UserSignedUpDomainEvent(
+                '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
+                'test@mail.com',
+                'HAdFD97Xp[T!crjHi^Y%',
+                'David',
+                'Doe',
+                true,
+                ['ROLE_USER'],
             ),
         );
 
@@ -113,7 +129,7 @@ class UpdateAUserPasswordCommandHandlerTest extends TestCase
                 [
                     [
                         'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                        'type' => UserSignedUpEvent::class,
+                        'type' => UserSignedUpDomainEvent::class,
                         'occurred_on' => '2020-10-10T12:00:00Z',
                         'payload' => json_encode([
                             'email' => 'test@mail.com',
@@ -128,6 +144,18 @@ class UpdateAUserPasswordCommandHandlerTest extends TestCase
                         ]),
                     ],
                 ],
+            ),
+        );
+
+        $this->eventEncryptor->expects($this->once())->method('decrypt')->willReturn(
+            new UserSignedUpDomainEvent(
+                '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
+                'test@mail.com',
+                'HAdFD97Xp[T!crjHi^Y%',
+                'David',
+                'Doe',
+                true,
+                ['ROLE_USER'],
             ),
         );
 

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Domain\Events;
 
-use App\UserContext\Domain\Events\UserReplayedEvent;
+use App\UserContext\Domain\Events\UserReplayedDomainEvent;
 use PHPUnit\Framework\TestCase;
 
 class UserReplayedEventTest extends TestCase
 {
     public function testToArray(): void
     {
-        $event = new UserReplayedEvent(
+        $event = new UserReplayedDomainEvent(
             'aggregateId',
             'firstname',
             'lastname',
@@ -40,7 +40,7 @@ class UserReplayedEventTest extends TestCase
 
     public function testFromArray(): void
     {
-        $event = UserReplayedEvent::fromArray([
+        $event = UserReplayedDomainEvent::fromArray([
             'aggregateId' => 'aggregateId',
             'email' => 'email',
             'password' => 'password',

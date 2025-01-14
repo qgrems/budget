@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
-use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
+use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use App\UserContext\Application\Commands\RequestAUserPasswordResetCommand;
 use App\UserContext\Application\Handlers\CommandHandlers\RequestAUserPasswordResetCommandHandler;
-use App\UserContext\Domain\Events\UserSignedUpEvent;
+use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 use App\UserContext\Domain\Exceptions\UserNotFoundException;
+use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\Ports\Inbound\PasswordResetTokenGeneratorInterface;
 use App\UserContext\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserContext\Domain\ValueObjects\UserConsent;
@@ -29,6 +30,7 @@ class RequestAUserPasswordResetCommandHandlerTest extends TestCase
     private EventStoreInterface&MockObject $eventStore;
     private UserViewRepositoryInterface&MockObject $userViewRepository;
     private PasswordResetTokenGeneratorInterface&MockObject $passwordResetTokenGenerator;
+    private EventEncryptorInterface $eventEncryptor;
     private EventSourcedRepository $eventSourcedRepository;
     private RequestAUserPasswordResetCommandHandler $handler;
 
@@ -36,6 +38,7 @@ class RequestAUserPasswordResetCommandHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->eventStore = $this->createMock(EventStoreInterface::class);
+        $this->eventEncryptor = $this->createMock(EventEncryptorInterface::class);
         $this->userViewRepository = $this->createMock(UserViewRepositoryInterface::class);
         $this->passwordResetTokenGenerator = $this->createMock(PasswordResetTokenGeneratorInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
@@ -43,6 +46,7 @@ class RequestAUserPasswordResetCommandHandlerTest extends TestCase
             $this->userViewRepository,
             $this->passwordResetTokenGenerator,
             $this->eventSourcedRepository,
+            $this->eventEncryptor,
         );
     }
 
@@ -70,7 +74,7 @@ class RequestAUserPasswordResetCommandHandlerTest extends TestCase
                 [
                     [
                         'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                        'type' => UserSignedUpEvent::class,
+                        'type' => UserSignedUpDomainEvent::class,
                         'occurred_on' => '2020-10-10T12:00:00Z',
                         'payload' => json_encode([
                             'email' => 'test@mail.com',
@@ -85,6 +89,18 @@ class RequestAUserPasswordResetCommandHandlerTest extends TestCase
                         ]),
                     ],
                 ],
+            ),
+        );
+
+        $this->eventEncryptor->expects($this->once())->method('decrypt')->willReturn(
+            new UserSignedUpDomainEvent(
+                '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
+                'test@mail.com',
+                'password',
+                'Test firstName',
+                'Test lastName',
+                true,
+                ['ROLE_USER'],
             ),
         );
 

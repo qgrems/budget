@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Domain\Events;
 
-use App\UserContext\Domain\Events\UserRewoundEvent;
+use App\UserContext\Domain\Events\UserRewoundDomainEvent;
 use PHPUnit\Framework\TestCase;
 
 class UserRewoundEventTest extends TestCase
 {
     public function testToArray(): void
     {
-        $event = new UserRewoundEvent(
+        $event = new UserRewoundDomainEvent(
             'aggregateId',
             'firstname',
             'lastname',
@@ -40,7 +40,7 @@ class UserRewoundEventTest extends TestCase
 
     public function testFromArray(): void
     {
-        $event = UserRewoundEvent::fromArray([
+        $event = UserRewoundDomainEvent::fromArray([
             'aggregateId' => 'aggregateId',
             'email' => 'email',
             'password' => 'password',

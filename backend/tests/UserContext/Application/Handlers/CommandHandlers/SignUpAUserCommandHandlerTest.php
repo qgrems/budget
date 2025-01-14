@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
-use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
+use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use App\UserContext\Application\Commands\SignUpAUserCommand;
 use App\UserContext\Application\Handlers\CommandHandlers\SignUpAUserCommandHandler;
-use App\UserContext\Domain\Events\UserSignedUpEvent;
+use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 use App\UserContext\Domain\Exceptions\UserAlreadyExistsException;
+use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserContext\Domain\Ports\Outbound\PasswordHasherInterface;
 use App\UserContext\Domain\ValueObjects\UserConsent;
@@ -27,6 +28,7 @@ use PHPUnit\Framework\TestCase;
 class SignUpAUserCommandHandlerTest extends TestCase
 {
     private EventStoreInterface&MockObject $eventStore;
+    private EventEncryptorInterface&MockObject $eventEncryptor;
     private UserViewRepositoryInterface&MockObject $userViewRepository;
     private PasswordHasherInterface&MockObject $passwordHasher;
     private EventSourcedRepository $eventSourcedRepository;
@@ -39,10 +41,12 @@ class SignUpAUserCommandHandlerTest extends TestCase
         $this->userViewRepository = $this->createMock(UserViewRepositoryInterface::class);
         $this->passwordHasher = $this->createMock(PasswordHasherInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
+        $this->eventEncryptor = $this->createMock(EventEncryptorInterface::class);
         $this->handler = new SignUpAUserCommandHandler(
             $this->eventSourcedRepository,
             $this->userViewRepository,
             $this->passwordHasher,
+            $this->eventEncryptor,
         );
     }
 
@@ -81,7 +85,7 @@ class SignUpAUserCommandHandlerTest extends TestCase
                 [
                     [
                         'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                        'type' => UserSignedUpEvent::class,
+                        'type' => UserSignedUpDomainEvent::class,
                         'occurred_on' => '2020-10-10T12:00:00Z',
                         'payload' => json_encode([
                             'email' => 'test@gmail.com',

@@ -12,7 +12,7 @@ interface BudgetEnvelopeViewRepositoryInterface
 
     public function findOneBy(array $criteria, ?array $orderBy = null): ?BudgetEnvelopeViewInterface;
 
-    public function findOneEnvelopeWithHistoryBy(array $criteria, ?array $orderBy = null): array;
+    public function findOneEnvelopeWithItsLedgerBy(array $criteria, ?array $orderBy = null): array;
 
     public function findBy(
         array $criteria,

@@ -7,11 +7,13 @@ namespace App\UserContext\Application\Handlers\CommandHandlers;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\UserContext\Application\Commands\DeleteAUserCommand;
 use App\UserContext\Domain\Aggregates\User;
+use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 
 final readonly class DeleteAUserCommandHandler
 {
     public function __construct(
         private EventSourcedRepositoryInterface $eventSourcedRepository,
+        private EventEncryptorInterface $eventEncryptor,
     ) {
     }
 
@@ -21,9 +23,11 @@ final readonly class DeleteAUserCommandHandler
             $this->eventSourcedRepository->get(
                 (string) $deleteAUserCommand->getUserId(),
             ),
+            $this->eventEncryptor,
         );
         $aggregate->delete($deleteAUserCommand->getUserId());
-        $this->eventSourcedRepository->save($aggregate->raisedEvents());
-        $aggregate->clearRaisedEvents();
+        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());
+        $aggregate->clearRaisedDomainEvents();
+        $aggregate->clearKeys();
     }
 }

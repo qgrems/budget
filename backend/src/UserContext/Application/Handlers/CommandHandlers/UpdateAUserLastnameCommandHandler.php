@@ -7,11 +7,13 @@ namespace App\UserContext\Application\Handlers\CommandHandlers;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\UserContext\Application\Commands\UpdateAUserLastnameCommand;
 use App\UserContext\Domain\Aggregates\User;
+use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 
 final readonly class UpdateAUserLastnameCommandHandler
 {
     public function __construct(
         private EventSourcedRepositoryInterface $eventSourcedRepository,
+        private EventEncryptorInterface $eventEncryptor,
     ) {
     }
 
@@ -21,12 +23,15 @@ final readonly class UpdateAUserLastnameCommandHandler
             $this->eventSourcedRepository->get(
                 (string) $updateAUserLastnameCommand->getUserId(),
             ),
+            $this->eventEncryptor,
         );
         $aggregate->updateLastname(
             $updateAUserLastnameCommand->getUserLastname(),
             $updateAUserLastnameCommand->getUserId(),
+            $this->eventEncryptor,
         );
-        $this->eventSourcedRepository->save($aggregate->raisedEvents());
-        $aggregate->clearRaisedEvents();
+        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());
+        $aggregate->clearRaisedDomainEvents();
+        $aggregate->clearKeys();
     }
 }
