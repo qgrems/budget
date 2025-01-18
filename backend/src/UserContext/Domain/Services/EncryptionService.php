@@ -17,7 +17,7 @@ final class EncryptionService implements EncryptionServiceInterface
     private const int IV_SIZE = 12;
     private const int TAG_SIZE = 16;
 
-    public function __construct(private readonly KeyManagementRepositoryInterface $keyManagementService)
+    public function __construct(private readonly KeyManagementRepositoryInterface $keyManagementRepository)
     {
     }
 
@@ -73,13 +73,13 @@ final class EncryptionService implements EncryptionServiceInterface
             return $this->getKeyByUserId($userId);
         }
 
-        if ($isUserSignUpAction) {
-            $this->storeKeyByUserId($userId, $this->keyManagementService->generateKey($userId));
+        $key = $this->keyManagementRepository->getKey($userId);
+
+        if ($isUserSignUpAction && null === $key) {
+            $this->storeKeyByUserId($userId, $this->keyManagementRepository->generateKey($userId));
 
             return $this->getKeyByUserId($userId);
         }
-
-        $key = $this->keyManagementService->getKey($userId);
 
         if (null === $key) {
             throw UserEncryptionException::fromGetKeyFailure();
