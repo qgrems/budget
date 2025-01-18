@@ -9,7 +9,6 @@ use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use App\UserContext\Application\Commands\DeleteAUserCommand;
 use App\UserContext\Application\Handlers\CommandHandlers\DeleteAUserCommandHandler;
-use App\UserContext\Domain\Events\UserDeletedDomainEvent;
 use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 use App\UserContext\Domain\Exceptions\UserIsNotOwnedByUserException;
 use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;

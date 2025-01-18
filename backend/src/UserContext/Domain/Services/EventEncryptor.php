@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UserContext\Domain\Services;
 
 use App\UserContext\Domain\Attributes\PersonalData;
+use App\UserContext\Domain\Ports\Inbound\EncryptionServiceInterface;
 use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\Ports\Inbound\UserDomainEventInterface;
 use App\UserContext\Domain\Ports\Inbound\UserSignedUpDomainEventInterface;
@@ -13,7 +14,7 @@ use ReflectionProperty;
 
 final class EventEncryptor implements EventEncryptorInterface
 {
-    public function __construct(private readonly EncryptionService $encryptionService)
+    public function __construct(private readonly EncryptionServiceInterface $encryptionService)
     {
     }
 

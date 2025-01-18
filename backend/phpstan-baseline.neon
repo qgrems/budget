@@ -1675,7 +1675,7 @@ parameters:
 			path: src/UserContext/Domain/Services/EventEncryptor.php
 
 		-
-			message: '#^Parameter \#1 \$ciphertext of method App\\UserContext\\Domain\\Services\\EncryptionService\:\:decrypt\(\) expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$ciphertext of method App\\UserContext\\Domain\\Ports\\Inbound\\EncryptionServiceInterface\:\:decrypt\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Services/EventEncryptor.php
@@ -1687,13 +1687,13 @@ parameters:
 			path: src/UserContext/Domain/Services/EventEncryptor.php
 
 		-
-			message: '#^Parameter \#2 \$iv of method App\\UserContext\\Domain\\Services\\EncryptionService\:\:decrypt\(\) expects string, mixed given\.$#'
+			message: '#^Parameter \#2 \$iv of method App\\UserContext\\Domain\\Ports\\Inbound\\EncryptionServiceInterface\:\:decrypt\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Services/EventEncryptor.php
 
 		-
-			message: '#^Parameter \#3 \$tag of method App\\UserContext\\Domain\\Services\\EncryptionService\:\:decrypt\(\) expects string, mixed given\.$#'
+			message: '#^Parameter \#3 \$tag of method App\\UserContext\\Domain\\Ports\\Inbound\\EncryptionServiceInterface\:\:decrypt\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Services/EventEncryptor.php
@@ -2087,6 +2087,72 @@ parameters:
 			identifier: method.nonObject
 			count: 1
 			path: tests/UserContext/Application/Handlers/CommandHandlers/RewindAUserFromEventsCommandHandlerTest.php
+
+		-
+			message: '#^Call to an undefined method App\\UserContext\\Domain\\Ports\\Inbound\\KeyManagementRepositoryInterface\:\:method\(\)\.$#'
+			identifier: method.notFound
+			count: 6
+			path: tests/UserContext/Domain/Services/EncryptionServiceTest.php
+
+		-
+			message: '#^Cannot call method willReturn\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 6
+			path: tests/UserContext/Domain/Services/EncryptionServiceTest.php
+
+		-
+			message: '#^Cannot call method with\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 6
+			path: tests/UserContext/Domain/Services/EncryptionServiceTest.php
+
+		-
+			message: '#^Parameter \#1 \$ciphertext of method App\\UserContext\\Domain\\Ports\\Inbound\\EncryptionServiceInterface\:\:decrypt\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/UserContext/Domain/Services/EncryptionServiceTest.php
+
+		-
+			message: '#^Parameter \#2 \$iv of method App\\UserContext\\Domain\\Ports\\Inbound\\EncryptionServiceInterface\:\:decrypt\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/UserContext/Domain/Services/EncryptionServiceTest.php
+
+		-
+			message: '#^Parameter \#3 \$tag of method App\\UserContext\\Domain\\Ports\\Inbound\\EncryptionServiceInterface\:\:decrypt\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/UserContext/Domain/Services/EncryptionServiceTest.php
+
+		-
+			message: '#^Access to an undefined property App\\UserContext\\Domain\\Ports\\Inbound\\UserDomainEventInterface\:\:\$firstname\.$#'
+			identifier: property.notFound
+			count: 2
+			path: tests/UserContext/Domain/Services/EventEncryptorTest.php
+
+		-
+			message: '#^Call to an undefined method App\\UserContext\\Domain\\Ports\\Inbound\\EncryptionServiceInterface\:\:method\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: tests/UserContext/Domain/Services/EventEncryptorTest.php
+
+		-
+			message: '#^Cannot call method willReturn\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: tests/UserContext/Domain/Services/EventEncryptorTest.php
+
+		-
+			message: '#^Cannot call method with\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: tests/UserContext/Domain/Services/EventEncryptorTest.php
+
+		-
+			message: '#^Parameter \#2 \$firstname of class App\\UserContext\\Domain\\Events\\UserFirstnameUpdatedDomainEvent constructor expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/UserContext/Domain/Services/EventEncryptorTest.php
 
 		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsString\(\) with string will always evaluate to true\.$#'
