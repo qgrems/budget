@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Domain\Events;
 
-use App\UserContext\Domain\Events\UserFirstnameUpdatedEvent;
+use App\UserContext\Domain\Events\UserFirstnameUpdatedDomainEvent;
 use PHPUnit\Framework\TestCase;
 
 class UserFirstnameUpdatedEventTest extends TestCase
 {
     public function testToArray(): void
     {
-        $event = new UserFirstnameUpdatedEvent('b7e685be-db83-4866-9f85-102fac30a50b', 'John');
+        $event = new UserFirstnameUpdatedDomainEvent('b7e685be-db83-4866-9f85-102fac30a50b', 'John');
         $array = $event->toArray();
 
         $this->assertEquals('b7e685be-db83-4866-9f85-102fac30a50b', $array['aggregateId']);
@@ -27,7 +27,7 @@ class UserFirstnameUpdatedEventTest extends TestCase
             'occurredOn' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
         ];
 
-        $event = UserFirstnameUpdatedEvent::fromArray($data);
+        $event = UserFirstnameUpdatedDomainEvent::fromArray($data);
 
         $this->assertEquals($data['aggregateId'], $event->aggregateId);
         $this->assertEquals($data['firstname'], $event->firstname);

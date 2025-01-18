@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\ReadModels\Views;
 
-use App\UserContext\Domain\Events\UserSignedUpEvent;
+use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 use App\UserContext\Domain\ValueObjects\UserConsent;
 use App\UserContext\Domain\ValueObjects\UserEmail;
 use App\UserContext\Domain\ValueObjects\UserFirstname;
@@ -131,7 +131,7 @@ class UserViewTest extends TestCase
         $userView->fromEvents(
             (function () {
                 yield [
-                    'type' => UserSignedUpEvent::class,
+                    'type' => UserSignedUpDomainEvent::class,
                     'payload' => json_encode([
                         'aggregateId' => 'b7e685be-db83-4866-9f85-102fac30a50b',
                         'email' => 'john.doe@example.com',

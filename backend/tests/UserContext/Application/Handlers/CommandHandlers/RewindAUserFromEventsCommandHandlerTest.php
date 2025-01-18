@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
-use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
+use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use App\UserContext\Application\Commands\RewindAUserFromEventsCommand;
 use App\UserContext\Application\Handlers\CommandHandlers\RewindAUserFromEventsCommandHandler;
-use App\UserContext\Domain\Events\UserSignedUpEvent;
+use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
+use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\ValueObjects\UserId;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -17,6 +18,7 @@ use PHPUnit\Framework\TestCase;
 class RewindAUserFromEventsCommandHandlerTest extends TestCase
 {
     private EventStoreInterface&MockObject $eventStore;
+    private EventEncryptorInterface $eventEncryptor;
     private EventSourcedRepository $eventSourcedRepository;
     private RewindAUserFromEventsCommandHandler $handler;
 
@@ -24,7 +26,8 @@ class RewindAUserFromEventsCommandHandlerTest extends TestCase
     {
         $this->eventStore = $this->createMock(EventStoreInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
-        $this->handler = new RewindAUserFromEventsCommandHandler($this->eventSourcedRepository);
+        $this->eventEncryptor = $this->createMock(EventEncryptorInterface::class);
+        $this->handler = new RewindAUserFromEventsCommandHandler($this->eventSourcedRepository, $this->eventEncryptor);
     }
 
     public function testReplaySuccess(): void
@@ -42,7 +45,7 @@ class RewindAUserFromEventsCommandHandlerTest extends TestCase
                     [
                         [
                             'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                            'type' => UserSignedUpEvent::class,
+                            'type' => UserSignedUpDomainEvent::class,
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'email' => 'test@gmail.com',
@@ -58,6 +61,18 @@ class RewindAUserFromEventsCommandHandlerTest extends TestCase
                     ],
                 ),
             );
+
+        $this->eventEncryptor->expects($this->once())->method('decrypt')->willReturn(
+            new UserSignedUpDomainEvent(
+                '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
+                'test@mail.com',
+                'password',
+                'Test firstName',
+                'Test lastName',
+                true,
+                ['ROLE_USER'],
+            ),
+        );
 
         $this->handler->__invoke($command);
     }

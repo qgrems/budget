@@ -8,6 +8,7 @@ use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\UserContext\Application\Commands\SignUpAUserCommand;
 use App\UserContext\Domain\Aggregates\User;
 use App\UserContext\Domain\Exceptions\UserAlreadyExistsException;
+use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserContext\Domain\Ports\Outbound\PasswordHasherInterface;
 use App\UserContext\Domain\ValueObjects\UserPassword;
@@ -19,6 +20,7 @@ final readonly class SignUpAUserCommandHandler
         private EventSourcedRepositoryInterface $eventSourcedRepository,
         private UserViewRepositoryInterface $userViewRepository,
         private PasswordHasherInterface $userPasswordHasher,
+        private EventEncryptorInterface $eventEncryptor,
     ) {
     }
 
@@ -54,8 +56,11 @@ final readonly class SignUpAUserCommandHandler
             $signUpAUserCommand->getUserLastname(),
             $signUpAUserCommand->isUserConsentGiven(),
             $this->userViewRepository,
+            $this->eventEncryptor,
         );
-        $this->eventSourcedRepository->save($aggregate->raisedEvents());
-        $aggregate->clearRaisedEvents();
+
+        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());
+        $aggregate->clearRaisedDomainEvents();
+        $aggregate->clearKeys();
     }
 }

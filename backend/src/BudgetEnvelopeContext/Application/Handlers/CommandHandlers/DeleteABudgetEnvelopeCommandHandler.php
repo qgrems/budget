@@ -23,7 +23,7 @@ final readonly class DeleteABudgetEnvelopeCommandHandler
             ),
         );
         $aggregate->delete($deleteABudgetEnvelopeCommand->getBudgetEnvelopeUserId());
-        $this->eventSourcedRepository->save($aggregate->raisedEvents());
-        $aggregate->clearRaisedEvents();
+        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());
+        $aggregate->clearRaisedDomainEvents();
     }
 }

@@ -6,7 +6,7 @@ namespace App\Tests\BudgetEnvelopeContext\Application\Handlers\CommandHandlers;
 
 use App\BudgetEnvelopeContext\Application\Commands\RenameABudgetEnvelopeCommand;
 use App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\RenameABudgetEnvelopeCommandHandler;
-use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreatedEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreatedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeIsNotOwnedByUserException;
 use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeNameAlreadyExistsForUserException;
 use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeNotFoundException;
@@ -17,7 +17,7 @@ use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeContext\Presentation\HTTP\DTOs\RenameABudgetEnvelopeInput;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeView;
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
-use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
+use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -59,7 +59,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
                     [
                         [
                             'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                            'type' => BudgetEnvelopeCreatedEvent::class,
+                            'type' => BudgetEnvelopeCreatedDomainEvent::class,
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'name' => 'test1',
@@ -94,7 +94,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
                     [
                         [
                             'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                            'type' => BudgetEnvelopeCreatedEvent::class,
+                            'type' => BudgetEnvelopeCreatedDomainEvent::class,
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'name' => 'test1',
@@ -165,7 +165,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
                     [
                         [
                             'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                            'type' => BudgetEnvelopeCreatedEvent::class,
+                            'type' => BudgetEnvelopeCreatedDomainEvent::class,
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'name' => 'test1',

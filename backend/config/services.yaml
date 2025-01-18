@@ -51,7 +51,7 @@ services:
     App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\UpdateABudgetEnvelopeTargetedAmountCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\BudgetEnvelopeContext\Application\Handlers\QueryHandlers\GetABudgetEnvelopeWithItsHistoryQueryHandler:
+    App\BudgetEnvelopeContext\Application\Handlers\QueryHandlers\GetABudgetEnvelopeWithItsLedgerQueryHandler:
         tags: [ 'messenger.message_handler' ]
 
     App\BudgetEnvelopeContext\Application\Handlers\QueryHandlers\ListBudgetEnvelopesQueryHandler:
@@ -60,7 +60,7 @@ services:
     App\BudgetEnvelopeContext\ReadModels\Projections\BudgetEnvelopeProjection:
         tags: [ 'messenger.message_handler' ]
 
-    App\BudgetEnvelopeContext\ReadModels\Projections\BudgetEnvelopeHistoryProjection:
+    App\BudgetEnvelopeContext\ReadModels\Projections\BudgetEnvelopeLedgerEntryProjection:
         tags: [ 'messenger.message_handler' ]
 
     App\UserContext\Application\Handlers\CommandHandlers\SignUpAUserCommandHandler:
@@ -102,3 +102,8 @@ services:
     App\SharedContext\Infrastructure\EventListener\ExceptionListener:
         tags:
             - { name: 'kernel.event_listener', event: 'kernel.exception' }
+
+    App\UserContext\Infrastructure\Persistence\Repositories\KeyManagementRepository:
+        arguments:
+            $connection: '@doctrine.dbal.default_connection'
+            $passphrase: '%env(KEY_MANAGEMENT_SECRET)%'

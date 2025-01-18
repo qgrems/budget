@@ -9,4 +9,6 @@ use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenInterface;
 interface RefreshTokenManagerInterface
 {
     public function get(string $refreshToken): ?RefreshTokenInterface;
+
+    public function deleteAll(string $userEmail): void;
 }

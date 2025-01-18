@@ -26,7 +26,7 @@ final readonly class RewindABudgetEnvelopeFromEventsCommandHandler
         $aggregate->rewind(
             $rewindABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
         );
-        $this->eventSourcedRepository->save($aggregate->raisedEvents());
-        $aggregate->clearRaisedEvents();
+        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());
+        $aggregate->clearRaisedDomainEvents();
     }
 }

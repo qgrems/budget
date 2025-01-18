@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
-use App\SharedContext\Infrastructure\Persistence\Repositories\EventSourcedRepository;
+use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use App\UserContext\Application\Commands\DeleteAUserCommand;
 use App\UserContext\Application\Handlers\CommandHandlers\DeleteAUserCommandHandler;
-use App\UserContext\Domain\Events\UserSignedUpEvent;
+use App\UserContext\Domain\Events\UserDeletedDomainEvent;
+use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 use App\UserContext\Domain\Exceptions\UserIsNotOwnedByUserException;
+use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\ValueObjects\UserId;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -18,6 +20,7 @@ use PHPUnit\Framework\TestCase;
 class DeleteAUserCommandHandlerTest extends TestCase
 {
     private EventStoreInterface&MockObject $eventStore;
+    private EventEncryptorInterface&MockObject $eventEncryptor;
     private EventSourcedRepository $eventSourcedRepository;
     private DeleteAUserCommandHandler $handler;
 
@@ -26,8 +29,10 @@ class DeleteAUserCommandHandlerTest extends TestCase
     {
         $this->eventStore = $this->createMock(EventStoreInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
+        $this->eventEncryptor = $this->createMock(EventEncryptorInterface::class);
         $this->handler = new DeleteAUserCommandHandler(
             $this->eventSourcedRepository,
+            $this->eventEncryptor,
         );
     }
 
@@ -40,7 +45,7 @@ class DeleteAUserCommandHandlerTest extends TestCase
                 [
                     [
                         'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                        'type' => UserSignedUpEvent::class,
+                        'type' => UserSignedUpDomainEvent::class,
                         'occurred_on' => '2020-10-10T12:00:00Z',
                         'payload' => json_encode([
                             'email' => 'test@mail.com',
@@ -58,6 +63,17 @@ class DeleteAUserCommandHandlerTest extends TestCase
             ),
         );
         $this->eventStore->expects($this->once())->method('save');
+        $this->eventEncryptor->expects($this->once())->method('decrypt')->willReturn(
+            new UserSignedUpDomainEvent(
+                '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
+                'test@mail.com',
+                'password',
+                'Test firstName',
+                'Test lastName',
+                true,
+                ['ROLE_USER'],
+            ),
+        );
 
         $this->handler->__invoke($command);
     }
@@ -71,7 +87,7 @@ class DeleteAUserCommandHandlerTest extends TestCase
                 [
                     [
                         'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                        'type' => UserSignedUpEvent::class,
+                        'type' => UserSignedUpDomainEvent::class,
                         'occurred_on' => '2020-10-10T12:00:00Z',
                         'payload' => json_encode([
                             'email' => 'test@mail.com',
@@ -86,6 +102,17 @@ class DeleteAUserCommandHandlerTest extends TestCase
                         ]),
                     ],
                 ],
+            ),
+        );
+        $this->eventEncryptor->expects($this->once())->method('decrypt')->willReturn(
+            new UserSignedUpDomainEvent(
+                '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
+                'test@mail.com',
+                'password',
+                'Test firstName',
+                'Test lastName',
+                true,
+                ['ROLE_USER'],
             ),
         );
         $this->eventStore->expects($this->never())->method('save');

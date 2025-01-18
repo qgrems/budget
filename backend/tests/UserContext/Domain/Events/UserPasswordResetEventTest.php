@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Domain\Events;
 
-use App\UserContext\Domain\Events\UserPasswordResetEvent;
+use App\UserContext\Domain\Events\UserPasswordResetDomainEvent;
 use PHPUnit\Framework\TestCase;
 
 class UserPasswordResetEventTest extends TestCase
 {
     public function testToArray(): void
     {
-        $event = new UserPasswordResetEvent('b7e685be-db83-4866-9f85-102fac30a50b', 'newpassword123');
+        $event = new UserPasswordResetDomainEvent('b7e685be-db83-4866-9f85-102fac30a50b', 'newpassword123');
         $array = $event->toArray();
 
         $this->assertEquals('b7e685be-db83-4866-9f85-102fac30a50b', $array['aggregateId']);
@@ -27,7 +27,7 @@ class UserPasswordResetEventTest extends TestCase
             'occurredOn' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
         ];
 
-        $event = UserPasswordResetEvent::fromArray($data);
+        $event = UserPasswordResetDomainEvent::fromArray($data);
 
         $this->assertEquals($data['aggregateId'], $event->aggregateId);
         $this->assertEquals($data['password'], $event->password);

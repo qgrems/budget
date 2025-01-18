@@ -275,7 +275,7 @@ export default function EnvelopeDetailsPage() {
                         </tr>
                         </thead>
                         <tbody>
-                        {details.history.map((transaction, index) => (
+                        {details.ledger.map((transaction, index) => (
                             <motion.tr
                                 key={index}
                                 initial={{ opacity: 0, y: 20 }}
@@ -285,8 +285,8 @@ export default function EnvelopeDetailsPage() {
                             >
                                 <td className="p-3">{formatDate(transaction.created_at)}</td>
                                 <td className="p-3">{transaction.monetary_amount}</td>
-                                <td className={`p-3 ${transaction.transaction_type === 'credit' ? 'text-green-600' : 'text-red-600'}`}>
-                                    {t(`envelopes.${transaction.transaction_type}`)}
+                                <td className={`p-3 ${transaction.entry_type === 'credit' ? 'text-green-600' : 'text-red-600'}`}>
+                                    {t(`envelopes.${transaction.entry_type}`)}
                                 </td>
                             </motion.tr>
                         ))}

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\SharedContext\Infrastructure\Entities;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -8,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'event_store')]
 #[ORM\Index(name: 'idx_aggregate_id', columns: ['aggregate_id'])]
 #[ORM\Index(name: 'idx_occurred_on', columns: ['occurred_on'])]
-class EventStore
+final class EventStore
 {
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]

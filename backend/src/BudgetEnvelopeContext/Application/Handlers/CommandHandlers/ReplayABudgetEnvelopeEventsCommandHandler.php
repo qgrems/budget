@@ -25,7 +25,7 @@ final readonly class ReplayABudgetEnvelopeEventsCommandHandler
         $aggregate->replay(
             $replayABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
         );
-        $this->eventSourcedRepository->save($aggregate->raisedEvents());
-        $aggregate->clearRaisedEvents();
+        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());
+        $aggregate->clearRaisedDomainEvents();
     }
 }

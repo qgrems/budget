@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Domain\Events;
 
-use App\UserContext\Domain\Events\UserPasswordUpdatedEvent;
+use App\UserContext\Domain\Events\UserPasswordUpdatedDomainEvent;
 use PHPUnit\Framework\TestCase;
 
 class UserPasswordUpdatedEventTest extends TestCase
 {
     public function testToArray(): void
     {
-        $event = new UserPasswordUpdatedEvent('b7e685be-db83-4866-9f85-102fac30a50b', 'oldpassword123', 'newpassword123');
+        $event = new UserPasswordUpdatedDomainEvent('b7e685be-db83-4866-9f85-102fac30a50b', 'oldpassword123', 'newpassword123');
         $array = $event->toArray();
 
         $this->assertEquals('b7e685be-db83-4866-9f85-102fac30a50b', $array['aggregateId']);
@@ -29,7 +29,7 @@ class UserPasswordUpdatedEventTest extends TestCase
             'occurredOn' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
         ];
 
-        $event = UserPasswordUpdatedEvent::fromArray($data);
+        $event = UserPasswordUpdatedDomainEvent::fromArray($data);
 
         $this->assertEquals($data['aggregateId'], $event->aggregateId);
         $this->assertEquals($data['oldPassword'], $event->oldPassword);

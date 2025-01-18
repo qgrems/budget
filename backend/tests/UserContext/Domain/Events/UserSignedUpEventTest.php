@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Domain\Events;
 
-use App\UserContext\Domain\Events\UserSignedUpEvent;
+use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 use PHPUnit\Framework\TestCase;
 
 class UserSignedUpEventTest extends TestCase
 {
     public function testToArray(): void
     {
-        $event = new UserSignedUpEvent(
+        $event = new UserSignedUpDomainEvent(
             'b7e685be-db83-4866-9f85-102fac30a50b',
             'test@example.com',
             'password123',
@@ -45,7 +45,7 @@ class UserSignedUpEventTest extends TestCase
             'occurredOn' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
         ];
 
-        $event = UserSignedUpEvent::fromArray($data);
+        $event = UserSignedUpDomainEvent::fromArray($data);
 
         $this->assertEquals($data['aggregateId'], $event->aggregateId);
         $this->assertEquals($data['email'], $event->email);

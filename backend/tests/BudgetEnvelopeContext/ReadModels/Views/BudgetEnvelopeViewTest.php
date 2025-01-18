@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\BudgetEnvelopeContext\ReadModels\Views;
 
-use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreatedEvent;
-use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreatedDomainEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedDomainEvent;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeView;
 use PHPUnit\Framework\TestCase;
 
@@ -13,8 +13,8 @@ class BudgetEnvelopeViewTest extends TestCase
 {
     public function testJsonSerialize(): void
     {
-        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeCreatedEvent(
-            new BudgetEnvelopeCreatedEvent(
+        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeCreatedDomainEvent(
+            new BudgetEnvelopeCreatedDomainEvent(
                 'b7e685be-db83-4866-9f85-102fac30a50b',
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test Envelope',
@@ -23,8 +23,9 @@ class BudgetEnvelopeViewTest extends TestCase
         );
 
         $envelopeView->fromEvent(
-            new BudgetEnvelopeCreditedEvent(
+            new BudgetEnvelopeCreditedDomainEvent(
                 'b7e685be-db83-4866-9f85-102fac30a50b',
+                '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 '500.00',
             ),
         );
@@ -41,8 +42,8 @@ class BudgetEnvelopeViewTest extends TestCase
 
     public function testApplyCreatedEvent(): void
     {
-        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeCreatedEvent(
-            new BudgetEnvelopeCreatedEvent(
+        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeCreatedDomainEvent(
+            new BudgetEnvelopeCreatedDomainEvent(
                 'b7e685be-db83-4866-9f85-102fac30a50b',
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test Envelope',
@@ -51,7 +52,7 @@ class BudgetEnvelopeViewTest extends TestCase
         );
 
         $envelopeView->fromEvent(
-            new BudgetEnvelopeCreatedEvent(
+            new BudgetEnvelopeCreatedDomainEvent(
                 'b7e685be-db83-4866-9f85-102fac30a50b',
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test Envelope',
@@ -74,7 +75,7 @@ class BudgetEnvelopeViewTest extends TestCase
         $envelopeView = BudgetEnvelopeView::fromEvents(
             (function () {
                 yield [
-                    'type' => BudgetEnvelopeCreatedEvent::class,
+                    'type' => BudgetEnvelopeCreatedDomainEvent::class,
                     'payload' => json_encode([
                         'aggregateId' => 'b7e685be-db83-4866-9f85-102fac30a50b',
                         'userId' => '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
@@ -84,9 +85,10 @@ class BudgetEnvelopeViewTest extends TestCase
                     ]),
                 ];
                 yield [
-                    'type' => BudgetEnvelopeCreditedEvent::class,
+                    'type' => BudgetEnvelopeCreditedDomainEvent::class,
                     'payload' => json_encode([
                         'aggregateId' => 'b7e685be-db83-4866-9f85-102fac30a50b',
+                        'userId' => '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                         'creditMoney' => '500.00',
                         'occurredOn' => '2023-01-01T00:00:00+00:00',
                     ]),
