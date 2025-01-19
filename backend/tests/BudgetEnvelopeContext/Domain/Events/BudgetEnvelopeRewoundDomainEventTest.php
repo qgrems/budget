@@ -18,6 +18,7 @@ class BudgetEnvelopeRewoundDomainEventTest extends TestCase
             '1000.00',
             '500.00',
             '2024-12-07T22:03:35+00:00',
+            '2024-12-07T22:03:35+00:00',
             false
         );
         $array = $event->toArray();
@@ -41,6 +42,7 @@ class BudgetEnvelopeRewoundDomainEventTest extends TestCase
             'targetedAmount' => '1000.00',
             'currentAmount' => '500.00',
             'updatedAt' => '2024-12-07T22:03:35+00:00',
+            'desiredDateTime' => '2024-12-07T22:03:35+00:00',
             'occurredOn' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
             'isDeleted' => false,
         ];

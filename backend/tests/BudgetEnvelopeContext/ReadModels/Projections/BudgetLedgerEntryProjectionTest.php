@@ -10,6 +10,7 @@ use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryI
 use App\BudgetEnvelopeContext\ReadModels\Projections\BudgetEnvelopeLedgerEntryProjection;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeLedgerEntryView;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeView;
+use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -17,15 +18,18 @@ class BudgetLedgerEntryProjectionTest extends TestCase
 {
     private BudgetEnvelopeViewRepositoryInterface&MockObject $budgetEnvelopeViewRepository;
     private BudgetEnvelopeLedgerEntryViewRepositoryInterface&MockObject $budgetEnvelopeLedgerEntryViewRepository;
+    private EventSourcedRepositoryInterface&MockObject $eventSourcedRepository;
     private BudgetEnvelopeLedgerEntryProjection $budgetEnvelopeLedgerEntryProjection;
 
     protected function setUp(): void
     {
         $this->budgetEnvelopeViewRepository = $this->createMock(BudgetEnvelopeViewRepositoryInterface::class);
         $this->budgetEnvelopeLedgerEntryViewRepository = $this->createMock(BudgetEnvelopeLedgerEntryViewRepositoryInterface::class);
+        $this->eventSourcedRepository = $this->createMock(EventSourcedRepositoryInterface::class);
         $this->budgetEnvelopeLedgerEntryProjection = new BudgetEnvelopeLedgerEntryProjection(
             $this->budgetEnvelopeLedgerEntryViewRepository,
             $this->budgetEnvelopeViewRepository,
+            $this->eventSourcedRepository,
         );
     }
 

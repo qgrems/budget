@@ -183,6 +183,7 @@ final class BudgetEnvelope
 
     public function rewind(
         BudgetEnvelopeUserId $userId,
+        \DateTimeImmutable $desiredDateTime,
     ): void {
         $this->assertOwnership($userId);
         $budgetEnvelopeRewoundDomainEvent = new BudgetEnvelopeRewoundDomainEvent(
@@ -192,6 +193,7 @@ final class BudgetEnvelope
             (string) $this->budgetEnvelopeTargetedAmount,
             (string) $this->budgetEnvelopeCurrentAmount,
             $this->updatedAt->format(\DateTimeInterface::ATOM),
+            $desiredDateTime->format(\DateTimeInterface::ATOM),
             $this->isDeleted,
         );
         $this->apply($budgetEnvelopeRewoundDomainEvent);

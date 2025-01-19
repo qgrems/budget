@@ -11,5 +11,11 @@ interface EventSourcedRepositoryInterface
         ?\DateTimeImmutable $desiredDateTime = null,
     ): \Generator;
 
+    public function getByDomainEvents(
+        string $aggregateId,
+        array $domainEventClasses,
+        ?\DateTimeImmutable $desiredDateTime = null,
+    ): \Generator;
+
     public function save(array $raisedEvents): void;
 }

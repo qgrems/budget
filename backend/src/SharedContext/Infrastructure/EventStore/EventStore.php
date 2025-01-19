@@ -7,6 +7,7 @@ namespace App\SharedContext\Infrastructure\EventStore;
 use App\SharedContext\Domain\Exceptions\PublishEventsException;
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 
@@ -29,6 +30,25 @@ final readonly class EventStore implements EventStoreInterface
             ->from('event_store')
             ->where('aggregate_id = :id')
             ->setParameter('id', $uuid)
+            ->orderBy('occurred_on', 'ASC');
+
+        if (null !== $desiredDateTime) {
+            $queryBuilder->andWhere('occurred_on <= :desiredDateTime')
+                ->setParameter('desiredDateTime', $desiredDateTime->format('Y-m-d H:i:s'));
+        }
+
+        yield from $queryBuilder->executeQuery()->iterateAssociative();
+    }
+
+    public function loadByDomainEvents(string $uuid, array $domainEventClasses, ?\DateTimeImmutable $desiredDateTime = null): \Generator
+    {
+        $queryBuilder = $this->connection->createQueryBuilder()
+            ->select('aggregate_id', 'type', 'payload', 'occurred_on')
+            ->from('event_store')
+            ->where('aggregate_id = :id')
+            ->setParameter('id', $uuid)
+            ->andWhere('type IN (:domainEventClasses)')
+            ->setParameter('domainEventClasses', $domainEventClasses, ArrayParameterType::STRING)
             ->orderBy('occurred_on', 'ASC');
 
         if (null !== $desiredDateTime) {

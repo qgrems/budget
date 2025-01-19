@@ -18,6 +18,15 @@ final readonly class EventSourcedRepository implements EventSourcedRepositoryInt
     }
 
     #[\Override]
+    public function getByDomainEvents(
+        string $aggregateId,
+        array $domainEventClasses,
+        ?\DateTimeImmutable $desiredDateTime = null,
+    ): \Generator {
+        return $this->eventStore->loadByDomainEvents($aggregateId, $domainEventClasses, $desiredDateTime);
+    }
+
+    #[\Override]
     public function save(array $raisedEvents): void
     {
         $this->eventStore->save($raisedEvents);

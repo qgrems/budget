@@ -25,6 +25,7 @@ final readonly class RewindABudgetEnvelopeFromEventsCommandHandler
         );
         $aggregate->rewind(
             $rewindABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
+            $rewindABudgetEnvelopeCommand->getDesiredDateTime(),
         );
         $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());
         $aggregate->clearRaisedDomainEvents();
