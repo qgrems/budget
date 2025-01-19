@@ -261,6 +261,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             '1000.00',
             '0.00',
             '2024-01-01 00:00:00',
+            '2024-01-01 00:00:00',
             false,
         );
         $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeCreatedDomainEvent(
@@ -288,6 +289,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             'Test',
             '1000.00',
             '0.00',
+            '2024-01-01 00:00:00',
             '2024-01-01 00:00:00',
             false,
         );

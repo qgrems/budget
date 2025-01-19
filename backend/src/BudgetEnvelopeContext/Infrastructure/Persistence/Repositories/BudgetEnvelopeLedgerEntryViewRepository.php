@@ -36,4 +36,10 @@ final class BudgetEnvelopeLedgerEntryViewRepository implements BudgetEnvelopeLed
             'user_uuid' => $budgetEnvelopeLedgerEntryView->userUuid,
         ]);
     }
+
+    #[\Override]
+    public function delete(string $budgetEnvelopeUuid): void
+    {
+        $this->connection->delete('budget_envelope_ledger_entry_view', ['budget_envelope_uuid' => $budgetEnvelopeUuid]);
+    }
 }
