@@ -43,6 +43,9 @@ final readonly class SignUpAUserInput
             maxMessage: 'users.lastnameMaxLength',
         )]
         private(set) string $lastname,
+        #[Assert\NotBlank]
+        #[Assert\Locale(message: 'users.languagePreferenceInvalid')]
+        private(set) string $languagePreference,
         #[Assert\NotNull]
         #[Assert\IsTrue(message: 'users.consentNotGiven')]
         #[Assert\Type(type: 'bool')]

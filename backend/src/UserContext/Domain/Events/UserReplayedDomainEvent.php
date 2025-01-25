@@ -15,6 +15,8 @@ final class UserReplayedDomainEvent implements UserDomainEventInterface
     #[PersonalData]
     public string $lastname;
     #[PersonalData]
+    public string $languagePreference;
+    #[PersonalData]
     public string $email;
     #[PersonalData]
     public string $password;
@@ -27,6 +29,7 @@ final class UserReplayedDomainEvent implements UserDomainEventInterface
         string $aggregateId,
         string $firstname,
         string $lastname,
+        string $languagePreference,
         string $email,
         string $password,
         bool $isConsentGiven,
@@ -36,6 +39,7 @@ final class UserReplayedDomainEvent implements UserDomainEventInterface
         $this->aggregateId = $aggregateId;
         $this->firstname = $firstname;
         $this->lastname = $lastname;
+        $this->languagePreference = $languagePreference;
         $this->email = $email;
         $this->password = $password;
         $this->isConsentGiven = $isConsentGiven;
@@ -53,6 +57,7 @@ final class UserReplayedDomainEvent implements UserDomainEventInterface
             'password' => $this->password,
             'firstname' => $this->firstname,
             'lastname' => $this->lastname,
+            'languagePreference' => $this->languagePreference,
             'isConsentGiven' => $this->isConsentGiven,
             'consentDate' => $this->consentDate->format(\DateTimeInterface::ATOM),
             'updatedAt' => $this->updatedAt->format(\DateTimeInterface::ATOM),
@@ -67,6 +72,7 @@ final class UserReplayedDomainEvent implements UserDomainEventInterface
             $data['aggregateId'],
             $data['firstname'],
             $data['lastname'],
+            $data['languagePreference'],
             $data['email'],
             $data['password'],
             $data['isConsentGiven'],

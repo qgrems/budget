@@ -10,6 +10,7 @@ use App\UserContext\Domain\ValueObjects\UserConsent;
 use App\UserContext\Domain\ValueObjects\UserEmail;
 use App\UserContext\Domain\ValueObjects\UserFirstname;
 use App\UserContext\Domain\ValueObjects\UserId;
+use App\UserContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\ValueObjects\UserLastname;
 use App\UserContext\Domain\ValueObjects\UserPassword;
 use App\UserContext\Presentation\HTTP\DTOs\SignUpAUserInput;
@@ -39,6 +40,7 @@ final readonly class SignUpAUserController
                 UserPassword::fromString($signUpAUserInput->password),
                 UserFirstname::fromString($signUpAUserInput->firstname),
                 UserLastname::fromString($signUpAUserInput->lastname),
+                UserLanguagePreference::fromString($signUpAUserInput->languagePreference),
                 UserConsent::fromBool($signUpAUserInput->consentGiven),
             ),
         );

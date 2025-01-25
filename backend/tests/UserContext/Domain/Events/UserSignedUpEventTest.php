@@ -17,6 +17,7 @@ class UserSignedUpEventTest extends TestCase
             'password123',
             'John',
             'Doe',
+            'fr',
             true,
             ['ROLE_USER']
         );
@@ -40,6 +41,7 @@ class UserSignedUpEventTest extends TestCase
             'password' => 'password123',
             'firstname' => 'John',
             'lastname' => 'Doe',
+            'languagePreference' => 'fr',
             'isConsentGiven' => true,
             'roles' => ['ROLE_USER'],
             'occurredOn' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
@@ -52,6 +54,7 @@ class UserSignedUpEventTest extends TestCase
         $this->assertEquals($data['password'], $event->password);
         $this->assertEquals($data['firstname'], $event->firstname);
         $this->assertEquals($data['lastname'], $event->lastname);
+        $this->assertEquals($data['languagePreference'], $event->languagePreference);
         $this->assertTrue($event->isConsentGiven);
         $this->assertEquals($data['roles'], $event->roles);
         $this->assertEquals($data['occurredOn'], $event->occurredOn->format(\DateTimeInterface::ATOM));

@@ -9,6 +9,7 @@
         "php": ">=8.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-openssl": "*",
         "beberlei/assert": "^3.3",
         "doctrine/dbal": "^3",
         "doctrine/doctrine-bundle": "^2.12",
@@ -26,6 +27,7 @@
         "symfony/dotenv": "7.1.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "7.1.*",
+        "symfony/intl": "7.1.*",
         "symfony/mailer": "7.1.*",
         "symfony/messenger": "7.1.*",
         "symfony/monolog-bundle": "^3.10",
@@ -35,11 +37,11 @@
         "symfony/runtime": "7.1.*",
         "symfony/security-bundle": "7.1.*",
         "symfony/serializer": "7.1.*",
+        "symfony/translation": "7.1.*",
         "symfony/twig-bundle": "7.1.*",
         "symfony/uid": "7.1.*",
         "symfony/validator": "7.1.*",
-        "symfony/yaml": "7.1.*",
-        "ext-openssl": "*"
+        "symfony/yaml": "7.1.*"
     },
     "config": {
         "allow-plugins": {

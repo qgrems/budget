@@ -7,22 +7,22 @@ namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
-use App\UserContext\Application\Commands\UpdateAUserLastnameCommand;
-use App\UserContext\Application\Handlers\CommandHandlers\UpdateAUserLastnameCommandHandler;
+use App\UserContext\Application\Commands\UpdateAUserLanguagePreferenceCommand;
+use App\UserContext\Application\Handlers\CommandHandlers\UpdateAUserLanguagePreferenceCommandHandler;
 use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\ValueObjects\UserId;
-use App\UserContext\Domain\ValueObjects\UserLastname;
-use App\UserContext\Presentation\HTTP\DTOs\UpdateAUserLastnameInput;
+use App\UserContext\Domain\ValueObjects\UserLanguagePreference;
+use App\UserContext\Presentation\HTTP\DTOs\UpdateAUserLanguagePreferenceInput;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class UpdateAUserLastnameCommandHandlerTest extends TestCase
+class UpdateAUserLanguagePreferenceCommandHandlerTest extends TestCase
 {
     private EventStoreInterface&MockObject $eventStore;
     private EventEncryptorInterface&MockObject $eventEncryptor;
     private EventSourcedRepository $eventSourcedRepository;
-    private UpdateAUserLastnameCommandHandler $handler;
+    private UpdateAUserLanguagePreferenceCommandHandler $handler;
 
     #[\Override]
     protected function setUp(): void
@@ -30,18 +30,18 @@ class UpdateAUserLastnameCommandHandlerTest extends TestCase
         $this->eventStore = $this->createMock(EventStoreInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
         $this->eventEncryptor = $this->createMock(EventEncryptorInterface::class);
-        $this->handler = new UpdateAUserLastnameCommandHandler(
+        $this->handler = new UpdateAUserLanguagePreferenceCommandHandler(
             $this->eventSourcedRepository,
             $this->eventEncryptor,
         );
     }
 
-    public function testUpdateUserLastnameSuccess(): void
+    public function testUpdateAUserLanguagePreferenceSuccess(): void
     {
-        $createUserInput = new UpdateAUserLastnameInput('Snow');
-        $command = new UpdateAUserLastnameCommand(
+        $updateAUserLanguagePreferenceInput = new UpdateAUserLanguagePreferenceInput('fr');
+        $command = new UpdateAUserLanguagePreferenceCommand(
             UserId::fromString('7ac32191-3fa0-4477-8eb2-8dd3b0b7c836'),
-            UserLastname::fromString($createUserInput->lastname),
+            UserLanguagePreference::fromString($updateAUserLanguagePreferenceInput->languagePreference),
         );
 
         $this->eventStore->expects($this->once())->method('load')->willReturn(

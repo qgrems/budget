@@ -1,40 +1,55 @@
-'use client'
+"use client"
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { useUser } from '../domain/user/userHooks'
-import { useTranslation } from '../hooks/useTranslation'
-import { TermsModal } from '../components/TermsModal'
-import { v4 as uuidv4 } from 'uuid'
-import EnvelopeManagement from "../components/EnvelopeManagement";
-import {useError} from "../contexts/ErrorContext";
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { useUser } from "../domain/user/userHooks"
+import { useTranslation } from "../hooks/useTranslation"
+import { TermsModal } from "../components/TermsModal"
+import { v4 as uuidv4 } from "uuid"
+import { useError } from "../contexts/ErrorContext"
+import { useValidMessage } from "../contexts/ValidContext"
 
 export default function SignUp() {
-    const [firstname, setFirstname] = useState('')
-    const [lastname, setLastname] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
+    const [firstname, setFirstname] = useState("")
+    const [lastname, setLastname] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [confirmPassword, setConfirmPassword] = useState("")
     const [consentGiven, setConsentGiven] = useState(false)
     const [isTermsModalOpen, setIsTermsModalOpen] = useState(false)
-    const [successMessage, setSuccessMessage] = useState('')
+    const [successMessage, setSuccessMessage] = useState("")
+    const [languagePreference, setLanguagePreference] = useState("en")
     const { createUser, loading } = useUser()
     const router = useRouter()
-    const { t } = useTranslation()
- const { error, setError } = useError()
+    const { t, setLanguage } = useTranslation()
+    const { error, setError } = useError()
+    const { setValidMessage } = useValidMessage()
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         if (password !== confirmPassword) {
-            alert(t('signup.passwordMismatch'))
+            alert(t("signup.passwordMismatch"))
             return
         }
         const uuid = uuidv4()
-        const success = await createUser({ uuid, firstname, lastname, email, password, consentGiven }, setError)
+        const success = await createUser(
+            {
+                uuid,
+                firstname,
+                lastname,
+                email,
+                password,
+                languagePreference,
+                consentGiven,
+            },
+            setError,
+        )
         if (success) {
-            setSuccessMessage(t('signup.successMessage'))
+            setSuccessMessage(t("signup.successMessage"))
+            setLanguage(languagePreference) // Set the site's locale
             setTimeout(() => {
-                router.push('/signin')
+                router.push("/signin")
             }, 3000)
         }
     }
@@ -43,17 +58,17 @@ export default function SignUp() {
         <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-background">
             <div className="max-w-md w-full space-y-8">
                 <div className="text-center">
-                    <h1 className="text-3xl font-extrabold text-foreground">{t('signup.title')}</h1>
+                    <h1 className="text-3xl font-extrabold text-foreground">{t("signup.title")}</h1>
                 </div>
                 {successMessage ? (
-                    <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-md">
-                        {successMessage}
-                    </div>
+                    <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-md">{successMessage}</div>
                 ) : (
                     <form onSubmit={handleSubmit} className="mt-8 space-y-6 neomorphic p-8 rounded-lg">
                         <div className="rounded-md space-y-4">
                             <div>
-                                <label htmlFor="firstname" className="sr-only">{t('signup.firstname')}</label>
+                                <label htmlFor="firstname" className="sr-only">
+                                    {t("signup.firstname")}
+                                </label>
                                 <input
                                     id="firstname"
                                     name="firstname"
@@ -62,11 +77,13 @@ export default function SignUp() {
                                     value={firstname}
                                     onChange={(e) => setFirstname(e.target.value)}
                                     className="neomorphic-input w-full px-3 py-2 text-foreground"
-                                    placeholder={t('signup.firstname')}
+                                    placeholder={t("signup.firstname")}
                                 />
                             </div>
                             <div>
-                                <label htmlFor="lastname" className="sr-only">{t('signup.lastname')}</label>
+                                <label htmlFor="lastname" className="sr-only">
+                                    {t("signup.lastname")}
+                                </label>
                                 <input
                                     id="lastname"
                                     name="lastname"
@@ -75,11 +92,13 @@ export default function SignUp() {
                                     value={lastname}
                                     onChange={(e) => setLastname(e.target.value)}
                                     className="neomorphic-input w-full px-3 py-2 text-foreground"
-                                    placeholder={t('signup.lastname')}
+                                    placeholder={t("signup.lastname")}
                                 />
                             </div>
                             <div>
-                                <label htmlFor="email" className="sr-only">{t('signup.email')}</label>
+                                <label htmlFor="email" className="sr-only">
+                                    {t("signup.email")}
+                                </label>
                                 <input
                                     id="email"
                                     name="email"
@@ -89,11 +108,13 @@ export default function SignUp() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     className="neomorphic-input w-full px-3 py-2 text-foreground"
-                                    placeholder={t('signup.email')}
+                                    placeholder={t("signup.email")}
                                 />
                             </div>
                             <div>
-                                <label htmlFor="password" className="sr-only">{t('signup.password')}</label>
+                                <label htmlFor="password" className="sr-only">
+                                    {t("signup.password")}
+                                </label>
                                 <input
                                     id="password"
                                     name="password"
@@ -103,11 +124,13 @@ export default function SignUp() {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     className="neomorphic-input w-full px-3 py-2 text-foreground"
-                                    placeholder={t('signup.password')}
+                                    placeholder={t("signup.password")}
                                 />
                             </div>
                             <div>
-                                <label htmlFor="confirmPassword" className="sr-only">{t('signup.confirmPassword')}</label>
+                                <label htmlFor="confirmPassword" className="sr-only">
+                                    {t("signup.confirmPassword")}
+                                </label>
                                 <input
                                     id="confirmPassword"
                                     name="confirmPassword"
@@ -117,8 +140,23 @@ export default function SignUp() {
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     className="neomorphic-input w-full px-3 py-2 text-foreground"
-                                    placeholder={t('signup.confirmPassword')}
+                                    placeholder={t("signup.confirmPassword")}
                                 />
+                            </div>
+                            <div>
+                                <label htmlFor="languagePreference" className="block text-sm font-medium text-gray-700 mb-1">
+                                    {t("signup.languagePreference")}
+                                </label>
+                                <select
+                                    id="languagePreference"
+                                    value={languagePreference}
+                                    onChange={(e) => setLanguagePreference(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                                >
+                                    <option value="">{t("signup.selectLanguage")}</option>
+                                    <option value="en">{t("signup.english")}</option>
+                                    <option value="fr">{t("signup.french")}</option>
+                                </select>
                             </div>
                         </div>
 
@@ -133,13 +171,13 @@ export default function SignUp() {
                                 required
                             />
                             <label htmlFor="consentGiven" className="ml-2 block text-sm text-foreground">
-                                {t('signup.consentPart1')}{' '}
+                                {t("signup.consentPart1")}{" "}
                                 <button
                                     type="button"
                                     onClick={() => setIsTermsModalOpen(true)}
                                     className="font-medium text-primary hover:text-primary-dark"
                                 >
-                                    {t('signup.termsAndConditions')}
+                                    {t("signup.termsAndConditions")}
                                 </button>
                             </label>
                         </div>
@@ -152,15 +190,15 @@ export default function SignUp() {
                                 disabled={loading}
                                 className="group relative w-full flex justify-center py-2 px-4 neomorphic-button text-primary hover:text-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                             >
-                                {loading ? t('signup.signingUp') : t('signup.signUp')}
+                                {loading ? t("signup.signingUp") : t("signup.signUp")}
                             </button>
                         </div>
                     </form>
                 )}
                 <p className="mt-2 text-center text-sm text-foreground">
-                    {t('signup.alreadyHaveAccount')}{' '}
+                    {t("signup.alreadyHaveAccount")}{" "}
                     <Link href="/signin" className="font-medium text-primary hover:text-primary-dark">
-                        {t('signup.signIn')}
+                        {t("signup.signIn")}
                     </Link>
                 </p>
             </div>

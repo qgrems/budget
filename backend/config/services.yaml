@@ -103,6 +103,12 @@ services:
         tags:
             - { name: 'kernel.event_listener', event: 'kernel.exception' }
 
+    App\SharedContext\Infrastructure\EventListener\RequestIdListener:
+        arguments:
+            $requestIdProvider: '@App\SharedContext\Domain\Services\RequestIdProvider'
+        tags:
+            - { name: kernel.event_subscriber }
+
     App\UserContext\Infrastructure\Persistence\Repositories\KeyManagementRepository:
         arguments:
             $connection: '@doctrine.dbal.default_connection'

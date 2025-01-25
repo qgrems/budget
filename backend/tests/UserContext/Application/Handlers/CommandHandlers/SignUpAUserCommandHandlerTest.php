@@ -18,6 +18,7 @@ use App\UserContext\Domain\ValueObjects\UserConsent;
 use App\UserContext\Domain\ValueObjects\UserEmail;
 use App\UserContext\Domain\ValueObjects\UserFirstname;
 use App\UserContext\Domain\ValueObjects\UserId;
+use App\UserContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\ValueObjects\UserLastname;
 use App\UserContext\Domain\ValueObjects\UserPassword;
 use App\UserContext\Presentation\HTTP\DTOs\SignUpAUserInput;
@@ -52,13 +53,22 @@ class SignUpAUserCommandHandlerTest extends TestCase
 
     public function testCreateUserSuccess(): void
     {
-        $signUpAUserInput = new SignUpAUserInput('7ac32191-3fa0-4477-8eb2-8dd3b0b7c836', 'test@example.com', 'password', 'John', 'Doe', true);
+        $signUpAUserInput = new SignUpAUserInput(
+            '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
+            'test@example.com',
+            'password',
+            'John',
+            'Doe',
+            'fr',
+            true,
+        );
         $command = new SignUpAUserCommand(
             UserId::fromString($signUpAUserInput->uuid),
             UserEmail::fromString($signUpAUserInput->email),
             UserPassword::fromString($signUpAUserInput->password),
             UserFirstname::fromString($signUpAUserInput->firstname),
             UserLastname::fromString($signUpAUserInput->lastname),
+            UserLanguagePreference::fromString($signUpAUserInput->languagePreference),
             UserConsent::fromBool($signUpAUserInput->consentGiven),
         );
 
@@ -70,13 +80,22 @@ class SignUpAUserCommandHandlerTest extends TestCase
 
     public function testCreateUserWithSameOldUserUuid(): void
     {
-        $signUpAUserInput = new SignUpAUserInput('7ac32191-3fa0-4477-8eb2-8dd3b0b7c836', 'test@example.com', 'password', 'John', 'Doe', true);
+        $signUpAUserInput = new SignUpAUserInput(
+            '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
+            'test@example.com',
+            'password',
+            'John',
+            'Doe',
+            'fr',
+            true,
+        );
         $command = new SignUpAUserCommand(
             UserId::fromString($signUpAUserInput->uuid),
             UserEmail::fromString($signUpAUserInput->email),
             UserPassword::fromString($signUpAUserInput->password),
             UserFirstname::fromString($signUpAUserInput->firstname),
             UserLastname::fromString($signUpAUserInput->lastname),
+            UserLanguagePreference::fromString($signUpAUserInput->languagePreference),
             UserConsent::fromBool($signUpAUserInput->consentGiven),
         );
 
@@ -93,6 +112,7 @@ class SignUpAUserCommandHandlerTest extends TestCase
                             'lastname' => 'Doe',
                             'password' => 'HAdFD97Xp[T!crjHi^Y%',
                             'firstname' => 'David',
+                            'languagePreference' => 'fr',
                             'occurredOn' => '2024-12-13T00:26:48+00:00',
                             'aggregateId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
                             'isConsentGiven' => true,
@@ -115,6 +135,7 @@ class SignUpAUserCommandHandlerTest extends TestCase
             'password',
             'John',
             'Doe',
+            'fr',
             true,
         );
         $command = new SignUpAUserCommand(
@@ -123,6 +144,7 @@ class SignUpAUserCommandHandlerTest extends TestCase
             UserPassword::fromString($signUpAUserInput->password),
             UserFirstname::fromString($signUpAUserInput->firstname),
             UserLastname::fromString($signUpAUserInput->lastname),
+            UserLanguagePreference::fromString($signUpAUserInput->languagePreference),
             UserConsent::fromBool($signUpAUserInput->consentGiven),
         );
 
@@ -135,6 +157,7 @@ class SignUpAUserCommandHandlerTest extends TestCase
                 UserPassword::fromString('password'),
                 UserFirstname::fromString('Test firstName'),
                 UserLastname::fromString('Test lastName'),
+                UserLanguagePreference::fromString('fr'),
                 UserConsent::fromBool(true),
                 new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
                 new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),

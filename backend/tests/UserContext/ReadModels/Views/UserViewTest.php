@@ -9,6 +9,7 @@ use App\UserContext\Domain\ValueObjects\UserConsent;
 use App\UserContext\Domain\ValueObjects\UserEmail;
 use App\UserContext\Domain\ValueObjects\UserFirstname;
 use App\UserContext\Domain\ValueObjects\UserId;
+use App\UserContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\ValueObjects\UserLastname;
 use App\UserContext\Domain\ValueObjects\UserPassword;
 use App\UserContext\Domain\ValueObjects\UserPasswordResetToken;
@@ -25,6 +26,7 @@ class UserViewTest extends TestCase
             UserPassword::fromString('password123'),
             UserFirstname::fromString('John'),
             UserLastname::fromString('Doe'),
+            UserLanguagePreference::fromString('fr'),
             UserConsent::fromBool(true),
             new \DateTimeImmutable('2023-01-01T00:00:00+00:00'),
             new \DateTimeImmutable('2023-01-01T00:00:00+00:00'),
@@ -39,6 +41,7 @@ class UserViewTest extends TestCase
         $this->assertEquals('password123', $userView->getPassword());
         $this->assertEquals('John', $userView->firstname);
         $this->assertEquals('Doe', $userView->lastname);
+        $this->assertEquals('fr', $userView->languagePreference);
         $this->assertTrue($userView->consentGiven);
         $this->assertEquals('2023-01-01T00:00:00+00:00', $userView->consentDate->format(\DateTimeInterface::ATOM));
         $this->assertEquals(['ROLE_USER'], $userView->getRoles());
@@ -58,6 +61,7 @@ class UserViewTest extends TestCase
             UserPassword::fromString('password123'),
             UserFirstname::fromString('John'),
             UserLastname::fromString('Doe'),
+            UserLanguagePreference::fromString('fr'),
             UserConsent::fromBool(true),
             new \DateTimeImmutable('2023-01-01T00:00:00+00:00'),
             new \DateTimeImmutable('2023-01-01T00:00:00+00:00'),
@@ -71,6 +75,7 @@ class UserViewTest extends TestCase
             'uuid' => 'b7e685be-db83-4866-9f85-102fac30a50b',
             'firstname' => 'John',
             'lastname' => 'Doe',
+            'languagePreference' => 'fr',
             'email' => 'john.doe@example.com',
         ];
 
@@ -86,6 +91,7 @@ class UserViewTest extends TestCase
             'password' => 'password123',
             'firstname' => 'John',
             'lastname' => 'Doe',
+            'language_preference' => 'fr',
             'consent_given' => true,
             'consent_date' => '2023-01-01T00:00:00+00:00',
             'created_at' => '2023-01-01T00:00:00+00:00',
@@ -102,6 +108,7 @@ class UserViewTest extends TestCase
         $this->assertEquals($userData['password'], $userView->getPassword());
         $this->assertEquals($userData['firstname'], $userView->firstname);
         $this->assertEquals($userData['lastname'], $userView->lastname);
+        $this->assertEquals($userData['language_preference'], $userView->languagePreference);
         $this->assertEquals($userData['consent_given'], $userView->consentGiven);
         $this->assertEquals($userData['consent_date'], $userView->consentDate->format(\DateTimeInterface::ATOM));
         $this->assertEquals($userData['created_at'], $userView->createdAt->format(\DateTimeInterface::ATOM));
@@ -119,6 +126,7 @@ class UserViewTest extends TestCase
             UserPassword::fromString('password123'),
             UserFirstname::fromString('John'),
             UserLastname::fromString('Doe'),
+            UserLanguagePreference::fromString('fr'),
             UserConsent::fromBool(true),
             new \DateTimeImmutable('2023-01-01T00:00:00+00:00'),
             new \DateTimeImmutable('2023-01-01T00:00:00+00:00'),
@@ -138,6 +146,7 @@ class UserViewTest extends TestCase
                         'password' => 'password123',
                         'firstname' => 'John',
                         'lastname' => 'Doe',
+                        'languagePreference' => 'fr',
                         'isConsentGiven' => true,
                         'occurredOn' => '2023-01-01T00:00:00+00:00',
                         'roles' => ['ROLE_USER'],
@@ -149,6 +158,7 @@ class UserViewTest extends TestCase
             'uuid' => 'b7e685be-db83-4866-9f85-102fac30a50b',
             'firstname' => 'John',
             'lastname' => 'Doe',
+            'languagePreference' => 'fr',
             'email' => 'john.doe@example.com',
         ];
 

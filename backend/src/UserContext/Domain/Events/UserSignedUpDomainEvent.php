@@ -16,6 +16,8 @@ final class UserSignedUpDomainEvent implements UserSignedUpDomainEventInterface
     public string $firstname;
     #[PersonalData]
     public string $lastname;
+    #[PersonalData]
+    public string $languagePreference;
     public bool $isConsentGiven;
     public array $roles;
     public \DateTimeImmutable $occurredOn;
@@ -26,6 +28,7 @@ final class UserSignedUpDomainEvent implements UserSignedUpDomainEventInterface
         string $password,
         string $firstname,
         string $lastname,
+        string $languagePreference,
         bool $isConsentGiven,
         array $roles,
     ) {
@@ -34,6 +37,7 @@ final class UserSignedUpDomainEvent implements UserSignedUpDomainEventInterface
         $this->password = $password;
         $this->firstname = $firstname;
         $this->lastname = $lastname;
+        $this->languagePreference = $languagePreference;
         $this->isConsentGiven = $isConsentGiven;
         $this->roles = $roles;
         $this->occurredOn = new \DateTimeImmutable();
@@ -48,6 +52,7 @@ final class UserSignedUpDomainEvent implements UserSignedUpDomainEventInterface
             'password' => $this->password,
             'firstname' => $this->firstname,
             'lastname' => $this->lastname,
+            'languagePreference' => $this->languagePreference,
             'isConsentGiven' => $this->isConsentGiven,
             'roles' => $this->roles,
             'occurredOn' => $this->occurredOn->format(\DateTimeInterface::ATOM),
@@ -63,6 +68,7 @@ final class UserSignedUpDomainEvent implements UserSignedUpDomainEventInterface
             $data['password'],
             $data['firstname'],
             $data['lastname'],
+            $data['languagePreference'],
             $data['isConsentGiven'],
             $data['roles'],
         );

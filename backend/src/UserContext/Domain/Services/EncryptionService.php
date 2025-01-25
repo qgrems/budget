@@ -87,6 +87,6 @@ final class EncryptionService implements EncryptionServiceInterface
 
         $this->storeKeyByUserId($userId, $key);
 
-        return $this->getKeyByUserId($userId);
+        return $key;
     }
 }

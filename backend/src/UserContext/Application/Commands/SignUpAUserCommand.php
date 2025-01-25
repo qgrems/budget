@@ -9,6 +9,7 @@ use App\UserContext\Domain\ValueObjects\UserConsent;
 use App\UserContext\Domain\ValueObjects\UserEmail;
 use App\UserContext\Domain\ValueObjects\UserFirstname;
 use App\UserContext\Domain\ValueObjects\UserId;
+use App\UserContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\ValueObjects\UserLastname;
 use App\UserContext\Domain\ValueObjects\UserPassword;
 
@@ -19,6 +20,7 @@ final readonly class SignUpAUserCommand implements CommandInterface
     private string $userPassword;
     private string $userFirstname;
     private string $userLastname;
+    private string $userLanguagePreference;
     private bool $userConsentGiven;
 
     public function __construct(
@@ -27,6 +29,7 @@ final readonly class SignUpAUserCommand implements CommandInterface
         UserPassword $userPassword,
         UserFirstname $userFirstname,
         UserLastname $userLastname,
+        UserLanguagePreference $userLanguagePreference,
         UserConsent $userConsentGiven,
     ) {
         $this->userId = (string) $userId;
@@ -34,6 +37,7 @@ final readonly class SignUpAUserCommand implements CommandInterface
         $this->userPassword = (string) $userPassword;
         $this->userFirstname = (string) $userFirstname;
         $this->userLastname = (string) $userLastname;
+        $this->userLanguagePreference = (string) $userLanguagePreference;
         $this->userConsentGiven = $userConsentGiven->toBool();
     }
 
@@ -60,6 +64,11 @@ final readonly class SignUpAUserCommand implements CommandInterface
     public function getUserLastname(): UserLastname
     {
         return UserLastname::fromString($this->userLastname);
+    }
+
+    public function getUserLanguagePreference(): UserLanguagePreference
+    {
+        return UserLanguagePreference::fromString($this->userLanguagePreference);
     }
 
     public function isUserConsentGiven(): UserConsent

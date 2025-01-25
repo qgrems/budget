@@ -1051,19 +1051,37 @@ parameters:
 			path: src/SharedContext/Infrastructure/Entities/EventStore.php
 
 		-
+			message: '#^Property App\\SharedContext\\Infrastructure\\Entities\\EventStore\:\:\$userId is unused\.$#'
+			identifier: property.unused
+			count: 1
+			path: src/SharedContext/Infrastructure/Entities/EventStore.php
+
+		-
 			message: '#^Parameter \#1 \$code of method Symfony\\Component\\HttpFoundation\\Response\:\:setStatusCode\(\) expects int, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/SharedContext/Infrastructure/EventListener/ExceptionListener.php
 
 		-
+			message: '#^Access to an undefined property App\\UserContext\\Domain\\Ports\\Inbound\\UserDomainEventInterface\:\:\$aggregateId\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/SharedContext/Infrastructure/EventStore/EventStore.php
+
+		-
 			message: '#^Cannot access property \$aggregateId on mixed\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/SharedContext/Infrastructure/EventStore/EventStore.php
+
+		-
+			message: '#^Cannot access property \$occurredOn on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
 			path: src/SharedContext/Infrastructure/EventStore/EventStore.php
 
 		-
-			message: '#^Cannot access property \$occurredOn on mixed\.$#'
+			message: '#^Cannot access property \$userId on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
 			path: src/SharedContext/Infrastructure/EventStore/EventStore.php
@@ -1081,6 +1099,12 @@ parameters:
 			path: src/SharedContext/Infrastructure/EventStore/EventStore.php
 
 		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: src/SharedContext/Infrastructure/EventStore/EventStore.php
+
+		-
 			message: '#^Method App\\SharedContext\\Infrastructure\\EventStore\\EventStore\:\:loadByDomainEvents\(\) has parameter \$domainEventClasses with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1089,6 +1113,12 @@ parameters:
 		-
 			message: '#^Method App\\SharedContext\\Infrastructure\\EventStore\\EventStore\:\:save\(\) has parameter \$events with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
+			count: 1
+			path: src/SharedContext/Infrastructure/EventStore/EventStore.php
+
+		-
+			message: '#^Parameter \#1 \$aggregateId of method App\\SharedContext\\Infrastructure\\EventStore\\EventStore\:\:getCurrentVersion\(\) expects string, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/SharedContext/Infrastructure/EventStore/EventStore.php
 
@@ -1279,6 +1309,36 @@ parameters:
 			path: src/UserContext/Domain/Events/UserFirstnameUpdatedDomainEvent.php
 
 		-
+			message: '#^Method App\\UserContext\\Domain\\Events\\UserLanguagePreferenceUpdatedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Domain/Events/UserLanguagePreferenceUpdatedDomainEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Domain\\Events\\UserLanguagePreferenceUpdatedDomainEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Domain/Events/UserLanguagePreferenceUpdatedDomainEvent.php
+
+		-
+			message: '#^Parameter \#1 \$aggregateId of class App\\UserContext\\Domain\\Events\\UserLanguagePreferenceUpdatedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserLanguagePreferenceUpdatedDomainEvent.php
+
+		-
+			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserLanguagePreferenceUpdatedDomainEvent.php
+
+		-
+			message: '#^Parameter \#2 \$languagePreference of class App\\UserContext\\Domain\\Events\\UserLanguagePreferenceUpdatedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserLanguagePreferenceUpdatedDomainEvent.php
+
+		-
 			message: '#^Method App\\UserContext\\Domain\\Events\\UserLastnameUpdatedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1441,31 +1501,37 @@ parameters:
 			path: src/UserContext/Domain/Events/UserReplayedDomainEvent.php
 
 		-
-			message: '#^Parameter \#4 \$email of class App\\UserContext\\Domain\\Events\\UserReplayedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#4 \$languagePreference of class App\\UserContext\\Domain\\Events\\UserReplayedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Events/UserReplayedDomainEvent.php
 
 		-
-			message: '#^Parameter \#5 \$password of class App\\UserContext\\Domain\\Events\\UserReplayedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#5 \$email of class App\\UserContext\\Domain\\Events\\UserReplayedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Events/UserReplayedDomainEvent.php
 
 		-
-			message: '#^Parameter \#6 \$isConsentGiven of class App\\UserContext\\Domain\\Events\\UserReplayedDomainEvent constructor expects bool, mixed given\.$#'
+			message: '#^Parameter \#6 \$password of class App\\UserContext\\Domain\\Events\\UserReplayedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Events/UserReplayedDomainEvent.php
 
 		-
-			message: '#^Parameter \#7 \$consentDate of class App\\UserContext\\Domain\\Events\\UserReplayedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#7 \$isConsentGiven of class App\\UserContext\\Domain\\Events\\UserReplayedDomainEvent constructor expects bool, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Events/UserReplayedDomainEvent.php
 
 		-
-			message: '#^Parameter \#8 \$updatedAt of class App\\UserContext\\Domain\\Events\\UserReplayedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#8 \$consentDate of class App\\UserContext\\Domain\\Events\\UserReplayedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserReplayedDomainEvent.php
+
+		-
+			message: '#^Parameter \#9 \$updatedAt of class App\\UserContext\\Domain\\Events\\UserReplayedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Events/UserReplayedDomainEvent.php
@@ -1507,31 +1573,37 @@ parameters:
 			path: src/UserContext/Domain/Events/UserRewoundDomainEvent.php
 
 		-
-			message: '#^Parameter \#4 \$email of class App\\UserContext\\Domain\\Events\\UserRewoundDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#4 \$languagePreference of class App\\UserContext\\Domain\\Events\\UserRewoundDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Events/UserRewoundDomainEvent.php
 
 		-
-			message: '#^Parameter \#5 \$password of class App\\UserContext\\Domain\\Events\\UserRewoundDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#5 \$email of class App\\UserContext\\Domain\\Events\\UserRewoundDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Events/UserRewoundDomainEvent.php
 
 		-
-			message: '#^Parameter \#6 \$isConsentGiven of class App\\UserContext\\Domain\\Events\\UserRewoundDomainEvent constructor expects bool, mixed given\.$#'
+			message: '#^Parameter \#6 \$password of class App\\UserContext\\Domain\\Events\\UserRewoundDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Events/UserRewoundDomainEvent.php
 
 		-
-			message: '#^Parameter \#7 \$consentDate of class App\\UserContext\\Domain\\Events\\UserRewoundDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#7 \$isConsentGiven of class App\\UserContext\\Domain\\Events\\UserRewoundDomainEvent constructor expects bool, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Events/UserRewoundDomainEvent.php
 
 		-
-			message: '#^Parameter \#8 \$updatedAt of class App\\UserContext\\Domain\\Events\\UserRewoundDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#8 \$consentDate of class App\\UserContext\\Domain\\Events\\UserRewoundDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserRewoundDomainEvent.php
+
+		-
+			message: '#^Parameter \#9 \$updatedAt of class App\\UserContext\\Domain\\Events\\UserRewoundDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Events/UserRewoundDomainEvent.php
@@ -1591,13 +1663,19 @@ parameters:
 			path: src/UserContext/Domain/Events/UserSignedUpDomainEvent.php
 
 		-
-			message: '#^Parameter \#6 \$isConsentGiven of class App\\UserContext\\Domain\\Events\\UserSignedUpDomainEvent constructor expects bool, mixed given\.$#'
+			message: '#^Parameter \#6 \$languagePreference of class App\\UserContext\\Domain\\Events\\UserSignedUpDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Events/UserSignedUpDomainEvent.php
 
 		-
-			message: '#^Parameter \#7 \$roles of class App\\UserContext\\Domain\\Events\\UserSignedUpDomainEvent constructor expects array, mixed given\.$#'
+			message: '#^Parameter \#7 \$isConsentGiven of class App\\UserContext\\Domain\\Events\\UserSignedUpDomainEvent constructor expects bool, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserSignedUpDomainEvent.php
+
+		-
+			message: '#^Parameter \#8 \$roles of class App\\UserContext\\Domain\\Events\\UserSignedUpDomainEvent constructor expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Events/UserSignedUpDomainEvent.php
@@ -1689,7 +1767,7 @@ parameters:
 		-
 			message: '#^Method App\\UserContext\\Domain\\Services\\EncryptionService\:\:getKeyForUser\(\) should return string but returns string\|null\.$#'
 			identifier: return.type
-			count: 2
+			count: 1
 			path: src/UserContext/Domain/Services/EncryptionService.php
 
 		-
@@ -1759,6 +1837,12 @@ parameters:
 			path: src/UserContext/Domain/Services/EventEncryptor.php
 
 		-
+			message: '#^Access to an undefined property App\\UserContext\\Domain\\Ports\\Inbound\\UserViewInterface\:\:\$firstname\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/UserContext/Infrastructure/Adapters/MailerAdapter.php
+
+		-
 			message: '#^Property App\\UserContext\\Infrastructure\\Entities\\EncryptionKey\:\:\$createdAt is unused\.$#'
 			identifier: property.unused
 			count: 1
@@ -1826,6 +1910,12 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property App\\UserContext\\Domain\\Ports\\Inbound\\UserViewInterface\:\:\$firstname\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/UserContext/Infrastructure/Persistence/Repositories/UserViewRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\UserContext\\Domain\\Ports\\Inbound\\UserViewInterface\:\:\$languagePreference\.$#'
 			identifier: property.notFound
 			count: 1
 			path: src/UserContext/Infrastructure/Persistence/Repositories/UserViewRepository.php
@@ -2047,6 +2137,12 @@ parameters:
 			path: src/UserContext/ReadModels/Views/UserView.php
 
 		-
+			message: '#^Parameter \#1 \$language of static method App\\UserContext\\Domain\\ValueObjects\\UserLanguagePreference\:\:fromString\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/ReadModels/Views/UserView.php
+
+		-
 			message: '#^Parameter \#1 \$name of static method App\\UserContext\\Domain\\ValueObjects\\UserFirstname\:\:fromString\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -2077,7 +2173,7 @@ parameters:
 			path: src/UserContext/ReadModels/Views/UserView.php
 
 		-
-			message: '#^Parameter \#10 \$roles of class App\\UserContext\\ReadModels\\Views\\UserView constructor expects array, mixed given\.$#'
+			message: '#^Parameter \#11 \$roles of class App\\UserContext\\ReadModels\\Views\\UserView constructor expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/ReadModels/Views/UserView.php

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\ReadModels\Projections;
 
+use App\UserContext\Domain\Events\UserLanguagePreferenceUpdatedDomainEvent;
 use App\UserContext\Domain\Events\UserReplayedDomainEvent;
 use App\UserContext\Domain\Events\UserRewoundDomainEvent;
 use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
@@ -22,6 +23,7 @@ use App\UserContext\Domain\ValueObjects\UserConsent;
 use App\UserContext\Domain\ValueObjects\UserEmail;
 use App\UserContext\Domain\ValueObjects\UserFirstname;
 use App\UserContext\Domain\ValueObjects\UserId;
+use App\UserContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\ValueObjects\UserLastname;
 use App\UserContext\Domain\ValueObjects\UserPassword;
 use App\UserContext\ReadModels\Projections\UserProjection;
@@ -68,6 +70,7 @@ class UserProjectionTest extends TestCase
             'password123',
             'John',
             'Doe',
+            'fr',
             true,
             ['ROLE_USER']
         );
@@ -87,6 +90,7 @@ class UserProjectionTest extends TestCase
             'password123',
             'John',
             'Doe',
+            'fr',
             true,
             ['ROLE_USER']
         );
@@ -119,6 +123,7 @@ class UserProjectionTest extends TestCase
             UserPassword::fromString('password'),
             UserFirstname::fromString('Test firstName'),
             UserLastname::fromString('Test lastName'),
+            UserLanguagePreference::fromString('fr'),
             UserConsent::fromBool(true),
             new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
             new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
@@ -148,6 +153,40 @@ class UserProjectionTest extends TestCase
             UserPassword::fromString('password'),
             UserFirstname::fromString('Test firstName'),
             UserLastname::fromString('Test lastName'),
+            UserLanguagePreference::fromString('fr'),
+            UserConsent::fromBool(true),
+            new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
+            new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
+            new \DateTime('2024-12-07T22:03:35+00:00'),
+            ['ROLE_USER'],
+        );
+
+        $this->keyManagementRepository->method('getKey')
+            ->willReturn('encryption-key');
+        $this->userViewRepository->expects($this->once())
+            ->method('findOneBy')
+            ->with(['uuid' => $event->aggregateId])
+            ->willReturn($userView);
+        $this->userViewRepository->expects($this->once())
+            ->method('save')
+            ->with($userView);
+
+        $this->userProjection->__invoke($event);
+    }
+
+    public function testHandleUserLanguagePreferenceUpdatedEvent(): void
+    {
+        $event = new UserLanguagePreferenceUpdatedDomainEvent(
+            'b7e685be-db83-4866-9f85-102fac30a50b',
+            'fr',
+        );
+        $userView = new UserView(
+            UserId::fromString($event->aggregateId),
+            UserEmail::fromString('test@mail.com'),
+            UserPassword::fromString('password'),
+            UserFirstname::fromString('Test firstName'),
+            UserLastname::fromString('Test lastName'),
+            UserLanguagePreference::fromString('fr'),
             UserConsent::fromBool(true),
             new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
             new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
@@ -177,6 +216,7 @@ class UserProjectionTest extends TestCase
             UserPassword::fromString('password'),
             UserFirstname::fromString('Test firstName'),
             UserLastname::fromString('Test lastName'),
+            UserLanguagePreference::fromString('fr'),
             UserConsent::fromBool(true),
             new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
             new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
@@ -206,6 +246,7 @@ class UserProjectionTest extends TestCase
             UserPassword::fromString('password'),
             UserFirstname::fromString('Test firstName'),
             UserLastname::fromString('Test lastName'),
+            UserLanguagePreference::fromString('fr'),
             UserConsent::fromBool(true),
             new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
             new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
@@ -238,6 +279,7 @@ class UserProjectionTest extends TestCase
             UserPassword::fromString('password'),
             UserFirstname::fromString('Test firstName'),
             UserLastname::fromString('Test lastName'),
+            UserLanguagePreference::fromString('fr'),
             UserConsent::fromBool(true),
             new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
             new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
@@ -267,6 +309,7 @@ class UserProjectionTest extends TestCase
             UserPassword::fromString('password'),
             UserFirstname::fromString('Test firstName'),
             UserLastname::fromString('Test lastName'),
+            UserLanguagePreference::fromString('fr'),
             UserConsent::fromBool(true),
             new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
             new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
@@ -304,6 +347,23 @@ class UserProjectionTest extends TestCase
     public function testHandleUserLastnameUpdatedEventWithUserThatDoesNotExist(): void
     {
         $event = new UserLastnameUpdatedDomainEvent('b7e685be-db83-4866-9f85-102fac30a50b', 'Doe');
+
+        $this->keyManagementRepository->method('getKey')
+            ->willReturn('encryption-key');
+        $this->userViewRepository->expects($this->once())
+            ->method('findOneBy')
+            ->with(['uuid' => $event->aggregateId])
+            ->willReturn(null);
+
+        $this->userProjection->__invoke($event);
+    }
+
+    public function testHandleUserLanguagePreferenceUpdatedEventWithUserThatDoesNotExist(): void
+    {
+        $event = new UserLanguagePreferenceUpdatedDomainEvent(
+            'b7e685be-db83-4866-9f85-102fac30a50b',
+            'fr',
+        );
 
         $this->keyManagementRepository->method('getKey')
             ->willReturn('encryption-key');
@@ -377,6 +437,7 @@ class UserProjectionTest extends TestCase
             'b7e685be-db83-4866-9f85-102fac30a50b',
             'John',
             'Doe',
+            'fr',
             'john.doe@example.com',
             'password123',
             true,
@@ -390,6 +451,7 @@ class UserProjectionTest extends TestCase
             UserPassword::fromString($event->password),
             UserFirstname::fromString($event->firstname),
             UserLastname::fromString($event->lastname),
+            UserLanguagePreference::fromString('fr'),
             UserConsent::fromBool($event->isConsentGiven),
             new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
             new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
@@ -416,6 +478,7 @@ class UserProjectionTest extends TestCase
             'b7e685be-db83-4866-9f85-102fac30a50b',
             'John',
             'Doe',
+            'fr',
             'john.doe@example.com',
             'password123',
             true,
@@ -439,6 +502,7 @@ class UserProjectionTest extends TestCase
             'b7e685be-db83-4866-9f85-102fac30a50b',
             'John',
             'Doe',
+            'fr',
             'john.doe@example.com',
             'password123',
             true,
@@ -452,6 +516,7 @@ class UserProjectionTest extends TestCase
             UserPassword::fromString($event->password),
             UserFirstname::fromString($event->firstname),
             UserLastname::fromString($event->lastname),
+            UserLanguagePreference::fromString('fr'),
             UserConsent::fromBool($event->isConsentGiven),
             new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
             new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
@@ -478,6 +543,7 @@ class UserProjectionTest extends TestCase
             'b7e685be-db83-4866-9f85-102fac30a50b',
             'John',
             'Doe',
+            'fr',
             'john.doe@example.com',
             'password123',
             true,

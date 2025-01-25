@@ -18,6 +18,7 @@ use App\UserContext\Domain\ValueObjects\UserConsent;
 use App\UserContext\Domain\ValueObjects\UserEmail;
 use App\UserContext\Domain\ValueObjects\UserFirstname;
 use App\UserContext\Domain\ValueObjects\UserId;
+use App\UserContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\ValueObjects\UserLastname;
 use App\UserContext\Domain\ValueObjects\UserPassword;
 use App\UserContext\Presentation\HTTP\DTOs\UpdateAUserPasswordInput;
@@ -71,6 +72,7 @@ class UpdateAUserPasswordCommandHandlerTest extends TestCase
                             'password' => 'password',
                             'firstname' => 'Test firstName',
                             'lastname' => 'Test lastName',
+                            'languagePreference' => 'fr',
                             'isConsentGiven' => true,
                             'isDeleted' => false,
                             'occurredOn' => '2024-12-07T22:03:35+00:00',
@@ -89,6 +91,7 @@ class UpdateAUserPasswordCommandHandlerTest extends TestCase
                 'HAdFD97Xp[T!crjHi^Y%',
                 'David',
                 'Doe',
+                'fr',
                 true,
                 ['ROLE_USER'],
             ),
@@ -101,6 +104,7 @@ class UpdateAUserPasswordCommandHandlerTest extends TestCase
                 UserPassword::fromString('password'),
                 UserFirstname::fromString('Test firstName'),
                 UserLastname::fromString('Test lastName'),
+                UserLanguagePreference::fromString('fr'),
                 UserConsent::fromBool(true),
                 new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
                 new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
@@ -136,6 +140,7 @@ class UpdateAUserPasswordCommandHandlerTest extends TestCase
                             'password' => 'password',
                             'firstname' => 'Test firstName',
                             'lastname' => 'Test lastName',
+                            'languagePreference' => 'fr',
                             'isConsentGiven' => true,
                             'isDeleted' => false,
                             'occurredOn' => '2024-12-07T22:03:35+00:00',
@@ -154,6 +159,7 @@ class UpdateAUserPasswordCommandHandlerTest extends TestCase
                 'HAdFD97Xp[T!crjHi^Y%',
                 'David',
                 'Doe',
+                'fr',
                 true,
                 ['ROLE_USER'],
             ),
@@ -166,6 +172,7 @@ class UpdateAUserPasswordCommandHandlerTest extends TestCase
                 UserPassword::fromString('password'),
                 UserFirstname::fromString('Test firstName'),
                 UserLastname::fromString('Test lastName'),
+                UserLanguagePreference::fromString('fr'),
                 UserConsent::fromBool(true),
                 new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
                 new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
