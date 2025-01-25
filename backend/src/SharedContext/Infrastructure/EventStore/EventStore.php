@@ -7,6 +7,8 @@ namespace App\SharedContext\Infrastructure\EventStore;
 use App\SharedContext\Domain\Exceptions\PublishEventsException;
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
+use App\SharedContext\Domain\Services\RequestIdProvider;
+use App\UserContext\Domain\Ports\Inbound\UserDomainEventInterface;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -16,6 +18,7 @@ final readonly class EventStore implements EventStoreInterface
     public function __construct(
         private Connection $connection,
         private PublisherInterface $publisher,
+        private RequestIdProvider $requestIdProvider,
     ) {
     }
 
@@ -66,11 +69,16 @@ final readonly class EventStore implements EventStoreInterface
             $this->connection->beginTransaction();
 
             foreach ($events as $event) {
+                $currentVersion = $this->getCurrentVersion($event->aggregateId);
+
                 $this->connection->insert('event_store', [
                     'aggregate_id' => $event->aggregateId,
                     'type' => get_class($event),
                     'payload' => json_encode($event->toArray(), JSON_THROW_ON_ERROR),
                     'occurred_on' => $event->occurredOn->format('Y-m-d H:i:s'),
+                    'version' => $currentVersion + 1,
+                    'request_id' => $this->requestIdProvider->requestId,
+                    'user_id' => $event instanceof UserDomainEventInterface ? $event->aggregateId : $event->userId,
                 ]);
             }
 
@@ -80,5 +88,16 @@ final readonly class EventStore implements EventStoreInterface
             $this->connection->rollBack();
             throw new PublishEventsException();
         }
+    }
+
+    private function getCurrentVersion(string $aggregateId): int
+    {
+        $queryBuilder = $this->connection->createQueryBuilder()
+            ->select('MAX(version) as version')
+            ->from('event_store')
+            ->where('aggregate_id = :id')
+            ->setParameter('id', $aggregateId);
+
+        return (int) $queryBuilder->executeQuery()->fetchOne();
     }
 }

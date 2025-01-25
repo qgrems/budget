@@ -15,6 +15,7 @@ class UserReplayedEventTest extends TestCase
             'aggregateId',
             'firstname',
             'lastname',
+            'fr',
             'email',
             'password',
             true,
@@ -29,6 +30,7 @@ class UserReplayedEventTest extends TestCase
                 'password' => 'password',
                 'firstname' => 'firstname',
                 'lastname' => 'lastname',
+                'languagePreference' => 'fr',
                 'isConsentGiven' => true,
                 'consentDate' => '2021-09-01T00:00:00+00:00',
                 'updatedAt' => '2021-09-01T00:00:00+00:00',
@@ -46,6 +48,7 @@ class UserReplayedEventTest extends TestCase
             'password' => 'password',
             'firstname' => 'firstname',
             'lastname' => 'lastname',
+            'languagePreference' => 'fr',
             'isConsentGiven' => true,
             'consentDate' => '2021-09-01T00:00:00+00:00',
             'updatedAt' => '2021-09-01T00:00:00+00:00',
@@ -55,6 +58,7 @@ class UserReplayedEventTest extends TestCase
         $this->assertEquals('aggregateId', $event->aggregateId);
         $this->assertEquals('firstname', $event->firstname);
         $this->assertEquals('lastname', $event->lastname);
+        $this->assertEquals('fr', $event->languagePreference);
         $this->assertEquals('email', $event->email);
         $this->assertEquals('password', $event->password);
         $this->assertTrue($event->isConsentGiven);

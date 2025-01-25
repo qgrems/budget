@@ -6,6 +6,7 @@ namespace App\UserContext\ReadModels\Projections;
 
 use App\UserContext\Domain\Events\UserDeletedDomainEvent;
 use App\UserContext\Domain\Events\UserFirstnameUpdatedDomainEvent;
+use App\UserContext\Domain\Events\UserLanguagePreferenceUpdatedDomainEvent;
 use App\UserContext\Domain\Events\UserLastnameUpdatedDomainEvent;
 use App\UserContext\Domain\Events\UserPasswordResetDomainEvent;
 use App\UserContext\Domain\Events\UserPasswordResetRequestedDomainEvent;
@@ -25,11 +26,11 @@ use App\UserContext\ReadModels\Views\UserView;
 final readonly class UserProjection
 {
     public function __construct(
-        private UserViewRepositoryInterface      $userViewRepository,
-        private MailerInterface                  $mailer,
+        private UserViewRepositoryInterface $userViewRepository,
+        private MailerInterface $mailer,
         private KeyManagementRepositoryInterface $keyManagementRepository,
-        private EventEncryptorInterface          $eventEncryptor,
-        private RefreshTokenManagerInterface     $refreshTokenManager,
+        private EventEncryptorInterface $eventEncryptor,
+        private RefreshTokenManagerInterface $refreshTokenManager,
     ) {
     }
 
@@ -47,6 +48,7 @@ final readonly class UserProjection
             $event instanceof UserSignedUpDomainEvent => $this->handleUserSignedUpDomainEvent($event),
             $event instanceof UserFirstnameUpdatedDomainEvent => $this->handleUserFirstnameUpdatedDomainEvent($event),
             $event instanceof UserLastnameUpdatedDomainEvent => $this->handleUserLastnameUpdatedDomainEvent($event),
+            $event instanceof UserLanguagePreferenceUpdatedDomainEvent => $this->handleUserLanguagePreferenceUpdatedDomainEvent($event),
             $event instanceof UserPasswordResetDomainEvent => $this->handleUserPasswordResetEvent($event),
             $event instanceof UserPasswordResetRequestedDomainEvent => $this->handleUserPasswordResetRequestedDomainEvent($event),
             $event instanceof UserPasswordUpdatedDomainEvent => $this->handleUserPasswordUpdatedDomainEvent($event),
@@ -72,6 +74,19 @@ final readonly class UserProjection
         }
 
         $userView->fromEvent($userFirstnameUpdatedDomainEvent);
+        $this->userViewRepository->save($userView);
+    }
+
+    private function handleUserLanguagePreferenceUpdatedDomainEvent(
+        UserLanguagePreferenceUpdatedDomainEvent $userLanguagePreferenceUpdatedDomainEvent,
+    ): void {
+        $userView = $this->userViewRepository->findOneBy(['uuid' => $userLanguagePreferenceUpdatedDomainEvent->aggregateId]);
+
+        if (!$userView instanceof UserViewInterface) {
+            return;
+        }
+
+        $userView->fromEvent($userLanguagePreferenceUpdatedDomainEvent);
         $this->userViewRepository->save($userView);
     }
 

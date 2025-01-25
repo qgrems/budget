@@ -26,14 +26,15 @@ final readonly class UserViewRepository implements UserViewRepositoryInterface
     public function save(UserViewInterface $user): void
     {
         $this->connection->executeStatement('
-            INSERT INTO user_view (uuid, created_at, updated_at, email, password, firstname, lastname, consent_given, consent_date, roles, password_reset_token, password_reset_token_expiry)
-            VALUES (:uuid, :created_at, :updated_at, :email, :password, :firstname, :lastname, :consent_given, :consent_date, :roles, :password_reset_token, :password_reset_token_expiry)
+            INSERT INTO user_view (uuid, created_at, updated_at, email, password, firstname, lastname, language_preference, consent_given, consent_date, roles, password_reset_token, password_reset_token_expiry)
+            VALUES (:uuid, :created_at, :updated_at, :email, :password, :firstname, :lastname, :language_preference, :consent_given, :consent_date, :roles, :password_reset_token, :password_reset_token_expiry)
             ON DUPLICATE KEY UPDATE
                 updated_at = VALUES(updated_at),
                 email = VALUES(email),
                 password = VALUES(password),
                 firstname = VALUES(firstname),
                 lastname = VALUES(lastname),
+                language_preference = VALUES(language_preference),
                 consent_given = VALUES(consent_given),
                 consent_date = VALUES(consent_date),
                 roles = VALUES(roles),
@@ -47,6 +48,7 @@ final readonly class UserViewRepository implements UserViewRepositoryInterface
             'password' => $user->password,
             'firstname' => $user->firstname,
             'lastname' => $user->lastname,
+            'language_preference' => $user->languagePreference,
             'consent_given' => $user->consentGiven ? 1 : 0,
             'consent_date' => $user->consentDate->format(\DateTimeImmutable::ATOM),
             'roles' => json_encode($user->roles),

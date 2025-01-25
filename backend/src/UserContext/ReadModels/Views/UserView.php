@@ -7,6 +7,7 @@ namespace App\UserContext\ReadModels\Views;
 use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
 use App\SharedContext\Domain\Ports\Inbound\SharedUserInterface;
 use App\UserContext\Domain\Events\UserFirstnameUpdatedDomainEvent;
+use App\UserContext\Domain\Events\UserLanguagePreferenceUpdatedDomainEvent;
 use App\UserContext\Domain\Events\UserLastnameUpdatedDomainEvent;
 use App\UserContext\Domain\Events\UserPasswordResetDomainEvent;
 use App\UserContext\Domain\Events\UserPasswordResetRequestedDomainEvent;
@@ -19,6 +20,7 @@ use App\UserContext\Domain\ValueObjects\UserConsent;
 use App\UserContext\Domain\ValueObjects\UserEmail;
 use App\UserContext\Domain\ValueObjects\UserFirstname;
 use App\UserContext\Domain\ValueObjects\UserId;
+use App\UserContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\ValueObjects\UserLastname;
 use App\UserContext\Domain\ValueObjects\UserPassword;
 use App\UserContext\Domain\ValueObjects\UserPasswordResetToken;
@@ -50,6 +52,9 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
     #[ORM\Column(name: 'lastname', type: 'string', length: 50)]
     private(set) string $lastname;
 
+    #[ORM\Column(name: 'language_preference', type: 'string', length: 35)]
+    private(set) string $languagePreference;
+
     #[ORM\Column(name: 'consent_given', type: 'boolean')]
     private(set) bool $consentGiven;
 
@@ -80,6 +85,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
         UserPassword $password,
         UserFirstname $firstname,
         UserLastname $lastname,
+        UserLanguagePreference $languagePreference,
         UserConsent $consentGiven,
         \DateTimeImmutable $consentDate,
         \DateTimeImmutable $createdAt,
@@ -94,6 +100,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
         $this->password = (string) $password;
         $this->firstname = (string) $firstname;
         $this->lastname = (string) $lastname;
+        $this->languagePreference = (string) $languagePreference;
         $this->consentGiven = $consentGiven->toBool();
         $this->consentDate = $consentDate;
         $this->createdAt = $createdAt;
@@ -111,6 +118,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
             UserPassword::fromString($user['password']),
             UserFirstname::fromString($user['firstname']),
             UserLastname::fromString($user['lastname']),
+            UserLanguagePreference::fromString($user['language_preference']),
             UserConsent::fromBool((bool) $user['consent_given']),
             new \DateTimeImmutable($user['consent_date']),
             new \DateTimeImmutable($user['created_at']),
@@ -131,6 +139,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
             UserPassword::fromString($userSignedUpDomainEvent->password),
             UserFirstname::fromString($userSignedUpDomainEvent->firstname),
             UserLastname::fromString($userSignedUpDomainEvent->lastname),
+            UserLanguagePreference::fromString($userSignedUpDomainEvent->languagePreference),
             UserConsent::fromBool($userSignedUpDomainEvent->isConsentGiven),
             $userSignedUpDomainEvent->occurredOn,
             $userSignedUpDomainEvent->occurredOn,
@@ -186,6 +195,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
             'uuid' => $this->uuid,
             'firstname' => $this->firstname,
             'lastname' => $this->lastname,
+            'languagePreference' => $this->languagePreference,
             'email' => $this->email,
         ];
     }
@@ -196,6 +206,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
             UserSignedUpDomainEvent::class => $this->applyUserSignedUpDomainEvent($event),
             UserFirstnameUpdatedDomainEvent::class => $this->applyUserFirstnameUpdatedDomainEvent($event),
             UserLastnameUpdatedDomainEvent::class => $this->applyUserLastnameUpdatedDomainEvent($event),
+            UserLanguagePreferenceUpdatedDomainEvent::class => $this->applyUserLanguagePreferenceUpdatedDomainEvent($event),
             UserPasswordUpdatedDomainEvent::class => $this->applyUserPasswordUpdatedDomainEvent($event),
             UserPasswordResetRequestedDomainEvent::class => $this->applyUserPasswordResetRequestedDomainEvent($event),
             UserPasswordResetDomainEvent::class => $this->applyUserPasswordResetDomainEvent($event),
@@ -212,6 +223,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
         $this->password = $userSignedUpDomainEvent->password;
         $this->firstname = $userSignedUpDomainEvent->firstname;
         $this->lastname = $userSignedUpDomainEvent->lastname;
+        $this->languagePreference = $userSignedUpDomainEvent->languagePreference;
         $this->updatedAt = \DateTime::createFromImmutable($userSignedUpDomainEvent->occurredOn);
         $this->createdAt = $userSignedUpDomainEvent->occurredOn;
         $this->consentGiven = $userSignedUpDomainEvent->isConsentGiven;
@@ -233,6 +245,13 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
     ): void {
         $this->lastname = $userLastnameUpdatedDomainEvent->lastname;
         $this->updatedAt = \DateTime::createFromImmutable($userLastnameUpdatedDomainEvent->occurredOn);
+    }
+
+    private function applyUserLanguagePreferenceUpdatedDomainEvent(
+        UserLanguagePreferenceUpdatedDomainEvent $userLanguagePreferenceUpdatedDomainEvent,
+    ): void {
+        $this->languagePreference = $userLanguagePreferenceUpdatedDomainEvent->languagePreference;
+        $this->updatedAt = \DateTime::createFromImmutable($userLanguagePreferenceUpdatedDomainEvent->occurredOn);
     }
 
     private function applyUserPasswordUpdatedDomainEvent(
@@ -260,6 +279,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
     {
         $this->firstname = $userReplayedDomainEvent->firstname;
         $this->lastname = $userReplayedDomainEvent->lastname;
+        $this->languagePreference = $userReplayedDomainEvent->languagePreference;
         $this->email = $userReplayedDomainEvent->email;
         $this->password = $userReplayedDomainEvent->password;
         $this->consentGiven = $userReplayedDomainEvent->isConsentGiven;
@@ -271,6 +291,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
     {
         $this->firstname = $userRewoundDomainEvent->firstname;
         $this->lastname = $userRewoundDomainEvent->lastname;
+        $this->languagePreference = $userRewoundDomainEvent->languagePreference;
         $this->email = $userRewoundDomainEvent->email;
         $this->password = $userRewoundDomainEvent->password;
         $this->consentGiven = $userRewoundDomainEvent->isConsentGiven;

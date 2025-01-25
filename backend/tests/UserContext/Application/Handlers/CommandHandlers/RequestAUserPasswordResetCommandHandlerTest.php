@@ -18,6 +18,7 @@ use App\UserContext\Domain\ValueObjects\UserConsent;
 use App\UserContext\Domain\ValueObjects\UserEmail;
 use App\UserContext\Domain\ValueObjects\UserFirstname;
 use App\UserContext\Domain\ValueObjects\UserId;
+use App\UserContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\ValueObjects\UserLastname;
 use App\UserContext\Domain\ValueObjects\UserPassword;
 use App\UserContext\Presentation\HTTP\DTOs\RequestAUserPasswordResetInput;
@@ -62,6 +63,7 @@ class RequestAUserPasswordResetCommandHandlerTest extends TestCase
                 UserPassword::fromString('password'),
                 UserFirstname::fromString('Test firstName'),
                 UserLastname::fromString('Test lastName'),
+                UserLanguagePreference::fromString('fr'),
                 UserConsent::fromBool(true),
                 new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
                 new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
@@ -81,6 +83,7 @@ class RequestAUserPasswordResetCommandHandlerTest extends TestCase
                             'password' => 'password',
                             'firstname' => 'Test firstName',
                             'lastname' => 'Test lastName',
+                            'languagePreference' => 'fr',
                             'isConsentGiven' => true,
                             'isDeleted' => false,
                             'occurredOn' => '2024-12-07T22:03:35+00:00',
@@ -99,6 +102,7 @@ class RequestAUserPasswordResetCommandHandlerTest extends TestCase
                 'password',
                 'Test firstName',
                 'Test lastName',
+                'fr',
                 true,
                 ['ROLE_USER'],
             ),

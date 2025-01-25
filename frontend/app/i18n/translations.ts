@@ -19,13 +19,15 @@ export const translations = {
             analyzeProgressDesc: "Review your financial health and adjust your strategy",
             whyChooseUs: "Why Choose GoGoBudgeto?",
             comprehensiveBudgeting: "Comprehensive Financial Management",
-            comprehensiveBudgetingDesc: "GoGoBudgeto offers more than just envelope budgeting. Our platform is designed to grow with your financial needs, providing a complete toolkit for managing your money.",
-            futureFeaturesHint: "Stay tuned for exciting new features to help you take control of your finances like never before!",
+            comprehensiveBudgetingDesc:
+                "GoGoBudgeto offers more than just envelope budgeting. Our platform is designed to grow with your financial needs, providing a complete toolkit for managing your money.",
+            futureFeaturesHint:
+                "Stay tuned for exciting new features to help you take control of your finances like never before!",
             flexibleCustomization: "Flexible Customization",
             flexibleCustomizationDesc: "Tailor the app to fit your unique financial situation and goals.",
             insightfulReporting: "Insightful Reporting",
             insightfulReportingDesc: "Get detailed reports and analytics to make informed financial decisions.",
-            startBudgeting: "Start Your Financial Journey"
+            startBudgeting: "Start Your Financial Journey",
         },
         nav: {
             home: "Home",
@@ -52,6 +54,10 @@ export const translations = {
             consentPart1: "I agree to the",
             termsAndConditions: "terms and conditions",
             successMessage: "Sign up successful! Redirecting to sign in page...",
+            languagePreference: "Language Preference",
+            selectLanguage: "Select a language",
+            english: "English",
+            french: "French",
         },
         signin: {
             title: "Sign In",
@@ -61,7 +67,7 @@ export const translations = {
             signIn: "Sign In",
             signingIn: "Signing In...",
             dontHaveAccount: "Don't have an account?",
-            signUp: "Sign Up"
+            signUp: "Sign Up",
         },
         envelopes: {
             title: "Your Budget Envelopes",
@@ -75,7 +81,7 @@ export const translations = {
             create: "Create",
             cancel: "Cancel",
             deleteEnvelope: "Delete Envelope",
-            deleteConfirmation: "Are you sure you want to delete the envelope \"{name}\"?",
+            deleteConfirmation: 'Are you sure you want to delete the envelope "{name}"?',
             delete: "Delete",
             error: "Error: {error}",
             debit: "Debit",
@@ -100,15 +106,22 @@ export const translations = {
             targetedAmountInvalid: "The targeted amount must be a string representing a number with up to two decimal places (e.g., \"0.00\").",
             creditMoneyMinLength: "The credit amount must be at least 1 character long.",
             creditMoneyMaxLength: "The credit amount must be at most 13 characters long.",
-            creditMoneyInvalid: "The credit money must be a string representing a number with up to two decimal places (e.g., \"0.00\").",
+            creditMoneyInvalid:
+                'The credit money must be a string representing a number with up to two decimal places (e.g., "0.00").',
             debitMoneyMinLength: "The debit amount must be at least 1 character long.",
             debitMoneyMaxLength: "The debit amount must be at most 13 characters long.",
-            debitMoneyInvalid: "The debit money must be a string representing a number with up to two decimal places (e.g., \"0.00\").",
+            debitMoneyInvalid:
+                'The debit money must be a string representing a number with up to two decimal places (e.g., "0.00").',
             currentAmount: "Current Amount",
+            targetedBudget: "Targeted Budget",
             transactionHistory: "Transaction History",
             date: "Date",
             type: "Type",
             noDetails: "No details available for this envelope.",
+            updateFailed: "Failed to update",
+            updateName: "Update Name",
+            updateCurrentAmount: "Update Current Amount",
+            updateTargetBudget: "Update Target Budget",
         },
         users: {
             operationOnResetUserPassword: "Reset password token expired or invalid",
@@ -145,24 +158,29 @@ export const translations = {
             title: "Terms and Conditions",
             section1: {
                 title: "1. Acceptance of Terms",
-                content: "By accessing and using this budget envelope application, you agree to be bound by these Terms and Conditions, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws."
+                content:
+                    "By accessing and using this budget envelope application, you agree to be bound by these Terms and Conditions, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws.",
             },
             section2: {
                 title: "2. Use License",
-                content: "Permission is granted to temporarily use this application for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not modify or copy the materials."
+                content:
+                    "Permission is granted to temporarily use this application for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not modify or copy the materials.",
             },
             section3: {
                 title: "3. Disclaimer",
-                content: "The materials on this application are provided on an 'as is' basis. We make no warranties, expressed or implied, and hereby disclaim and negate all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights."
+                content:
+                    "The materials on this application are provided on an 'as is' basis. We make no warranties, expressed or implied, and hereby disclaim and negate all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.",
             },
             section4: {
                 title: "4. Limitations",
-                content: "In no event shall the application or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on the application, even if we or an authorized representative has been notified orally or in writing of the possibility of such damage."
+                content:
+                    "In no event shall the application or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on the application, even if we or an authorized representative has been notified orally or in writing of the possibility of such damage.",
             },
             section5: {
                 title: "5. Revisions and Errata",
-                content: "The materials appearing on the application could include technical, typographical, or photographic errors. We do not warrant that any of the materials on its application are accurate, complete or current. We may make changes to the materials contained on its application at any time without notice."
-            }
+                content:
+                    "The materials appearing on the application could include technical, typographical, or photographic errors. We do not warrant that any of the materials on its application are accurate, complete or current. We may make changes to the materials contained on its application at any time without notice.",
+            },
         },
         header: {
             title: "GoGoBudgeto",
@@ -185,6 +203,10 @@ export const translations = {
         },
         common: {
             loading: "Loading...",
+            updating: "Updating...",
+            update: "Update",
+            edit: "Edit",
+            cancel: "Cancel",
         },
         settings: {
             title: "Settings",
@@ -223,7 +245,8 @@ export const translations = {
             visualTracking: "Suivi visuel",
             visualTrackingDesc: "Visualisez vos progrès financiers en un coup d'œil avec des graphiques intuitifs",
             advancedAnalytics: "Analyses avancées",
-            advancedAnalyticsDesc: "Obtenez des informations plus approfondies sur vos habitudes de dépenses et vos tendances financières",
+            advancedAnalyticsDesc:
+                "Obtenez des informations plus approfondies sur vos habitudes de dépenses et vos tendances financières",
             howItWorks: "Comment ça marche",
             createBudget: "Créez votre budget",
             createBudgetDesc: "Configurez vos catégories de budget et allouez des fonds",
@@ -233,13 +256,16 @@ export const translations = {
             analyzeProgressDesc: "Examinez votre santé financière et ajustez votre stratégie",
             whyChooseUs: "Pourquoi choisir GoGoBudgeto ?",
             comprehensiveBudgeting: "Gestion financière complète",
-            comprehensiveBudgetingDesc: "GoGoBudgeto offre plus qu'une simple budgétisation par enveloppes. Notre plateforme est conçue pour évoluer avec vos besoins financiers, offrant une boîte à outils complète pour gérer votre argent.",
-            futureFeaturesHint: "Restez à l'écoute pour de nouvelles fonctionnalités passionnantes qui vous aideront à prendre le contrôle de vos finances comme jamais auparavant !",
+            comprehensiveBudgetingDesc:
+                "GoGoBudgeto offre plus qu'une simple budgétisation par enveloppes. Notre plateforme est conçue pour évoluer avec vos besoins financiers, offrant une boîte à outils complète pour gérer votre argent.",
+            futureFeaturesHint:
+                "Restez à l'écoute pour de nouvelles fonctionnalités passionnantes qui vous aideront à prendre le contrôle de vos finances comme jamais auparavant !",
             flexibleCustomization: "Personnalisation flexible",
             flexibleCustomizationDesc: "Adaptez l'application à votre situation financière unique et à vos objectifs.",
             insightfulReporting: "Rapports perspicaces",
-            insightfulReportingDesc: "Obtenez des rapports détaillés et des analyses pour prendre des décisions financières éclairées.",
-            startBudgeting: "Commencez votre voyage financier"
+            insightfulReportingDesc:
+                "Obtenez des rapports détaillés et des analyses pour prendre des décisions financières éclairées.",
+            startBudgeting: "Commencez votre voyage financier",
         },
         nav: {
             home: "Accueil",
@@ -266,6 +292,10 @@ export const translations = {
             consentPart1: "J'accepte les",
             termsAndConditions: "conditions générales d'utilisation",
             successMessage: "Inscription réussie ! Redirection vers la page de connexion...",
+            languagePreference: "Préférence de langue",
+            selectLanguage: "Sélectionnez une langue",
+            english: "Anglais",
+            french: "Français",
         },
         signin: {
             title: "Se connecter",
@@ -275,7 +305,7 @@ export const translations = {
             signIn: "Se connecter",
             signingIn: "Connexion en cours...",
             dontHaveAccount: "Vous n'avez pas de compte ?",
-            signUp: "S'inscrire"
+            signUp: "S'inscrire",
         },
         envelopes: {
             title: "Vos enveloppes budgétaires",
@@ -289,7 +319,7 @@ export const translations = {
             create: "Créer",
             cancel: "Annuler",
             deleteEnvelope: "Supprimer l'enveloppe",
-            deleteConfirmation: "Êtes-vous sûr de vouloir supprimer l'enveloppe \"{name}\" ?",
+            deleteConfirmation: 'Êtes-vous sûr de vouloir supprimer l\'enveloppe "{name}" ?',
             delete: "Supprimer",
             error: "Erreur : {error}",
             debit: "Débiter",
@@ -314,15 +344,22 @@ export const translations = {
             targetedAmountInvalid: "Le budget cible doit être une chaîne représentant un nombre avec jusqu'à deux décimales (par exemple, \"0.00\").",
             creditMoneyMinLength: "Le montant du crédit doit comporter au moins 1 caractère.",
             creditMoneyMaxLength: "Le montant du crédit doit comporter au plus 13 caractères.",
-            creditMoneyInvalid: "Le montant du crédit doit être une chaîne représentant un nombre avec jusqu'à deux décimales (par exemple, \"0.00\").",
+            creditMoneyInvalid:
+                'Le montant du crédit doit être une chaîne représentant un nombre avec jusqu\'à deux décimales (par exemple, "0.00").',
             debitMoneyMinLength: "Le montant du débit doit comporter au moins 1 caractère.",
             debitMoneyMaxLength: "Le montant du débit doit comporter au plus 13 caractères.",
-            debitMoneyInvalid: "Le montant du débit doit être une chaîne représentant un nombre avec jusqu'à deux décimales (par exemple, \"0.00\").",
+            debitMoneyInvalid:
+                'Le montant du débit doit être une chaîne représentant un nombre avec jusqu\'à deux décimales (par exemple, "0.00").',
             currentAmount: "Montant actuel",
+            targetedBudget: "Budget ciblé",
             transactionHistory: "Historique des transactions",
             date: "Date",
             type: "Type",
             noDetails: "Aucune donnée disponible pour cette enveloppe.",
+            updateFailed: "Échec de la mise à jour",
+            updateName: "Mettre à jour le nom",
+            updateCurrentAmount: "Mettre à jour le montant actuel",
+            updateTargetBudget: "Mettre à jour le budget cible",
         },
         users: {
             operationOnResetUserPassword: "Token de réinitialisation de mot de passe expiré ou invalide",
@@ -359,24 +396,29 @@ export const translations = {
             title: "Conditions Générales d'Utilisation",
             section1: {
                 title: "1. Acceptation des Conditions",
-                content: "En accédant et en utilisant cette application d'enveloppes budgétaires, vous acceptez d'être lié par ces Conditions Générales d'Utilisation, toutes les lois et réglementations applicables, et vous acceptez que vous êtes responsable du respect de toutes les lois locales applicables."
+                content:
+                    "En accédant et en utilisant cette application d'enveloppes budgétaires, vous acceptez d'être lié par ces Conditions Générales d'Utilisation, toutes les lois et réglementations applicables, et vous acceptez que vous êtes responsable du respect de toutes les lois locales applicables.",
             },
             section2: {
                 title: "2. Licence d'Utilisation",
-                content: "Une autorisation est accordée pour utiliser temporairement cette application pour un usage personnel et non commercial uniquement. Il s'agit de l'octroi d'une licence, et non d'un transfert de titre, et en vertu de cette licence, vous ne pouvez pas modifier ou copier les matériaux."
+                content:
+                    "Une autorisation est accordée pour utiliser temporairement cette application pour un usage personnel et non commercial uniquement. Il s'agit de l'octroi d'une licence, et non d'un transfert de titre, et en vertu de cette licence, vous ne pouvez pas modifier ou copier les matériaux.",
             },
             section3: {
                 title: "3. Avertissement",
-                content: "Les matériaux de cette application sont fournis 'tels quels'. Nous ne donnons aucune garantie, expresse ou implicite, et déclinons par la présente toute autre garantie, y compris, sans limitation, les garanties ou conditions implicites de qualité marchande, d'adéquation à un usage particulier, ou de non-violation des droits de propriété intellectuelle ou d'autres droits."
+                content:
+                    "Les matériaux de cette application sont fournis 'tels quels'. Nous ne donnons aucune garantie, expresse ou implicite, et déclinons par la présente toute autre garantie, y compris, sans limitation, les garanties ou conditions implicites de qualité marchande, d'adéquation à un usage particulier, ou de non-violation des droits de propriété intellectuelle ou d'autres droits.",
             },
             section4: {
                 title: "4. Limitations",
-                content: "En aucun cas, l'application ou ses fournisseurs ne seront responsables des dommages (y compris, sans limitation, les dommages pour perte de données ou de profit, ou en raison d'une interruption d'activité) résultant de l'utilisation ou de l'impossibilité d'utiliser les matériaux de l'application, même si nous ou un représentant autorisé avons été informés oralement ou par écrit de la possibilité de tels dommages."
+                content:
+                    "En aucun cas, l'application ou ses fournisseurs ne seront responsables des dommages (y compris, sans limitation, les dommages pour perte de données ou de profit, ou en raison d'une interruption d'activité) résultant de l'utilisation ou de l'impossibilité d'utiliser les matériaux de l'application, même si nous ou un représentant autorisé avons été informés oralement ou par écrit de la possibilité de tels dommages.",
             },
             section5: {
                 title: "5. Révisions et Erreurs",
-                content: "Les matériaux apparaissant sur l'application pourraient inclure des erreurs techniques, typographiques ou photographiques. Nous ne garantissons pas que les matériaux de son application sont exacts, complets ou à jour. Nous pouvons apporter des modifications aux matériaux contenus sur son application à tout moment sans préavis."
-            }
+                content:
+                    "Les matériaux apparaissant sur l'application pourraient inclure des erreurs techniques, typographiques ou photographiques. Nous ne garantissons pas que les matériaux de son application sont exacts, complets ou à jour. Nous pouvons apporter des modifications aux matériaux contenus sur son application à tout moment sans préavis.",
+            },
         },
         header: {
             title: "GoGoBudgeto",
@@ -399,6 +441,10 @@ export const translations = {
         },
         common: {
             loading: "Chargement...",
+            updating: "Mise à jour...",
+            update: "Mettre à jour",
+            edit: "Modifier",
+            cancel: "Annuler",
         },
         settings: {
             title: "Paramètres",
@@ -426,5 +472,5 @@ export const translations = {
             edit: "Modifier",
             signOut: "Se déconnecter",
         },
-    }
+    },
 }

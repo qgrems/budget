@@ -18,6 +18,8 @@ final class UserRewoundDomainEvent implements UserDomainEventInterface
     public string $email;
     #[PersonalData]
     public string $password;
+    #[PersonalData]
+    public string $languagePreference;
     public bool $isConsentGiven;
     public \DateTime $updatedAt;
     public \DateTimeImmutable $consentDate;
@@ -27,6 +29,7 @@ final class UserRewoundDomainEvent implements UserDomainEventInterface
         string $aggregateId,
         string $firstname,
         string $lastname,
+        string $languagePreference,
         string $email,
         string $password,
         bool $isConsentGiven,
@@ -36,6 +39,7 @@ final class UserRewoundDomainEvent implements UserDomainEventInterface
         $this->aggregateId = $aggregateId;
         $this->firstname = $firstname;
         $this->lastname = $lastname;
+        $this->languagePreference = $languagePreference;
         $this->email = $email;
         $this->password = $password;
         $this->isConsentGiven = $isConsentGiven;
@@ -53,6 +57,7 @@ final class UserRewoundDomainEvent implements UserDomainEventInterface
             'password' => $this->password,
             'firstname' => $this->firstname,
             'lastname' => $this->lastname,
+            'languagePreference' => $this->languagePreference,
             'isConsentGiven' => $this->isConsentGiven,
             'consentDate' => $this->consentDate->format(\DateTimeInterface::ATOM),
             'updatedAt' => $this->updatedAt->format(\DateTimeInterface::ATOM),
@@ -67,6 +72,7 @@ final class UserRewoundDomainEvent implements UserDomainEventInterface
             $data['aggregateId'],
             $data['firstname'],
             $data['lastname'],
+            $data['languagePreference'],
             $data['email'],
             $data['password'],
             $data['isConsentGiven'],

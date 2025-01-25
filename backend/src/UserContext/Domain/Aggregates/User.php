@@ -5,6 +5,7 @@ namespace App\UserContext\Domain\Aggregates;
 use App\SharedContext\Domain\Traits\DomainEventsCapabilityTrait;
 use App\UserContext\Domain\Events\UserDeletedDomainEvent;
 use App\UserContext\Domain\Events\UserFirstnameUpdatedDomainEvent;
+use App\UserContext\Domain\Events\UserLanguagePreferenceUpdatedDomainEvent;
 use App\UserContext\Domain\Events\UserLastnameUpdatedDomainEvent;
 use App\UserContext\Domain\Events\UserPasswordResetDomainEvent;
 use App\UserContext\Domain\Events\UserPasswordResetRequestedDomainEvent;
@@ -23,6 +24,7 @@ use App\UserContext\Domain\ValueObjects\UserConsent;
 use App\UserContext\Domain\ValueObjects\UserEmail;
 use App\UserContext\Domain\ValueObjects\UserFirstname;
 use App\UserContext\Domain\ValueObjects\UserId;
+use App\UserContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\ValueObjects\UserLastname;
 use App\UserContext\Domain\ValueObjects\UserPassword;
 use App\UserContext\Domain\ValueObjects\UserPasswordResetToken;
@@ -37,6 +39,7 @@ final class User
     private UserPassword $password;
     private UserFirstname $firstname;
     private UserLastname $lastname;
+    private UserLanguagePreference $languagePreference;
     private UserConsent $consentGiven;
     private \DateTimeImmutable $consentDate;
     private \DateTimeImmutable $createdAt;
@@ -71,6 +74,7 @@ final class User
         UserPassword $password,
         UserFirstname $firstname,
         UserLastname $lastname,
+        UserLanguagePreference $languagePreference,
         UserConsent $isConsentGiven,
         UserViewRepositoryInterface $userViewRepository,
         EventEncryptorInterface $eventEncryptor,
@@ -87,6 +91,7 @@ final class User
             (string) $password,
             (string) $firstname,
             (string) $lastname,
+            (string) $languagePreference,
             $isConsentGiven->toBool(),
             $aggregate->roles,
         );
@@ -118,6 +123,27 @@ final class User
         $this->raiseDomainEvents(
             $eventEncryptor->encrypt(
                 $userFirstnameUpdatedDomainEvent,
+                (string) $this->userId,
+            ),
+        );
+    }
+
+    public function updateLanguagePreference(
+        UserLanguagePreference $languagePreference,
+        UserId $userId,
+        EventEncryptorInterface $eventEncryptor,
+    ): void {
+        $this->assertOwnership($userId);
+
+        $userLanguagePreferenceUpdatedDomainEvent = new UserLanguagePreferenceUpdatedDomainEvent(
+            (string) $this->userId,
+            (string) $languagePreference,
+        );
+
+        $this->applyUserLanguagePreferenceUpdatedDomainEvent($userLanguagePreferenceUpdatedDomainEvent);
+        $this->raiseDomainEvents(
+            $eventEncryptor->encrypt(
+                $userLanguagePreferenceUpdatedDomainEvent,
                 (string) $this->userId,
             ),
         );
@@ -229,6 +255,7 @@ final class User
             (string) $this->userId,
             (string) $this->firstname,
             (string) $this->lastname,
+            (string) $this->languagePreference,
             (string) $this->email,
             (string) $this->password,
             $this->consentGiven->toBool(),
@@ -253,6 +280,7 @@ final class User
             (string) $this->userId,
             (string) $this->firstname,
             (string) $this->lastname,
+            (string) $this->languagePreference,
             (string) $this->email,
             (string) $this->password,
             $this->consentGiven->toBool(),
@@ -278,6 +306,7 @@ final class User
             UserSignedUpDomainEvent::class => $this->applyUserSignedUpDomainEvent($event),
             UserFirstnameUpdatedDomainEvent::class => $this->applyUserFirstnameUpdatedDomainEvent($event),
             UserLastnameUpdatedDomainEvent::class => $this->applyUserLastnameUpdatedDomainEvent($event),
+            UserLanguagePreferenceUpdatedDomainEvent::class => $this->applyUserLanguagePreferenceUpdatedDomainEvent($event),
             UserPasswordUpdatedDomainEvent::class => $this->applyUserPasswordUpdatedDomainEvent($event),
             UserPasswordResetRequestedDomainEvent::class => $this->applyUserPasswordResetRequestedDomainEvent($event),
             UserPasswordResetDomainEvent::class => $this->applyUserPasswordResetDomainEvent($event),
@@ -295,6 +324,7 @@ final class User
         $this->password = UserPassword::fromString($userSignedUpDomainEvent->password);
         $this->firstname = UserFirstname::fromString($userSignedUpDomainEvent->firstname);
         $this->lastname = UserLastname::fromString($userSignedUpDomainEvent->lastname);
+        $this->languagePreference = UserLanguagePreference::fromString($userSignedUpDomainEvent->languagePreference);
         $this->updatedAt = \DateTime::createFromImmutable($userSignedUpDomainEvent->occurredOn);
         $this->createdAt = $userSignedUpDomainEvent->occurredOn;
         $this->consentGiven = UserConsent::fromBool($userSignedUpDomainEvent->isConsentGiven);
@@ -308,6 +338,13 @@ final class User
         UserFirstnameUpdatedDomainEvent $userFirstnameUpdatedDomainEvent,
     ): void {
         $this->firstname = UserFirstname::fromString($userFirstnameUpdatedDomainEvent->firstname);
+        $this->updatedAt = \DateTime::createFromImmutable($userFirstnameUpdatedDomainEvent->occurredOn);
+    }
+
+    private function applyUserLanguagePreferenceUpdatedDomainEvent(
+        UserLanguagePreferenceUpdatedDomainEvent $userFirstnameUpdatedDomainEvent,
+    ): void {
+        $this->languagePreference = UserLanguagePreference::fromString($userFirstnameUpdatedDomainEvent->languagePreference);
         $this->updatedAt = \DateTime::createFromImmutable($userFirstnameUpdatedDomainEvent->occurredOn);
     }
 
@@ -350,6 +387,7 @@ final class User
     {
         $this->firstname = UserFirstname::fromString($userReplayedDomainEvent->firstname);
         $this->lastname = UserLastname::fromString($userReplayedDomainEvent->lastname);
+        $this->languagePreference = UserLanguagePreference::fromString($userReplayedDomainEvent->languagePreference);
         $this->email = UserEmail::fromString($userReplayedDomainEvent->email);
         $this->password = UserPassword::fromString($userReplayedDomainEvent->password);
         $this->consentGiven = UserConsent::fromBool($userReplayedDomainEvent->isConsentGiven);
@@ -361,6 +399,7 @@ final class User
     {
         $this->firstname = UserFirstname::fromString($userRewoundDomainEvent->firstname);
         $this->lastname = UserLastname::fromString($userRewoundDomainEvent->lastname);
+        $this->languagePreference = UserLanguagePreference::fromString($userRewoundDomainEvent->languagePreference);
         $this->email = UserEmail::fromString($userRewoundDomainEvent->email);
         $this->password = UserPassword::fromString($userRewoundDomainEvent->password);
         $this->consentGiven = UserConsent::fromBool($userRewoundDomainEvent->isConsentGiven);
