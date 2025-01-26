@@ -60,6 +60,7 @@ class ReplayABudgetEnvelopeEventsCommandHandlerTest extends TestCase
                     'occurred_on' => '2020-10-10T12:00:00Z',
                     'payload' => json_encode([
                         'creditMoney' => '5.47',
+                        'description' => 'test',
                         'userId' => '18e04f53-0ea6-478c-a02b-81b7f3d6e8c1',
                         'occurredOn' => '2024-12-07T22:03:35+00:00',
                         'aggregateId' => '3e6a6763-4c4d-4648-bc3f-e9447dbed12c',

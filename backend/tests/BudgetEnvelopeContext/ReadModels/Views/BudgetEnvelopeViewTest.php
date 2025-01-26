@@ -27,6 +27,7 @@ class BudgetEnvelopeViewTest extends TestCase
                 'b7e685be-db83-4866-9f85-102fac30a50b',
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 '500.00',
+                'test',
             ),
         );
 
@@ -90,6 +91,7 @@ class BudgetEnvelopeViewTest extends TestCase
                         'aggregateId' => 'b7e685be-db83-4866-9f85-102fac30a50b',
                         'userId' => '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                         'creditMoney' => '500.00',
+                        'description' => 'test',
                         'occurredOn' => '2023-01-01T00:00:00+00:00',
                     ]),
                 ];

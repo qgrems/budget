@@ -77,7 +77,7 @@ final readonly class EventStore implements EventStoreInterface
                     'payload' => json_encode($event->toArray(), JSON_THROW_ON_ERROR),
                     'occurred_on' => $event->occurredOn->format('Y-m-d H:i:s'),
                     'version' => $currentVersion + 1,
-                    'request_id' => $this->requestIdProvider->requestId,
+                    'request_id' => $this->requestIdProvider->requestId ?? 'admin',
                     'user_id' => $event instanceof UserDomainEventInterface ? $event->aggregateId : $event->userId,
                 ]);
             }

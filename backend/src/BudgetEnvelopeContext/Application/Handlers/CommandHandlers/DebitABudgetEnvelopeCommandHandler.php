@@ -24,6 +24,7 @@ final readonly class DebitABudgetEnvelopeCommandHandler
         );
         $aggregate->debit(
             $debitABudgetEnvelopeCommand->getBudgetEnvelopeDebitMoney(),
+            $debitABudgetEnvelopeCommand->getBudgetEnvelopeEntryDescription(),
             $debitABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
         );
         $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());

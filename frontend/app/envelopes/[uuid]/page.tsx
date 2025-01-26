@@ -1,15 +1,15 @@
-'use client'
+"use client"
 
-import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { useTranslation } from '../../hooks/useTranslation'
-import { EnvelopeDetails as EnvelopeDetailsType } from '../../domain/envelope/envelopeTypes'
-import { api } from '../../infrastructure/api'
-import { ArrowLeft, Check, X, Loader2, Edit2, DollarSign, Calendar } from 'lucide-react'
-import Link from 'next/link'
-import { useError } from '../../contexts/ErrorContext'
-import { useValidMessage } from '../../contexts/ValidContext'
-import { motion } from 'framer-motion'
+import { useState, useEffect } from "react"
+import { useParams, useRouter } from "next/navigation"
+import { useTranslation } from "../../hooks/useTranslation"
+import type { EnvelopeDetails as EnvelopeDetailsType } from "../../domain/envelope/envelopeTypes"
+import { api } from "../../infrastructure/api"
+import { ArrowLeft, Check, X, Loader2, Edit2, DollarSign, Calendar } from "lucide-react"
+import Link from "next/link"
+import { useError } from "../../contexts/ErrorContext"
+import { useValidMessage } from "../../contexts/ValidContext"
+import { motion } from "framer-motion"
 
 const RETRY_INTERVAL = 2000 // 2 seconds
 const MAX_RETRIES = 10
@@ -21,7 +21,7 @@ export default function EnvelopeDetailsPage() {
     const [details, setDetails] = useState<EnvelopeDetailsType | null>(null)
     const [pendingActions, setPendingActions] = useState<{ [key: string]: boolean }>({})
     const [editingField, setEditingField] = useState<string | null>(null)
-    const [newValues, setNewValues] = useState({ name: '', targetBudget: '' })
+    const [newValues, setNewValues] = useState({ name: "", targetBudget: "" })
     const { setError: setGlobalError } = useError()
     const { setValidMessage } = useValidMessage()
 
@@ -34,10 +34,10 @@ export default function EnvelopeDetailsPage() {
                 setDetails(response)
                 setNewValues({
                     name: response.envelope.name,
-                    targetBudget: response.envelope.targetedAmount
+                    targetBudget: response.envelope.targetedAmount,
                 })
             } catch (err) {
-                setGlobalError('Failed to fetch envelope details')
+                setGlobalError("Failed to fetch envelope details")
             }
         }
 
@@ -45,46 +45,51 @@ export default function EnvelopeDetailsPage() {
     }, [params.uuid])
 
     const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        if (language === 'fr') {
-            return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const date = new Date(dateString)
+        if (language === "fr") {
+            return date.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" })
         } else {
-            return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+            return date.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" })
         }
-    };
+    }
 
     const handleAmountChange = (value: string) => {
-        value = value.replace(/[^\d.]/g, '');
-        if (value.startsWith('.')) {
-            value = '0' + value;
+        value = value.replace(/[^\d.]/g, "")
+        if (value.startsWith(".")) {
+            value = "0" + value
         }
-        const parts = value.split('.');
+        const parts = value.split(".")
         if (parts.length > 2) {
-            parts.pop();
-            value = parts.join('.');
+            parts.pop()
+            value = parts.join(".")
         }
-        if (value.includes('.')) {
-            const [integerPart, decimalPart] = value.split('.');
-            value = `${integerPart.slice(0, 10)}.${decimalPart.slice(0, 2)}`;
+        if (value.includes(".")) {
+            const [integerPart, decimalPart] = value.split(".")
+            value = `${integerPart.slice(0, 10)}.${decimalPart.slice(0, 2)}`
         } else {
-            value = value.slice(0, 10);
+            value = value.slice(0, 10)
         }
-        if (value.length > 1 && value.startsWith('0') && !value.startsWith('0.')) {
-            value = value.replace(/^0+/, '');
+        if (value.length > 1 && value.startsWith("0") && !value.startsWith("0.")) {
+            value = value.replace(/^0+/, "")
         }
-        setNewValues(prev => ({ ...prev, targetBudget: value }));
-    };
+        setNewValues((prev) => ({ ...prev, targetBudget: value }))
+    }
 
-    const pollForChanges = async (field: string, envelopeId: string, action: string, expectedChange: (envelope: EnvelopeDetailsType | undefined) => boolean) => {
+    const pollForChanges = async (
+        field: string,
+        envelopeId: string,
+        action: string,
+        expectedChange: (envelope: EnvelopeDetailsType | undefined) => boolean,
+    ) => {
         let retries = 0
         while (retries < MAX_RETRIES) {
-            await new Promise(resolve => setTimeout(resolve, RETRY_INTERVAL))
+            await new Promise((resolve) => setTimeout(resolve, RETRY_INTERVAL))
             try {
                 const updatedEnvelope = await api.envelopeQueries.getEnvelopeDetails(envelopeId)
                 if (expectedChange(updatedEnvelope)) {
                     setDetails(updatedEnvelope)
                     setValidMessage(`Envelope ${action} confirmed`)
-                    setPendingActions(prev => ({ ...prev, [field]: false }))
+                    setPendingActions((prev) => ({ ...prev, [field]: false }))
                     return
                 }
             } catch (err) {
@@ -93,23 +98,28 @@ export default function EnvelopeDetailsPage() {
             retries++
         }
         setGlobalError(`Failed to confirm ${action}. Please refresh.`)
-        setPendingActions(prev => ({ ...prev, [field]: false }))
+        setPendingActions((prev) => ({ ...prev, [field]: false }))
     }
 
-    const handleUpdate = async (field: 'name' | 'targetBudget') => {
+    const handleUpdate = async (field: "name" | "targetBudget") => {
         if (!details) return
-        setPendingActions(prev => ({ ...prev, [field]: true }))
+        setPendingActions((prev) => ({ ...prev, [field]: true }))
         try {
-            if (field === 'name') {
+            if (field === "name") {
                 await api.envelopeCommands.nameEnvelope(details.envelope.uuid, newValues.name)
-                pollForChanges('name', details.envelope.uuid, 'name update', (env) => env?.envelope.name === newValues.name)
+                pollForChanges("name", details.envelope.uuid, "name update", (env) => env?.envelope.name === newValues.name)
             } else {
-                await api.envelopeCommands.updateTargetBudget(details.envelope.uuid, newValues.targetBudget, details.envelope.currentAmount)
-                pollForChanges('targetBudget', details.envelope.uuid, 'target budget update', (env) => details.envelope.targetedAmount === newValues.targetBudget)
+                await api.envelopeCommands.updateTargetBudget(details.envelope.uuid, newValues.targetBudget)
+                pollForChanges(
+                    "targetBudget",
+                    details.envelope.uuid,
+                    "target budget update",
+                    (env) => env?.envelope.targetedAmount === newValues.targetBudget,
+                )
             }
         } catch (err) {
             setGlobalError(`Failed to update envelope ${field}`)
-            setPendingActions(prev => ({ ...prev, [field]: false }))
+            setPendingActions((prev) => ({ ...prev, [field]: false }))
         }
         setEditingField(null)
     }
@@ -122,7 +132,8 @@ export default function EnvelopeDetailsPage() {
         )
     }
 
-    const progress = (parseFloat(details.envelope.currentAmount) / parseFloat(details.envelope.targetedAmount)) * 100
+    const progress =
+        (Number.parseFloat(details.envelope.currentAmount) / Number.parseFloat(details.envelope.targetedAmount)) * 100
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -132,17 +143,26 @@ export default function EnvelopeDetailsPage() {
                 transition={{ duration: 0.5 }}
                 className="neomorphic rounded-lg p-6 bg-gradient-to-br from-gray-50 to-white"
             >
-                <Link href="/envelopes" className="mb-6 flex items-center text-primary hover:underline transition-colors duration-200">
-                    <ArrowLeft className="mr-2" /> {t('common.back')}
+                <Link
+                    href="/envelopes"
+                    className="mb-6 flex items-center text-primary hover:underline transition-colors duration-200"
+                >
+                    <ArrowLeft className="mr-2" /> {t("common.back")}
                 </Link>
                 <div className="mb-6 flex items-center">
                     <h1 className="text-3xl font-bold mr-2">
-                        {editingField === 'name' ? (
-                            <form onSubmit={(e) => { e.preventDefault(); handleUpdate('name'); }} className="flex items-center">
+                        {editingField === "name" ? (
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault()
+                                    handleUpdate("name")
+                                }}
+                                className="flex items-center"
+                            >
                                 <input
                                     type="text"
                                     value={newValues.name}
-                                    onChange={(e) => setNewValues(prev => ({ ...prev, name: e.target.value }))}
+                                    onChange={(e) => setNewValues((prev) => ({ ...prev, name: e.target.value }))}
                                     className="flex-grow mr-2 p-2 border-b-2 border-primary bg-transparent focus:outline-none text-2xl font-bold neomorphic-input transition-all duration-200"
                                     autoFocus
                                 />
@@ -169,13 +189,13 @@ export default function EnvelopeDetailsPage() {
                             details.envelope.name
                         )}
                     </h1>
-                    {editingField !== 'name' && (
+                    {editingField !== "name" && (
                         <motion.button
-                            onClick={() => setEditingField('name')}
+                            onClick={() => setEditingField("name")}
                             className="p-2 text-primary neomorphic-button hover:shadow-lg transition-all duration-200"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            aria-label={t('envelopes.updateName')}
+                            aria-label={t("envelopes.updateName")}
                         >
                             <Edit2 className="h-5 w-5" />
                         </motion.button>
@@ -189,21 +209,25 @@ export default function EnvelopeDetailsPage() {
                     >
                         <h2 className="text-xl font-semibold mb-2 flex items-center">
                             <DollarSign className="mr-2 text-primary" />
-                            {t('envelopes.currentAmount')}
+                            {t("envelopes.currentAmount")}
                         </h2>
-                        <p className="text-3xl font-bold text-primary">
-                            {details.envelope.currentAmount}
-                        </p>
+                        <p className="text-3xl font-bold text-primary">{details.envelope.currentAmount}</p>
                     </motion.div>
                     <motion.div
                         className="p-6 rounded-lg neomorphic bg-gradient-to-br from-green-50 to-white"
                         whileHover={{ scale: 1.02 }}
                         transition={{ type: "spring", stiffness: 300 }}
                     >
-                        <h2 className="text-xl font-semibold mb-2">{t('envelopes.targetedAmount')}</h2>
+                        <h2 className="text-xl font-semibold mb-2">{t("envelopes.targetedAmount")}</h2>
                         <div className="flex items-center">
-                            {editingField === 'targetBudget' ? (
-                                <form onSubmit={(e) => { e.preventDefault(); handleUpdate('targetBudget'); }} className="flex items-center w-full">
+                            {editingField === "targetBudget" ? (
+                                <form
+                                    onSubmit={(e) => {
+                                        e.preventDefault()
+                                        handleUpdate("targetBudget")
+                                    }}
+                                    className="flex items-center w-full"
+                                >
                                     <input
                                         type="text"
                                         value={newValues.targetBudget}
@@ -218,7 +242,11 @@ export default function EnvelopeDetailsPage() {
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                     >
-                                        {pendingActions.targetBudget ? <Loader2 className="h-5 w-5 animate-spin" /> : <Check className="h-5 w-5" />}
+                                        {pendingActions.targetBudget ? (
+                                            <Loader2 className="h-5 w-5 animate-spin" />
+                                        ) : (
+                                            <Check className="h-5 w-5" />
+                                        )}
                                     </motion.button>
                                     <motion.button
                                         type="button"
@@ -232,15 +260,13 @@ export default function EnvelopeDetailsPage() {
                                 </form>
                             ) : (
                                 <>
-                                    <p className="text-3xl font-bold text-primary mr-2">
-                                        {details.envelope.targetedAmount}
-                                    </p>
+                                    <p className="text-3xl font-bold text-primary mr-2">{details.envelope.targetedAmount}</p>
                                     <motion.button
-                                        onClick={() => setEditingField('targetBudget')}
+                                        onClick={() => setEditingField("targetBudget")}
                                         className="p-2 text-primary neomorphic-button hover:shadow-lg transition-all duration-200"
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        aria-label={t('envelopes.updateTargetBudget')}
+                                        aria-label={t("envelopes.updateTargetBudget")}
                                     >
                                         <Edit2 className="h-5 w-5" />
                                     </motion.button>
@@ -263,15 +289,16 @@ export default function EnvelopeDetailsPage() {
                 </div>
                 <h2 className="text-2xl font-bold mb-4 flex items-center">
                     <Calendar className="mr-2 text-primary" />
-                    {t('envelopes.transactionHistory')}
+                    {t("envelopes.transactionHistory")}
                 </h2>
                 <div className="overflow-x-auto">
                     <table className="w-full border-collapse neomorphic">
                         <thead>
                         <tr className="bg-gradient-to-r from-gray-50 to-white">
-                            <th className="p-3 text-left border-b">{t('envelopes.date')}</th>
-                            <th className="p-3 text-left border-b">{t('envelopes.amount')}</th>
-                            <th className="p-3 text-left border-b">{t('envelopes.type')}</th>
+                            <th className="p-3 text-left border-b">{t("envelopes.date")}</th>
+                            <th className="p-3 text-left border-b">{t("envelopes.description")}</th>
+                            <th className="p-3 text-left border-b">{t("envelopes.amount")}</th>
+                            <th className="p-3 text-left border-b">{t("envelopes.type")}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -284,8 +311,11 @@ export default function EnvelopeDetailsPage() {
                                 className="border-b hover:bg-gray-50 transition-colors duration-150"
                             >
                                 <td className="p-3">{formatDate(transaction.created_at)}</td>
+                                <td className="p-3">{transaction.description || "-"}</td>
                                 <td className="p-3">{transaction.monetary_amount}</td>
-                                <td className={`p-3 ${transaction.entry_type === 'credit' ? 'text-green-600' : 'text-red-600'}`}>
+                                <td
+                                    className={`p-3 ${transaction.entry_type === "credit" ? "text-green-600" : "text-red-600"}`}
+                                >
                                     {t(`envelopes.${transaction.entry_type}`)}
                                 </td>
                             </motion.tr>

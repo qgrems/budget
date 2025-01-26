@@ -24,6 +24,7 @@ final readonly class CreditABudgetEnvelopeCommandHandler
         );
         $aggregate->credit(
             $creditABudgetEnvelopeCommand->getBudgetEnvelopeCreditMoney(),
+            $creditABudgetEnvelopeCommand->getBudgetEnvelopeEntryDescription(),
             $creditABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
         );
         $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());

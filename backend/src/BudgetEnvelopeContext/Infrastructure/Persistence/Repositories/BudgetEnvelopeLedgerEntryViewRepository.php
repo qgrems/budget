@@ -21,18 +21,20 @@ final class BudgetEnvelopeLedgerEntryViewRepository implements BudgetEnvelopeLed
     public function save(BudgetEnvelopeLedgerEntryViewInterface $budgetEnvelopeLedgerEntryView): void
     {
         $this->connection->executeStatement('
-        INSERT INTO budget_envelope_ledger_entry_view (budget_envelope_uuid, created_at, monetary_amount, entry_type, user_uuid)
-        VALUES (:budget_envelope_uuid, :created_at, :monetary_amount, :entry_type, :user_uuid)
+        INSERT INTO budget_envelope_ledger_entry_view (budget_envelope_uuid, created_at, monetary_amount, entry_type, description, user_uuid)
+        VALUES (:budget_envelope_uuid, :created_at, :monetary_amount, :entry_type, :description, :user_uuid)
         ON DUPLICATE KEY UPDATE
             created_at = VALUES(created_at),
             monetary_amount = VALUES(monetary_amount),
             entry_type = VALUES(entry_type),
+            description = VALUES(description),
             user_uuid = VALUES(user_uuid)
     ', [
             'budget_envelope_uuid' => $budgetEnvelopeLedgerEntryView->budgetEnvelopeUuid,
             'created_at' => $budgetEnvelopeLedgerEntryView->createdAt->format(\DateTimeImmutable::ATOM),
             'monetary_amount' => $budgetEnvelopeLedgerEntryView->monetaryAmount,
             'entry_type' => $budgetEnvelopeLedgerEntryView->entryType,
+            'description' => $budgetEnvelopeLedgerEntryView->description,
             'user_uuid' => $budgetEnvelopeLedgerEntryView->userUuid,
         ]);
     }

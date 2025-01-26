@@ -80,7 +80,7 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
     public function findOneEnvelopeWithItsLedgerBy(array $criteria, ?array $orderBy = null): array
     {
         $sql = sprintf(
-            'SELECT ev.uuid, ev.created_at, ev.updated_at, ev.current_amount, ev.targeted_amount, ev.name, ev.user_uuid, ev.is_deleted, ehv.budget_envelope_uuid, ehv.created_at AS ledger_created_at, ehv.monetary_amount, ehv.entry_type
+            'SELECT ev.uuid, ev.created_at, ev.updated_at, ev.current_amount, ev.targeted_amount, ev.name, ev.user_uuid, ev.is_deleted, ehv.budget_envelope_uuid, ehv.created_at AS ledger_created_at, ehv.monetary_amount, ehv.entry_type, ehv.description
          FROM budget_envelope_view ev
          LEFT JOIN budget_envelope_ledger_entry_view ehv ON ev.uuid = ehv.budget_envelope_uuid
          WHERE %s
@@ -99,7 +99,8 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
             $budgetEnvelopeData['budget_envelope_uuid'],
             $budgetEnvelopeData['monetary_amount'],
             $budgetEnvelopeData['entry_type'],
-            $budgetEnvelopeData['ledger_created_at']
+            $budgetEnvelopeData['description'],
+            $budgetEnvelopeData['ledger_created_at'],
         );
 
         return [
@@ -113,6 +114,7 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
                         'created_at' => $row['ledger_created_at'],
                         'monetary_amount' => $row['monetary_amount'],
                         'entry_type' => $row['entry_type'],
+                        'description' => $row['description'],
                     ];
                 }, $result)
             ) : [],

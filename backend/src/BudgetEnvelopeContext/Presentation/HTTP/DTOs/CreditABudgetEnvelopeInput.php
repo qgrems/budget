@@ -22,6 +22,11 @@ final readonly class CreditABudgetEnvelopeInput
             message: 'envelopes.creditMoneyInvalid'
         )]
         private(set) string $creditMoney,
+        #[Assert\Regex(
+            pattern: '/^[\p{L}\p{N} ]+$/u',
+            message: 'envelopes.descriptionInvalid'
+        )]
+        private(set) string $description,
     ) {
     }
 }

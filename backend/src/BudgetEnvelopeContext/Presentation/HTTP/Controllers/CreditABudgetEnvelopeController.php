@@ -8,6 +8,7 @@ use App\BudgetEnvelopeContext\Application\Commands\CreditABudgetEnvelopeCommand;
 use App\BudgetEnvelopeContext\Domain\Ports\Outbound\CommandBusInterface;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCreditMoney;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeEntryDescription;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeContext\Presentation\HTTP\DTOs\CreditABudgetEnvelopeInput;
 use App\SharedContext\Domain\Ports\Inbound\SharedUserInterface;
@@ -35,6 +36,7 @@ final readonly class CreditABudgetEnvelopeController
         $this->commandBus->execute(
             new CreditABudgetEnvelopeCommand(
                 BudgetEnvelopeCreditMoney::fromString($creditABudgetEnvelopeInput->creditMoney),
+                BudgetEnvelopeEntryDescription::fromString($creditABudgetEnvelopeInput->description),
                 BudgetEnvelopeId::fromString($uuid),
                 BudgetEnvelopeUserId::fromString($user->getUuid()),
             ),

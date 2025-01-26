@@ -16,6 +16,7 @@ use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeIsNotOwnedByUserEx
 use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeNotFoundException;
 use App\BudgetEnvelopeContext\Domain\Exceptions\InvalidBudgetEnvelopeOperationException;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeDebitMoney;
+use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeEntryDescription;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeContext\Presentation\HTTP\DTOs\DebitABudgetEnvelopeInput;
@@ -44,9 +45,10 @@ class DebitABudgetEnvelopeCommandHandlerTest extends TestCase
 
     public function testDebitABudgetEnvelopeSuccess(): void
     {
-        $debitABudgetEnvelopeInput = new DebitABudgetEnvelopeInput('1.00');
+        $debitABudgetEnvelopeInput = new DebitABudgetEnvelopeInput('1.00', 'test');
         $debitABudgetEnvelopeCommand = new DebitABudgetEnvelopeCommand(
             BudgetEnvelopeDebitMoney::fromString($debitABudgetEnvelopeInput->debitMoney),
+            BudgetEnvelopeEntryDescription::fromString($debitABudgetEnvelopeInput->description),
             BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
             BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
@@ -73,6 +75,7 @@ class DebitABudgetEnvelopeCommandHandlerTest extends TestCase
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'creditMoney' => '5.47',
+                                'description' => 'test',
                                 'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                                 'occurredOn' => '2024-12-07T22:03:35+00:00',
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
@@ -84,6 +87,7 @@ class DebitABudgetEnvelopeCommandHandlerTest extends TestCase
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'debitMoney' => '2.46',
+                                'description' => 'test',
                                 'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                                 'occurredOn' => '2024-12-07T22:03:35+00:00',
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
@@ -99,9 +103,10 @@ class DebitABudgetEnvelopeCommandHandlerTest extends TestCase
 
     public function testDebitABudgetEnvelopeNotFoundFailure(): void
     {
-        $debitABudgetEnvelopeInput = new DebitABudgetEnvelopeInput('100');
+        $debitABudgetEnvelopeInput = new DebitABudgetEnvelopeInput('100', 'test');
         $debitABudgetEnvelopeCommand = new DebitABudgetEnvelopeCommand(
             BudgetEnvelopeDebitMoney::fromString($debitABudgetEnvelopeInput->debitMoney),
+            BudgetEnvelopeEntryDescription::fromString($debitABudgetEnvelopeInput->description),
             BudgetEnvelopeId::fromString('0099c0ce-3b53-4318-ba7b-994e437a859b'),
             BudgetEnvelopeUserId::fromString('d26cc02e-99e7-428c-9d61-572dff3f84a7'),
         );
@@ -117,9 +122,10 @@ class DebitABudgetEnvelopeCommandHandlerTest extends TestCase
 
     public function testDebitABudgetEnvelopeExceedsDebitLimit(): void
     {
-        $debitABudgetEnvelopeInput = new DebitABudgetEnvelopeInput('100');
+        $debitABudgetEnvelopeInput = new DebitABudgetEnvelopeInput('100', 'test');
         $debitABudgetEnvelopeCommand = new DebitABudgetEnvelopeCommand(
             BudgetEnvelopeDebitMoney::fromString($debitABudgetEnvelopeInput->debitMoney),
+            BudgetEnvelopeEntryDescription::fromString($debitABudgetEnvelopeInput->description),
             BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
             BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
@@ -146,6 +152,7 @@ class DebitABudgetEnvelopeCommandHandlerTest extends TestCase
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'creditMoney' => '5.47',
+                                'description' => 'test',
                                 'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                                 'occurredOn' => '2024-12-07T22:03:35+00:00',
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
@@ -163,10 +170,10 @@ class DebitABudgetEnvelopeCommandHandlerTest extends TestCase
 
     public function testDebitDeletedEnvelope(): void
     {
-        $debitABudgetEnvelopeInput = new DebitABudgetEnvelopeInput('3000.00');
-
+        $debitABudgetEnvelopeInput = new DebitABudgetEnvelopeInput('3000.00', 'test');
         $debitABudgetEnvelopeCommand = new DebitABudgetEnvelopeCommand(
             BudgetEnvelopeDebitMoney::fromString($debitABudgetEnvelopeInput->debitMoney),
+            BudgetEnvelopeEntryDescription::fromString($debitABudgetEnvelopeInput->description),
             BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
             BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
@@ -193,6 +200,7 @@ class DebitABudgetEnvelopeCommandHandlerTest extends TestCase
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'debitMoney' => '5.47',
+                                'description' => 'test',
                                 'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                                 'occurredOn' => '2024-12-07T22:03:35+00:00',
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
@@ -211,9 +219,10 @@ class DebitABudgetEnvelopeCommandHandlerTest extends TestCase
 
     public function testDebitABudgetEnvelopeWithWrongUser(): void
     {
-        $debitABudgetEnvelopeInput = new DebitABudgetEnvelopeInput('3000.00');
+        $debitABudgetEnvelopeInput = new DebitABudgetEnvelopeInput('3000.00', 'test');
         $debitABudgetEnvelopeCommand = new DebitABudgetEnvelopeCommand(
             BudgetEnvelopeDebitMoney::fromString($debitABudgetEnvelopeInput->debitMoney),
+            BudgetEnvelopeEntryDescription::fromString($debitABudgetEnvelopeInput->description),
             BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
             BudgetEnvelopeUserId::fromString('0d6851a2-5123-40df-939b-8f043850fbf1'),
         );

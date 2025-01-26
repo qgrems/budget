@@ -16,6 +16,7 @@ use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeIsNotOwnedByUserEx
 use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeNotFoundException;
 use App\BudgetEnvelopeContext\Domain\Exceptions\InvalidBudgetEnvelopeOperationException;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCreditMoney;
+use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeEntryDescription;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeContext\Presentation\HTTP\DTOs\CreditABudgetEnvelopeInput;
@@ -44,9 +45,10 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
 
     public function testCreditABudgetEnvelopeSuccess(): void
     {
-        $creditABudgetEnvelopeInput = new CreditABudgetEnvelopeInput('100.00');
+        $creditABudgetEnvelopeInput = new CreditABudgetEnvelopeInput('100.00', 'test');
         $creditABudgetEnvelopeCommand = new CreditABudgetEnvelopeCommand(
             BudgetEnvelopeCreditMoney::fromString($creditABudgetEnvelopeInput->creditMoney),
+            BudgetEnvelopeEntryDescription::fromString($creditABudgetEnvelopeInput->description),
             BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
             BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
@@ -84,6 +86,7 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'creditMoney' => '5.47',
+                                'description' => 'test',
                                 'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                                 'occurredOn' => '2024-12-07T22:03:35+00:00',
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
@@ -95,6 +98,7 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'debitMoney' => '2.46',
+                                'description' => 'test',
                                 'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                                 'occurredOn' => '2024-12-07T22:03:35+00:00',
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
@@ -110,9 +114,10 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
 
     public function testCreditABudgetEnvelopeNotFoundFailure(): void
     {
-        $creditABudgetEnvelopeInput = new CreditABudgetEnvelopeInput('100.00');
+        $creditABudgetEnvelopeInput = new CreditABudgetEnvelopeInput('100.00', 'test');
         $creditABudgetEnvelopeCommand = new CreditABudgetEnvelopeCommand(
             BudgetEnvelopeCreditMoney::fromString($creditABudgetEnvelopeInput->creditMoney),
+            BudgetEnvelopeEntryDescription::fromString($creditABudgetEnvelopeInput->description),
             BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
             BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
@@ -128,9 +133,10 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
 
     public function testCreditABudgetEnvelopeExceedsCreditLimit(): void
     {
-        $creditABudgetEnvelopeInput = new CreditABudgetEnvelopeInput('3000.00');
+        $creditABudgetEnvelopeInput = new CreditABudgetEnvelopeInput('3000.00', 'test');
         $creditABudgetEnvelopeCommand = new CreditABudgetEnvelopeCommand(
             BudgetEnvelopeCreditMoney::fromString($creditABudgetEnvelopeInput->creditMoney),
+            BudgetEnvelopeEntryDescription::fromString($creditABudgetEnvelopeInput->description),
             BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
             BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
@@ -174,9 +180,10 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
 
     public function testCreditDeletedEnvelope(): void
     {
-        $creditABudgetEnvelopeInput = new CreditABudgetEnvelopeInput('3000.00');
+        $creditABudgetEnvelopeInput = new CreditABudgetEnvelopeInput('3000.00', 'test');
         $creditABudgetEnvelopeCommand = new CreditABudgetEnvelopeCommand(
             BudgetEnvelopeCreditMoney::fromString($creditABudgetEnvelopeInput->creditMoney),
+            BudgetEnvelopeEntryDescription::fromString($creditABudgetEnvelopeInput->description),
             BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
             BudgetEnvelopeUserId::fromString('a871e446-ddcd-4e7a-9bf9-525bab84e566'),
         );
@@ -232,9 +239,10 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
 
     public function testCreditABudgetEnvelopeWithWrongUser(): void
     {
-        $creditABudgetEnvelopeInput = new CreditABudgetEnvelopeInput('3000.00');
+        $creditABudgetEnvelopeInput = new CreditABudgetEnvelopeInput('3000.00', 'test');
         $creditABudgetEnvelopeCommand = new CreditABudgetEnvelopeCommand(
             BudgetEnvelopeCreditMoney::fromString($creditABudgetEnvelopeInput->creditMoney),
+            BudgetEnvelopeEntryDescription::fromString($creditABudgetEnvelopeInput->description),
             BudgetEnvelopeId::fromString('10a33b8c-853a-4df8-8fc9-e8bb00b78da4'),
             BudgetEnvelopeUserId::fromString('0d6851a2-5123-40df-939b-8f043850fbf1'),
         );
