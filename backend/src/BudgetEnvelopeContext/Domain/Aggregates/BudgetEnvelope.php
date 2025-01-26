@@ -21,6 +21,7 @@ use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCreditMoney;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCurrentAmount;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeDebitMoney;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeEntryDescription;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeName;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
@@ -117,6 +118,7 @@ final class BudgetEnvelope
 
     public function credit(
         BudgetEnvelopeCreditMoney $budgetEnvelopeCreditMoney,
+        BudgetEnvelopeEntryDescription $budgetEnvelopeEntryDescription,
         BudgetEnvelopeUserId $userId,
     ): void {
         $this->assertNotDeleted();
@@ -126,6 +128,7 @@ final class BudgetEnvelope
             (string) $this->budgetEnvelopeId,
             (string) $this->userId,
             (string) $budgetEnvelopeCreditMoney,
+            (string) $budgetEnvelopeEntryDescription,
         );
 
         $this->apply($budgetEnvelopeCreditedDomainEvent);
@@ -134,6 +137,7 @@ final class BudgetEnvelope
 
     public function debit(
         BudgetEnvelopeDebitMoney $budgetEnvelopeDebitMoney,
+        BudgetEnvelopeEntryDescription $budgetEnvelopeEntryDescription,
         BudgetEnvelopeUserId $userId,
     ): void {
         $this->assertNotDeleted();
@@ -143,6 +147,7 @@ final class BudgetEnvelope
             (string) $this->budgetEnvelopeId,
             (string) $this->userId,
             (string) $budgetEnvelopeDebitMoney,
+            (string) $budgetEnvelopeEntryDescription,
         );
 
         $this->apply($budgetEnvelopeDebitedDomainEvent);

@@ -22,6 +22,11 @@ final readonly class DebitABudgetEnvelopeInput
             message: 'envelopes.debitMoneyInvalid'
         )]
         private(set) string $debitMoney,
+        #[Assert\Regex(
+            pattern: '/^[\p{L}\p{N} ]+$/u',
+            message: 'envelopes.descriptionInvalid'
+        )]
+        private(set) string $description,
     ) {
     }
 }

@@ -63,13 +63,16 @@ export const api = {
   envelopeCommands: {
     createEnvelope: (envelopeData: any) =>
         fetchWithAuth("/envelopes/new", { method: "POST", body: JSON.stringify(envelopeData) }),
-    creditEnvelope: (envelopeId: string, amount: string) =>
+    creditEnvelope: (envelopeId: string, amount: string, description: string) =>
         fetchWithAuth(`/envelopes/${envelopeId}/credit`, {
           method: "POST",
-          body: JSON.stringify({ creditMoney: amount }),
+          body: JSON.stringify({ creditMoney: amount, description }),
         }),
-    debitEnvelope: (envelopeId: string, amount: string) =>
-        fetchWithAuth(`/envelopes/${envelopeId}/debit`, { method: "POST", body: JSON.stringify({ debitMoney: amount }) }),
+    debitEnvelope: (envelopeId: string, amount: string, description: string) =>
+        fetchWithAuth(`/envelopes/${envelopeId}/debit`, {
+          method: "POST",
+          body: JSON.stringify({ debitMoney: amount, description }),
+        }),
     deleteEnvelope: (envelopeId: string) => fetchWithAuth(`/envelopes/${envelopeId}`, { method: "DELETE" }),
     nameEnvelope: (envelopeId: string, name: string) =>
         fetchWithAuth(`/envelopes/${envelopeId}/name`, { method: "POST", body: JSON.stringify({ name }) }),

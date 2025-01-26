@@ -8,6 +8,7 @@ use App\BudgetEnvelopeContext\Application\Commands\DebitABudgetEnvelopeCommand;
 use App\BudgetEnvelopeContext\Domain\Ports\Outbound\CommandBusInterface;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeDebitMoney;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeEntryDescription;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeContext\Presentation\HTTP\DTOs\DebitABudgetEnvelopeInput;
 use App\SharedContext\Domain\Ports\Inbound\SharedUserInterface;
@@ -35,6 +36,7 @@ final readonly class DebitABudgetEnvelopeController
         $this->commandBus->execute(
             new DebitABudgetEnvelopeCommand(
                 BudgetEnvelopeDebitMoney::fromString($debitABudgetEnvelopeInput->debitMoney),
+                BudgetEnvelopeEntryDescription::fromString($debitABudgetEnvelopeInput->description),
                 BudgetEnvelopeId::fromString($uuid),
                 BudgetEnvelopeUserId::fromString($user->getUuid()),
             ),

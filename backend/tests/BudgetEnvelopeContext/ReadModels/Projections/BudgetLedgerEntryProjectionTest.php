@@ -39,6 +39,7 @@ class BudgetLedgerEntryProjectionTest extends TestCase
             'b7e685be-db83-4866-9f85-102fac30a50b',
             '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
             '500.00',
+            'test',
         );
         $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeCreatedDomainEvent(
             new BudgetEnvelopeCreatedDomainEvent(
@@ -70,6 +71,7 @@ class BudgetLedgerEntryProjectionTest extends TestCase
             'b7e685be-db83-4866-9f85-102fac30a50b',
             '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
             '500.00',
+            'test',
         );
 
         $this->budgetEnvelopeViewRepository->expects($this->once())
@@ -88,6 +90,7 @@ class BudgetLedgerEntryProjectionTest extends TestCase
             'b7e685be-db83-4866-9f85-102fac30a50b',
             '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
             '500.00',
+            'test',
         );
         $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeCreatedDomainEvent(
             new BudgetEnvelopeCreatedDomainEvent(
@@ -101,6 +104,7 @@ class BudgetLedgerEntryProjectionTest extends TestCase
             'b7e685be-db83-4866-9f85-102fac30a50b',
             '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
             '500.00',
+            'test',
         ));
 
         $envelopeHistory = BudgetEnvelopeLedgerEntryView::fromBudgetEnvelopeDebitedDomainEvent(
@@ -125,6 +129,7 @@ class BudgetLedgerEntryProjectionTest extends TestCase
             'b7e685be-db83-4866-9f85-102fac30a50b',
             '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
             '500.00',
+            'test',
         );
 
         $this->budgetEnvelopeViewRepository->expects($this->once())

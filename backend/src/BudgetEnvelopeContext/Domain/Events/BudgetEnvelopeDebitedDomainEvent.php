@@ -11,13 +11,15 @@ final class BudgetEnvelopeDebitedDomainEvent implements DomainEventInterface
     public string $aggregateId;
     public string $userId;
     public string $debitMoney;
+    public string $description;
     public \DateTimeImmutable $occurredOn;
 
-    public function __construct(string $aggregateId, string $userId, string $debitMoney)
+    public function __construct(string $aggregateId, string $userId, string $debitMoney, string $description)
     {
         $this->aggregateId = $aggregateId;
         $this->userId = $userId;
         $this->debitMoney = $debitMoney;
+        $this->description = $description;
         $this->occurredOn = new \DateTimeImmutable();
     }
 
@@ -28,6 +30,7 @@ final class BudgetEnvelopeDebitedDomainEvent implements DomainEventInterface
             'aggregateId' => $this->aggregateId,
             'userId' => $this->userId,
             'debitMoney' => $this->debitMoney,
+            'description' => $this->description,
             'occurredOn' => $this->occurredOn->format(\DateTimeInterface::ATOM),
         ];
     }
@@ -35,7 +38,7 @@ final class BudgetEnvelopeDebitedDomainEvent implements DomainEventInterface
     #[\Override]
     public static function fromArray(array $data): self
     {
-        $event = new self($data['aggregateId'], $data['userId'], $data['debitMoney']);
+        $event = new self($data['aggregateId'], $data['userId'], $data['debitMoney'], $data['description']);
         $event->occurredOn = new \DateTimeImmutable($data['occurredOn']);
 
         return $event;

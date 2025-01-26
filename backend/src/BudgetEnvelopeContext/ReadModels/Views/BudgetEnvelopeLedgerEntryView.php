@@ -9,6 +9,7 @@ use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDebitedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeLedgerEntryViewInterface;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeEntryType;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeEntryDescription;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -34,18 +35,23 @@ final class BudgetEnvelopeLedgerEntryView implements BudgetEnvelopeLedgerEntryVi
     #[ORM\Column(name: 'entry_type', type: 'string', length: 6)]
     private(set) string $entryType;
 
+    #[ORM\Column(name: 'description', type: 'string', length: 35, options: ['default' => ''])]
+    private(set) string $description;
+
     #[ORM\Column(name: 'user_uuid', type: 'string', length: 36)]
     private(set) string $userUuid;
 
     private function __construct(
         BudgetEnvelopeId $budgetEnvelopeId,
         BudgetEnvelopeEntryType $entryType,
+        BudgetEnvelopeEntryDescription $budgetEnvelopeEntryDescription,
         BudgetEnvelopeUserId $budgetEnvelopeUserId,
         \DateTimeImmutable $createdAt,
         string $monetaryAmount,
     ) {
         $this->budgetEnvelopeUuid = (string) $budgetEnvelopeId;
         $this->entryType = (string) $entryType;
+        $this->description = (string) $budgetEnvelopeEntryDescription;
         $this->userUuid = (string) $budgetEnvelopeUserId;
         $this->createdAt = $createdAt;
         $this->monetaryAmount = $monetaryAmount;
@@ -57,6 +63,7 @@ final class BudgetEnvelopeLedgerEntryView implements BudgetEnvelopeLedgerEntryVi
         return new self(
             BudgetEnvelopeId::fromString($budgetEnvelopeLedgerEntry['aggregate_id']),
             BudgetEnvelopeEntryType::fromString($budgetEnvelopeLedgerEntry['entry_type']),
+            BudgetEnvelopeEntryDescription::fromString($budgetEnvelopeLedgerEntry['description']),
             BudgetEnvelopeUserId::fromString($budgetEnvelopeLedgerEntry['user_uuid']),
             new \DateTimeImmutable($budgetEnvelopeLedgerEntry['created_at']),
             $budgetEnvelopeLedgerEntry['monetary_amount'],
@@ -71,6 +78,7 @@ final class BudgetEnvelopeLedgerEntryView implements BudgetEnvelopeLedgerEntryVi
         return new self(
             BudgetEnvelopeId::fromString($budgetEnvelopeCreditedDomainEvent->aggregateId),
             BudgetEnvelopeEntryType::fromString(BudgetEnvelopeEntryType::CREDIT),
+            BudgetEnvelopeEntryDescription::fromString($budgetEnvelopeCreditedDomainEvent->description),
             BudgetEnvelopeUserId::fromString($userUuid),
             $budgetEnvelopeCreditedDomainEvent->occurredOn,
             $budgetEnvelopeCreditedDomainEvent->creditMoney,
@@ -85,6 +93,7 @@ final class BudgetEnvelopeLedgerEntryView implements BudgetEnvelopeLedgerEntryVi
         return new self(
             BudgetEnvelopeId::fromString($budgetEnvelopeDebitedDomainEvent->aggregateId),
             BudgetEnvelopeEntryType::fromString(BudgetEnvelopeEntryType::DEBIT),
+            BudgetEnvelopeEntryDescription::fromString($budgetEnvelopeDebitedDomainEvent->description),
             BudgetEnvelopeUserId::fromString($userUuid),
             $budgetEnvelopeDebitedDomainEvent->occurredOn,
             $budgetEnvelopeDebitedDomainEvent->debitMoney,
@@ -98,6 +107,7 @@ final class BudgetEnvelopeLedgerEntryView implements BudgetEnvelopeLedgerEntryVi
             'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
             'monetary_amount' => $this->monetaryAmount,
             'entry_type' => $this->entryType,
+            'description' => $this->description,
         ];
     }
 }
