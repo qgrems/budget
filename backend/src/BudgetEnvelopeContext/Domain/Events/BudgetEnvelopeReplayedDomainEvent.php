@@ -15,6 +15,7 @@ final class BudgetEnvelopeReplayedDomainEvent implements DomainEventInterface
     public string $currentAmount;
     public bool $isDeleted;
     public \DateTime $updatedAt;
+    public string $requestId;
     public \DateTimeImmutable $occurredOn;
 
     public function __construct(
@@ -25,6 +26,7 @@ final class BudgetEnvelopeReplayedDomainEvent implements DomainEventInterface
         string $currentAmount,
         string $updatedAt,
         bool $isDeleted,
+        string $requestId = DomainEventInterface::DEFAULT_REQUEST_ID,
     ) {
         $this->aggregateId = $aggregateId;
         $this->userId = $userId;
@@ -32,6 +34,7 @@ final class BudgetEnvelopeReplayedDomainEvent implements DomainEventInterface
         $this->targetedAmount = $targetedAmount;
         $this->currentAmount = $currentAmount;
         $this->updatedAt = new \DateTime($updatedAt);
+        $this->requestId = $requestId;
         $this->isDeleted = $isDeleted;
         $this->occurredOn = new \DateTimeImmutable();
     }
@@ -41,6 +44,7 @@ final class BudgetEnvelopeReplayedDomainEvent implements DomainEventInterface
     {
         return [
             'aggregateId' => $this->aggregateId,
+            'requestId' => $this->requestId,
             'userId' => $this->userId,
             'name' => $this->name,
             'targetedAmount' => $this->targetedAmount,
@@ -62,6 +66,7 @@ final class BudgetEnvelopeReplayedDomainEvent implements DomainEventInterface
             $data['currentAmount'],
             $data['updatedAt'],
             $data['isDeleted'],
+            $data['requestId'],
         );
         $event->occurredOn = new \DateTimeImmutable($data['occurredOn']);
 

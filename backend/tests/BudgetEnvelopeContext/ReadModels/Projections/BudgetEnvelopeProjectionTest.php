@@ -2,34 +2,37 @@
 
 namespace App\Tests\BudgetEnvelopeContext\ReadModels\Projections;
 
-use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreatedDomainEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeAddedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDebitedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDeletedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRenamedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeReplayedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRewoundDomainEvent;
-use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeTargetedAmountUpdatedDomainEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeTargetedAmountChangedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
 use App\BudgetEnvelopeContext\ReadModels\Projections\BudgetEnvelopeProjection;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeView;
+use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class BudgetEnvelopeProjectionTest extends TestCase
 {
     private BudgetEnvelopeViewRepositoryInterface&MockObject $envelopeViewRepository;
+    private PublisherInterface&MockObject $publisher;
     private BudgetEnvelopeProjection $budgetEnvelopeProjection;
 
     protected function setUp(): void
     {
         $this->envelopeViewRepository = $this->createMock(BudgetEnvelopeViewRepositoryInterface::class);
-        $this->budgetEnvelopeProjection = new BudgetEnvelopeProjection($this->envelopeViewRepository);
+        $this->publisher = $this->createMock(PublisherInterface::class);
+        $this->budgetEnvelopeProjection = new BudgetEnvelopeProjection($this->envelopeViewRepository, $this->publisher);
     }
 
-    public function testHandleEnvelopeCreatedEvent(): void
+    public function testHandleEnvelopeAddedEvent(): void
     {
-        $event = new BudgetEnvelopeCreatedDomainEvent(
+        $event = new BudgetEnvelopeAddedDomainEvent(
             'b7e685be-db83-4866-9f85-102fac30a50b',
             '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
             'Test',
@@ -48,6 +51,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
                     && $view->name === $event->name
                     && $view->userUuid === $event->userId;
             }));
+        $this->publisher->expects($this->once())->method('publishNotificationEvents');
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
@@ -60,8 +64,8 @@ class BudgetEnvelopeProjectionTest extends TestCase
             '500.00',
             'test',
         );
-        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeCreatedDomainEvent(
-            new BudgetEnvelopeCreatedDomainEvent(
+        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeAddedDomainEvent(
+            new BudgetEnvelopeAddedDomainEvent(
                 'b7e685be-db83-4866-9f85-102fac30a50b',
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test',
@@ -73,6 +77,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             ->method('findOneBy')
             ->with(['uuid' => $event->aggregateId, 'is_deleted' => false])
             ->willReturn($envelopeView);
+        $this->publisher->expects($this->once())->method('publishNotificationEvents');
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
@@ -90,6 +95,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             ->method('findOneBy')
             ->with(['uuid' => $event->aggregateId, 'is_deleted' => false])
             ->willReturn(null);
+        $this->publisher->expects($this->never())->method('publishNotificationEvents');
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
@@ -102,8 +108,8 @@ class BudgetEnvelopeProjectionTest extends TestCase
             '500.00',
             'test',
         );
-        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeCreatedDomainEvent(
-            new BudgetEnvelopeCreatedDomainEvent(
+        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeAddedDomainEvent(
+            new BudgetEnvelopeAddedDomainEvent(
                 'b7e685be-db83-4866-9f85-102fac30a50b',
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test',
@@ -115,6 +121,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             ->method('findOneBy')
             ->with(['uuid' => $event->aggregateId, 'is_deleted' => false])
             ->willReturn($envelopeView);
+        $this->publisher->expects($this->once())->method('publishNotificationEvents');
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
@@ -132,6 +139,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             ->method('findOneBy')
             ->with(['uuid' => $event->aggregateId, 'is_deleted' => false])
             ->willReturn(null);
+        $this->publisher->expects($this->never())->method('publishNotificationEvents');
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
@@ -143,8 +151,8 @@ class BudgetEnvelopeProjectionTest extends TestCase
             '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
             'Test',
         );
-        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeCreatedDomainEvent(
-            new BudgetEnvelopeCreatedDomainEvent(
+        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeAddedDomainEvent(
+            new BudgetEnvelopeAddedDomainEvent(
                 'b7e685be-db83-4866-9f85-102fac30a50b',
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test',
@@ -156,6 +164,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             ->method('findOneBy')
             ->with(['uuid' => $event->aggregateId, 'is_deleted' => false])
             ->willReturn($envelopeView);
+        $this->publisher->expects($this->once())->method('publishNotificationEvents');
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
@@ -172,6 +181,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             ->method('findOneBy')
             ->with(['uuid' => $event->aggregateId, 'is_deleted' => false])
             ->willReturn(null);
+        $this->publisher->expects($this->never())->method('publishNotificationEvents');
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
@@ -183,8 +193,8 @@ class BudgetEnvelopeProjectionTest extends TestCase
             '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
             true,
         );
-        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeCreatedDomainEvent(
-            new BudgetEnvelopeCreatedDomainEvent(
+        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeAddedDomainEvent(
+            new BudgetEnvelopeAddedDomainEvent(
                 'b7e685be-db83-4866-9f85-102fac30a50b',
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test',
@@ -196,6 +206,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             ->method('findOneBy')
             ->with(['uuid' => $event->aggregateId, 'is_deleted' => false])
             ->willReturn($envelopeView);
+        $this->publisher->expects($this->once())->method('publishNotificationEvents');
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
@@ -212,19 +223,20 @@ class BudgetEnvelopeProjectionTest extends TestCase
             ->method('findOneBy')
             ->with(['uuid' => $event->aggregateId, 'is_deleted' => false])
             ->willReturn(null);
+        $this->publisher->expects($this->never())->method('publishNotificationEvents');
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
 
     public function testHandleEnvelopeTargetedAmountUpdatedEvent(): void
     {
-        $event = new BudgetEnvelopeTargetedAmountUpdatedDomainEvent(
+        $event = new BudgetEnvelopeTargetedAmountChangedDomainEvent(
             'b7e685be-db83-4866-9f85-102fac30a50b',
             '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
             '1000.00',
         );
-        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeCreatedDomainEvent(
-            new BudgetEnvelopeCreatedDomainEvent(
+        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeAddedDomainEvent(
+            new BudgetEnvelopeAddedDomainEvent(
                 'b7e685be-db83-4866-9f85-102fac30a50b',
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test',
@@ -236,13 +248,14 @@ class BudgetEnvelopeProjectionTest extends TestCase
             ->method('findOneBy')
             ->with(['uuid' => $event->aggregateId, 'is_deleted' => false])
             ->willReturn($envelopeView);
+        $this->publisher->expects($this->once())->method('publishNotificationEvents');
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
 
     public function testHandleEnvelopeTargetedAmountUpdatedWithEnvelopeThatDoesNotExist(): void
     {
-        $event = new BudgetEnvelopeTargetedAmountUpdatedDomainEvent(
+        $event = new BudgetEnvelopeTargetedAmountChangedDomainEvent(
             'b7e685be-db83-4866-9f85-102fac30a50b',
             '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
             '1000.00',
@@ -252,6 +265,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             ->method('findOneBy')
             ->with(['uuid' => $event->aggregateId, 'is_deleted' => false])
             ->willReturn(null);
+        $this->publisher->expects($this->never())->method('publishNotificationEvents');
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
@@ -268,8 +282,8 @@ class BudgetEnvelopeProjectionTest extends TestCase
             '2024-01-01 00:00:00',
             false,
         );
-        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeCreatedDomainEvent(
-            new BudgetEnvelopeCreatedDomainEvent(
+        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeAddedDomainEvent(
+            new BudgetEnvelopeAddedDomainEvent(
                 'b7e685be-db83-4866-9f85-102fac30a50b',
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test',
@@ -281,6 +295,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             ->method('findOneBy')
             ->with(['uuid' => $event->aggregateId, 'is_deleted' => false])
             ->willReturn($envelopeView);
+        $this->publisher->expects($this->once())->method('publishNotificationEvents');
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
@@ -302,6 +317,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             ->method('findOneBy')
             ->with(['uuid' => $event->aggregateId, 'is_deleted' => false])
             ->willReturn(null);
+        $this->publisher->expects($this->never())->method('publishNotificationEvents');
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
@@ -317,8 +333,8 @@ class BudgetEnvelopeProjectionTest extends TestCase
             '2024-01-01 00:00:00',
             false,
         );
-        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeCreatedDomainEvent(
-            new BudgetEnvelopeCreatedDomainEvent(
+        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeAddedDomainEvent(
+            new BudgetEnvelopeAddedDomainEvent(
                 'b7e685be-db83-4866-9f85-102fac30a50b',
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test',
@@ -330,6 +346,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             ->method('findOneBy')
             ->with(['uuid' => $event->aggregateId, 'is_deleted' => false])
             ->willReturn($envelopeView);
+        $this->publisher->expects($this->once())->method('publishNotificationEvents');
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
@@ -350,6 +367,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             ->method('findOneBy')
             ->with(['uuid' => $event->aggregateId, 'is_deleted' => false])
             ->willReturn(null);
+        $this->publisher->expects($this->never())->method('publishNotificationEvents');
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }

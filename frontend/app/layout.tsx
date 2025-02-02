@@ -1,17 +1,17 @@
-import './globals.css'
-import { Inter } from 'next/font/google'
-import { Providers } from './providers'
-import { AppContent } from './components/AppContent'
-import { LanguageProvider } from './contexts/LanguageContext'
-import {ErrorProvider} from "./contexts/ErrorContext";
-import ErrorModal from "./components/ErrorModal";
-import {ValidProvider} from "./contexts/ValidContext";
+import "./globals.css"
+import { Inter } from "next/font/google"
+import { Providers } from "./providers"
+import { AppContent } from "./components/AppContent"
+import { LanguageProvider } from "./contexts/LanguageContext"
+import { ErrorProvider } from "./contexts/ErrorContext"
+import { ValidProvider } from "./contexts/ValidContext"
+import { SocketWrapper } from "./components/SocketWrapper"
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-    title: 'GoGoBudgeto App',
-    description: 'Manage your budget',
+    title: "GoGoBudgeto App",
+    description: "Manage your budget",
 }
 
 export default function RootLayout({
@@ -35,13 +35,15 @@ export default function RootLayout({
         <body className={inter.className}>
         <LanguageProvider>
             <Providers>
-                <ErrorProvider>
-                    <ValidProvider>
-                        <div className="flex flex-col min-h-screen bg-background">
-                            <AppContent>{children}</AppContent>
-                        </div>
-                    </ValidProvider>
-                </ErrorProvider>
+                <SocketWrapper>
+                    <ErrorProvider>
+                        <ValidProvider>
+                            <div className="flex flex-col min-h-screen bg-background">
+                                <AppContent>{children}</AppContent>
+                            </div>
+                        </ValidProvider>
+                    </ErrorProvider>
+                </SocketWrapper>
             </Providers>
         </LanguageProvider>
         </body>

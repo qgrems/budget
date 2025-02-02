@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Domain\Events;
 
+use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
 use App\UserContext\Domain\Events\UserRewoundDomainEvent;
 use PHPUnit\Framework\TestCase;
 
@@ -21,11 +22,14 @@ class UserRewoundEventTest extends TestCase
             true,
             '2021-09-01T00:00:00+00:00',
             '2021-09-01T00:00:00+00:00',
+            'aggregateId',
         );
 
         $this->assertEquals(
             [
                 'aggregateId' => 'aggregateId',
+                'requestId' => DomainEventInterface::DEFAULT_REQUEST_ID,
+                'userId' => 'aggregateId',
                 'email' => 'email',
                 'password' => 'password',
                 'firstname' => 'firstname',
@@ -44,6 +48,8 @@ class UserRewoundEventTest extends TestCase
     {
         $event = UserRewoundDomainEvent::fromArray([
             'aggregateId' => 'aggregateId',
+            'userId' => 'aggregateId',
+            'requestId' => '8f636cef-6a4d-40f1-a9cf-4e64f67ce7c0',
             'email' => 'email',
             'password' => 'password',
             'firstname' => 'firstname',
@@ -56,6 +62,8 @@ class UserRewoundEventTest extends TestCase
         ]);
 
         $this->assertEquals('aggregateId', $event->aggregateId);
+        $this->assertEquals('aggregateId', $event->userId);
+        $this->assertEquals('8f636cef-6a4d-40f1-a9cf-4e64f67ce7c0', $event->requestId);
         $this->assertEquals('firstname', $event->firstname);
         $this->assertEquals('lastname', $event->lastname);
         $this->assertEquals('fr', $event->languagePreference);

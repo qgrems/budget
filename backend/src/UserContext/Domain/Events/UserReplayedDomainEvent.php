@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserContext\Domain\Events;
 
+use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
 use App\UserContext\Domain\Attributes\PersonalData;
 use App\UserContext\Domain\Ports\Inbound\UserDomainEventInterface;
 
@@ -23,6 +24,8 @@ final class UserReplayedDomainEvent implements UserDomainEventInterface
     public bool $isConsentGiven;
     public \DateTime $updatedAt;
     public \DateTimeImmutable $consentDate;
+    public string $userId;
+    public string $requestId;
     public \DateTimeImmutable $occurredOn;
 
     public function __construct(
@@ -35,6 +38,8 @@ final class UserReplayedDomainEvent implements UserDomainEventInterface
         bool $isConsentGiven,
         string $consentDate,
         string $updatedAt,
+        string $userId,
+        string $requestId = DomainEventInterface::DEFAULT_REQUEST_ID,
     ) {
         $this->aggregateId = $aggregateId;
         $this->firstname = $firstname;
@@ -45,6 +50,8 @@ final class UserReplayedDomainEvent implements UserDomainEventInterface
         $this->isConsentGiven = $isConsentGiven;
         $this->updatedAt = new \DateTime($updatedAt);
         $this->consentDate = new \DateTimeImmutable($consentDate);
+        $this->userId = $userId;
+        $this->requestId = $requestId;
         $this->occurredOn = new \DateTimeImmutable();
     }
 
@@ -53,6 +60,8 @@ final class UserReplayedDomainEvent implements UserDomainEventInterface
     {
         return [
             'aggregateId' => $this->aggregateId,
+            'requestId' => $this->requestId,
+            'userId' => $this->userId,
             'email' => $this->email,
             'password' => $this->password,
             'firstname' => $this->firstname,
@@ -78,6 +87,8 @@ final class UserReplayedDomainEvent implements UserDomainEventInterface
             $data['isConsentGiven'],
             $data['consentDate'],
             $data['updatedAt'],
+            $data['userId'],
+            $data['requestId'],
         );
         $event->occurredOn = new \DateTimeImmutable($data['occurredOn']);
 

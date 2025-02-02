@@ -142,6 +142,8 @@ class UserViewTest extends TestCase
                     'type' => UserSignedUpDomainEvent::class,
                     'payload' => json_encode([
                         'aggregateId' => 'b7e685be-db83-4866-9f85-102fac30a50b',
+                        'userId' => 'b7e685be-db83-4866-9f85-102fac30a50b',
+                        'requestId' => '8f636cef-6a4d-40f1-a9cf-4e64f67ce7c0',
                         'email' => 'john.doe@example.com',
                         'password' => 'password123',
                         'firstname' => 'John',

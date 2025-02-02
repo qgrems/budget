@@ -2,6 +2,7 @@
 
 namespace App\UserContext\Domain\Events;
 
+use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
 use App\UserContext\Domain\Attributes\PersonalData;
 use App\UserContext\Domain\Ports\Inbound\UserSignedUpDomainEventInterface;
 
@@ -20,6 +21,8 @@ final class UserSignedUpDomainEvent implements UserSignedUpDomainEventInterface
     public string $languagePreference;
     public bool $isConsentGiven;
     public array $roles;
+    public string $userId;
+    public string $requestId;
     public \DateTimeImmutable $occurredOn;
 
     public function __construct(
@@ -31,6 +34,8 @@ final class UserSignedUpDomainEvent implements UserSignedUpDomainEventInterface
         string $languagePreference,
         bool $isConsentGiven,
         array $roles,
+        string $userId,
+        string $requestId = DomainEventInterface::DEFAULT_REQUEST_ID
     ) {
         $this->aggregateId = $aggregateId;
         $this->email = $email;
@@ -40,6 +45,8 @@ final class UserSignedUpDomainEvent implements UserSignedUpDomainEventInterface
         $this->languagePreference = $languagePreference;
         $this->isConsentGiven = $isConsentGiven;
         $this->roles = $roles;
+        $this->userId = $userId;
+        $this->requestId = $requestId;
         $this->occurredOn = new \DateTimeImmutable();
     }
 
@@ -48,6 +55,8 @@ final class UserSignedUpDomainEvent implements UserSignedUpDomainEventInterface
     {
         return [
             'aggregateId' => $this->aggregateId,
+            'requestId' => $this->requestId,
+            'userId' => $this->userId,
             'email' => $this->email,
             'password' => $this->password,
             'firstname' => $this->firstname,
@@ -71,6 +80,8 @@ final class UserSignedUpDomainEvent implements UserSignedUpDomainEventInterface
             $data['languagePreference'],
             $data['isConsentGiven'],
             $data['roles'],
+            $data['userId'],
+            $data['requestId']
         );
         $event->occurredOn = new \DateTimeImmutable($data['occurredOn']);
 

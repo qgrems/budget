@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\UserContext\Domain\Services;
 
 use App\UserContext\Domain\Attributes\PersonalData;
-use App\UserContext\Domain\Events\UserFirstnameUpdatedDomainEvent;
+use App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent;
 use App\UserContext\Domain\Ports\Inbound\EncryptionServiceInterface;
 use App\UserContext\Domain\Ports\Inbound\UserDomainEventInterface;
 use App\UserContext\Domain\Services\EventEncryptor;
@@ -25,7 +25,7 @@ final class EventEncryptorTest extends TestCase
     public function testEncrypt(): void
     {
         $userId = 'user123';
-        $event = new UserFirstnameUpdatedDomainEvent('aggregateId', 'sensitive data');
+        $event = new UserFirstnameChangedDomainEvent('aggregateId', 'sensitive data', 'aggregateId');
 
         $this->encryptionService
             ->method('encrypt')
@@ -47,11 +47,11 @@ final class EventEncryptorTest extends TestCase
     public function testDecrypt(): void
     {
         $userId = 'user123';
-        $event = new UserFirstnameUpdatedDomainEvent('aggregateId', json_encode([
+        $event = new UserFirstnameChangedDomainEvent('aggregateId', json_encode([
             'ciphertext' => 'encryptedData',
             'iv' => 'iv',
             'tag' => 'tag',
-        ]));
+        ]), 'aggregateId');
 
         $this->encryptionService
             ->method('decrypt')

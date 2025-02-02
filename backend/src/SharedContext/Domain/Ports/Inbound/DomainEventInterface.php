@@ -6,6 +6,8 @@ namespace App\SharedContext\Domain\Ports\Inbound;
 
 interface DomainEventInterface
 {
+    public const string DEFAULT_REQUEST_ID = '4f3539bf-f986-4117-9236-203b47dc3955';
+
     public function toArray(): array;
 
     public static function fromArray(array $data): self;

@@ -19,11 +19,13 @@ class UserSignedUpEventTest extends TestCase
             'Doe',
             'fr',
             true,
-            ['ROLE_USER']
+            ['ROLE_USER'],
+            'b7e685be-db83-4866-9f85-102fac30a50b',
         );
         $array = $event->toArray();
 
         $this->assertEquals('b7e685be-db83-4866-9f85-102fac30a50b', $array['aggregateId']);
+        $this->assertEquals('b7e685be-db83-4866-9f85-102fac30a50b', $array['userId']);
         $this->assertEquals('test@example.com', $array['email']);
         $this->assertEquals('password123', $array['password']);
         $this->assertEquals('John', $array['firstname']);
@@ -45,6 +47,8 @@ class UserSignedUpEventTest extends TestCase
             'isConsentGiven' => true,
             'roles' => ['ROLE_USER'],
             'occurredOn' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
+            'userId' => 'b7e685be-db83-4866-9f85-102fac30a50b',
+            'requestId' => '8f636cef-6a4d-40f1-a9cf-4e64f67ce7c0',
         ];
 
         $event = UserSignedUpDomainEvent::fromArray($data);
@@ -55,7 +59,9 @@ class UserSignedUpEventTest extends TestCase
         $this->assertEquals($data['firstname'], $event->firstname);
         $this->assertEquals($data['lastname'], $event->lastname);
         $this->assertEquals($data['languagePreference'], $event->languagePreference);
-        $this->assertTrue($event->isConsentGiven);
+        $this->assertEquals($data['isConsentGiven'], $event->isConsentGiven);
+        $this->assertEquals($data['userId'], $event->userId);
+        $this->assertEquals($data['requestId'], $event->requestId);
         $this->assertEquals($data['roles'], $event->roles);
         $this->assertEquals($data['occurredOn'], $event->occurredOn->format(\DateTimeInterface::ATOM));
     }

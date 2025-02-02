@@ -1,0 +1,21 @@
+services:
+  websocket:
+    build: .
+    container_name: websocket_server
+    ports:
+      - "3030:3030"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - NODE_ENV=production
+    env_file:
+      - .env
+    networks:
+      - backend_my_network
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+networks:
+  backend_my_network:
+    external: true

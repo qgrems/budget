@@ -11,7 +11,11 @@ class UserPasswordResetEventTest extends TestCase
 {
     public function testToArray(): void
     {
-        $event = new UserPasswordResetDomainEvent('b7e685be-db83-4866-9f85-102fac30a50b', 'newpassword123');
+        $event = new UserPasswordResetDomainEvent(
+            'b7e685be-db83-4866-9f85-102fac30a50b',
+            'newpassword123',
+            'b7e685be-db83-4866-9f85-102fac30a50b',
+        );
         $array = $event->toArray();
 
         $this->assertEquals('b7e685be-db83-4866-9f85-102fac30a50b', $array['aggregateId']);
@@ -23,6 +27,8 @@ class UserPasswordResetEventTest extends TestCase
     {
         $data = [
             'aggregateId' => 'b7e685be-db83-4866-9f85-102fac30a50b',
+            'userId' => 'b7e685be-db83-4866-9f85-102fac30a50b',
+            'requestId' => '8f636cef-6a4d-40f1-a9cf-4e64f67ce7c0',
             'password' => 'newpassword123',
             'occurredOn' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
         ];
@@ -30,6 +36,8 @@ class UserPasswordResetEventTest extends TestCase
         $event = UserPasswordResetDomainEvent::fromArray($data);
 
         $this->assertEquals($data['aggregateId'], $event->aggregateId);
+        $this->assertEquals($data['userId'], $event->userId);
+        $this->assertEquals($data['requestId'], $event->requestId);
         $this->assertEquals($data['password'], $event->password);
         $this->assertEquals($data['occurredOn'], $event->occurredOn->format(\DateTimeInterface::ATOM));
     }

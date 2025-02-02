@@ -73,13 +73,12 @@ final class BudgetEnvelopeLedgerEntryView implements BudgetEnvelopeLedgerEntryVi
     #[\Override]
     public static function fromBudgetEnvelopeCreditedDomainEvent(
         BudgetEnvelopeCreditedDomainEvent $budgetEnvelopeCreditedDomainEvent,
-        string $userUuid
     ): self {
         return new self(
             BudgetEnvelopeId::fromString($budgetEnvelopeCreditedDomainEvent->aggregateId),
             BudgetEnvelopeEntryType::fromString(BudgetEnvelopeEntryType::CREDIT),
             BudgetEnvelopeEntryDescription::fromString($budgetEnvelopeCreditedDomainEvent->description),
-            BudgetEnvelopeUserId::fromString($userUuid),
+            BudgetEnvelopeUserId::fromString($budgetEnvelopeCreditedDomainEvent->userId),
             $budgetEnvelopeCreditedDomainEvent->occurredOn,
             $budgetEnvelopeCreditedDomainEvent->creditMoney,
         );
@@ -88,13 +87,12 @@ final class BudgetEnvelopeLedgerEntryView implements BudgetEnvelopeLedgerEntryVi
     #[\Override]
     public static function fromBudgetEnvelopeDebitedDomainEvent(
         BudgetEnvelopeDebitedDomainEvent $budgetEnvelopeDebitedDomainEvent,
-        string $userUuid,
     ): self {
         return new self(
             BudgetEnvelopeId::fromString($budgetEnvelopeDebitedDomainEvent->aggregateId),
             BudgetEnvelopeEntryType::fromString(BudgetEnvelopeEntryType::DEBIT),
             BudgetEnvelopeEntryDescription::fromString($budgetEnvelopeDebitedDomainEvent->description),
-            BudgetEnvelopeUserId::fromString($userUuid),
+            BudgetEnvelopeUserId::fromString($budgetEnvelopeDebitedDomainEvent->userId),
             $budgetEnvelopeDebitedDomainEvent->occurredOn,
             $budgetEnvelopeDebitedDomainEvent->debitMoney,
         );
