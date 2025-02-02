@@ -18,7 +18,7 @@ final readonly class PublisherAdapter implements PublisherInterface
     }
 
     #[\Override]
-    public function publishEvents(array $events): void
+    public function publishDomainEvents(array $events): void
     {
         $channel = $this->amqpsStreamConnection->channel();
         $channel->exchange_declare('domain_events', 'fanout', false, true, false);
@@ -32,6 +32,26 @@ final readonly class PublisherAdapter implements PublisherInterface
             ]);
             $message->set('application_headers', new AMQPTable($headers));
             $channel->basic_publish($message, 'domain_events');
+        }
+
+        $channel->close();
+    }
+
+    #[\Override]
+    public function publishNotificationEvents(array $events): void
+    {
+        $channel = $this->amqpsStreamConnection->channel();
+        $channel->exchange_declare('notification_events', 'fanout', false, true, false);
+
+        foreach ($events as $event) {
+            $messageBody = json_encode($event->toArray(), JSON_THROW_ON_ERROR);
+            $headers = ['type' => get_class($event)];
+            $message = new AMQPMessage($messageBody, [
+                'content_type' => 'application/json',
+                'delivery_mode' => self::DELIVERY_MODE_PERSISTENT,
+            ]);
+            $message->set('application_headers', new AMQPTable($headers));
+            $channel->basic_publish($message, 'notification_events');
         }
 
         $channel->close();

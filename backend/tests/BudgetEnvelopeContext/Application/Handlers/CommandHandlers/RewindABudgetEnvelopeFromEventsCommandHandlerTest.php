@@ -6,7 +6,7 @@ namespace App\Tests\BudgetEnvelopeContext\Application\Handlers\CommandHandlers;
 
 use App\BudgetEnvelopeContext\Application\Commands\RewindABudgetEnvelopeFromEventsCommand;
 use App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\RewindABudgetEnvelopeFromEventsCommandHandler;
-use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreatedDomainEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeAddedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
@@ -42,13 +42,14 @@ class RewindABudgetEnvelopeFromEventsCommandHandlerTest extends TestCase
             [
                 [
                     'aggregate_id' => '3e6a6763-4c4d-4648-bc3f-e9447dbed12c',
-                    'type' => BudgetEnvelopeCreatedDomainEvent::class,
+                    'type' => BudgetEnvelopeAddedDomainEvent::class,
                     'occurred_on' => '2020-10-10T12:00:00Z',
                     'payload' => json_encode([
                         'name' => 'test1',
                         'userId' => '18e04f53-0ea6-478c-a02b-81b7f3d6e8c1',
                         'occurredOn' => '2024-12-07T22:03:35+00:00',
                         'aggregateId' => '3e6a6763-4c4d-4648-bc3f-e9447dbed12c',
+                        'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                         'targetedAmount' => '2000.00',
                     ]),
                 ],
@@ -61,6 +62,7 @@ class RewindABudgetEnvelopeFromEventsCommandHandlerTest extends TestCase
                         'description' => 'test',
                         'userId' => '18e04f53-0ea6-478c-a02b-81b7f3d6e8c1',
                         'occurredOn' => '2024-12-07T22:03:35+00:00',
+                        'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c3',
                         'aggregateId' => '3e6a6763-4c4d-4648-bc3f-e9447dbed12c',
                     ]),
                 ],

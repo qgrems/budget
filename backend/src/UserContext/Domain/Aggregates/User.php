@@ -4,12 +4,12 @@ namespace App\UserContext\Domain\Aggregates;
 
 use App\SharedContext\Domain\Traits\DomainEventsCapabilityTrait;
 use App\UserContext\Domain\Events\UserDeletedDomainEvent;
-use App\UserContext\Domain\Events\UserFirstnameUpdatedDomainEvent;
-use App\UserContext\Domain\Events\UserLanguagePreferenceUpdatedDomainEvent;
-use App\UserContext\Domain\Events\UserLastnameUpdatedDomainEvent;
+use App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent;
+use App\UserContext\Domain\Events\UserLanguagePreferenceChangedDomainEvent;
+use App\UserContext\Domain\Events\UserLastnameChangedDomainEvent;
 use App\UserContext\Domain\Events\UserPasswordResetDomainEvent;
 use App\UserContext\Domain\Events\UserPasswordResetRequestedDomainEvent;
-use App\UserContext\Domain\Events\UserPasswordUpdatedDomainEvent;
+use App\UserContext\Domain\Events\UserPasswordChangedDomainEvent;
 use App\UserContext\Domain\Events\UserReplayedDomainEvent;
 use App\UserContext\Domain\Events\UserRewoundDomainEvent;
 use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
@@ -94,6 +94,7 @@ final class User
             (string) $languagePreference,
             $isConsentGiven->toBool(),
             $aggregate->roles,
+            (string) $userId,
         );
 
         $aggregate->applyUserSignedUpDomainEvent($userSignedUpEvent);
@@ -114,15 +115,16 @@ final class User
     ): void {
         $this->assertOwnership($userId);
 
-        $userFirstnameUpdatedDomainEvent = new UserFirstnameUpdatedDomainEvent(
+        $userFirstnameChangedDomainEvent = new UserFirstnameChangedDomainEvent(
             (string) $this->userId,
             (string) $firstname,
+            (string) $this->userId,
         );
 
-        $this->applyUserFirstnameUpdatedDomainEvent($userFirstnameUpdatedDomainEvent);
+        $this->applyUserFirstnameChangedDomainEvent($userFirstnameChangedDomainEvent);
         $this->raiseDomainEvents(
             $eventEncryptor->encrypt(
-                $userFirstnameUpdatedDomainEvent,
+                $userFirstnameChangedDomainEvent,
                 (string) $this->userId,
             ),
         );
@@ -135,15 +137,16 @@ final class User
     ): void {
         $this->assertOwnership($userId);
 
-        $userLanguagePreferenceUpdatedDomainEvent = new UserLanguagePreferenceUpdatedDomainEvent(
+        $userLanguagePreferenceChangedDomainEvent = new UserLanguagePreferenceChangedDomainEvent(
             (string) $this->userId,
             (string) $languagePreference,
+            (string) $this->userId,
         );
 
-        $this->applyUserLanguagePreferenceUpdatedDomainEvent($userLanguagePreferenceUpdatedDomainEvent);
+        $this->applyUserLanguagePreferenceChangedDomainEvent($userLanguagePreferenceChangedDomainEvent);
         $this->raiseDomainEvents(
             $eventEncryptor->encrypt(
-                $userLanguagePreferenceUpdatedDomainEvent,
+                $userLanguagePreferenceChangedDomainEvent,
                 (string) $this->userId,
             ),
         );
@@ -156,15 +159,16 @@ final class User
     ): void {
         $this->assertOwnership($userId);
 
-        $userLastnameUpdatedDomainEvent = new UserLastnameUpdatedDomainEvent(
+        $userLastnameChangedDomainEvent = new UserLastnameChangedDomainEvent(
             (string) $this->userId,
             (string) $lastname,
+            (string) $this->userId,
         );
 
-        $this->applyUserLastnameUpdatedDomainEvent($userLastnameUpdatedDomainEvent);
+        $this->applyUserLastnameChangedDomainEvent($userLastnameChangedDomainEvent);
         $this->raiseDomainEvents(
             $eventEncryptor->encrypt(
-                $userLastnameUpdatedDomainEvent,
+                $userLastnameChangedDomainEvent,
                 (string) $this->userId,
             ),
         );
@@ -175,6 +179,7 @@ final class User
         $this->assertOwnership($userId);
 
         $userDeletedDomainEvent = new UserDeletedDomainEvent(
+            (string) $this->userId,
             (string) $this->userId,
         );
 
@@ -190,16 +195,17 @@ final class User
     ): void {
         $this->assertOwnership($userId);
 
-        $userPasswordUpdatedDomainEvent = new UserPasswordUpdatedDomainEvent(
+        $userPasswordChangedDomainEvent = new UserPasswordChangedDomainEvent(
             (string) $this->userId,
             (string) $oldPassword,
             (string) $newPassword,
+            (string) $this->userId,
         );
 
-        $this->applyUserPasswordUpdatedDomainEvent($userPasswordUpdatedDomainEvent);
+        $this->applyUserPasswordChangedDomainEvent($userPasswordChangedDomainEvent);
         $this->raiseDomainEvents(
             $eventEncryptor->encrypt(
-                $userPasswordUpdatedDomainEvent,
+                $userPasswordChangedDomainEvent,
                 (string) $this->userId,
             ),
         );
@@ -215,6 +221,7 @@ final class User
             (string) $this->userId,
             (string) $passwordResetToken,
             new \DateTimeImmutable('+1 hour'),
+            (string) $this->userId,
         );
 
         $this->applyUserPasswordResetRequestedDomainEvent($userPasswordResetRequestedDomainEvent);
@@ -235,6 +242,7 @@ final class User
         $userPasswordResetEvent = new UserPasswordResetDomainEvent(
             (string) $this->userId,
             (string) $password,
+            (string) $this->userId,
         );
 
         $this->applyUserPasswordResetDomainEvent($userPasswordResetEvent);
@@ -261,6 +269,7 @@ final class User
             $this->consentGiven->toBool(),
             $this->consentDate->format(\DateTimeInterface::ATOM),
             $this->updatedAt->format(\DateTimeInterface::ATOM),
+            (string) $this->userId,
         );
         $this->applyUserRewoundDomainEvent($userRewoundDomainEvent);
         $this->raiseDomainEvents(
@@ -286,6 +295,7 @@ final class User
             $this->consentGiven->toBool(),
             $this->consentDate->format(\DateTimeInterface::ATOM),
             $this->updatedAt->format(\DateTimeInterface::ATOM),
+            (string) $this->userId,
         );
         $this->applyUserReplayedDomainEvent($userReplayedDomainEvent);
         $this->raiseDomainEvents(
@@ -304,10 +314,10 @@ final class User
 
         match ($event::class) {
             UserSignedUpDomainEvent::class => $this->applyUserSignedUpDomainEvent($event),
-            UserFirstnameUpdatedDomainEvent::class => $this->applyUserFirstnameUpdatedDomainEvent($event),
-            UserLastnameUpdatedDomainEvent::class => $this->applyUserLastnameUpdatedDomainEvent($event),
-            UserLanguagePreferenceUpdatedDomainEvent::class => $this->applyUserLanguagePreferenceUpdatedDomainEvent($event),
-            UserPasswordUpdatedDomainEvent::class => $this->applyUserPasswordUpdatedDomainEvent($event),
+            UserFirstnameChangedDomainEvent::class => $this->applyUserFirstnameChangedDomainEvent($event),
+            UserLastnameChangedDomainEvent::class => $this->applyUserLastnameChangedDomainEvent($event),
+            UserLanguagePreferenceChangedDomainEvent::class => $this->applyUserLanguagePreferenceChangedDomainEvent($event),
+            UserPasswordChangedDomainEvent::class => $this->applyUserPasswordChangedDomainEvent($event),
             UserPasswordResetRequestedDomainEvent::class => $this->applyUserPasswordResetRequestedDomainEvent($event),
             UserPasswordResetDomainEvent::class => $this->applyUserPasswordResetDomainEvent($event),
             UserDeletedDomainEvent::class => $this->applyUserDeletedDomainEvent(),
@@ -334,32 +344,32 @@ final class User
         $this->passwordResetTokenExpiry = null;
     }
 
-    private function applyUserFirstnameUpdatedDomainEvent(
-        UserFirstnameUpdatedDomainEvent $userFirstnameUpdatedDomainEvent,
+    private function applyUserFirstnameChangedDomainEvent(
+        UserFirstnameChangedDomainEvent $userFirstnameChangedDomainEvent,
     ): void {
-        $this->firstname = UserFirstname::fromString($userFirstnameUpdatedDomainEvent->firstname);
-        $this->updatedAt = \DateTime::createFromImmutable($userFirstnameUpdatedDomainEvent->occurredOn);
+        $this->firstname = UserFirstname::fromString($userFirstnameChangedDomainEvent->firstname);
+        $this->updatedAt = \DateTime::createFromImmutable($userFirstnameChangedDomainEvent->occurredOn);
     }
 
-    private function applyUserLanguagePreferenceUpdatedDomainEvent(
-        UserLanguagePreferenceUpdatedDomainEvent $userFirstnameUpdatedDomainEvent,
+    private function applyUserLanguagePreferenceChangedDomainEvent(
+        UserLanguagePreferenceChangedDomainEvent $userFirstnameChangedDomainEvent,
     ): void {
-        $this->languagePreference = UserLanguagePreference::fromString($userFirstnameUpdatedDomainEvent->languagePreference);
-        $this->updatedAt = \DateTime::createFromImmutable($userFirstnameUpdatedDomainEvent->occurredOn);
+        $this->languagePreference = UserLanguagePreference::fromString($userFirstnameChangedDomainEvent->languagePreference);
+        $this->updatedAt = \DateTime::createFromImmutable($userFirstnameChangedDomainEvent->occurredOn);
     }
 
-    private function applyUserLastnameUpdatedDomainEvent(
-        UserLastnameUpdatedDomainEvent $userLastnameUpdatedDomainEvent,
+    private function applyUserLastnameChangedDomainEvent(
+        UserLastnameChangedDomainEvent $userLastnameChangedDomainEvent,
     ): void {
-        $this->lastname = UserLastname::fromString($userLastnameUpdatedDomainEvent->lastname);
-        $this->updatedAt = \DateTime::createFromImmutable($userLastnameUpdatedDomainEvent->occurredOn);
+        $this->lastname = UserLastname::fromString($userLastnameChangedDomainEvent->lastname);
+        $this->updatedAt = \DateTime::createFromImmutable($userLastnameChangedDomainEvent->occurredOn);
     }
 
-    private function applyUserPasswordUpdatedDomainEvent(
-        UserPasswordUpdatedDomainEvent $userPasswordUpdatedDomainEvent
+    private function applyUserPasswordChangedDomainEvent(
+        UserPasswordChangedDomainEvent $userPasswordChangedDomainEvent
     ): void {
-        $this->password = UserPassword::fromString($userPasswordUpdatedDomainEvent->newPassword);
-        $this->updatedAt = \DateTime::createFromImmutable($userPasswordUpdatedDomainEvent->occurredOn);
+        $this->password = UserPassword::fromString($userPasswordChangedDomainEvent->newPassword);
+        $this->updatedAt = \DateTime::createFromImmutable($userPasswordChangedDomainEvent->occurredOn);
     }
 
     private function applyUserPasswordResetRequestedDomainEvent(

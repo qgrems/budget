@@ -13,32 +13,64 @@ framework:
 
         transports:
             sync: 'sync://'
-            async:
+            domain_events:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 serializer: messenger.transport.symfony_serializer
                 options:
                     exchange:
                         name: 'domain_events'
                         type: fanout
+            notification_events:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                serializer: messenger.transport.symfony_serializer
+                options:
+                    exchange:
+                        name: 'notification_events'
+                        type: fanout
 
         routing:
-            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreatedDomainEvent': async
-            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedDomainEvent': async
-            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDebitedDomainEvent': async
-            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDeletedDomainEvent': async
-            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRenamedDomainEvent': async
-            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeReplayedDomainEvent': async
-            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRewoundDomainEvent': async
-            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeTargetedAmountUpdatedDomainEvent': async
-            'App\UserContext\Domain\Events\UserDeletedDomainEvent': async
-            'App\UserContext\Domain\Events\UserFirstnameUpdatedDomainEvent': async
-            'App\UserContext\Domain\Events\UserLastnameUpdatedDomainEvent': async
-            'App\UserContext\Domain\Events\UserPasswordResetDomainEvent': async
-            'App\UserContext\Domain\Events\UserPasswordResetRequestedDomainEvent': async
-            'App\UserContext\Domain\Events\UserPasswordUpdatedDomainEvent': async
-            'App\UserContext\Domain\Events\UserSignedUpDomainEvent': async
-            'App\UserContext\Domain\Events\UserReplayedDomainEvent': async
-            'App\UserContext\Domain\Events\UserRewoundDomainEvent': async
+            # Domain Events
+            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeAddedDomainEvent': domain_events
+            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedDomainEvent': domain_events
+            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDebitedDomainEvent': domain_events
+            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDeletedDomainEvent': domain_events
+            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRenamedDomainEvent': domain_events
+            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeReplayedDomainEvent': domain_events
+            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRewoundDomainEvent': domain_events
+            'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeTargetedAmountChangedDomainEvent': domain_events
+            'App\UserContext\Domain\Events\UserDeletedDomainEvent': domain_events
+            'App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent': domain_events
+            'App\UserContext\Domain\Events\UserLastnameChangedDomainEvent': domain_events
+            'App\UserContext\Domain\Events\UserLanguagePreferenceChangedDomainEvent': domain_events
+            'App\UserContext\Domain\Events\UserPasswordResetDomainEvent': domain_events
+            'App\UserContext\Domain\Events\UserPasswordResetRequestedDomainEvent': domain_events
+            'App\UserContext\Domain\Events\UserPasswordChangedDomainEvent': domain_events
+            'App\UserContext\Domain\Events\UserSignedUpDomainEvent': domain_events
+            'App\UserContext\Domain\Events\UserReplayedDomainEvent': domain_events
+            'App\UserContext\Domain\Events\UserRewoundDomainEvent': domain_events
+            # Notification Events
+            'App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeAddedNotificationEvent': notification_events
+            'App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeCreditedNotificationEvent': notification_events
+            'App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeDebitedNotificationEvent': notification_events
+            'App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeDeletedNotificationEvent': notification_events
+            'App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeRenamedNotificationEvent': notification_events
+            'App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeReplayedNotificationEvent': notification_events
+            'App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeRewoundNotificationEvent': notification_events
+            'App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeTargetedAmountChangedNotificationEvent': notification_events
+            'App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeLedgerDebitEntryAddedNotificationEvent': notification_events
+            'App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeLedgerCreditEntryAddedNotificationEvent': notification_events
+            'App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeLedgerEntriesRewoundNotificationEvent': notification_events
+            'App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeLedgerEntriesReplayedNotificationEvent': notification_events
+            'App\UserContext\Infrastructure\Events\Notifications\UserDeletedNotificationEvent': notification_events
+            'App\UserContext\Infrastructure\Events\Notifications\UserFirstnameChangedNotificationEvent': notification_events
+            'App\UserContext\Infrastructure\Events\Notifications\UserLastnameChangedNotificationEvent': notification_events
+            'App\UserContext\Infrastructure\Events\Notifications\UserLanguagePreferenceChangedNotificationEvent': notification_events
+            'App\UserContext\Infrastructure\Events\Notifications\UserPasswordResetNotificationEvent': notification_events
+            'App\UserContext\Infrastructure\Events\Notifications\UserPasswordResetRequestedNotificationEvent': notification_events
+            'App\UserContext\Infrastructure\Events\Notifications\UserPasswordChangedNotificationEvent': notification_events
+            'App\UserContext\Infrastructure\Events\Notifications\UserSignedUpNotificationEvent': notification_events
+            'App\UserContext\Infrastructure\Events\Notifications\UserReplayedNotificationEvent': notification_events
+            'App\UserContext\Infrastructure\Events\Notifications\UserRewoundNotificationEvent': notification_events
 
 # when@test:
 #    framework:

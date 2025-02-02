@@ -73,7 +73,7 @@ parameters:
 			path: src/BudgetEnvelopeContext/Domain/Aggregates/BudgetEnvelope.php
 
 		-
-			message: '#^Property App\\BudgetEnvelopeContext\\Domain\\Aggregates\\BudgetEnvelope\:\:\$createdAt is never read, only written\.$#'
+			message: '#^Property App\\BudgetEnvelopeContext\\Domain\\Aggregates\\BudgetEnvelope\:\:\$addedAt is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
 			path: src/BudgetEnvelopeContext/Domain/Aggregates/BudgetEnvelope.php
@@ -85,46 +85,52 @@ parameters:
 			path: src/BudgetEnvelopeContext/Domain/Aggregates/BudgetEnvelope.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeCreatedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeAddedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeCreatedDomainEvent.php
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeAddedDomainEvent.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeCreatedDomainEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeAddedDomainEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeCreatedDomainEvent.php
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeAddedDomainEvent.php
 
 		-
-			message: '#^Parameter \#1 \$aggregateId of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeCreatedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$aggregateId of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeAddedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeCreatedDomainEvent.php
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeAddedDomainEvent.php
 
 		-
 			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeCreatedDomainEvent.php
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeAddedDomainEvent.php
 
 		-
-			message: '#^Parameter \#2 \$userId of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeCreatedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#2 \$userId of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeAddedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeCreatedDomainEvent.php
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeAddedDomainEvent.php
 
 		-
-			message: '#^Parameter \#3 \$name of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeCreatedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#3 \$name of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeAddedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeCreatedDomainEvent.php
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeAddedDomainEvent.php
 
 		-
-			message: '#^Parameter \#4 \$targetedAmount of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeCreatedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#4 \$targetedAmount of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeAddedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeCreatedDomainEvent.php
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeAddedDomainEvent.php
+
+		-
+			message: '#^Parameter \#5 \$requestId of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeAddedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeAddedDomainEvent.php
 
 		-
 			message: '#^Method App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeCreditedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
@@ -164,6 +170,12 @@ parameters:
 
 		-
 			message: '#^Parameter \#4 \$description of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeCreditedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeCreditedDomainEvent.php
+
+		-
+			message: '#^Parameter \#5 \$requestId of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeCreditedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeCreditedDomainEvent.php
@@ -211,6 +223,12 @@ parameters:
 			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeDebitedDomainEvent.php
 
 		-
+			message: '#^Parameter \#5 \$requestId of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeDebitedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeDebitedDomainEvent.php
+
+		-
 			message: '#^Method App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeDeletedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -247,6 +265,12 @@ parameters:
 			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeDeletedDomainEvent.php
 
 		-
+			message: '#^Parameter \#4 \$requestId of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeDeletedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeDeletedDomainEvent.php
+
+		-
 			message: '#^Method App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeRenamedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -278,6 +302,12 @@ parameters:
 
 		-
 			message: '#^Parameter \#3 \$name of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeRenamedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeRenamedDomainEvent.php
+
+		-
+			message: '#^Parameter \#4 \$requestId of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeRenamedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeRenamedDomainEvent.php
@@ -338,6 +368,12 @@ parameters:
 
 		-
 			message: '#^Parameter \#7 \$isDeleted of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeReplayedDomainEvent constructor expects bool, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeReplayedDomainEvent.php
+
+		-
+			message: '#^Parameter \#8 \$requestId of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeReplayedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeReplayedDomainEvent.php
@@ -409,40 +445,52 @@ parameters:
 			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeRewoundDomainEvent.php
 
 		-
-			message: '#^Method App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeTargetedAmountUpdatedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeTargetedAmountUpdatedDomainEvent.php
-
-		-
-			message: '#^Method App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeTargetedAmountUpdatedDomainEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeTargetedAmountUpdatedDomainEvent.php
-
-		-
-			message: '#^Parameter \#1 \$aggregateId of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeTargetedAmountUpdatedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#9 \$requestId of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeRewoundDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeTargetedAmountUpdatedDomainEvent.php
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeRewoundDomainEvent.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeTargetedAmountChangedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeTargetedAmountChangedDomainEvent.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeTargetedAmountChangedDomainEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeTargetedAmountChangedDomainEvent.php
+
+		-
+			message: '#^Parameter \#1 \$aggregateId of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeTargetedAmountChangedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeTargetedAmountChangedDomainEvent.php
 
 		-
 			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeTargetedAmountUpdatedDomainEvent.php
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeTargetedAmountChangedDomainEvent.php
 
 		-
-			message: '#^Parameter \#2 \$userId of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeTargetedAmountUpdatedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#2 \$userId of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeTargetedAmountChangedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeTargetedAmountUpdatedDomainEvent.php
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeTargetedAmountChangedDomainEvent.php
 
 		-
-			message: '#^Parameter \#3 \$targetedAmount of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeTargetedAmountUpdatedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#3 \$targetedAmount of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeTargetedAmountChangedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeTargetedAmountUpdatedDomainEvent.php
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeTargetedAmountChangedDomainEvent.php
+
+		-
+			message: '#^Parameter \#4 \$requestId of class App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeTargetedAmountChangedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/BudgetEnvelopeContext/Domain/Events/BudgetEnvelopeTargetedAmountChangedDomainEvent.php
 
 		-
 			message: '#^Method App\\BudgetEnvelopeContext\\Domain\\Ports\\Inbound\\BudgetEnvelopeLedgerEntryViewInterface\:\:fromRepository\(\) has parameter \$budgetEnvelopeLedgerEntry with no value type specified in iterable type array\.$#'
@@ -515,6 +563,78 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/BudgetEnvelopeContext/Domain/Ports/Inbound/BudgetEnvelopesPaginatedInterface.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeContext\\Infrastructure\\Events\\Notifications\\BudgetEnvelopeAddedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeContext/Infrastructure/Events/Notifications/BudgetEnvelopeAddedNotificationEvent.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeContext\\Infrastructure\\Events\\Notifications\\BudgetEnvelopeCreditedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeContext/Infrastructure/Events/Notifications/BudgetEnvelopeCreditedNotificationEvent.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeContext\\Infrastructure\\Events\\Notifications\\BudgetEnvelopeDebitedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeContext/Infrastructure/Events/Notifications/BudgetEnvelopeDebitedNotificationEvent.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeContext\\Infrastructure\\Events\\Notifications\\BudgetEnvelopeDeletedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeContext/Infrastructure/Events/Notifications/BudgetEnvelopeDeletedNotificationEvent.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeContext\\Infrastructure\\Events\\Notifications\\BudgetEnvelopeLedgerCreditEntryAddedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeContext/Infrastructure/Events/Notifications/BudgetEnvelopeLedgerCreditEntryAddedNotificationEvent.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeContext\\Infrastructure\\Events\\Notifications\\BudgetEnvelopeLedgerDebitEntryAddedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeContext/Infrastructure/Events/Notifications/BudgetEnvelopeLedgerDebitEntryAddedNotificationEvent.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeContext\\Infrastructure\\Events\\Notifications\\BudgetEnvelopeLedgerEntriesReplayedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeContext/Infrastructure/Events/Notifications/BudgetEnvelopeLedgerEntriesReplayedNotificationEvent.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeContext\\Infrastructure\\Events\\Notifications\\BudgetEnvelopeLedgerEntriesRewoundNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeContext/Infrastructure/Events/Notifications/BudgetEnvelopeLedgerEntriesRewoundNotificationEvent.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeContext\\Infrastructure\\Events\\Notifications\\BudgetEnvelopeRenamedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeContext/Infrastructure/Events/Notifications/BudgetEnvelopeRenamedNotificationEvent.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeContext\\Infrastructure\\Events\\Notifications\\BudgetEnvelopeReplayedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeContext/Infrastructure/Events/Notifications/BudgetEnvelopeReplayedNotificationEvent.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeContext\\Infrastructure\\Events\\Notifications\\BudgetEnvelopeRewoundNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeContext/Infrastructure/Events/Notifications/BudgetEnvelopeRewoundNotificationEvent.php
+
+		-
+			message: '#^Method App\\BudgetEnvelopeContext\\Infrastructure\\Events\\Notifications\\BudgetEnvelopeTargetedAmountChangedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/BudgetEnvelopeContext/Infrastructure/Events/Notifications/BudgetEnvelopeTargetedAmountChangedNotificationEvent.php
 
 		-
 			message: '#^Access to an undefined property App\\BudgetEnvelopeContext\\Domain\\Ports\\Inbound\\BudgetEnvelopeLedgerEntryViewInterface\:\:\$budgetEnvelopeUuid\.$#'
@@ -763,12 +883,6 @@ parameters:
 			path: src/BudgetEnvelopeContext/Presentation/Cli/RewindABudgetEnvelopeCommand.php
 
 		-
-			message: '#^Access to an undefined property App\\BudgetEnvelopeContext\\Domain\\Ports\\Inbound\\BudgetEnvelopeViewInterface\:\:\$userUuid\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/BudgetEnvelopeContext/ReadModels/Projections/BudgetEnvelopeLedgerEntryProjection.php
-
-		-
 			message: '#^Cannot access offset ''payload'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 4
@@ -796,18 +910,6 @@ parameters:
 			message: '#^Parameter \#1 \$json of function json_decode expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 4
-			path: src/BudgetEnvelopeContext/ReadModels/Projections/BudgetEnvelopeLedgerEntryProjection.php
-
-		-
-			message: '#^Parameter \#2 \$userUuid of static method App\\BudgetEnvelopeContext\\ReadModels\\Views\\BudgetEnvelopeLedgerEntryView\:\:fromBudgetEnvelopeCreditedDomainEvent\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/BudgetEnvelopeContext/ReadModels/Projections/BudgetEnvelopeLedgerEntryProjection.php
-
-		-
-			message: '#^Parameter \#2 \$userUuid of static method App\\BudgetEnvelopeContext\\ReadModels\\Views\\BudgetEnvelopeLedgerEntryView\:\:fromBudgetEnvelopeDebitedDomainEvent\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
 			path: src/BudgetEnvelopeContext/ReadModels/Projections/BudgetEnvelopeLedgerEntryProjection.php
 
 		-
@@ -895,7 +997,7 @@ parameters:
 			path: src/BudgetEnvelopeContext/ReadModels/Views/BudgetEnvelopeView.php
 
 		-
-			message: '#^Parameter \#1 \$budgetEnvelopeCreatedDomainEvent of static method App\\BudgetEnvelopeContext\\ReadModels\\Views\\BudgetEnvelopeView\:\:fromBudgetEnvelopeCreatedDomainEvent\(\) expects App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeCreatedDomainEvent, mixed given\.$#'
+			message: '#^Parameter \#1 \$budgetEnvelopeAddedDomainEvent of static method App\\BudgetEnvelopeContext\\ReadModels\\Views\\BudgetEnvelopeView\:\:fromBudgetEnvelopeAddedDomainEvent\(\) expects App\\BudgetEnvelopeContext\\Domain\\Events\\BudgetEnvelopeAddedDomainEvent, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/BudgetEnvelopeContext/ReadModels/Views/BudgetEnvelopeView.php
@@ -1015,7 +1117,13 @@ parameters:
 			path: src/SharedContext/Domain/Ports/Inbound/EventStoreInterface.php
 
 		-
-			message: '#^Method App\\SharedContext\\Domain\\Ports\\Outbound\\PublisherInterface\:\:publishEvents\(\) has parameter \$events with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\SharedContext\\Domain\\Ports\\Outbound\\PublisherInterface\:\:publishDomainEvents\(\) has parameter \$events with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/SharedContext/Domain/Ports/Outbound/PublisherInterface.php
+
+		-
+			message: '#^Method App\\SharedContext\\Domain\\Ports\\Outbound\\PublisherInterface\:\:publishNotificationEvents\(\) has parameter \$events with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/SharedContext/Domain/Ports/Outbound/PublisherInterface.php
@@ -1023,11 +1131,17 @@ parameters:
 		-
 			message: '#^Cannot call method toArray\(\) on mixed\.$#'
 			identifier: method.nonObject
+			count: 2
+			path: src/SharedContext/Infrastructure/Adapters/PublisherAdapter.php
+
+		-
+			message: '#^Method App\\SharedContext\\Infrastructure\\Adapters\\PublisherAdapter\:\:publishDomainEvents\(\) has parameter \$events with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
 			count: 1
 			path: src/SharedContext/Infrastructure/Adapters/PublisherAdapter.php
 
 		-
-			message: '#^Method App\\SharedContext\\Infrastructure\\Adapters\\PublisherAdapter\:\:publishEvents\(\) has parameter \$events with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\SharedContext\\Infrastructure\\Adapters\\PublisherAdapter\:\:publishNotificationEvents\(\) has parameter \$events with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/SharedContext/Infrastructure/Adapters/PublisherAdapter.php
@@ -1035,7 +1149,7 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$object of function get_class expects object, mixed given\.$#'
 			identifier: argument.type
-			count: 1
+			count: 2
 			path: src/SharedContext/Infrastructure/Adapters/PublisherAdapter.php
 
 		-
@@ -1087,10 +1201,10 @@ parameters:
 			path: src/SharedContext/Infrastructure/EventListener/ExceptionListener.php
 
 		-
-			message: '#^Access to an undefined property App\\UserContext\\Domain\\Ports\\Inbound\\UserDomainEventInterface\:\:\$aggregateId\.$#'
-			identifier: property.notFound
+			message: '#^Property App\\SharedContext\\Domain\\Services\\RequestIdProvider\:\:\$requestId \(string\) does not accept string\|null\.$#'
+			identifier: assign.propertyType
 			count: 1
-			path: src/SharedContext/Infrastructure/EventStore/EventStore.php
+			path: src/SharedContext/Infrastructure/EventListener/RequestIdListener.php
 
 		-
 			message: '#^Cannot access property \$aggregateId on mixed\.$#'
@@ -1165,22 +1279,22 @@ parameters:
 			path: src/SharedContext/Infrastructure/Repositories/EventSourcedRepository.php
 
 		-
-			message: '#^Parameter \#1 \$user of method App\\UserContext\\Domain\\Ports\\Outbound\\PasswordHasherInterface\:\:hash\(\) expects Symfony\\Component\\Security\\Core\\User\\PasswordAuthenticatedUserInterface, App\\UserContext\\Domain\\Ports\\Inbound\\UserViewInterface given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/UserContext/Application/Handlers/CommandHandlers/ResetAUserPasswordCommandHandler.php
-
-		-
 			message: '#^Parameter \#1 \$user of method App\\UserContext\\Domain\\Ports\\Outbound\\PasswordHasherInterface\:\:hash\(\) expects Symfony\\Component\\Security\\Core\\User\\PasswordAuthenticatedUserInterface, App\\UserContext\\Domain\\Ports\\Inbound\\UserViewInterface\|null given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/UserContext/Application/Handlers/CommandHandlers/UpdateAUserPasswordCommandHandler.php
+			path: src/UserContext/Application/Handlers/CommandHandlers/ChangeAUserPasswordCommandHandler.php
 
 		-
 			message: '#^Parameter \#1 \$user of method App\\UserContext\\Domain\\Ports\\Outbound\\PasswordHasherInterface\:\:verify\(\) expects Symfony\\Component\\Security\\Core\\User\\PasswordAuthenticatedUserInterface, App\\UserContext\\Domain\\Ports\\Inbound\\UserViewInterface\|null given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/UserContext/Application/Handlers/CommandHandlers/UpdateAUserPasswordCommandHandler.php
+			path: src/UserContext/Application/Handlers/CommandHandlers/ChangeAUserPasswordCommandHandler.php
+
+		-
+			message: '#^Parameter \#1 \$user of method App\\UserContext\\Domain\\Ports\\Outbound\\PasswordHasherInterface\:\:hash\(\) expects Symfony\\Component\\Security\\Core\\User\\PasswordAuthenticatedUserInterface, App\\UserContext\\Domain\\Ports\\Inbound\\UserViewInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Application/Handlers/CommandHandlers/ResetAUserPasswordCommandHandler.php
 
 		-
 			message: '#^Access to an undefined property App\\UserContext\\Domain\\Ports\\Inbound\\UserDomainEventInterface\:\:\$aggregateId\.$#'
@@ -1303,94 +1417,190 @@ parameters:
 			path: src/UserContext/Domain/Events/UserDeletedDomainEvent.php
 
 		-
-			message: '#^Method App\\UserContext\\Domain\\Events\\UserFirstnameUpdatedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/UserContext/Domain/Events/UserFirstnameUpdatedDomainEvent.php
-
-		-
-			message: '#^Method App\\UserContext\\Domain\\Events\\UserFirstnameUpdatedDomainEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/UserContext/Domain/Events/UserFirstnameUpdatedDomainEvent.php
-
-		-
-			message: '#^Parameter \#1 \$aggregateId of class App\\UserContext\\Domain\\Events\\UserFirstnameUpdatedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#2 \$userId of class App\\UserContext\\Domain\\Events\\UserDeletedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/UserContext/Domain/Events/UserFirstnameUpdatedDomainEvent.php
+			path: src/UserContext/Domain/Events/UserDeletedDomainEvent.php
+
+		-
+			message: '#^Parameter \#3 \$requestId of class App\\UserContext\\Domain\\Events\\UserDeletedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserDeletedDomainEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Domain\\Events\\UserFirstnameChangedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Domain/Events/UserFirstnameChangedDomainEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Domain\\Events\\UserFirstnameChangedDomainEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Domain/Events/UserFirstnameChangedDomainEvent.php
+
+		-
+			message: '#^Parameter \#1 \$aggregateId of class App\\UserContext\\Domain\\Events\\UserFirstnameChangedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserFirstnameChangedDomainEvent.php
 
 		-
 			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/UserContext/Domain/Events/UserFirstnameUpdatedDomainEvent.php
+			path: src/UserContext/Domain/Events/UserFirstnameChangedDomainEvent.php
 
 		-
-			message: '#^Parameter \#2 \$firstname of class App\\UserContext\\Domain\\Events\\UserFirstnameUpdatedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#2 \$firstname of class App\\UserContext\\Domain\\Events\\UserFirstnameChangedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/UserContext/Domain/Events/UserFirstnameUpdatedDomainEvent.php
+			path: src/UserContext/Domain/Events/UserFirstnameChangedDomainEvent.php
 
 		-
-			message: '#^Method App\\UserContext\\Domain\\Events\\UserLanguagePreferenceUpdatedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/UserContext/Domain/Events/UserLanguagePreferenceUpdatedDomainEvent.php
-
-		-
-			message: '#^Method App\\UserContext\\Domain\\Events\\UserLanguagePreferenceUpdatedDomainEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/UserContext/Domain/Events/UserLanguagePreferenceUpdatedDomainEvent.php
-
-		-
-			message: '#^Parameter \#1 \$aggregateId of class App\\UserContext\\Domain\\Events\\UserLanguagePreferenceUpdatedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#3 \$userId of class App\\UserContext\\Domain\\Events\\UserFirstnameChangedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/UserContext/Domain/Events/UserLanguagePreferenceUpdatedDomainEvent.php
+			path: src/UserContext/Domain/Events/UserFirstnameChangedDomainEvent.php
+
+		-
+			message: '#^Parameter \#4 \$requestId of class App\\UserContext\\Domain\\Events\\UserFirstnameChangedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserFirstnameChangedDomainEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Domain\\Events\\UserLanguagePreferenceChangedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Domain/Events/UserLanguagePreferenceChangedDomainEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Domain\\Events\\UserLanguagePreferenceChangedDomainEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Domain/Events/UserLanguagePreferenceChangedDomainEvent.php
+
+		-
+			message: '#^Parameter \#1 \$aggregateId of class App\\UserContext\\Domain\\Events\\UserLanguagePreferenceChangedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserLanguagePreferenceChangedDomainEvent.php
 
 		-
 			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/UserContext/Domain/Events/UserLanguagePreferenceUpdatedDomainEvent.php
+			path: src/UserContext/Domain/Events/UserLanguagePreferenceChangedDomainEvent.php
 
 		-
-			message: '#^Parameter \#2 \$languagePreference of class App\\UserContext\\Domain\\Events\\UserLanguagePreferenceUpdatedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#2 \$languagePreference of class App\\UserContext\\Domain\\Events\\UserLanguagePreferenceChangedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/UserContext/Domain/Events/UserLanguagePreferenceUpdatedDomainEvent.php
+			path: src/UserContext/Domain/Events/UserLanguagePreferenceChangedDomainEvent.php
 
 		-
-			message: '#^Method App\\UserContext\\Domain\\Events\\UserLastnameUpdatedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/UserContext/Domain/Events/UserLastnameUpdatedDomainEvent.php
-
-		-
-			message: '#^Method App\\UserContext\\Domain\\Events\\UserLastnameUpdatedDomainEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/UserContext/Domain/Events/UserLastnameUpdatedDomainEvent.php
-
-		-
-			message: '#^Parameter \#1 \$aggregateId of class App\\UserContext\\Domain\\Events\\UserLastnameUpdatedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#3 \$userId of class App\\UserContext\\Domain\\Events\\UserLanguagePreferenceChangedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/UserContext/Domain/Events/UserLastnameUpdatedDomainEvent.php
+			path: src/UserContext/Domain/Events/UserLanguagePreferenceChangedDomainEvent.php
+
+		-
+			message: '#^Parameter \#4 \$requestId of class App\\UserContext\\Domain\\Events\\UserLanguagePreferenceChangedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserLanguagePreferenceChangedDomainEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Domain\\Events\\UserLastnameChangedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Domain/Events/UserLastnameChangedDomainEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Domain\\Events\\UserLastnameChangedDomainEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Domain/Events/UserLastnameChangedDomainEvent.php
+
+		-
+			message: '#^Parameter \#1 \$aggregateId of class App\\UserContext\\Domain\\Events\\UserLastnameChangedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserLastnameChangedDomainEvent.php
 
 		-
 			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/UserContext/Domain/Events/UserLastnameUpdatedDomainEvent.php
+			path: src/UserContext/Domain/Events/UserLastnameChangedDomainEvent.php
 
 		-
-			message: '#^Parameter \#2 \$lastname of class App\\UserContext\\Domain\\Events\\UserLastnameUpdatedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#2 \$lastname of class App\\UserContext\\Domain\\Events\\UserLastnameChangedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/UserContext/Domain/Events/UserLastnameUpdatedDomainEvent.php
+			path: src/UserContext/Domain/Events/UserLastnameChangedDomainEvent.php
+
+		-
+			message: '#^Parameter \#3 \$userId of class App\\UserContext\\Domain\\Events\\UserLastnameChangedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserLastnameChangedDomainEvent.php
+
+		-
+			message: '#^Parameter \#4 \$requestId of class App\\UserContext\\Domain\\Events\\UserLastnameChangedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserLastnameChangedDomainEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Domain\\Events\\UserPasswordChangedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Domain/Events/UserPasswordChangedDomainEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Domain\\Events\\UserPasswordChangedDomainEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Domain/Events/UserPasswordChangedDomainEvent.php
+
+		-
+			message: '#^Parameter \#1 \$aggregateId of class App\\UserContext\\Domain\\Events\\UserPasswordChangedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserPasswordChangedDomainEvent.php
+
+		-
+			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserPasswordChangedDomainEvent.php
+
+		-
+			message: '#^Parameter \#2 \$oldPassword of class App\\UserContext\\Domain\\Events\\UserPasswordChangedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserPasswordChangedDomainEvent.php
+
+		-
+			message: '#^Parameter \#3 \$newPassword of class App\\UserContext\\Domain\\Events\\UserPasswordChangedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserPasswordChangedDomainEvent.php
+
+		-
+			message: '#^Parameter \#4 \$userId of class App\\UserContext\\Domain\\Events\\UserPasswordChangedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserPasswordChangedDomainEvent.php
+
+		-
+			message: '#^Parameter \#5 \$requestId of class App\\UserContext\\Domain\\Events\\UserPasswordChangedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserPasswordChangedDomainEvent.php
 
 		-
 			message: '#^Method App\\UserContext\\Domain\\Events\\UserPasswordResetDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
@@ -1418,6 +1628,18 @@ parameters:
 
 		-
 			message: '#^Parameter \#2 \$password of class App\\UserContext\\Domain\\Events\\UserPasswordResetDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserPasswordResetDomainEvent.php
+
+		-
+			message: '#^Parameter \#3 \$userId of class App\\UserContext\\Domain\\Events\\UserPasswordResetDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserPasswordResetDomainEvent.php
+
+		-
+			message: '#^Parameter \#4 \$requestId of class App\\UserContext\\Domain\\Events\\UserPasswordResetDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Events/UserPasswordResetDomainEvent.php
@@ -1453,40 +1675,16 @@ parameters:
 			path: src/UserContext/Domain/Events/UserPasswordResetRequestedDomainEvent.php
 
 		-
-			message: '#^Method App\\UserContext\\Domain\\Events\\UserPasswordUpdatedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/UserContext/Domain/Events/UserPasswordUpdatedDomainEvent.php
-
-		-
-			message: '#^Method App\\UserContext\\Domain\\Events\\UserPasswordUpdatedDomainEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/UserContext/Domain/Events/UserPasswordUpdatedDomainEvent.php
-
-		-
-			message: '#^Parameter \#1 \$aggregateId of class App\\UserContext\\Domain\\Events\\UserPasswordUpdatedDomainEvent constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#4 \$userId of class App\\UserContext\\Domain\\Events\\UserPasswordResetRequestedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/UserContext/Domain/Events/UserPasswordUpdatedDomainEvent.php
+			path: src/UserContext/Domain/Events/UserPasswordResetRequestedDomainEvent.php
 
 		-
-			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#5 \$requestId of class App\\UserContext\\Domain\\Events\\UserPasswordResetRequestedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/UserContext/Domain/Events/UserPasswordUpdatedDomainEvent.php
-
-		-
-			message: '#^Parameter \#2 \$oldPassword of class App\\UserContext\\Domain\\Events\\UserPasswordUpdatedDomainEvent constructor expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/UserContext/Domain/Events/UserPasswordUpdatedDomainEvent.php
-
-		-
-			message: '#^Parameter \#3 \$newPassword of class App\\UserContext\\Domain\\Events\\UserPasswordUpdatedDomainEvent constructor expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/UserContext/Domain/Events/UserPasswordUpdatedDomainEvent.php
+			path: src/UserContext/Domain/Events/UserPasswordResetRequestedDomainEvent.php
 
 		-
 			message: '#^Method App\\UserContext\\Domain\\Events\\UserReplayedDomainEvent\:\:fromArray\(\) has parameter \$data with no value type specified in iterable type array\.$#'
@@ -1508,6 +1706,18 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserReplayedDomainEvent.php
+
+		-
+			message: '#^Parameter \#10 \$userId of class App\\UserContext\\Domain\\Events\\UserReplayedDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserReplayedDomainEvent.php
+
+		-
+			message: '#^Parameter \#11 \$requestId of class App\\UserContext\\Domain\\Events\\UserReplayedDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Events/UserReplayedDomainEvent.php
@@ -1580,6 +1790,18 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserRewoundDomainEvent.php
+
+		-
+			message: '#^Parameter \#10 \$userId of class App\\UserContext\\Domain\\Events\\UserRewoundDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserRewoundDomainEvent.php
+
+		-
+			message: '#^Parameter \#11 \$requestId of class App\\UserContext\\Domain\\Events\\UserRewoundDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Events/UserRewoundDomainEvent.php
@@ -1663,6 +1885,12 @@ parameters:
 			path: src/UserContext/Domain/Events/UserSignedUpDomainEvent.php
 
 		-
+			message: '#^Parameter \#10 \$requestId of class App\\UserContext\\Domain\\Events\\UserSignedUpDomainEvent constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserSignedUpDomainEvent.php
+
+		-
 			message: '#^Parameter \#2 \$email of class App\\UserContext\\Domain\\Events\\UserSignedUpDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -1700,6 +1928,12 @@ parameters:
 
 		-
 			message: '#^Parameter \#8 \$roles of class App\\UserContext\\Domain\\Events\\UserSignedUpDomainEvent constructor expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/UserContext/Domain/Events/UserSignedUpDomainEvent.php
+
+		-
+			message: '#^Parameter \#9 \$userId of class App\\UserContext\\Domain\\Events\\UserSignedUpDomainEvent constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/UserContext/Domain/Events/UserSignedUpDomainEvent.php
@@ -1889,6 +2123,66 @@ parameters:
 			identifier: property.unused
 			count: 1
 			path: src/UserContext/Infrastructure/Entities/EncryptionKey.php
+
+		-
+			message: '#^Method App\\UserContext\\Infrastructure\\Events\\Notifications\\UserDeletedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Infrastructure/Events/Notifications/UserDeletedNotificationEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Infrastructure\\Events\\Notifications\\UserFirstnameChangedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Infrastructure/Events/Notifications/UserFirstnameChangedNotificationEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Infrastructure\\Events\\Notifications\\UserLanguagePreferenceChangedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Infrastructure/Events/Notifications/UserLanguagePreferenceChangedNotificationEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Infrastructure\\Events\\Notifications\\UserLastnameChangedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Infrastructure/Events/Notifications/UserLastnameChangedNotificationEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Infrastructure\\Events\\Notifications\\UserPasswordChangedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Infrastructure/Events/Notifications/UserPasswordChangedNotificationEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Infrastructure\\Events\\Notifications\\UserPasswordResetNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Infrastructure/Events/Notifications/UserPasswordResetNotificationEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Infrastructure\\Events\\Notifications\\UserPasswordResetRequestedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Infrastructure/Events/Notifications/UserPasswordResetRequestedNotificationEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Infrastructure\\Events\\Notifications\\UserReplayedNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Infrastructure/Events/Notifications/UserReplayedNotificationEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Infrastructure\\Events\\Notifications\\UserRewoundNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Infrastructure/Events/Notifications/UserRewoundNotificationEvent.php
+
+		-
+			message: '#^Method App\\UserContext\\Infrastructure\\Events\\Notifications\\UserSignedUpNotificationEvent\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/UserContext/Infrastructure/Events/Notifications/UserSignedUpNotificationEvent.php
 
 		-
 			message: '#^Binary operation "\." between non\-empty\-string and mixed results in an error\.$#'
@@ -2329,7 +2623,7 @@ parameters:
 			path: tests/UserContext/Domain/Services/EventEncryptorTest.php
 
 		-
-			message: '#^Parameter \#2 \$firstname of class App\\UserContext\\Domain\\Events\\UserFirstnameUpdatedDomainEvent constructor expects string, string\|false given\.$#'
+			message: '#^Parameter \#2 \$firstname of class App\\UserContext\\Domain\\Events\\UserFirstnameChangedDomainEvent constructor expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: tests/UserContext/Domain/Services/EventEncryptorTest.php

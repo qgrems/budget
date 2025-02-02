@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\BudgetEnvelopeContext\Domain\Aggregates;
 
-use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreatedDomainEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeAddedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDebitedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDeletedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRenamedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeReplayedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRewoundDomainEvent;
-use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeTargetedAmountUpdatedDomainEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeTargetedAmountChangedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeIsNotOwnedByUserException;
 use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeNameAlreadyExistsForUserException;
 use App\BudgetEnvelopeContext\Domain\Exceptions\InvalidBudgetEnvelopeOperationException;
@@ -38,7 +38,7 @@ final class BudgetEnvelope
     private BudgetEnvelopeTargetedAmount $budgetEnvelopeTargetedAmount;
     private BudgetEnvelopeName $budgetEnvelopeName;
     private \DateTime $updatedAt;
-    private \DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $addedAt;
     private bool $isDeleted;
 
     private function __construct()
@@ -71,15 +71,15 @@ final class BudgetEnvelope
             throw new BudgetEnvelopeNameAlreadyExistsForUserException();
         }
 
-        $budgetEnvelopeCreatedDomainEvent = new BudgetEnvelopeCreatedDomainEvent(
+        $budgetEnvelopeAddedDomainEvent = new BudgetEnvelopeAddedDomainEvent(
             (string) $budgetEnvelopeId,
             (string) $budgetEnvelopeUserId,
             (string) $budgetEnvelopeName,
             (string) $budgetEnvelopeTargetedAmount,
         );
         $aggregate = new self();
-        $aggregate->apply($budgetEnvelopeCreatedDomainEvent);
-        $aggregate->raiseDomainEvents($budgetEnvelopeCreatedDomainEvent);
+        $aggregate->apply($budgetEnvelopeAddedDomainEvent);
+        $aggregate->raiseDomainEvents($budgetEnvelopeAddedDomainEvent);
 
         return $aggregate;
     }
@@ -176,14 +176,14 @@ final class BudgetEnvelope
         $this->assertNotDeleted();
         $this->assertOwnership($userId);
 
-        $budgetEnvelopeTargetedAmountUpdatedDomainEvent = new BudgetEnvelopeTargetedAmountUpdatedDomainEvent(
+        $budgetEnvelopeTargetedAmountChangedDomainEvent = new BudgetEnvelopeTargetedAmountChangedDomainEvent(
             (string) $this->budgetEnvelopeId,
             (string) $this->userId,
             (string) $budgetEnvelopeTargetedAmount,
         );
 
-        $this->apply($budgetEnvelopeTargetedAmountUpdatedDomainEvent);
-        $this->raiseDomainEvents($budgetEnvelopeTargetedAmountUpdatedDomainEvent);
+        $this->apply($budgetEnvelopeTargetedAmountChangedDomainEvent);
+        $this->raiseDomainEvents($budgetEnvelopeTargetedAmountChangedDomainEvent);
     }
 
     public function rewind(
@@ -218,41 +218,41 @@ final class BudgetEnvelope
             $this->updatedAt->format(\DateTimeInterface::ATOM),
             $this->isDeleted,
         );
-        $this->raiseDomainEvents($budgetEnvelopeReplayedDomainEvent);
         $this->apply($budgetEnvelopeReplayedDomainEvent);
+        $this->raiseDomainEvents($budgetEnvelopeReplayedDomainEvent);
     }
 
     private function apply(DomainEventInterface $event): void
     {
         match ($event::class) {
-            BudgetEnvelopeCreatedDomainEvent::class => $this->applyBudgetEnvelopeCreatedDomainEvent($event),
+            BudgetEnvelopeAddedDomainEvent::class => $this->applyBudgetEnvelopeAddedDomainEvent($event),
             BudgetEnvelopeRenamedDomainEvent::class => $this->applyBudgetEnvelopeRenamedDomainEvent($event),
             BudgetEnvelopeCreditedDomainEvent::class => $this->applyBudgetEnvelopeCreditedDomainEvent($event),
             BudgetEnvelopeDebitedDomainEvent::class => $this->applyBudgetEnvelopeDebitedDomainEvent($event),
             BudgetEnvelopeDeletedDomainEvent::class => $this->applyBudgetEnvelopeDeletedDomainEvent($event),
             BudgetEnvelopeReplayedDomainEvent::class => $this->applyBudgetEnvelopeReplayedDomainEvent($event),
             BudgetEnvelopeRewoundDomainEvent::class => $this->applyBudgetEnvelopeRewoundDomainEvent($event),
-            BudgetEnvelopeTargetedAmountUpdatedDomainEvent::class => $this->applyBudgetEnvelopeTargetedAmountUpdatedDomainEvent($event),
+            BudgetEnvelopeTargetedAmountChangedDomainEvent::class => $this->applyBudgetEnvelopeTargetedAmountChangedDomainEvent($event),
             default => throw new \RuntimeException('envelopes.unknownEvent'),
         };
     }
 
-    private function applyBudgetEnvelopeCreatedDomainEvent(
-        BudgetEnvelopeCreatedDomainEvent $budgetEnvelopeCreatedDomainEvent,
+    private function applyBudgetEnvelopeAddedDomainEvent(
+        BudgetEnvelopeAddedDomainEvent $budgetEnvelopeAddedDomainEvent,
     ): void {
-        $this->budgetEnvelopeId = BudgetEnvelopeId::fromString($budgetEnvelopeCreatedDomainEvent->aggregateId);
-        $this->userId = BudgetEnvelopeUserId::fromString($budgetEnvelopeCreatedDomainEvent->userId);
-        $this->budgetEnvelopeName = BudgetEnvelopeName::fromString($budgetEnvelopeCreatedDomainEvent->name);
+        $this->budgetEnvelopeId = BudgetEnvelopeId::fromString($budgetEnvelopeAddedDomainEvent->aggregateId);
+        $this->userId = BudgetEnvelopeUserId::fromString($budgetEnvelopeAddedDomainEvent->userId);
+        $this->budgetEnvelopeName = BudgetEnvelopeName::fromString($budgetEnvelopeAddedDomainEvent->name);
         $this->budgetEnvelopeTargetedAmount = BudgetEnvelopeTargetedAmount::fromString(
-            $budgetEnvelopeCreatedDomainEvent->targetedAmount,
+            $budgetEnvelopeAddedDomainEvent->targetedAmount,
             '0.00',
         );
         $this->budgetEnvelopeCurrentAmount = BudgetEnvelopeCurrentAmount::fromString(
             '0.00',
-            $budgetEnvelopeCreatedDomainEvent->targetedAmount,
+            $budgetEnvelopeAddedDomainEvent->targetedAmount,
         );
-        $this->createdAt = $budgetEnvelopeCreatedDomainEvent->occurredOn;
-        $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeCreatedDomainEvent->occurredOn);
+        $this->addedAt = $budgetEnvelopeAddedDomainEvent->occurredOn;
+        $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeAddedDomainEvent->occurredOn);
         $this->isDeleted = false;
     }
 
@@ -301,14 +301,14 @@ final class BudgetEnvelope
         $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeDeletedDomainEvent->occurredOn);
     }
 
-    private function applyBudgetEnvelopeTargetedAmountUpdatedDomainEvent(
-        BudgetEnvelopeTargetedAmountUpdatedDomainEvent $budgetEnvelopeTargetedAmountUpdatedDomainEvent,
+    private function applyBudgetEnvelopeTargetedAmountChangedDomainEvent(
+        BudgetEnvelopeTargetedAmountChangedDomainEvent $budgetEnvelopeTargetedAmountChangedDomainEvent,
     ): void {
         $this->budgetEnvelopeTargetedAmount = BudgetEnvelopeTargetedAmount::fromString(
-            $budgetEnvelopeTargetedAmountUpdatedDomainEvent->targetedAmount,
+            $budgetEnvelopeTargetedAmountChangedDomainEvent->targetedAmount,
             (string) $this->budgetEnvelopeCurrentAmount,
         );
-        $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeTargetedAmountUpdatedDomainEvent->occurredOn);
+        $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeTargetedAmountChangedDomainEvent->occurredOn);
     }
 
     private function applyBudgetEnvelopeReplayedDomainEvent(

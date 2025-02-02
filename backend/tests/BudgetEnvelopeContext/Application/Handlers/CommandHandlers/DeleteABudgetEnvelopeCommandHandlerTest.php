@@ -6,7 +6,7 @@ namespace App\Tests\BudgetEnvelopeContext\Application\Handlers\CommandHandlers;
 
 use App\BudgetEnvelopeContext\Application\Commands\DeleteABudgetEnvelopeCommand;
 use App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\DeleteABudgetEnvelopeCommandHandler;
-use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreatedDomainEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeAddedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDeletedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRenamedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeIsNotOwnedByUserException;
@@ -47,12 +47,13 @@ class DeleteABudgetEnvelopeCommandHandlerTest extends TestCase
                 [
                     [
                         'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                        'type' => BudgetEnvelopeCreatedDomainEvent::class,
+                        'type' => BudgetEnvelopeAddedDomainEvent::class,
                         'occurred_on' => '2020-10-10T12:00:00Z',
                         'payload' => json_encode([
                             'name' => 'test1',
                             'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                             'occurredOn' => '2024-12-07T22:03:35+00:00',
+                            'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                             'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                             'targetedAmount' => '20.00',
                         ]),
@@ -78,12 +79,13 @@ class DeleteABudgetEnvelopeCommandHandlerTest extends TestCase
                 [
                     [
                         'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                        'type' => BudgetEnvelopeCreatedDomainEvent::class,
+                        'type' => BudgetEnvelopeAddedDomainEvent::class,
                         'occurred_on' => '2020-10-10T12:00:00Z',
                         'payload' => json_encode([
                             'name' => 'test1',
                             'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                             'occurredOn' => '2024-12-07T22:03:35+00:00',
+                            'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                             'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                             'targetedAmount' => '20.00',
                         ]),
@@ -96,6 +98,7 @@ class DeleteABudgetEnvelopeCommandHandlerTest extends TestCase
                             'creditMoney' => '5.47',
                             'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                             'occurredOn' => '2024-12-07T22:03:35+00:00',
+                            'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c3',
                             'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                             'isDeleted' => true,
                         ]),
@@ -123,13 +126,14 @@ class DeleteABudgetEnvelopeCommandHandlerTest extends TestCase
                     [
                         [
                             'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                            'type' => BudgetEnvelopeCreatedDomainEvent::class,
+                            'type' => BudgetEnvelopeAddedDomainEvent::class,
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'name' => 'test1',
                                 'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                                 'occurredOn' => '2024-12-07T22:03:35+00:00',
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
+                                'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                                 'targetedAmount' => '2000.00',
                             ]),
                         ],
@@ -141,6 +145,7 @@ class DeleteABudgetEnvelopeCommandHandlerTest extends TestCase
                                 'name' => 'test2',
                                 'userId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                                 'occurredOn' => '2024-12-07T22:03:35+00:00',
+                                'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c3',
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                             ]),
                         ],

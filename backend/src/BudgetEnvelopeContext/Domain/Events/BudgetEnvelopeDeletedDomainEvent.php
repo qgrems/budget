@@ -11,13 +11,19 @@ final class BudgetEnvelopeDeletedDomainEvent implements DomainEventInterface
     public string $aggregateId;
     public string $userId;
     public bool $isDeleted;
+    public string $requestId;
     public \DateTimeImmutable $occurredOn;
 
-    public function __construct(string $aggregateId, string $userId, bool $isDeleted)
-    {
+    public function __construct(
+        string $aggregateId,
+        string $userId,
+        bool $isDeleted,
+        string $requestId = DomainEventInterface::DEFAULT_REQUEST_ID,
+    ) {
         $this->aggregateId = $aggregateId;
         $this->userId = $userId;
         $this->isDeleted = $isDeleted;
+        $this->requestId = $requestId;
         $this->occurredOn = new \DateTimeImmutable();
     }
 
@@ -26,6 +32,7 @@ final class BudgetEnvelopeDeletedDomainEvent implements DomainEventInterface
     {
         return [
             'aggregateId' => $this->aggregateId,
+            'requestId' => $this->requestId,
             'userId' => $this->userId,
             'isDeleted' => $this->isDeleted,
             'occurredOn' => $this->occurredOn->format(\DateTimeInterface::ATOM),
@@ -35,7 +42,7 @@ final class BudgetEnvelopeDeletedDomainEvent implements DomainEventInterface
     #[\Override]
     public static function fromArray(array $data): self
     {
-        $event = new self($data['aggregateId'], $data['userId'], $data['isDeleted']);
+        $event = new self($data['aggregateId'], $data['userId'], $data['isDeleted'], $data['requestId']);
         $event->occurredOn = new \DateTimeImmutable($data['occurredOn']);
 
         return $event;

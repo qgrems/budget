@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { useEnvelopes } from "../domain/envelope/envelopeHooks"
 import { PlusCircle, Trash2, Edit2, Loader2, Check, X } from "lucide-react"
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
@@ -11,6 +11,7 @@ import { useError } from "../contexts/ErrorContext"
 import { useValidMessage } from "../contexts/ValidContext"
 import Link from "next/link"
 import { DescriptionModal } from "./DescriptionModal"
+import type React from "react"
 
 export default function EnvelopeManagement() {
     const {
@@ -38,7 +39,7 @@ export default function EnvelopeManagement() {
     const { t } = useTranslation()
     const { error, setError } = useError()
     const { validMessage, setValidMessage } = useValidMessage()
-    const handleAmountChange = (id: string, value: string, isNewEnvelope = false) => {
+    const handleAmountChange = useCallback((id: string, value: string, isNewEnvelope = false) => {
         // Remove any non-digit and non-dot characters
         value = value.replace(/[^\d.]/g, "")
 
@@ -74,16 +75,20 @@ export default function EnvelopeManagement() {
         } else {
             setAmounts((prev) => ({ ...prev, [id]: value }))
         }
-    }
+    }, [])
 
-    const formatAmount = (amount: string): string => {
-        if (!amount) return ""
-        let [integerPart, decimalPart] = amount.split(".")
-        integerPart = integerPart || "0"
-        decimalPart = decimalPart || "00"
-        decimalPart = decimalPart.padEnd(2, "0").slice(0, 2)
-        return `${integerPart}.${decimalPart}`
-    }
+    const formatAmount = useMemo(
+        () =>
+            (amount: string): string => {
+                if (!amount) return ""
+                let [integerPart, decimalPart] = amount.split(".")
+                integerPart = integerPart || "0"
+                decimalPart = decimalPart || "00"
+                decimalPart = decimalPart.padEnd(2, "0").slice(0, 2)
+                return `${integerPart}.${decimalPart}`
+            },
+        [],
+    )
 
     const handleCreditEnvelope = (id: string, currentAmount: string, targetedAmount: string) => {
         if (amounts[id]) {
@@ -201,22 +206,190 @@ export default function EnvelopeManagement() {
         // Check if the input is a valid number or a partial decimal input
         return !/^\d{1,10}(\.\d{0,2})?$/.test(value)
     }
-    const validateAmount = (
-        amount: string,
-        currentAmount: string,
-        targetedAmount: string,
-        isCredit: boolean,
-    ): boolean => {
-        const amountFloat = Number.parseFloat(amount)
-        const currentAmountFloat = Number.parseFloat(currentAmount)
-        const targetedAmountFloat = Number.parseFloat(targetedAmount)
+    const validateAmount = useMemo(
+        () =>
+            (amount: string, currentAmount: string, targetedAmount: string, isCredit: boolean): boolean => {
+                const amountFloat = Number.parseFloat(amount)
+                const currentAmountFloat = Number.parseFloat(currentAmount)
+                const targetedAmountFloat = Number.parseFloat(targetedAmount)
 
-        if (isCredit) {
-            return currentAmountFloat + amountFloat <= targetedAmountFloat
-        } else {
-            return currentAmountFloat - amountFloat >= 0
-        }
-    }
+                if (isCredit) {
+                    return currentAmountFloat + amountFloat <= targetedAmountFloat
+                } else {
+                    return currentAmountFloat - amountFloat >= 0
+                }
+            },
+        [],
+    )
+
+    const renderedEnvelopes = useMemo(() => {
+        return envelopesData?.envelopes.map((envelope) => (
+            <Link key={envelope.uuid} href={`/envelopes/${envelope.uuid}`} className="block">
+                <motion.div
+                    layout
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.3 }}
+                    className={`neomorphic p-3 md:p-4 ${envelope.pending ? "opacity-70" : ""} ${envelope.deleted ? "bg-red-100" : ""}`}
+                    onClick={(e) => {
+                        // Prevent navigation if clicking on interactive elements
+                        if (
+                            e.target instanceof HTMLButtonElement ||
+                            e.target instanceof HTMLInputElement ||
+                            (e.target instanceof HTMLElement && e.target.closest("button, input"))
+                        ) {
+                            e.preventDefault()
+                        }
+                    }}
+                >
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex-grow">
+                            <div className="flex items-center">
+                                {editingName && editingName.id === envelope.uuid ? (
+                                    <div className="flex items-center flex-grow">
+                                        <input
+                                            type="text"
+                                            value={editingName.name}
+                                            onChange={(e) => handleNameChange(e.target.value)}
+                                            className="flex-grow p-1 mr-2 neomorphic-input text-lg md:text-xl font-bold"
+                                            autoFocus
+                                        />
+                                        <button
+                                            onClick={(e) => handleUpdateEnvelopeName(e)}
+                                            className="p-1 neomorphic-button text-green-500 mr-1"
+                                            disabled={envelope.pending || !!pendingActions[envelope.uuid]}
+                                        >
+                                            <Check className="h-4 w-4 md:h-5 md:w-5" />
+                                        </button>
+                                        <button
+                                            onClick={cancelNameEdit}
+                                            className="p-1 neomorphic-button text-red-500"
+                                            disabled={envelope.pending || !!pendingActions[envelope.uuid]}
+                                        >
+                                            <X className="h-4 w-4 md:h-5 md:w-5" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <h3 className="text-base md:text-lg font-bold mr-2">{envelope.name}</h3>
+                                        <button
+                                            onClick={(e) => {
+                                                e.preventDefault()
+                                                handleStartEditingName(envelope.uuid, envelope.name)
+                                            }}
+                                            className="p-1 neomorphic-button text-primary"
+                                            disabled={envelope.pending || !!pendingActions[envelope.uuid]}
+                                        >
+                                            <Edit2 className="h-4 w-4 md:h-5 md:w-5" />
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                        <div className="flex items-center">
+                            {envelope.pending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+                        </div>
+                    </div>
+                    <div className="flex justify-between items-center mb-4">
+                        <div>
+                            <p className="text-lg md:text-xl font-semibold">
+                                ${Number.parseFloat(envelope.currentAmount).toFixed(2)}
+                            </p>
+                            <p className="text-xs md:text-sm text-muted-foreground">
+                                {t("envelopes.of")} ${Number.parseFloat(envelope.targetedAmount).toFixed(2)}
+                            </p>
+                        </div>
+                        <div className="w-16 h-16 md:w-20 md:h-20 neomorphic-circle flex items-center justify-center">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={[
+                                            { name: "Used", value: Number.parseFloat(envelope.currentAmount) },
+                                            {
+                                                name: "Remaining",
+                                                value: Number.parseFloat(envelope.targetedAmount) - Number.parseFloat(envelope.currentAmount),
+                                            },
+                                        ]}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={20}
+                                        outerRadius={30}
+                                        fill="#8884d8"
+                                        dataKey="value"
+                                        strokeWidth={0}
+                                    >
+                                        <Cell key="cell-0" fill="#4CAF50" />
+                                        <Cell key="cell-1" fill="#E0E0E0" />
+                                    </Pie>
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+                    <div className="space-y-4">
+                        <div className="flex flex-col space-y-2">
+                            <div className="flex items-center space-x-2">
+                                <input
+                                    type="text"
+                                    inputMode="decimal"
+                                    value={amounts[envelope.uuid] || ""}
+                                    onChange={(e) => handleAmountChange(envelope.uuid, e.target.value)}
+                                    placeholder={t("envelopes.amount")}
+                                    className="w-1/2 p-1 md:p-2 neomorphic-input text-sm md:text-base"
+                                    disabled={envelope.pending || !!pendingActions[envelope.uuid]}
+                                />
+                                <button
+                                    onClick={() => handleCreditEnvelope(envelope.uuid, envelope.currentAmount, envelope.targetedAmount)}
+                                    className="w-1/4 p-1 md:p-2 neomorphic-button text-green-500 text-xs md:text-sm font-semibold"
+                                    disabled={
+                                        envelope.pending ||
+                                        !!pendingActions[envelope.uuid] ||
+                                        isInvalidInput(amounts[envelope.uuid] || "") ||
+                                        !amounts[envelope.uuid]
+                                    }
+                                >
+                                    {t("envelopes.credit")}
+                                </button>
+                                <button
+                                    onClick={() => handleDebitEnvelope(envelope.uuid, envelope.currentAmount)}
+                                    className="w-1/4 p-1 md:p-2 neomorphic-button text-red-500 text-xs md:text-sm font-semibold"
+                                    disabled={
+                                        envelope.pending ||
+                                        !!pendingActions[envelope.uuid] ||
+                                        isInvalidInput(amounts[envelope.uuid] || "") ||
+                                        !amounts[envelope.uuid]
+                                    }
+                                >
+                                    {t("envelopes.debit")}
+                                </button>
+                            </div>
+                        </div>
+                        <div className="flex justify-end mt-4">
+                            <button
+                                onClick={() => openDeleteModal(envelope.uuid, envelope.name)}
+                                className="p-2 neomorphic-button text-red-500 hover:text-red-600"
+                                disabled={envelope.pending || !!pendingActions[envelope.uuid]}
+                            >
+                                <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
+                            </button>
+                        </div>
+                    </div>
+                    {envelope.deleted && <p className="text-red-500 mt-2">Deleting...</p>}
+                </motion.div>
+            </Link>
+        ))
+    }, [
+        envelopesData,
+        amounts,
+        editingName,
+        pendingActions,
+        handleAmountChange,
+        handleCreditEnvelope,
+        handleDebitEnvelope,
+        handleUpdateEnvelopeName,
+        openDeleteModal,
+    ])
+
     return (
         <div className="space-y-8">
             {error && (
@@ -242,167 +415,7 @@ export default function EnvelopeManagement() {
                 </div>
             ) : (
                 <AnimatePresence initial={false}>
-                    <motion.div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                        {envelopesData?.envelopes.map((envelope) => (
-                            <Link key={envelope.uuid} href={`/envelopes/${envelope.uuid}`} className="block">
-                                <motion.div
-                                    layout
-                                    initial={{ opacity: 0, scale: 0.8 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.8 }}
-                                    transition={{ duration: 0.3 }}
-                                    className={`neomorphic p-3 md:p-4 ${envelope.pending ? "opacity-70" : ""} ${envelope.deleted ? "bg-red-100" : ""}`}
-                                    onClick={(e) => {
-                                        // Prevent navigation if clicking on interactive elements
-                                        if (
-                                            e.target instanceof HTMLButtonElement ||
-                                            e.target instanceof HTMLInputElement ||
-                                            (e.target instanceof HTMLElement && e.target.closest("button, input"))
-                                        ) {
-                                            e.preventDefault()
-                                        }
-                                    }}
-                                >
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className="flex-grow">
-                                            <div className="flex items-center">
-                                                {editingName && editingName.id === envelope.uuid ? (
-                                                    <div className="flex items-center flex-grow">
-                                                        <input
-                                                            type="text"
-                                                            value={editingName.name}
-                                                            onChange={(e) => handleNameChange(e.target.value)}
-                                                            className="flex-grow p-1 mr-2 neomorphic-input text-lg md:text-xl font-bold"
-                                                            autoFocus
-                                                        />
-                                                        <button
-                                                            onClick={(e) => handleUpdateEnvelopeName(e)}
-                                                            className="p-1 neomorphic-button text-green-500 mr-1"
-                                                            disabled={envelope.pending || !!pendingActions[envelope.uuid]}
-                                                        >
-                                                            <Check className="h-4 w-4 md:h-5 md:w-5" />
-                                                        </button>
-                                                        <button
-                                                            onClick={cancelNameEdit}
-                                                            className="p-1 neomorphic-button text-red-500"
-                                                            disabled={envelope.pending || !!pendingActions[envelope.uuid]}
-                                                        >
-                                                            <X className="h-4 w-4 md:h-5 md:w-5" />
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <>
-                                                        <h3 className="text-base md:text-lg font-bold mr-2">{envelope.name}</h3>
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.preventDefault()
-                                                                handleStartEditingName(envelope.uuid, envelope.name)
-                                                            }}
-                                                            className="p-1 neomorphic-button text-primary"
-                                                            disabled={envelope.pending || !!pendingActions[envelope.uuid]}
-                                                        >
-                                                            <Edit2 className="h-4 w-4 md:h-5 md:w-5" />
-                                                        </button>
-                                                    </>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center">
-                                            {envelope.pending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-between items-center mb-4">
-                                        <div>
-                                            <p className="text-lg md:text-xl font-semibold">
-                                                ${Number.parseFloat(envelope.currentAmount).toFixed(2)}
-                                            </p>
-                                            <p className="text-xs md:text-sm text-muted-foreground">
-                                                {t("envelopes.of")} ${Number.parseFloat(envelope.targetedAmount).toFixed(2)}
-                                            </p>
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 neomorphic-circle flex items-center justify-center">
-                                            <ResponsiveContainer width="100%" height="100%">
-                                                <PieChart>
-                                                    <Pie
-                                                        data={[
-                                                            { name: "Used", value: Number.parseFloat(envelope.currentAmount) },
-                                                            {
-                                                                name: "Remaining",
-                                                                value:
-                                                                    Number.parseFloat(envelope.targetedAmount) -
-                                                                    Number.parseFloat(envelope.currentAmount),
-                                                            },
-                                                        ]}
-                                                        cx="50%"
-                                                        cy="50%"
-                                                        innerRadius={20}
-                                                        outerRadius={30}
-                                                        fill="#8884d8"
-                                                        dataKey="value"
-                                                        strokeWidth={0}
-                                                    >
-                                                        <Cell key="cell-0" fill="#4CAF50" />
-                                                        <Cell key="cell-1" fill="#E0E0E0" />
-                                                    </Pie>
-                                                </PieChart>
-                                            </ResponsiveContainer>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-4">
-                                        <div className="flex flex-col space-y-2">
-                                            <div className="flex items-center space-x-2">
-                                                <input
-                                                    type="text"
-                                                    inputMode="decimal"
-                                                    value={amounts[envelope.uuid] || ""}
-                                                    onChange={(e) => handleAmountChange(envelope.uuid, e.target.value)}
-                                                    placeholder={t("envelopes.amount")}
-                                                    className="w-1/2 p-1 md:p-2 neomorphic-input text-sm md:text-base"
-                                                    disabled={envelope.pending || !!pendingActions[envelope.uuid]}
-                                                />
-                                                <button
-                                                    onClick={() =>
-                                                        handleCreditEnvelope(envelope.uuid, envelope.currentAmount, envelope.targetedAmount)
-                                                    }
-                                                    className="w-1/4 p-1 md:p-2 neomorphic-button text-green-500 text-xs md:text-sm font-semibold"
-                                                    disabled={
-                                                        envelope.pending ||
-                                                        !!pendingActions[envelope.uuid] ||
-                                                        isInvalidInput(amounts[envelope.uuid] || "") ||
-                                                        !amounts[envelope.uuid]
-                                                    }
-                                                >
-                                                    {t("envelopes.credit")}
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDebitEnvelope(envelope.uuid, envelope.currentAmount)}
-                                                    className="w-1/4 p-1 md:p-2 neomorphic-button text-red-500 text-xs md:text-sm font-semibold"
-                                                    disabled={
-                                                        envelope.pending ||
-                                                        !!pendingActions[envelope.uuid] ||
-                                                        isInvalidInput(amounts[envelope.uuid] || "") ||
-                                                        !amounts[envelope.uuid]
-                                                    }
-                                                >
-                                                    {t("envelopes.debit")}
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div className="flex justify-end mt-4">
-                                            <button
-                                                onClick={() => openDeleteModal(envelope.uuid, envelope.name)}
-                                                className="p-2 neomorphic-button text-red-500 hover:text-red-600"
-                                                disabled={envelope.pending || !!pendingActions[envelope.uuid]}
-                                            >
-                                                <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                    {envelope.deleted && <p className="text-red-500 mt-2">Deleting...</p>}
-                                </motion.div>
-                            </Link>
-                        ))}
-                    </motion.div>
+                    <motion.div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{renderedEnvelopes}</motion.div>
                 </AnimatePresence>
             )}
             {isCreating && (

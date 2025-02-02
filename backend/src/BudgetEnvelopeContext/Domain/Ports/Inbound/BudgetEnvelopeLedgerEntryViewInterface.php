@@ -15,11 +15,9 @@ interface BudgetEnvelopeLedgerEntryViewInterface
 
     public static function fromBudgetEnvelopeCreditedDomainEvent(
         BudgetEnvelopeCreditedDomainEvent $budgetEnvelopeCreditedDomainEvent,
-        string $userUuid,
     ): self;
 
     public static function fromBudgetEnvelopeDebitedDomainEvent(
         BudgetEnvelopeDebitedDomainEvent $budgetEnvelopeDebitedDomainEvent,
-        string $userUuid,
     ): self;
 }

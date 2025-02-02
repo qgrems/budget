@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\BudgetEnvelopeContext\ReadModels\Views;
 
-use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreatedDomainEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeAddedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDebitedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDeletedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRenamedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeReplayedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRewoundDomainEvent;
-use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeTargetedAmountUpdatedDomainEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeTargetedAmountChangedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeViewInterface;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCurrentAmount;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
@@ -98,23 +98,23 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
         ;
     }
 
-    public static function fromBudgetEnvelopeCreatedDomainEvent(
-        BudgetEnvelopeCreatedDomainEvent $budgetEnvelopeCreatedDomainEvent,
+    public static function fromBudgetEnvelopeAddedDomainEvent(
+        BudgetEnvelopeAddedDomainEvent $budgetEnvelopeAddedDomainEvent,
     ): self {
         return new self(
-            BudgetEnvelopeId::fromString($budgetEnvelopeCreatedDomainEvent->aggregateId),
+            BudgetEnvelopeId::fromString($budgetEnvelopeAddedDomainEvent->aggregateId),
             BudgetEnvelopeTargetedAmount::fromString(
-                $budgetEnvelopeCreatedDomainEvent->targetedAmount,
+                $budgetEnvelopeAddedDomainEvent->targetedAmount,
                 '0.00',
             ),
-            BudgetEnvelopeName::fromString($budgetEnvelopeCreatedDomainEvent->name),
-            BudgetEnvelopeUserId::fromString($budgetEnvelopeCreatedDomainEvent->userId),
+            BudgetEnvelopeName::fromString($budgetEnvelopeAddedDomainEvent->name),
+            BudgetEnvelopeUserId::fromString($budgetEnvelopeAddedDomainEvent->userId),
             BudgetEnvelopeCurrentAmount::fromString(
                 '0.00',
-                $budgetEnvelopeCreatedDomainEvent->targetedAmount,
+                $budgetEnvelopeAddedDomainEvent->targetedAmount,
             ),
-            $budgetEnvelopeCreatedDomainEvent->occurredOn,
-            \DateTime::createFromImmutable($budgetEnvelopeCreatedDomainEvent->occurredOn),
+            $budgetEnvelopeAddedDomainEvent->occurredOn,
+            \DateTime::createFromImmutable($budgetEnvelopeAddedDomainEvent->occurredOn),
             false,
         );
     }
@@ -124,12 +124,12 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
         $budgetEnvelope = null;
 
         foreach ($events as $event) {
-            if ($event['type'] !== BudgetEnvelopeCreatedDomainEvent::class && $budgetEnvelope instanceof self) {
+            if ($event['type'] !== BudgetEnvelopeAddedDomainEvent::class && $budgetEnvelope instanceof self) {
                 $budgetEnvelope->apply($event['type']::fromArray(json_decode($event['payload'], true)));
                 continue;
             }
 
-            $budgetEnvelope = self::fromBudgetEnvelopeCreatedDomainEvent(
+            $budgetEnvelope = self::fromBudgetEnvelopeAddedDomainEvent(
                 $event['type']::fromArray(json_decode($event['payload'], true)),
             );
         }
@@ -145,28 +145,28 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
     private function apply(DomainEventInterface $event): void
     {
         match ($event::class) {
-            BudgetEnvelopeCreatedDomainEvent::class => $this->applyBudgetEnvelopCreatedDomainEvent($event),
+            BudgetEnvelopeAddedDomainEvent::class => $this->applyBudgetEnvelopeAddedDomainEvent($event),
             BudgetEnvelopeRenamedDomainEvent::class => $this->applyBudgetEnvelopeRenamedDomainEvent($event),
             BudgetEnvelopeCreditedDomainEvent::class => $this->applyBudgetEnvelopeCreditedDomainEvent($event),
             BudgetEnvelopeDebitedDomainEvent::class => $this->applyBudgetEnvelopeDebitedDomainEvent($event),
             BudgetEnvelopeDeletedDomainEvent::class => $this->applyBudgetEnvelopeDeletedDomainEvent($event),
             BudgetEnvelopeRewoundDomainEvent::class => $this->applyBudgetEnvelopeRewoundDomainEvent($event),
             BudgetEnvelopeReplayedDomainEvent::class => $this->applyBudgetEnvelopeReplayedDomainEvent($event),
-            BudgetEnvelopeTargetedAmountUpdatedDomainEvent::class => $this->applyBudgetEnvelopeTargetedAmountUpdatedDomainEvent($event),
+            BudgetEnvelopeTargetedAmountChangedDomainEvent::class => $this->applyBudgetEnvelopeTargetedAmountChangedDomainEvent($event),
             default => throw new \RuntimeException('envelopes.unknownEvent'),
         };
     }
 
-    private function applyBudgetEnvelopCreatedDomainEvent(
-        BudgetEnvelopeCreatedDomainEvent $budgetEnvelopeCreatedDomainEvent,
+    private function applyBudgetEnvelopeAddedDomainEvent(
+        BudgetEnvelopeAddedDomainEvent $budgetEnvelopeAddedDomainEvent,
     ): void {
-        $this->uuid = $budgetEnvelopeCreatedDomainEvent->aggregateId;
-        $this->userUuid = $budgetEnvelopeCreatedDomainEvent->userId;
-        $this->name = $budgetEnvelopeCreatedDomainEvent->name;
-        $this->targetedAmount = $budgetEnvelopeCreatedDomainEvent->targetedAmount;
+        $this->uuid = $budgetEnvelopeAddedDomainEvent->aggregateId;
+        $this->userUuid = $budgetEnvelopeAddedDomainEvent->userId;
+        $this->name = $budgetEnvelopeAddedDomainEvent->name;
+        $this->targetedAmount = $budgetEnvelopeAddedDomainEvent->targetedAmount;
         $this->currentAmount = '0.00';
-        $this->createdAt = $budgetEnvelopeCreatedDomainEvent->occurredOn;
-        $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeCreatedDomainEvent->occurredOn);
+        $this->createdAt = $budgetEnvelopeAddedDomainEvent->occurredOn;
+        $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeAddedDomainEvent->occurredOn);
         $this->isDeleted = false;
     }
 
@@ -222,11 +222,11 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
         $this->updatedAt = $budgetEnvelopeReplayedDomainEvent->updatedAt;
     }
 
-    private function applyBudgetEnvelopeTargetedAmountUpdatedDomainEvent(
-        BudgetEnvelopeTargetedAmountUpdatedDomainEvent $budgetEnvelopeTargetedAmountUpdatedDomainEvent,
+    private function applyBudgetEnvelopeTargetedAmountChangedDomainEvent(
+        BudgetEnvelopeTargetedAmountChangedDomainEvent $budgetEnvelopeTargetedAmountChangedDomainEvent,
     ): void {
-        $this->targetedAmount = $budgetEnvelopeTargetedAmountUpdatedDomainEvent->targetedAmount;
-        $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeTargetedAmountUpdatedDomainEvent->occurredOn);
+        $this->targetedAmount = $budgetEnvelopeTargetedAmountChangedDomainEvent->targetedAmount;
+        $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeTargetedAmountChangedDomainEvent->occurredOn);
     }
 
     public function jsonSerialize(): array

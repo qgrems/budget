@@ -56,6 +56,8 @@ class RewindAUserFromEventsCommandHandlerTest extends TestCase
                                 'firstname' => 'David',
                                 'occurredOn' => '2024-12-13T00:26:48+00:00',
                                 'aggregateId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
+                                'userId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
+                                'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                                 'isConsentGiven' => true,
                             ]),
                         ],
@@ -73,6 +75,7 @@ class RewindAUserFromEventsCommandHandlerTest extends TestCase
                 'fr',
                 true,
                 ['ROLE_USER'],
+                '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
             ),
         );
 

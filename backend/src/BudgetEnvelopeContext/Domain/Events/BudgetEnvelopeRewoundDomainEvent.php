@@ -14,6 +14,7 @@ final class BudgetEnvelopeRewoundDomainEvent implements DomainEventInterface
     public string $targetedAmount;
     public string $currentAmount;
     public bool $isDeleted;
+    public string $requestId;
     public \DateTime $updatedAt;
     public \DateTimeImmutable $desiredDateTime;
     public \DateTimeImmutable $occurredOn;
@@ -27,6 +28,7 @@ final class BudgetEnvelopeRewoundDomainEvent implements DomainEventInterface
         string $updatedAt,
         string $desiredDateTime,
         bool $isDeleted,
+        string $requestId = DomainEventInterface::DEFAULT_REQUEST_ID,
     ) {
         $this->aggregateId = $aggregateId;
         $this->userId = $userId;
@@ -37,6 +39,7 @@ final class BudgetEnvelopeRewoundDomainEvent implements DomainEventInterface
         $this->desiredDateTime = new \DateTimeImmutable($desiredDateTime);
         $this->occurredOn = new \DateTimeImmutable();
         $this->isDeleted = $isDeleted;
+        $this->requestId = $requestId;
     }
 
     #[\Override]
@@ -44,6 +47,7 @@ final class BudgetEnvelopeRewoundDomainEvent implements DomainEventInterface
     {
         return [
             'aggregateId' => $this->aggregateId,
+            'requestId' => $this->requestId,
             'userId' => $this->userId,
             'name' => $this->name,
             'targetedAmount' => $this->targetedAmount,
@@ -67,6 +71,7 @@ final class BudgetEnvelopeRewoundDomainEvent implements DomainEventInterface
             $data['desiredDateTime'],
             $data['updatedAt'],
             $data['isDeleted'],
+            $data['requestId'],
         );
         $event->occurredOn = new \DateTimeImmutable($data['occurredOn']);
 

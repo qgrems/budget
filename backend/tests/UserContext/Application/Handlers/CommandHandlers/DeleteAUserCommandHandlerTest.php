@@ -56,6 +56,8 @@ class DeleteAUserCommandHandlerTest extends TestCase
                             'isDeleted' => false,
                             'occurredOn' => '2024-12-07T22:03:35+00:00',
                             'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
+                            'userId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
+                            'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                             'roles' => ['ROLE_USER'],
                         ]),
                     ],
@@ -73,6 +75,7 @@ class DeleteAUserCommandHandlerTest extends TestCase
                 'fr',
                 true,
                 ['ROLE_USER'],
+                '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
             ),
         );
 
@@ -100,6 +103,8 @@ class DeleteAUserCommandHandlerTest extends TestCase
                             'isDeleted' => false,
                             'occurredOn' => '2024-12-07T22:03:35+00:00',
                             'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
+                            'userId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
+                            'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                             'roles' => ['ROLE_USER'],
                         ]),
                     ],
@@ -116,6 +121,7 @@ class DeleteAUserCommandHandlerTest extends TestCase
                 'fr',
                 true,
                 ['ROLE_USER'],
+                '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
             ),
         );
         $this->eventStore->expects($this->never())->method('save');

@@ -6,12 +6,12 @@ namespace App\UserContext\ReadModels\Views;
 
 use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
 use App\SharedContext\Domain\Ports\Inbound\SharedUserInterface;
-use App\UserContext\Domain\Events\UserFirstnameUpdatedDomainEvent;
-use App\UserContext\Domain\Events\UserLanguagePreferenceUpdatedDomainEvent;
-use App\UserContext\Domain\Events\UserLastnameUpdatedDomainEvent;
+use App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent;
+use App\UserContext\Domain\Events\UserLanguagePreferenceChangedDomainEvent;
+use App\UserContext\Domain\Events\UserLastnameChangedDomainEvent;
 use App\UserContext\Domain\Events\UserPasswordResetDomainEvent;
 use App\UserContext\Domain\Events\UserPasswordResetRequestedDomainEvent;
-use App\UserContext\Domain\Events\UserPasswordUpdatedDomainEvent;
+use App\UserContext\Domain\Events\UserPasswordChangedDomainEvent;
 use App\UserContext\Domain\Events\UserReplayedDomainEvent;
 use App\UserContext\Domain\Events\UserRewoundDomainEvent;
 use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
@@ -204,10 +204,10 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
     {
         match (get_class($event)) {
             UserSignedUpDomainEvent::class => $this->applyUserSignedUpDomainEvent($event),
-            UserFirstnameUpdatedDomainEvent::class => $this->applyUserFirstnameUpdatedDomainEvent($event),
-            UserLastnameUpdatedDomainEvent::class => $this->applyUserLastnameUpdatedDomainEvent($event),
-            UserLanguagePreferenceUpdatedDomainEvent::class => $this->applyUserLanguagePreferenceUpdatedDomainEvent($event),
-            UserPasswordUpdatedDomainEvent::class => $this->applyUserPasswordUpdatedDomainEvent($event),
+            UserFirstnameChangedDomainEvent::class => $this->applyUserFirstnameChangedDomainEvent($event),
+            UserLastnameChangedDomainEvent::class => $this->applyUserLastnameChangedDomainEvent($event),
+            UserLanguagePreferenceChangedDomainEvent::class => $this->applyUserLanguagePreferenceChangedDomainEvent($event),
+            UserPasswordChangedDomainEvent::class => $this->applyUserPasswordChangedDomainEvent($event),
             UserPasswordResetRequestedDomainEvent::class => $this->applyUserPasswordResetRequestedDomainEvent($event),
             UserPasswordResetDomainEvent::class => $this->applyUserPasswordResetDomainEvent($event),
             UserReplayedDomainEvent::class => $this->applyUserReplayedDomainEvent($event),
@@ -233,32 +233,32 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
         $this->passwordResetTokenExpiry = null;
     }
 
-    private function applyUserFirstnameUpdatedDomainEvent(
-        UserFirstnameUpdatedDomainEvent $userFirstnameUpdatedDomainEvent,
+    private function applyUserFirstnameChangedDomainEvent(
+        UserFirstnameChangedDomainEvent $userFirstnameChangedDomainEvent,
     ): void {
-        $this->firstname = $userFirstnameUpdatedDomainEvent->firstname;
-        $this->updatedAt = \DateTime::createFromImmutable($userFirstnameUpdatedDomainEvent->occurredOn);
+        $this->firstname = $userFirstnameChangedDomainEvent->firstname;
+        $this->updatedAt = \DateTime::createFromImmutable($userFirstnameChangedDomainEvent->occurredOn);
     }
 
-    private function applyUserLastnameUpdatedDomainEvent(
-        UserLastnameUpdatedDomainEvent $userLastnameUpdatedDomainEvent,
+    private function applyUserLastnameChangedDomainEvent(
+        UserLastnameChangedDomainEvent $userLastnameChangedDomainEvent,
     ): void {
-        $this->lastname = $userLastnameUpdatedDomainEvent->lastname;
-        $this->updatedAt = \DateTime::createFromImmutable($userLastnameUpdatedDomainEvent->occurredOn);
+        $this->lastname = $userLastnameChangedDomainEvent->lastname;
+        $this->updatedAt = \DateTime::createFromImmutable($userLastnameChangedDomainEvent->occurredOn);
     }
 
-    private function applyUserLanguagePreferenceUpdatedDomainEvent(
-        UserLanguagePreferenceUpdatedDomainEvent $userLanguagePreferenceUpdatedDomainEvent,
+    private function applyUserLanguagePreferenceChangedDomainEvent(
+        UserLanguagePreferenceChangedDomainEvent $userLanguagePreferenceChangedDomainEvent,
     ): void {
-        $this->languagePreference = $userLanguagePreferenceUpdatedDomainEvent->languagePreference;
-        $this->updatedAt = \DateTime::createFromImmutable($userLanguagePreferenceUpdatedDomainEvent->occurredOn);
+        $this->languagePreference = $userLanguagePreferenceChangedDomainEvent->languagePreference;
+        $this->updatedAt = \DateTime::createFromImmutable($userLanguagePreferenceChangedDomainEvent->occurredOn);
     }
 
-    private function applyUserPasswordUpdatedDomainEvent(
-        UserPasswordUpdatedDomainEvent $userPasswordUpdatedDomainEvent,
+    private function applyUserPasswordChangedDomainEvent(
+        UserPasswordChangedDomainEvent $userPasswordChangedDomainEvent,
     ): void {
-        $this->password = $userPasswordUpdatedDomainEvent->newPassword;
-        $this->updatedAt = \DateTime::createFromImmutable($userPasswordUpdatedDomainEvent->occurredOn);
+        $this->password = $userPasswordChangedDomainEvent->newPassword;
+        $this->updatedAt = \DateTime::createFromImmutable($userPasswordChangedDomainEvent->occurredOn);
     }
 
     private function applyUserPasswordResetRequestedDomainEvent(

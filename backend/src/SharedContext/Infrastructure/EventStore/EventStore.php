@@ -8,7 +8,6 @@ use App\SharedContext\Domain\Exceptions\PublishEventsException;
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
 use App\SharedContext\Domain\Services\RequestIdProvider;
-use App\UserContext\Domain\Ports\Inbound\UserDomainEventInterface;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -29,7 +28,7 @@ final readonly class EventStore implements EventStoreInterface
     public function load(string $uuid, ?\DateTimeImmutable $desiredDateTime = null): \Generator
     {
         $queryBuilder = $this->connection->createQueryBuilder()
-            ->select('aggregate_id', 'type', 'payload', 'occurred_on')
+            ->select('aggregate_id', 'type', 'payload', 'occurred_on', 'request_id', 'user_id')
             ->from('event_store')
             ->where('aggregate_id = :id')
             ->setParameter('id', $uuid)
@@ -43,10 +42,13 @@ final readonly class EventStore implements EventStoreInterface
         yield from $queryBuilder->executeQuery()->iterateAssociative();
     }
 
-    public function loadByDomainEvents(string $uuid, array $domainEventClasses, ?\DateTimeImmutable $desiredDateTime = null): \Generator
-    {
+    public function loadByDomainEvents(
+        string $uuid,
+        array $domainEventClasses,
+        ?\DateTimeImmutable $desiredDateTime = null
+    ): \Generator {
         $queryBuilder = $this->connection->createQueryBuilder()
-            ->select('aggregate_id', 'type', 'payload', 'occurred_on')
+            ->select('aggregate_id', 'type', 'payload', 'occurred_on', 'request_id', 'user_id')
             ->from('event_store')
             ->where('aggregate_id = :id')
             ->setParameter('id', $uuid)
@@ -70,19 +72,18 @@ final readonly class EventStore implements EventStoreInterface
 
             foreach ($events as $event) {
                 $currentVersion = $this->getCurrentVersion($event->aggregateId);
-
                 $this->connection->insert('event_store', [
                     'aggregate_id' => $event->aggregateId,
                     'type' => get_class($event),
                     'payload' => json_encode($event->toArray(), JSON_THROW_ON_ERROR),
                     'occurred_on' => $event->occurredOn->format('Y-m-d H:i:s'),
                     'version' => $currentVersion + 1,
-                    'request_id' => $this->requestIdProvider->requestId ?? 'admin',
-                    'user_id' => $event instanceof UserDomainEventInterface ? $event->aggregateId : $event->userId,
+                    'request_id' => $this->requestIdProvider->requestId,
+                    'user_id' => $event->userId,
                 ]);
             }
 
-            $this->publisher->publishEvents($events);
+            $this->publisher->publishDomainEvents($events);
             $this->connection->commit();
         } catch (Exception $exception) {
             $this->connection->rollBack();
