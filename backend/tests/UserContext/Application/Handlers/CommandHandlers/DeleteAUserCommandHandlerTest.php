@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
+use App\SharedContext\Domain\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use App\UserContext\Application\Commands\DeleteAUserCommand;
@@ -22,6 +23,7 @@ class DeleteAUserCommandHandlerTest extends TestCase
     private EventEncryptorInterface&MockObject $eventEncryptor;
     private EventSourcedRepository $eventSourcedRepository;
     private DeleteAUserCommandHandler $handler;
+    private EventClassMap $eventClassMap;
 
     #[\Override]
     protected function setUp(): void
@@ -29,9 +31,11 @@ class DeleteAUserCommandHandlerTest extends TestCase
         $this->eventStore = $this->createMock(EventStoreInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
         $this->eventEncryptor = $this->createMock(EventEncryptorInterface::class);
+        $this->eventClassMap = new EventClassMap();
         $this->handler = new DeleteAUserCommandHandler(
             $this->eventSourcedRepository,
             $this->eventEncryptor,
+            $this->eventClassMap,
         );
     }
 
@@ -44,7 +48,8 @@ class DeleteAUserCommandHandlerTest extends TestCase
                 [
                     [
                         'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                        'type' => UserSignedUpDomainEvent::class,
+                        'event_name' => UserSignedUpDomainEvent::class,
+                        'stream_version' => 0,
                         'occurred_on' => '2020-10-10T12:00:00Z',
                         'payload' => json_encode([
                             'email' => 'test@mail.com',
@@ -91,7 +96,8 @@ class DeleteAUserCommandHandlerTest extends TestCase
                 [
                     [
                         'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                        'type' => UserSignedUpDomainEvent::class,
+                        'event_name' => UserSignedUpDomainEvent::class,
+                        'stream_version' => 0,
                         'occurred_on' => '2020-10-10T12:00:00Z',
                         'payload' => json_encode([
                             'email' => 'test@mail.com',

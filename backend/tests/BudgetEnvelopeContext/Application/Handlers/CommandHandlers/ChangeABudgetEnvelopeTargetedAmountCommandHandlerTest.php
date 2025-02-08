@@ -20,6 +20,7 @@ use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeContext\Presentation\HTTP\DTOs\ChangeABudgetEnvelopeTargetedAmountInput;
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
+use App\SharedContext\Domain\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -29,6 +30,7 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
 {
     private ChangeABudgetEnvelopeTargetedAmountCommandHandler $changeABudgetEnvelopeTargetedAmountCommandHandler;
     private EventStoreInterface&MockObject $eventStore;
+    private EventClassMap $eventClassMap;
     private EventSourcedRepository $eventSourcedRepository;
 
     #[\Override]
@@ -36,9 +38,11 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
     {
         $this->eventStore = $this->createMock(EventStoreInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
+        $this->eventClassMap = new EventClassMap();
 
         $this->changeABudgetEnvelopeTargetedAmountCommandHandler = new ChangeABudgetEnvelopeTargetedAmountCommandHandler(
             $this->eventSourcedRepository,
+            $this->eventClassMap,
         );
     }
 
@@ -60,7 +64,8 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
                     [
                         [
                             'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                            'type' => BudgetEnvelopeAddedDomainEvent::class,
+                            'event_name' => BudgetEnvelopeAddedDomainEvent::class,
+                            'stream_version' => 0,
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'name' => 'test1',
@@ -73,7 +78,8 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
                         ],
                         [
                             'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                            'type' => BudgetEnvelopeRenamedDomainEvent::class,
+                            'event_name' => BudgetEnvelopeRenamedDomainEvent::class,
+                            'stream_version' => 1,
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'name' => 'test2',
@@ -85,7 +91,8 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
                         ],
                         [
                             'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                            'type' => BudgetEnvelopeCreditedDomainEvent::class,
+                            'event_name' => BudgetEnvelopeCreditedDomainEvent::class,
+                            'stream_version' => 2,
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'creditMoney' => '5.47',
@@ -98,7 +105,8 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
                         ],
                         [
                             'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                            'type' => BudgetEnvelopeDebitedDomainEvent::class,
+                            'event_name' => BudgetEnvelopeDebitedDomainEvent::class,
+                            'stream_version' => 3,
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'debitMoney' => '2.46',
@@ -156,7 +164,8 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
                     [
                         [
                             'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                            'type' => BudgetEnvelopeAddedDomainEvent::class,
+                            'event_name' => BudgetEnvelopeAddedDomainEvent::class,
+                            'stream_version' => 0,
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'name' => 'test1',
@@ -169,7 +178,8 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
                         ],
                         [
                             'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                            'type' => BudgetEnvelopeCreditedDomainEvent::class,
+                            'event_name' => BudgetEnvelopeCreditedDomainEvent::class,
+                            'stream_version' => 1,
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'creditMoney' => '2000.00',
@@ -208,7 +218,8 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
                     [
                         [
                             'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                            'type' => BudgetEnvelopeAddedDomainEvent::class,
+                            'event_name' => BudgetEnvelopeAddedDomainEvent::class,
+                            'stream_version' => 0,
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'name' => 'test1',
@@ -221,7 +232,8 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
                         ],
                         [
                             'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                            'type' => BudgetEnvelopeDeletedDomainEvent::class,
+                            'event_name' => BudgetEnvelopeDeletedDomainEvent::class,
+                            'stream_version' => 1,
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'targetedAmount' => '5.47',
@@ -274,7 +286,8 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
                     [
                         [
                             'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                            'type' => BudgetEnvelopeAddedDomainEvent::class,
+                            'event_name' => BudgetEnvelopeAddedDomainEvent::class,
+                            'stream_version' => 0,
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'name' => 'test1',
@@ -287,7 +300,8 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
                         ],
                         [
                             'aggregate_id' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
-                            'type' => BudgetEnvelopeRenamedDomainEvent::class,
+                            'event_name' => BudgetEnvelopeRenamedDomainEvent::class,
+                            'stream_version' => 1,
                             'occurred_on' => '2020-10-10T12:00:00Z',
                             'payload' => json_encode([
                                 'name' => 'test2',

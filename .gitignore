@@ -8,6 +8,12 @@
 /backend/public/bundles/
 /backend/var/
 /backend/vendor/
+/backend/.DS_Store
+/backend/.gitignore
+/backend/migrations/.DS_Store
+/backend/supervisord.log
+/backend/supervisord.pid
+/backend/translations/.gitignore
 ###< symfony/framework-bundle ###
 
 ###> phpstan/phpstan ###
@@ -33,5 +39,8 @@ backend/config/jwt/*.pem
 /frontend/.next
 /frontend/node_modules
 ###< next ###
+
+/websocket/.env
+/websocket/server.log
 
 .idea

@@ -7,11 +7,10 @@ namespace App\SharedContext\Infrastructure\Entities;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: 'event_store', uniqueConstraints: [
-    new ORM\UniqueConstraint(name: 'unique_aggregate_version', columns: ['aggregate_id', 'type', 'version'])
-])]
-#[ORM\Index(name: 'idx_aggregate_id', columns: ['aggregate_id'])]
-#[ORM\Index(name: 'idx_type', columns: ['type'])]
+#[ORM\Table(name: 'event_store')]
+#[ORM\UniqueConstraint(name: 'unique_stream_version', columns: ['stream_id', 'stream_version'])]
+#[ORM\Index(name: 'idx_stream_id', columns: ['stream_id'])]
+#[ORM\Index(name: 'idx_event_name', columns: ['event_name'])]
 #[ORM\Index(name: 'idx_user_id', columns: ['user_id'])]
 #[ORM\Index(name: 'idx_occurred_on', columns: ['occurred_on'])]
 final class EventStore
@@ -28,13 +27,13 @@ final class EventStore
         }
     }
 
-    #[ORM\Column(name: 'aggregate_id', type: 'string', length: 36)]
-    private string $aggregateId {
+    #[ORM\Column(name: 'stream_id', type: 'string', length: 36)]
+    private string $streamId {
         get {
-            return $this->aggregateId;
+            return $this->streamId;
         }
         set {
-            $this->aggregateId = $value;
+            $this->streamId = $value;
         }
     }
 
@@ -48,23 +47,23 @@ final class EventStore
         }
     }
 
-    #[ORM\Column(name: 'type', type: 'string', length: 255)]
-    private string $type {
+    #[ORM\Column(name: 'event_name', type: 'string', length: 255)]
+    private string $eventName {
         get {
-            return $this->type;
+            return $this->eventName;
         }
         set {
-            $this->type = $value;
+            $this->eventName = $value;
         }
     }
 
-    #[ORM\Column(name: 'version', type: 'integer', options: ['default' => 0])]
-    public int $version = 0 {
+    #[ORM\Column(name: 'stream_version', type: 'integer', options: ['default' => 0])]
+    public int $streamVersion = 0 {
         get {
-            return $this->version;
+            return $this->streamVersion;
         }
         set {
-            $this->version = $value;
+            $this->streamVersion = $value;
         }
     }
 
@@ -85,6 +84,16 @@ final class EventStore
         }
         set {
             $this->payload = $value;
+        }
+    }
+
+    #[ORM\Column(name: 'meta_data', type: 'json')]
+    private array $metaData = [] {
+        get {
+            return $this->metaData;
+        }
+        set {
+            $this->metaData = $value;
         }
     }
 

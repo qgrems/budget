@@ -26,6 +26,7 @@ use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeName;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
+use App\SharedContext\Domain\Ports\Inbound\EventClassMapInterface;
 use App\SharedContext\Domain\Traits\DomainEventsCapabilityTrait;
 
 final class BudgetEnvelope
@@ -39,18 +40,27 @@ final class BudgetEnvelope
     private BudgetEnvelopeName $budgetEnvelopeName;
     private \DateTime $updatedAt;
     private \DateTimeImmutable $addedAt;
-    private bool $isDeleted;
+    private int $aggregateVersion = 0;
+    private bool $isDeleted = false;
 
     private function __construct()
     {
     }
 
-    public static function fromEvents(\Generator $events): self
+    public static function fromEvents(\Generator $events, EventClassMapInterface $eventClassMap): self
     {
         $aggregate = new self();
 
         foreach ($events as $event) {
-            $aggregate->apply($event['type']::fromArray(json_decode($event['payload'], true)));
+            $aggregate->apply(
+                $eventClassMap->getEventPathByClassName($event['event_name'])::fromArray(
+                    json_decode(
+                        $event['payload'],
+                        true,
+                    )
+                ),
+            );
+            $aggregate->aggregateVersion = $event['stream_version'];
         }
 
         return $aggregate;
@@ -220,6 +230,11 @@ final class BudgetEnvelope
         );
         $this->apply($budgetEnvelopeReplayedDomainEvent);
         $this->raiseDomainEvents($budgetEnvelopeReplayedDomainEvent);
+    }
+
+    public function aggregateVersion(): int
+    {
+        return $this->aggregateVersion;
     }
 
     private function apply(DomainEventInterface $event): void

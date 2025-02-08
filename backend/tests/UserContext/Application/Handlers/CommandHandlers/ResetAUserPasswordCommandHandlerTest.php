@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
+use App\SharedContext\Domain\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use App\UserContext\Application\Commands\ResetAUserPasswordCommand;
@@ -37,6 +38,7 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
     private PasswordHasherInterface&MockObject $passwordHasher;
     private EventSourcedRepository $eventSourcedRepository;
     private ResetAUserPasswordCommandHandler $handler;
+    private EventClassMap $eventClassMap;
 
     #[\Override]
     protected function setUp(): void
@@ -46,11 +48,13 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
         $this->passwordHasher = $this->createMock(PasswordHasherInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
         $this->eventEncryptor = $this->createMock(EventEncryptorInterface::class);
+        $this->eventClassMap = new EventClassMap();
         $this->handler = new ResetAUserPasswordCommandHandler(
             $this->userViewRepository,
             $this->eventSourcedRepository,
             $this->passwordHasher,
             $this->eventEncryptor,
+            $this->eventClassMap,
         );
     }
 
@@ -83,7 +87,8 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
                 [
                     [
                         'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                        'type' => UserSignedUpDomainEvent::class,
+                        'event_name' => UserSignedUpDomainEvent::class,
+                        'stream_version' => 0,
                         'occurred_on' => new \DateTimeImmutable()->format(\DateTime::ATOM),
                         'payload' => json_encode([
                             'email' => 'test@mail.com',
@@ -102,7 +107,8 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
                     ],
                     [
                         'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                        'type' => UserPasswordResetRequestedDomainEvent::class,
+                        'event_name' => UserPasswordResetRequestedDomainEvent::class,
+                        'stream_version' => 1,
                         'occurred_on' => new \DateTimeImmutable()->format(\DateTime::ATOM),
                         'payload' => json_encode([
                             'aggregateId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
@@ -172,7 +178,8 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
                 [
                     [
                         'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                        'type' => UserSignedUpDomainEvent::class,
+                        'event_name' => UserSignedUpDomainEvent::class,
+                        'stream_version' => 0,
                         'occurred_on' => new \DateTimeImmutable()->format(\DateTime::ATOM),
                         'payload' => json_encode([
                             'email' => 'test@mail.com',

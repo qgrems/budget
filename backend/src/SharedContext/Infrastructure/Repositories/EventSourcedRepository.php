@@ -27,8 +27,8 @@ final readonly class EventSourcedRepository implements EventSourcedRepositoryInt
     }
 
     #[\Override]
-    public function save(array $raisedEvents): void
+    public function save(array $raisedEvents, int $version): void
     {
-        $this->eventStore->save($raisedEvents);
+        $this->eventStore->save($raisedEvents, $version);
     }
 }

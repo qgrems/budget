@@ -11,6 +11,7 @@ use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
+use App\SharedContext\Domain\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -21,15 +22,18 @@ class ReplayABudgetEnvelopeEventsCommandHandlerTest extends TestCase
     private ReplayABudgetEnvelopeEventsCommandHandler $replayABudgetEnvelopeEventsCommandHandler;
     private EventStoreInterface&MockObject $eventStore;
     private EventSourcedRepository $eventSourcedRepository;
+    private EventClassMap $eventClassMap;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->eventStore = $this->createMock(EventStoreInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
+        $this->eventClassMap = new EventClassMap();
 
         $this->replayABudgetEnvelopeEventsCommandHandler = new ReplayABudgetEnvelopeEventsCommandHandler(
-            $this->eventSourcedRepository
+            $this->eventSourcedRepository,
+            $this->eventClassMap,
         );
     }
 
@@ -44,7 +48,8 @@ class ReplayABudgetEnvelopeEventsCommandHandlerTest extends TestCase
             [
                 [
                     'aggregate_id' => '3e6a6763-4c4d-4648-bc3f-e9447dbed12c',
-                    'type' => BudgetEnvelopeAddedDomainEvent::class,
+                    'event_name' => BudgetEnvelopeAddedDomainEvent::class,
+                    'stream_version' => 0,
                     'occurred_on' => '2020-10-10T12:00:00Z',
                     'payload' => json_encode([
                         'name' => 'test1',
@@ -57,7 +62,8 @@ class ReplayABudgetEnvelopeEventsCommandHandlerTest extends TestCase
                 ],
                 [
                     'aggregate_id' => '3e6a6763-4c4d-4648-bc3f-e9447dbed12c',
-                    'type' => BudgetEnvelopeCreditedDomainEvent::class,
+                    'event_name' => BudgetEnvelopeCreditedDomainEvent::class,
+                    'stream_version' => 1,
                     'occurred_on' => '2020-10-10T12:00:00Z',
                     'payload' => json_encode([
                         'creditMoney' => '5.47',

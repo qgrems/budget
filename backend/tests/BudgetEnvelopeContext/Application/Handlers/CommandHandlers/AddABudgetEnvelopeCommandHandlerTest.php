@@ -126,7 +126,8 @@ class AddABudgetEnvelopeCommandHandlerTest extends TestCase
                 [
                     [
                         'aggregate_id' => $addABudgetEnvelopeInput->uuid,
-                        'type' => BudgetEnvelopeAddedDomainEvent::class,
+                        'event_name' => BudgetEnvelopeAddedDomainEvent::class,
+                        'stream_version' => 0,
                         'occurred_on' => '2020-10-10T12:00:00Z',
                         'payload' => json_encode([
                             'name' => 'test1',

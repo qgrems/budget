@@ -7,6 +7,7 @@ namespace App\UserContext\Application\Handlers\CommandHandlers;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\UserContext\Application\Commands\RewindAUserFromEventsCommand;
 use App\UserContext\Domain\Aggregates\User;
+use App\UserContext\Domain\Ports\Inbound\EventClassMapInterface;
 use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 
 final readonly class RewindAUserFromEventsCommandHandler
@@ -14,6 +15,7 @@ final readonly class RewindAUserFromEventsCommandHandler
     public function __construct(
         private EventSourcedRepositoryInterface $eventSourcedRepository,
         private EventEncryptorInterface $eventEncryptor,
+        private EventClassMapInterface $eventClassMap,
     ) {
     }
 
@@ -25,12 +27,13 @@ final readonly class RewindAUserFromEventsCommandHandler
                 $rewindAUserFromEventsCommand->getDesiredDateTime(),
             ),
             $this->eventEncryptor,
+            $this->eventClassMap,
         );
         $aggregate->rewind(
             $rewindAUserFromEventsCommand->getUserId(),
             $this->eventEncryptor,
         );
-        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());
+        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), $aggregate->aggregateVersion());
         $aggregate->clearRaisedDomainEvents();
         $aggregate->clearKeys();
     }
