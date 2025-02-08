@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useTranslation } from '../hooks/useTranslation'
+import ActionButton from './buttons/actionButton'
 
 interface DeleteConfirmationModalProps {
     isOpen: boolean
@@ -31,8 +32,17 @@ export function DeleteConfirmationModal({ isOpen, onClose, onConfirm, envelopeNa
                     {t('envelopes.deleteConfirmation').replace('{name}', envelopeName)}
                 </p>
                 <div className="flex justify-between">
-                    <button onClick={onConfirm} className="py-2 px-4 neomorphic-button text-red-500 text-sm md:text-base">{t('envelopes.delete')}</button>
-                    <button onClick={onClose} className="py-2 px-4 neomorphic-button text-primary text-sm md:text-base">{t('envelopes.cancel')}</button>
+                    <ActionButton
+                        onClick={onConfirm}
+                        label={t('envelopes.delete')}
+                        className="text-red-500"
+                    />
+                    <ActionButton
+                        onClick={onClose}
+                        label={t('envelopes.cancel')}
+                        className="text-primary"
+                    />
+
                 </div>
             </motion.div>
         </motion.div>

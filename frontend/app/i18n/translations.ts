@@ -129,6 +129,18 @@ export const translations = {
             descriptionError: "Description must contain only letters and spaces (max 35 characters)",
             submit: "Submit",
             cancel: "Cancel",
+            validationError: {
+                sameName: "The name is identical, no modification needed.",
+                nameTooLong: "The name must not exceed 25 characters.",
+                sameTargetedAmount: 'The targeted amount is the same, no changes needed.',
+                targetBudgetLessThanCurrentAmount: 'The targeted amount is less than the current amount, modification not possible.',
+                createNewEnvelopeTooLong:"The name must not exceed 25 characters.",
+            },
+            validationSuccess: {
+                name: "The name has been successfully updated.",
+                targetBudget: 'The target budget has been successfully updated.',
+                createNewEnvelope:"The envelope has been successfully created",
+            }
         },
         users: {
             operationOnResetUserPassword: "Reset password token expired or invalid",
@@ -373,6 +385,18 @@ export const translations = {
             descriptionPlaceholder: "Entrez une description (max 35 caractères)",
             descriptionError: "La description ne doit contenir que des lettres et des espaces (max 35 caractères)",
             submit: "Soumettre",
+            validationError: {
+                sameName: "Le nom est identique, aucune modification nécessaire.",
+                nameTooLong: "Le nom ne doit pas dépasser 25 caractères.",
+                sameTargetedAmount: 'Le montant ciblé est identique, aucune modification nécessaire. ',
+                targetBudgetLessThanCurrentAmount: 'Le montant ciblé est inférieur au montant actuel, modification impossible',
+                createNewEnvelopeTooLong:"Le nom ne doit pas dépasser 25 caractères.",
+            },
+            validationSuccess: {
+                name: "Le nom a été mis à jour avec succès.",
+                targetBudget: 'Le budget cible a été changé avec succès.',
+                createNewEnvelope:"L'enveloppe a été créée avec succès.",
+            }
         },
         users: {
             operationOnResetUserPassword: "Token de réinitialisation de mot de passe expiré ou invalide",

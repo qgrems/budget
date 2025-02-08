@@ -77,15 +77,15 @@ export const api = {
         nameEnvelope: (envelopeId: string, name: string, requestId: string) =>
             fetchWithAuth(`/envelopes/${envelopeId}/name`, { method: "POST", body: JSON.stringify({ name }), requestId }),
         updateTargetBudget: (envelopeId: string, targetedAmount: string, currentAmount: string, requestId: string) =>
-            fetchWithAuth(`/envelopes/${envelopeId}/change-target-budget`, {
+            fetchWithAuth(`/envelopes/${envelopeId}/change-targeted-amount`, {
                 method: "POST",
                 body: JSON.stringify({ targetedAmount, currentAmount }),
                 requestId,
             }),
     },
 
-  envelopeQueries: {
-    listEnvelopes: () => fetchWithAuth("/envelopes"),
-    getEnvelopeDetails: (uuid: string) => fetchWithAuth(`/envelopes/${uuid}`),
-  }
+    envelopeQueries: {
+        listEnvelopes: () => fetchWithAuth("/envelopes"),
+        getEnvelopeDetails: (uuid: string) => fetchWithAuth(`/envelopes/${uuid}`),
+    }
 }

@@ -63,7 +63,9 @@ body {
   background: linear-gradient(145deg, #ffffff, #f0f0f0);
   box-shadow: inset 5px 5px 10px #d1d1d1, inset -5px -5px 10px #ffffff;
 }
-
+.maxWidthInput{
+  max-width: 300px!important;
+}
 .neomorphic-button {
   border-radius: 8px;
   background: linear-gradient(145deg, #f0f0f0, #ffffff);
