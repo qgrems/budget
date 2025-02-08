@@ -32,13 +32,15 @@ export function useEnvelopes() {
       envelopesData: {
         ...prev.envelopesData,
         envelopes: prev.envelopesData?.envelopes.map(env =>
-            env.uuid === updatedEnvelope.uuid ? updatedEnvelope : env
+          env.uuid === updatedEnvelope.uuid ? updatedEnvelope : env
         ) || [],
       },
     }))
   }, [])
 
   const refreshEnvelopes = useCallback(async (force = false) => {
+
+    console.log(envelopeState)
     if (!force && (envelopeState.loading || envelopeState.envelopesData)) return
 
     setLoading(true)
@@ -67,7 +69,7 @@ export function useEnvelopes() {
     'BudgetEnvelopeCredited',
     'BudgetEnvelopeDebited',
     'BudgetEnvelopeDeleted',
-    'BudgetEnvelopeNameUpdated'
+    'BudgetEnvelopeRenamed'
   ];
 
   useEffect(() => {
@@ -79,19 +81,16 @@ export function useEnvelopes() {
       requestId: string
       type: string
     }) => {
-      console.log('Received envelope event:', event);
-
       // Match request ID to remove pending state
       const pendingEnvelope = envelopeState.envelopesData?.envelopes
-          .find(env => env.uuid === event.requestId);
-
+        .find(env => env.uuid === event.aggregateId);
       if (pendingEnvelope) {
         setEnvelopeState(prev => ({
           ...prev,
           envelopesData: {
             ...prev.envelopesData,
             envelopes: prev.envelopesData?.envelopes
-                .filter(env => env.uuid !== event.requestId) || []
+              .filter(env => env.uuid !== event.aggregateId) || []
           }
         }));
       }
@@ -175,9 +174,9 @@ export function useEnvelopes() {
       envelopesData: {
         ...prev.envelopesData,
         envelopes:
-            prev.envelopesData?.envelopes.map((env) =>
-                env.uuid === envelopeId ? { ...env, pending: true, deleted: true } : env,
-            ) || [],
+          prev.envelopesData?.envelopes.map((env) =>
+            env.uuid === envelopeId ? { ...env, pending: true, deleted: true } : env,
+          ) || [],
       },
     }))
 
@@ -195,9 +194,9 @@ export function useEnvelopes() {
         envelopesData: {
           ...prev.envelopesData,
           envelopes:
-              prev.envelopesData?.envelopes.map((env) =>
-                  env.uuid === envelopeId ? { ...env, pending: false, deleted: false } : env,
-              ) || [],
+            prev.envelopesData?.envelopes.map((env) =>
+              env.uuid === envelopeId ? { ...env, pending: false, deleted: false } : env,
+            ) || [],
         },
       }))
       setLoading(false)
@@ -205,11 +204,11 @@ export function useEnvelopes() {
   }
 
   const creditEnvelope = async (
-      envelopeId: string,
-      amount: string,
-      description: string,
-      setError: any,
-      setValidMessage: any,
+    envelopeId: string,
+    amount: string,
+    description: string,
+    setError: any,
+    setValidMessage: any,
   ) => {
     setLoading(true)
     const requestId = uuidv4()
@@ -222,12 +221,14 @@ export function useEnvelopes() {
     try {
       await api.envelopeCommands.creditEnvelope(envelopeId, amount, description, requestId)
     } catch (err: any) {
+      console.log('iciiiiii')
+      setError('test')
       setPendingRequests(prev => {
         const newSet = new Set(prev);
         newSet.delete(requestId);
         return newSet;
       });
-      setError(err.message)
+     
       if (updatedEnvelope) {
         updateEnvelopeState({ ...updatedEnvelope, pending: false })
       }
@@ -236,11 +237,11 @@ export function useEnvelopes() {
   }
 
   const debitEnvelope = async (
-      envelopeId: string,
-      amount: string,
-      description: string,
-      setError: any,
-      setValidMessage: any,
+    envelopeId: string,
+    amount: string,
+    description: string,
+    setError: any,
+    setValidMessage: any,
   ) => {
     setLoading(true)
     const requestId = uuidv4()
@@ -266,7 +267,7 @@ export function useEnvelopes() {
     }
   }
 
-  const updateEnvelopeName = async (envelopeId: string, name: string, setError: any, setValidMessage: any) => {
+  const updateEnvelopeName = async (envelopeId: string, name: string, setError: any) => {
     setLoading(true)
     const requestId = uuidv4()
     setPendingRequests(prev => new Set([...prev, requestId]));

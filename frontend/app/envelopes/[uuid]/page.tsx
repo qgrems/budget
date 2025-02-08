@@ -10,6 +10,8 @@ import Link from "next/link"
 import { useError } from "../../contexts/ErrorContext"
 import { useValidMessage } from "../../contexts/ValidContext"
 import { motion } from "framer-motion"
+import InputNameEnvelope from "../../components/inputs/inputNameEnvelope"
+import ValidInputButton from "../../components/buttons/validInputButton"
 
 const RETRY_INTERVAL = 2000 // 2 seconds
 const MAX_RETRIES = 10
@@ -22,8 +24,10 @@ export default function EnvelopeDetailsPage() {
     const [pendingActions, setPendingActions] = useState<{ [key: string]: boolean }>({})
     const [editingField, setEditingField] = useState<string | null>(null)
     const [newValues, setNewValues] = useState({ name: "", targetBudget: "" })
-    const { setError: setGlobalError } = useError()
+    const { setError: setError } = useError()
     const { setValidMessage } = useValidMessage()
+
+
 
     useEffect(() => {
         const fetchEnvelopeDetails = async () => {
@@ -106,20 +110,39 @@ export default function EnvelopeDetailsPage() {
         setPendingActions((prev) => ({ ...prev, [field]: true }))
         try {
             if (field === "name") {
-                await api.envelopeCommands.nameEnvelope(details.envelope.uuid, newValues.name)
-                pollForChanges("name", details.envelope.uuid, "name update", (env) => env?.envelope.name === newValues.name)
+                if (newValues.name.length > 25) {
+                    setError('envelopes.validationError.nameTooLong');
+                }
+                if (newValues.name === details.envelope.name) {
+                    setError('envelopes.validationError.sameName');
+                }
+                else {
+                    await api.envelopeCommands.nameEnvelope(details.envelope.uuid, newValues.name)
+                    pollForChanges("name", details.envelope.uuid, "name update", (env) => env?.envelope.name === newValues.name)
+                    setValidMessage('envelopes.validationSuccess.name');
+                }
             } else {
-                await api.envelopeCommands.updateTargetBudget(details.envelope.uuid, newValues.targetBudget)
-                pollForChanges(
-                    "targetBudget",
-                    details.envelope.uuid,
-                    "target budget update",
-                    (env) => env?.envelope.targetedAmount === newValues.targetBudget,
-                )
+                if (newValues.targetBudget === details.envelope.targetedAmount) {
+                    setError('envelopes.validationError.sameTargetedAmount');
+                }
+                if (newValues.targetBudget < details.envelope.currentAmount) {
+                    setError('envelopes.validationError.targetBudgetLessThanCurrentAmount');
+                }
+                else {
+                    await api.envelopeCommands.updateTargetBudget(details.envelope.uuid, newValues.targetBudget, details.envelope.currentAmount)
+                    pollForChanges(
+                        "targetBudget",
+                        details.envelope.uuid,
+                        "target budget update",
+                        (env) => env?.envelope.targetedAmount === newValues.targetBudget,
+                    )
+                    setValidMessage('envelopes.validationSuccess.targetBudget');
+                }
+
             }
         } catch (err) {
-            setGlobalError(`Failed to update envelope ${field}`)
-            setPendingActions((prev) => ({ ...prev, [field]: false }))
+            // setGlobalError(`Failed to update envelope ${field}`)
+            // setPendingActions((prev) => ({ ...prev, [field]: false }))
         }
         setEditingField(null)
     }
@@ -134,7 +157,6 @@ export default function EnvelopeDetailsPage() {
 
     const progress =
         (Number.parseFloat(details.envelope.currentAmount) / Number.parseFloat(details.envelope.targetedAmount)) * 100
-
     return (
         <div className="container mx-auto px-4 py-8">
             <motion.div
@@ -151,55 +173,55 @@ export default function EnvelopeDetailsPage() {
                 </Link>
                 <div className="mb-6 flex items-center">
                     <h1 className="text-3xl font-bold mr-2">
+
                         {editingField === "name" ? (
-                            <form
-                                onSubmit={(e) => {
-                                    e.preventDefault()
-                                    handleUpdate("name")
-                                }}
-                                className="flex items-center"
-                            >
-                                <input
-                                    type="text"
-                                    value={newValues.name}
-                                    onChange={(e) => setNewValues((prev) => ({ ...prev, name: e.target.value }))}
-                                    className="flex-grow mr-2 p-2 border-b-2 border-primary bg-transparent focus:outline-none text-2xl font-bold neomorphic-input transition-all duration-200"
+                            <div className="flex items-center flex-grow">
+                                <InputNameEnvelope
+                                    value={newValues?.name || ""} // ✅ Gère le cas undefined
+                                    onChange={(value) =>
+                                        setNewValues((prev) => ({ ...(prev || {}), name: value }))
+                                    }
                                     autoFocus
+                                    className="custom-input-class"
                                 />
-                                <motion.button
-                                    type="submit"
-                                    className="p-2 text-green-500 mr-1 neomorphic-button hover:shadow-lg transition-all duration-200"
-                                    disabled={pendingActions.name}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                >
-                                    {pendingActions.name ? <Loader2 className="h-5 w-5 animate-spin" /> : <Check className="h-5 w-5" />}
-                                </motion.button>
-                                <motion.button
-                                    type="button"
-                                    onClick={() => setEditingField(null)}
-                                    className="p-2 text-red-500 neomorphic-button hover:shadow-lg transition-all duration-200"
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                >
-                                    <X className="h-5 w-5" />
-                                </motion.button>
-                            </form>
+                                <ValidInputButton
+                                    onClick={() => handleUpdate("name")}
+                                    icon={<Check className="h-4 w-4 md:h-5 md:w-5" />}
+                                    className="p-1 neomorphic-button text-green-500 mr-1"
+                                    text=""
+                                />
+                                <ValidInputButton
+                                    onClick={() => {
+                                        setNewValues((prev) => ({ ...prev, name: details.envelope.name })); //
+                                        setEditingField(null);
+                                    }}
+                                    icon={<X className="h-4 w-4 md:h-5 md:w-5" />
+                                    }
+                                    className="p-1 neomorphic-button text-red-500"
+                                    text=""
+                                />
+                            </div>
                         ) : (
-                            details.envelope.name
+                            <>
+                                <InputNameEnvelope
+                                    value={details.envelope.name}
+                                    onChange={() => setEditingField("name")}// ✅ Active le mode édition
+                                    onFocus={() => setEditingField("name")} // ✅ Active aussi au clic
+                                    className="custom-input-class cursor-pointer"
+                                />
+                                {/* <button
+                                               onClick={(e) => {
+                                                   e.preventDefault()
+                                                   handleStartEditingName(envelope.uuid, envelope.name)
+                                               }}
+                                               className="p-1 neomorphic-button text-primary"
+                                               disabled={envelope.pending || !!pendingActions[envelope.uuid]}
+                                           >
+                                               <Edit2 className="h-4 w-4 md:h-5 md:w-5" />
+                                           </button> */}
+                            </>
                         )}
                     </h1>
-                    {editingField !== "name" && (
-                        <motion.button
-                            onClick={() => setEditingField("name")}
-                            className="p-2 text-primary neomorphic-button hover:shadow-lg transition-all duration-200"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            aria-label={t("envelopes.updateName")}
-                        >
-                            <Edit2 className="h-5 w-5" />
-                        </motion.button>
-                    )}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <motion.div
@@ -221,55 +243,45 @@ export default function EnvelopeDetailsPage() {
                         <h2 className="text-xl font-semibold mb-2">{t("envelopes.targetedAmount")}</h2>
                         <div className="flex items-center">
                             {editingField === "targetBudget" ? (
-                                <form
-                                    onSubmit={(e) => {
-                                        e.preventDefault()
-                                        handleUpdate("targetBudget")
-                                    }}
+                                <div
                                     className="flex items-center w-full"
                                 >
-                                    <input
-                                        type="text"
+                                    <InputNameEnvelope
                                         value={newValues.targetBudget}
-                                        onChange={(e) => handleAmountChange(e.target.value)}
-                                        className="flex-grow mr-2 p-2 border-b-2 border-primary bg-transparent focus:outline-none text-xl neomorphic-input transition-all duration-200"
+                                        onChange={(value) =>
+                                            handleAmountChange(value)
+                                        }
                                         autoFocus
+                                        className="flex-grow mr-2 p-2 border-b-2 border-primary bg-transparent focus:outline-none text-xl neomorphic-input transition-all duration-200"
                                     />
-                                    <motion.button
-                                        type="submit"
-                                        className="p-2 text-green-500 mr-1 neomorphic-button hover:shadow-lg transition-all duration-200"
+                                    <ValidInputButton
+                                        onClick={(e) => handleUpdate("targetBudget")}
+                                        icon={<Check className="h-4 w-4 md:h-5 md:w-5" />}
+                                        className=" text-green-500 mr-1"
                                         disabled={pendingActions.targetBudget}
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                    >
-                                        {pendingActions.targetBudget ? (
-                                            <Loader2 className="h-5 w-5 animate-spin" />
-                                        ) : (
-                                            <Check className="h-5 w-5" />
-                                        )}
-                                    </motion.button>
-                                    <motion.button
-                                        type="button"
-                                        onClick={() => setEditingField(null)}
-                                        className="p-2 text-red-500 neomorphic-button hover:shadow-lg transition-all duration-200"
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                    >
-                                        <X className="h-5 w-5" />
-                                    </motion.button>
-                                </form>
+                                        text=""
+                                    />
+                                    <ValidInputButton
+                                        onClick={(e) => {
+                                            setEditingField(null)
+                                            setNewValues((prev) => ({ ...prev, targetBudget: details.envelope.targetedAmount })); //
+                                        }}
+                                        icon={<X className="h-4 w-4 md:h-5 md:w-5" />}
+                                        className="text-red-500"
+                                        text=""
+                                    />
+
+                                </div>
                             ) : (
                                 <>
-                                    <p className="text-3xl font-bold text-primary mr-2">{details.envelope.targetedAmount}</p>
-                                    <motion.button
-                                        onClick={() => setEditingField("targetBudget")}
-                                        className="p-2 text-primary neomorphic-button hover:shadow-lg transition-all duration-200"
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
+                                    <InputNameEnvelope
+                                        value={details.envelope.targetedAmount}
+                                        onChange={() => setEditingField("targetBudget")}
                                         aria-label={t("envelopes.updateTargetBudget")}
-                                    >
-                                        <Edit2 className="h-5 w-5" />
-                                    </motion.button>
+                                        className="flex-grow mr-2 p-2 border-b-2 border-primary bg-transparent focus:outline-none text-xl neomorphic-input transition-all duration-200"
+                                        onFocus={() => setEditingField("targetBudget")} // ✅ Active aussi au clic
+
+                                    />
                                 </>
                             )}
                         </div>
@@ -294,36 +306,36 @@ export default function EnvelopeDetailsPage() {
                 <div className="overflow-x-auto">
                     <table className="w-full border-collapse neomorphic">
                         <thead>
-                        <tr className="bg-gradient-to-r from-gray-50 to-white">
-                            <th className="p-3 text-left border-b">{t("envelopes.date")}</th>
-                            <th className="p-3 text-left border-b">{t("envelopes.description")}</th>
-                            <th className="p-3 text-left border-b">{t("envelopes.amount")}</th>
-                            <th className="p-3 text-left border-b">{t("envelopes.type")}</th>
-                        </tr>
+                            <tr className="bg-gradient-to-r from-gray-50 to-white">
+                                <th className="p-3 text-left border-b">{t("envelopes.date")}</th>
+                                <th className="p-3 text-left border-b">{t("envelopes.description")}</th>
+                                <th className="p-3 text-left border-b">{t("envelopes.amount")}</th>
+                                <th className="p-3 text-left border-b">{t("envelopes.type")}</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {details.ledger.map((transaction, index) => (
-                            <motion.tr
-                                key={index}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.3, delay: index * 0.1 }}
-                                className="border-b hover:bg-gray-50 transition-colors duration-150"
-                            >
-                                <td className="p-3">{formatDate(transaction.created_at)}</td>
-                                <td className="p-3">{transaction.description || "-"}</td>
-                                <td className="p-3">{transaction.monetary_amount}</td>
-                                <td
-                                    className={`p-3 ${transaction.entry_type === "credit" ? "text-green-600" : "text-red-600"}`}
+                            {details.ledger.map((transaction, index) => (
+                                <motion.tr
+                                    key={index}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                                    className="border-b hover:bg-gray-50 transition-colors duration-150"
                                 >
-                                    {t(`envelopes.${transaction.entry_type}`)}
-                                </td>
-                            </motion.tr>
-                        ))}
+                                    <td className="p-3">{formatDate(transaction.created_at)}</td>
+                                    <td className="p-3">{transaction.description || "-"}</td>
+                                    <td className="p-3">{transaction.monetary_amount}</td>
+                                    <td
+                                        className={`p-3 ${transaction.entry_type === "credit" ? "text-green-600" : "text-red-600"}`}
+                                    >
+                                        {t(`envelopes.${transaction.entry_type}`)}
+                                    </td>
+                                </motion.tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>
-            </motion.div>
-        </div>
+            </motion.div >
+        </div >
     )
 }

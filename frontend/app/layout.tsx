@@ -15,14 +15,14 @@ export const metadata = {
 }
 
 export default function RootLayout({
-                                       children,
-                                   }: {
+    children,
+}: {
     children: React.ReactNode
 }) {
     return (
         <html lang="en">
-        <head>
-            <style>{`
+            <head>
+                <style>{`
           :root {
             --chart-1: 200 100% 50%;
             --chart-2: 150 100% 50%;
@@ -31,22 +31,22 @@ export default function RootLayout({
             --chart-5: 0 100% 50%;
           }
         `}</style>
-        </head>
-        <body className={inter.className}>
-        <LanguageProvider>
-            <Providers>
-                <SocketWrapper>
-                    <ErrorProvider>
-                        <ValidProvider>
-                            <div className="flex flex-col min-h-screen bg-background">
-                                <AppContent>{children}</AppContent>
-                            </div>
-                        </ValidProvider>
-                    </ErrorProvider>
-                </SocketWrapper>
-            </Providers>
-        </LanguageProvider>
-        </body>
+            </head>
+            <body className={inter.className}>
+                <LanguageProvider>
+                    <Providers>
+                        <SocketWrapper>
+                            <ErrorProvider>
+                                    <ValidProvider>
+                                        <div className="flex flex-col min-h-screen bg-background">
+                                            <AppContent>{children}</AppContent>
+                                        </div>
+                                    </ValidProvider>
+                            </ErrorProvider>
+                        </SocketWrapper>
+                    </Providers>
+                </LanguageProvider>
+            </body>
         </html>
     )
 }

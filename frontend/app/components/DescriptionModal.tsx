@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { useTranslation } from "../hooks/useTranslation"
+import ActionButton from "./buttons/actionButton"
 
 interface DescriptionModalProps {
     isOpen: boolean
@@ -15,10 +16,9 @@ export function DescriptionModal({ isOpen, onClose, onSubmit, actionType }: Desc
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        if (description.trim() !== "") {
-            onSubmit(description.trim())
-            setDescription("")
-        }
+        onSubmit(description.trim())
+        setDescription("")
+
     }
 
     const isValidDescription = (value: string) => {
@@ -60,16 +60,16 @@ export function DescriptionModal({ isOpen, onClose, onSubmit, actionType }: Desc
                         )}
                     </div>
                     <div className="flex justify-between">
-                        <button
-                            type="submit"
+                        <ActionButton
+                            onClick={() => handleSubmit}
+                            label={t("envelopes.submit")}
                             className="py-2 px-4 neomorphic-button text-primary"
-                            disabled={!isValidDescription(description)}
-                        >
-                            {t("envelopes.submit")}
-                        </button>
-                        <button onClick={onClose} className="py-2 px-4 neomorphic-button text-red-500">
-                            {t("envelopes.cancel")}
-                        </button>
+                        />
+                        <ActionButton
+                            onClick={() => onClose}
+                            label={t("envelopes.cancel")}
+                            className="py-2 px-4 neomorphic-button text-red-500"
+                        />
                     </div>
                 </form>
             </motion.div>
