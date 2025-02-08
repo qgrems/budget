@@ -25,7 +25,7 @@ export function ErrorProvider({children}: { children: ReactNode }) {
     return (
         <ErrorContext.Provider value={{error, setError: addError}}>
             {children}
-            {t(error) && <ErrorModal />}
+            {(error) && <ErrorModal />}
         </ErrorContext.Provider>
     )
 }
