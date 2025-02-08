@@ -18,7 +18,7 @@ final readonly class DebitABudgetEnvelopeInput
             maxMessage: 'envelopes.debitMoneyMaxLength'
         )]
         #[Assert\Regex(
-            pattern: '/^\d+(\.\d{2})?$/',
+            pattern: '/^\d+(\.\d{1,2})?$/',
             message: 'envelopes.debitMoneyInvalid'
         )]
         private(set) string $debitMoney,

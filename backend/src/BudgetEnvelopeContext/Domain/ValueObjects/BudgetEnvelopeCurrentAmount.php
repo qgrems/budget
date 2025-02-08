@@ -28,7 +28,7 @@ final readonly class BudgetEnvelopeCurrentAmount
             ->string('Current amount must be a string.')
             ->minLength(1, 'The current amount must be at least 1 character long.')
             ->maxLength(13, 'The current amount must be at most 13 character long.')
-            ->regex('/^\d+(\.\d{2})?$/', 'The current amount must be a string representing a number with up to two decimal places (e.g., "0.00").')
+            ->regex('/^\d+(\.\d{1,2})?$/', 'The current amount must be a string representing a number with up to two decimal places (e.g., "0.00").')
         ;
     }
 
