@@ -125,6 +125,10 @@ export default function EnvelopeDetailsPage() {
                 if (newValues.targetBudget === details.envelope.targetedAmount) {
                     setError('envelopes.validationError.sameTargetedAmount');
                 }
+                console.log(newValues.targetBudget)
+                if (newValues.targetBudget === 0) {
+                    setError('envelopes.validationError.targetBudgetLessThanCurrentAmount');
+                }
                 if (newValues.targetBudget < details.envelope.currentAmount) {
                     setError('envelopes.validationError.targetBudgetLessThanCurrentAmount');
                 }
@@ -258,7 +262,6 @@ export default function EnvelopeDetailsPage() {
                                         onClick={(e) => handleUpdate("targetBudget")}
                                         icon={<Check className="h-4 w-4 md:h-5 md:w-5" />}
                                         className=" text-green-500 mr-1"
-                                        disabled={pendingActions.targetBudget}
                                         text=""
                                     />
                                     <ValidInputButton
