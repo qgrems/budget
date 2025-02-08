@@ -61,7 +61,7 @@ final readonly class SignUpAUserCommandHandler
             $this->eventEncryptor,
         );
 
-        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());
+        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), 0);
         $aggregate->clearRaisedDomainEvents();
         $aggregate->clearKeys();
     }

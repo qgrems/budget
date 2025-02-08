@@ -6,12 +6,14 @@ namespace App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers;
 
 use App\BudgetEnvelopeContext\Application\Commands\RewindABudgetEnvelopeFromEventsCommand;
 use App\BudgetEnvelopeContext\Domain\Aggregates\BudgetEnvelope;
+use App\SharedContext\Domain\Ports\Inbound\EventClassMapInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 
 final readonly class RewindABudgetEnvelopeFromEventsCommandHandler
 {
     public function __construct(
         private EventSourcedRepositoryInterface $eventSourcedRepository,
+        private EventClassMapInterface $eventClassMap,
     ) {
     }
 
@@ -22,12 +24,13 @@ final readonly class RewindABudgetEnvelopeFromEventsCommandHandler
                 (string) $rewindABudgetEnvelopeCommand->getBudgetEnvelopeId(),
                 $rewindABudgetEnvelopeCommand->getDesiredDateTime(),
             ),
+            $this->eventClassMap,
         );
         $aggregate->rewind(
             $rewindABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
             $rewindABudgetEnvelopeCommand->getDesiredDateTime(),
         );
-        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());
+        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), $aggregate->aggregateVersion());
         $aggregate->clearRaisedDomainEvents();
     }
 }

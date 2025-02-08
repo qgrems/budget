@@ -8,6 +8,7 @@ use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\UserContext\Application\Commands\ChangeAUserPasswordCommand;
 use App\UserContext\Domain\Aggregates\User;
 use App\UserContext\Domain\Exceptions\UserOldPasswordIsIncorrectException;
+use App\UserContext\Domain\Ports\Inbound\EventClassMapInterface;
 use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserContext\Domain\Ports\Outbound\PasswordHasherInterface;
@@ -20,6 +21,7 @@ final readonly class ChangeAUserPasswordCommandHandler
         private UserViewRepositoryInterface $userViewRepository,
         private PasswordHasherInterface $passwordHasher,
         private EventEncryptorInterface $eventEncryptor,
+        private EventClassMapInterface $eventClassMap,
     ) {
     }
 
@@ -29,10 +31,9 @@ final readonly class ChangeAUserPasswordCommandHandler
     public function __invoke(ChangeAUserPasswordCommand $changeAUserPasswordCommand): void
     {
         $aggregate = User::fromEvents(
-            $this->eventSourcedRepository->get(
-                (string) $changeAUserPasswordCommand->getUserId(),
-            ),
+            $this->eventSourcedRepository->get((string) $changeAUserPasswordCommand->getUserId()),
             $this->eventEncryptor,
+            $this->eventClassMap,
         );
         $userView = $this->userViewRepository->findOneBy(
             ['uuid' => (string) $changeAUserPasswordCommand->getUserId()],
@@ -50,7 +51,7 @@ final readonly class ChangeAUserPasswordCommandHandler
             $changeAUserPasswordCommand->getUserId(),
             $this->eventEncryptor,
         );
-        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());
+        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), $aggregate->aggregateVersion());
         $aggregate->clearRaisedDomainEvents();
         $aggregate->clearKeys();
     }

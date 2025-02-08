@@ -6,12 +6,14 @@ namespace App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers;
 
 use App\BudgetEnvelopeContext\Application\Commands\ChangeABudgetEnvelopeTargetedAmountCommand;
 use App\BudgetEnvelopeContext\Domain\Aggregates\BudgetEnvelope;
+use App\SharedContext\Domain\Ports\Inbound\EventClassMapInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 
 final readonly class ChangeABudgetEnvelopeTargetedAmountCommandHandler
 {
     public function __construct(
         private EventSourcedRepositoryInterface $eventSourcedRepository,
+        private EventClassMapInterface $eventClassMap,
     ) {
     }
 
@@ -22,12 +24,13 @@ final readonly class ChangeABudgetEnvelopeTargetedAmountCommandHandler
             $this->eventSourcedRepository->get(
                 (string) $changeABudgetEnvelopeTargetedAmountCommand->getBudgetEnvelopeId(),
             ),
+            $this->eventClassMap,
         );
         $aggregate->updateTargetedAmount(
             $changeABudgetEnvelopeTargetedAmountCommand->getBudgetEnvelopeTargetedAmount(),
             $changeABudgetEnvelopeTargetedAmountCommand->getBudgetEnvelopeUserId(),
         );
-        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());
+        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), $aggregate->aggregateVersion());
         $aggregate->clearRaisedDomainEvents();
     }
 }

@@ -8,6 +8,7 @@ use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\UserContext\Application\Commands\ResetAUserPasswordCommand;
 use App\UserContext\Domain\Aggregates\User;
 use App\UserContext\Domain\Exceptions\UserNotFoundException;
+use App\UserContext\Domain\Ports\Inbound\EventClassMapInterface;
 use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\Ports\Inbound\UserViewInterface;
 use App\UserContext\Domain\Ports\Inbound\UserViewRepositoryInterface;
@@ -22,6 +23,7 @@ final readonly class ResetAUserPasswordCommandHandler
         private EventSourcedRepositoryInterface $eventSourcedRepository,
         private PasswordHasherInterface $passwordHasher,
         private EventEncryptorInterface $eventEncryptor,
+        private EventClassMapInterface $eventClassMap,
     ) {
     }
 
@@ -38,10 +40,9 @@ final readonly class ResetAUserPasswordCommandHandler
         }
 
         $aggregate = User::fromEvents(
-            $this->eventSourcedRepository->get(
-                $userView->getUuid(),
-            ),
+            $this->eventSourcedRepository->get($userView->getUuid()),
             $this->eventEncryptor,
+            $this->eventClassMap,
         );
         $aggregate->resetPassword(
             UserPassword::fromString(
@@ -50,7 +51,7 @@ final readonly class ResetAUserPasswordCommandHandler
             UserId::fromString($userView->getUuid()),
             $this->eventEncryptor,
         );
-        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());
+        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), $aggregate->aggregateVersion());
         $aggregate->clearRaisedDomainEvents();
         $aggregate->clearKeys();
     }

@@ -7,6 +7,7 @@ namespace App\UserContext\Application\Handlers\CommandHandlers;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\UserContext\Application\Commands\ChangeAUserFirstnameCommand;
 use App\UserContext\Domain\Aggregates\User;
+use App\UserContext\Domain\Ports\Inbound\EventClassMapInterface;
 use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 
 final readonly class ChangeAUserFirstnameCommandHandler
@@ -14,23 +15,23 @@ final readonly class ChangeAUserFirstnameCommandHandler
     public function __construct(
         private EventSourcedRepositoryInterface $eventSourcedRepository,
         private EventEncryptorInterface $eventEncryptor,
+        private EventClassMapInterface $eventClassMap,
     ) {
     }
 
     public function __invoke(ChangeAUserFirstnameCommand $changeAUserFirstnameCommand): void
     {
         $aggregate = User::fromEvents(
-            $this->eventSourcedRepository->get(
-                (string) $changeAUserFirstnameCommand->getUserId(),
-            ),
+            $this->eventSourcedRepository->get((string) $changeAUserFirstnameCommand->getUserId()),
             $this->eventEncryptor,
+            $this->eventClassMap,
         );
         $aggregate->updateFirstname(
             $changeAUserFirstnameCommand->getFirstname(),
             $changeAUserFirstnameCommand->getUserId(),
             $this->eventEncryptor,
         );
-        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());
+        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), $aggregate->aggregateVersion());
         $aggregate->clearRaisedDomainEvents();
         $aggregate->clearKeys();
     }

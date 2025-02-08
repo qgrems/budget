@@ -17,5 +17,5 @@ interface EventSourcedRepositoryInterface
         ?\DateTimeImmutable $desiredDateTime = null,
     ): \Generator;
 
-    public function save(array $raisedEvents): void;
+    public function save(array $raisedEvents, int $version): void;
 }

@@ -10,5 +10,7 @@ interface EventStoreInterface
 
     public function loadByDomainEvents(string $uuid, array $domainEventClasses, ?\DateTimeImmutable $desiredDateTime = null): \Generator;
 
-    public function save(array $events): void;
+    public function save(array $events, int $version): void;
+
+    public function getCurrentVersion(string $aggregateId): int;
 }

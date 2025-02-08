@@ -33,7 +33,8 @@ final readonly class AddABudgetEnvelopeCommandHandler
             $addABudgetEnvelopeCommand->getBudgetEnvelopeName(),
             $this->budgetEnvelopeViewRepository,
         );
-        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents());
+
+        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), 0);
         $aggregate->clearRaisedDomainEvents();
     }
 }

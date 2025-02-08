@@ -2,6 +2,7 @@
 
 namespace App\UserContext\Domain\Aggregates;
 
+use App\SharedContext\Domain\Ports\Inbound\EventClassMapInterface;
 use App\SharedContext\Domain\Traits\DomainEventsCapabilityTrait;
 use App\UserContext\Domain\Events\UserDeletedDomainEvent;
 use App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent;
@@ -45,6 +46,7 @@ final class User
     private \DateTimeImmutable $createdAt;
     private \DateTime $updatedAt;
     private array $roles = ['ROLE_USER'];
+    private int $aggregateVersion = 0;
     private ?UserPasswordResetToken $passwordResetToken;
     private ?\DateTimeImmutable $passwordResetTokenExpiry;
 
@@ -55,14 +57,21 @@ final class User
     public static function fromEvents(
         \Generator $events,
         EventEncryptorInterface $eventEncryptor,
+        EventClassMapInterface $eventClassMap,
     ): self {
         $aggregate = new self();
 
         foreach ($events as $event) {
             $aggregate->apply(
-                $event['type']::fromArray(json_decode($event['payload'], true)),
+                $eventClassMap->getEventPathByClassName($event['event_name'])::fromArray(
+                    json_decode(
+                        $event['payload'],
+                        true,
+                    )
+                ),
                 $eventEncryptor,
             );
+            $aggregate->aggregateVersion = $event['stream_version'];
         }
 
         return $aggregate;
@@ -304,6 +313,11 @@ final class User
                 (string) $this->userId,
             ),
         );
+    }
+
+    public function aggregateVersion(): int
+    {
+        return $this->aggregateVersion;
     }
 
     private function apply(

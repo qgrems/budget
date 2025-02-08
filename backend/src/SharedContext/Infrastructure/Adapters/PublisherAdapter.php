@@ -25,7 +25,7 @@ final readonly class PublisherAdapter implements PublisherInterface
 
         foreach ($events as $event) {
             $messageBody = json_encode($event->toArray(), JSON_THROW_ON_ERROR);
-            $headers = ['type' => get_class($event)];
+            $headers = ['type' => $event::class];
             $message = new AMQPMessage($messageBody, [
                 'content_type' => 'application/json',
                 'delivery_mode' => self::DELIVERY_MODE_PERSISTENT,
@@ -45,7 +45,7 @@ final readonly class PublisherAdapter implements PublisherInterface
 
         foreach ($events as $event) {
             $messageBody = json_encode($event->toArray(), JSON_THROW_ON_ERROR);
-            $headers = ['type' => get_class($event)];
+            $headers = ['type' => $event::class];
             $message = new AMQPMessage($messageBody, [
                 'content_type' => 'application/json',
                 'delivery_mode' => self::DELIVERY_MODE_PERSISTENT,

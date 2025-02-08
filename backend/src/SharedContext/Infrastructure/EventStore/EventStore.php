@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\SharedContext\Infrastructure\EventStore;
 
 use App\SharedContext\Domain\Exceptions\PublishEventsException;
+use App\SharedContext\Domain\Ports\Inbound\EventClassMapInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
 use App\SharedContext\Domain\Services\RequestIdProvider;
@@ -18,6 +19,7 @@ final readonly class EventStore implements EventStoreInterface
         private Connection $connection,
         private PublisherInterface $publisher,
         private RequestIdProvider $requestIdProvider,
+        private EventClassMapInterface $eventClassMap,
     ) {
     }
 
@@ -28,9 +30,9 @@ final readonly class EventStore implements EventStoreInterface
     public function load(string $uuid, ?\DateTimeImmutable $desiredDateTime = null): \Generator
     {
         $queryBuilder = $this->connection->createQueryBuilder()
-            ->select('aggregate_id', 'type', 'payload', 'occurred_on', 'request_id', 'user_id')
+            ->select('stream_id', 'event_name', 'payload', 'occurred_on', 'request_id', 'user_id', 'stream_version')
             ->from('event_store')
-            ->where('aggregate_id = :id')
+            ->where('stream_id = :id')
             ->setParameter('id', $uuid)
             ->orderBy('occurred_on', 'ASC');
 
@@ -48,12 +50,16 @@ final readonly class EventStore implements EventStoreInterface
         ?\DateTimeImmutable $desiredDateTime = null
     ): \Generator {
         $queryBuilder = $this->connection->createQueryBuilder()
-            ->select('aggregate_id', 'type', 'payload', 'occurred_on', 'request_id', 'user_id')
+            ->select('stream_id', 'event_name', 'payload', 'occurred_on', 'request_id', 'user_id', 'stream_version')
             ->from('event_store')
-            ->where('aggregate_id = :id')
+            ->where('stream_id = :id')
             ->setParameter('id', $uuid)
-            ->andWhere('type IN (:domainEventClasses)')
-            ->setParameter('domainEventClasses', $domainEventClasses, ArrayParameterType::STRING)
+            ->andWhere('event_name IN (:domainEventNames)')
+            ->setParameter(
+                'domainEventNames',
+                $this->eventClassMap->getClassNamesByEventsPaths($domainEventClasses),
+                ArrayParameterType::STRING,
+            )
             ->orderBy('occurred_on', 'ASC');
 
         if (null !== $desiredDateTime) {
@@ -65,21 +71,21 @@ final readonly class EventStore implements EventStoreInterface
     }
 
     #[\Override]
-    public function save(array $events): void
+    public function save(array $events, int $version): void
     {
         try {
             $this->connection->beginTransaction();
 
             foreach ($events as $event) {
-                $currentVersion = $this->getCurrentVersion($event->aggregateId);
                 $this->connection->insert('event_store', [
-                    'aggregate_id' => $event->aggregateId,
-                    'type' => get_class($event),
+                    'stream_id' => $event->aggregateId,
+                    'event_name' => $this->eventClassMap->getClassNameByEventPath($event::class),
                     'payload' => json_encode($event->toArray(), JSON_THROW_ON_ERROR),
                     'occurred_on' => $event->occurredOn->format('Y-m-d H:i:s'),
-                    'version' => $currentVersion + 1,
+                    'stream_version' => ++$version,
                     'request_id' => $this->requestIdProvider->requestId,
                     'user_id' => $event->userId,
+                    'meta_data' => json_encode([], JSON_THROW_ON_ERROR),
                 ]);
             }
 
@@ -91,10 +97,10 @@ final readonly class EventStore implements EventStoreInterface
         }
     }
 
-    private function getCurrentVersion(string $aggregateId): int
+    public function getCurrentVersion(string $aggregateId): int
     {
         $queryBuilder = $this->connection->createQueryBuilder()
-            ->select('MAX(version) as version')
+            ->select('MAX(stream_version) as version')
             ->from('event_store')
             ->where('aggregate_id = :id')
             ->setParameter('id', $aggregateId);
