@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\UserContext\Infrastructure\Persistence\Repositories;
+namespace App\Libraries\Anonymii\Repositories;
 
-use App\UserContext\Domain\Ports\Inbound\KeyManagementRepositoryInterface;
 use Doctrine\DBAL\Connection;
 
 final readonly class KeyManagementRepository implements KeyManagementRepositoryInterface

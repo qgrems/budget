@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\UserContext\Domain\Ports\Inbound;
+namespace App\Libraries\Anonymii\Events;
 
-interface UserSignedUpDomainEventInterface extends UserDomainEventInterface
+interface AnonymiiUserSignedUpDomainEventInterface
 {
     public function toArray(): array;
 

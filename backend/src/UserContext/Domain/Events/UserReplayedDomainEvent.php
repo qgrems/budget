@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\UserContext\Domain\Events;
 
+use App\Libraries\Anonymii\Attributes\PersonalData;
 use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
-use App\UserContext\Domain\Attributes\PersonalData;
 use App\UserContext\Domain\Ports\Inbound\UserDomainEventInterface;
 
 final class UserReplayedDomainEvent implements UserDomainEventInterface

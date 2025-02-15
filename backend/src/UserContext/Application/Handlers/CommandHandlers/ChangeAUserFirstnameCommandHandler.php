@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\UserContext\Application\Handlers\CommandHandlers;
 
+use App\Libraries\Anonymii\Services\EventEncryptorInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\UserContext\Application\Commands\ChangeAUserFirstnameCommand;
 use App\UserContext\Domain\Aggregates\User;
 use App\UserContext\Domain\Ports\Inbound\EventClassMapInterface;
-use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 
 final readonly class ChangeAUserFirstnameCommandHandler
 {

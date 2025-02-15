@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
+use App\Libraries\Anonymii\Services\EventEncryptorInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 use App\SharedContext\Domain\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
@@ -12,7 +13,6 @@ use App\UserContext\Application\Commands\ChangeAUserPasswordCommand;
 use App\UserContext\Application\Handlers\CommandHandlers\ChangeAUserPasswordCommandHandler;
 use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 use App\UserContext\Domain\Exceptions\UserOldPasswordIsIncorrectException;
-use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserContext\Domain\Ports\Outbound\PasswordHasherInterface;
 use App\UserContext\Domain\ValueObjects\UserConsent;

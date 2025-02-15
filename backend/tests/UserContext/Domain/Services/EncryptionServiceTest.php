@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Domain\Services;
 
-use App\UserContext\Domain\Exceptions\UserEncryptionException;
-use App\UserContext\Domain\Ports\Inbound\EncryptionServiceInterface;
-use App\UserContext\Domain\Ports\Inbound\KeyManagementRepositoryInterface;
-use App\UserContext\Domain\Services\EncryptionService;
+use App\Libraries\Anonymii\Exceptions\UserEncryptionException;
+use App\Libraries\Anonymii\Repositories\KeyManagementRepositoryInterface;
+use App\Libraries\Anonymii\Services\EncryptionService;
+use App\Libraries\Anonymii\Services\EncryptionServiceInterface;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 

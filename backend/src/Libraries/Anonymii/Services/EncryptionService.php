@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\UserContext\Domain\Services;
+namespace App\Libraries\Anonymii\Services;
 
-use App\UserContext\Domain\Exceptions\UserEncryptionException;
-use App\UserContext\Domain\Ports\Inbound\EncryptionServiceInterface;
-use App\UserContext\Domain\Ports\Inbound\KeyManagementRepositoryInterface;
-use App\UserContext\Domain\Traits\EncryptedKeyCacheTrait;
+use App\Libraries\Anonymii\Exceptions\UserEncryptionException;
+use App\Libraries\Anonymii\Repositories\KeyManagementRepositoryInterface;
+use App\Libraries\Anonymii\Traits\EncryptedKeyCacheTrait;
 
 final class EncryptionService implements EncryptionServiceInterface
 {

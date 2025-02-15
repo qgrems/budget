@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\UserContext\ReadModels\Projections;
 
+use App\Libraries\Anonymii\Repositories\KeyManagementRepositoryInterface;
+use App\Libraries\Anonymii\Services\EventEncryptorInterface;
 use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
 use App\UserContext\Domain\Events\UserDeletedDomainEvent;
 use App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent;
 use App\UserContext\Domain\Events\UserLanguagePreferenceChangedDomainEvent;
 use App\UserContext\Domain\Events\UserLastnameChangedDomainEvent;
+use App\UserContext\Domain\Events\UserPasswordChangedDomainEvent;
 use App\UserContext\Domain\Events\UserPasswordResetDomainEvent;
 use App\UserContext\Domain\Events\UserPasswordResetRequestedDomainEvent;
-use App\UserContext\Domain\Events\UserPasswordChangedDomainEvent;
 use App\UserContext\Domain\Events\UserReplayedDomainEvent;
 use App\UserContext\Domain\Events\UserRewoundDomainEvent;
 use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
-use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
-use App\UserContext\Domain\Ports\Inbound\KeyManagementRepositoryInterface;
 use App\UserContext\Domain\Ports\Inbound\UserDomainEventInterface;
 use App\UserContext\Domain\Ports\Inbound\UserViewInterface;
 use App\UserContext\Domain\Ports\Inbound\UserViewRepositoryInterface;

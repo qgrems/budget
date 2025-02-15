@@ -4,19 +4,19 @@ namespace App\UserContext\Infrastructure\Adapters;
 
 use App\UserContext\Domain\Ports\Inbound\UserViewInterface;
 use App\UserContext\Domain\Ports\Outbound\MailerInterface;
+use App\UserContext\Domain\Ports\Outbound\UrlGeneratorInterface;
 use Symfony\Component\Mailer\Envelope;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface as SymfonyMailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\RawMessage;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class MailerAdapter implements MailerInterface
 {
     public function __construct(
         private SymfonyMailerInterface $mailer,
-        private UrlGeneratorAdapter $urlGeneratorAdapter,
+        private UrlGeneratorInterface $urlGeneratorAdapter,
         private TranslatorInterface $translator,
     ) {
     }

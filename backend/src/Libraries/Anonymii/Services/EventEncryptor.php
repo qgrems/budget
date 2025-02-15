@@ -2,13 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\UserContext\Domain\Services;
+namespace App\Libraries\Anonymii\Services;
 
-use App\UserContext\Domain\Attributes\PersonalData;
-use App\UserContext\Domain\Ports\Inbound\EncryptionServiceInterface;
-use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
-use App\UserContext\Domain\Ports\Inbound\UserDomainEventInterface;
-use App\UserContext\Domain\Ports\Inbound\UserSignedUpDomainEventInterface;
+use App\Libraries\Anonymii\Attributes\PersonalData;
+use App\Libraries\Anonymii\Events\AnonymiiUserDomainEventInterface;
+use App\Libraries\Anonymii\Events\AnonymiiUserSignedUpDomainEventInterface;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -18,7 +16,7 @@ final class EventEncryptor implements EventEncryptorInterface
     {
     }
 
-    public function encrypt(UserDomainEventInterface $event, string $userId): UserDomainEventInterface
+    public function encrypt(AnonymiiUserDomainEventInterface $event, string $userId): AnonymiiUserDomainEventInterface
     {
         $reflection = new ReflectionClass($event);
 
@@ -31,7 +29,7 @@ final class EventEncryptor implements EventEncryptorInterface
                     $encrypted = $this->encryptionService->encrypt(
                         (string) $value,
                         $userId,
-                        $event instanceof UserSignedUpDomainEventInterface,
+                        $event instanceof AnonymiiUserSignedUpDomainEventInterface,
                     );
                     $property->setValue($event, json_encode($encrypted));
                 }
@@ -41,7 +39,7 @@ final class EventEncryptor implements EventEncryptorInterface
         return $event;
     }
 
-    public function decrypt(UserDomainEventInterface $event, string $userId): UserDomainEventInterface
+    public function decrypt(AnonymiiUserDomainEventInterface $event, string $userId): AnonymiiUserDomainEventInterface
     {
         $reflection = new ReflectionClass($event);
 

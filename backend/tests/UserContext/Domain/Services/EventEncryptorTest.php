@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Domain\Services;
 
-use App\UserContext\Domain\Attributes\PersonalData;
+use App\Libraries\Anonymii\Services\EncryptionServiceInterface;
+use App\Libraries\Anonymii\Services\EventEncryptor;
 use App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent;
-use App\UserContext\Domain\Ports\Inbound\EncryptionServiceInterface;
-use App\UserContext\Domain\Ports\Inbound\UserDomainEventInterface;
-use App\UserContext\Domain\Services\EventEncryptor;
 use PHPUnit\Framework\TestCase;
 
 final class EventEncryptorTest extends TestCase

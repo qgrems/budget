@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
+use App\Libraries\Anonymii\Services\EventEncryptorInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 use App\SharedContext\Domain\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
@@ -11,7 +12,6 @@ use App\Tests\CreateEventGenerator;
 use App\UserContext\Application\Commands\ChangeAUserFirstnameCommand;
 use App\UserContext\Application\Handlers\CommandHandlers\ChangeAUserFirstnameCommandHandler;
 use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
-use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\ValueObjects\UserFirstname;
 use App\UserContext\Domain\ValueObjects\UserId;
 use App\UserContext\Presentation\HTTP\DTOs\ChangeAUserFirstnameInput;
