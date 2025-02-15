@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserContext\Application\Commands;
 
-use App\UserContext\Domain\Ports\Inbound\CommandInterface;
+use App\SharedContext\Domain\Ports\Inbound\CommandInterface;
 use App\UserContext\Domain\ValueObjects\UserFirstname;
 use App\UserContext\Domain\ValueObjects\UserId;
 

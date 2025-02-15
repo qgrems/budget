@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\UserContext\Domain\Services;
 
 use App\Libraries\Anonymii\Exceptions\UserEncryptionException;
-use App\Libraries\Anonymii\Repositories\KeyManagementRepositoryInterface;
+use App\Libraries\Anonymii\Ports\EncryptionServiceInterface;
+use App\Libraries\Anonymii\Ports\KeyManagementRepositoryInterface;
 use App\Libraries\Anonymii\Services\EncryptionService;
-use App\Libraries\Anonymii\Services\EncryptionServiceInterface;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 

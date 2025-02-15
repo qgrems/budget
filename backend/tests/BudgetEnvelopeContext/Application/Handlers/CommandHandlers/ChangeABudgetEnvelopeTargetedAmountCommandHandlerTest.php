@@ -18,8 +18,8 @@ use App\BudgetEnvelopeContext\Domain\Exceptions\InvalidBudgetEnvelopeOperationEx
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
-use App\BudgetEnvelopeContext\Presentation\HTTP\DTOs\ChangeABudgetEnvelopeTargetedAmountInput;
-use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
+use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
+use App\Gateway\BudgetEnvelope\HTTP\DTOs\ChangeABudgetEnvelopeTargetedAmountInput;
 use App\SharedContext\Domain\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;

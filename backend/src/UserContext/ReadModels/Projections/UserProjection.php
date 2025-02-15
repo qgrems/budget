@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\UserContext\ReadModels\Projections;
 
-use App\Libraries\Anonymii\Repositories\KeyManagementRepositoryInterface;
-use App\Libraries\Anonymii\Services\EventEncryptorInterface;
+use App\Libraries\Anonymii\Ports\EventEncryptorInterface;
+use App\Libraries\Anonymii\Ports\KeyManagementRepositoryInterface;
 use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
 use App\UserContext\Domain\Events\UserDeletedDomainEvent;
 use App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent;

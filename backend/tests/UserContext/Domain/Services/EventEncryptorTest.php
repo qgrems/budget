@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Domain\Services;
 
-use App\Libraries\Anonymii\Services\EncryptionServiceInterface;
+use App\Libraries\Anonymii\Ports\EncryptionServiceInterface;
 use App\Libraries\Anonymii\Services\EventEncryptor;
 use App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent;
 use PHPUnit\Framework\TestCase;

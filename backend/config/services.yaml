@@ -19,12 +19,12 @@ services:
             $user: '%env(RABBITMQ_USER)%'
             $password: '%env(RABBITMQ_PASSWORD)%'
 
-    App\UserContext\Presentation\HTTP\Controllers\:
-        resource: '../src/UserContext/Presentation/HTTP/Controllers'
+    App\Gateway\User\HTTP\Controllers\:
+        resource: '../src/Gateway/User/HTTP/Controllers'
         tags: [ 'controller.service_arguments' ]
 
-    App\BudgetEnvelopeContext\Presentation\HTTP\Controllers\:
-        resource: '../src/BudgetEnvelopeContext/Presentation/HTTP/Controllers'
+    App\Gateway\BudgetEnvelope\HTTP\Controllers\:
+        resource: '../src/Gateway/BudgetEnvelope/HTTP/Controllers'
         tags: [ 'controller.service_arguments' ]
 
     App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\AddABudgetEnvelopeCommandHandler:
@@ -108,7 +108,7 @@ services:
 
     App\SharedContext\Infrastructure\EventListener\RequestIdListener:
         arguments:
-            $requestIdProvider: '@App\SharedContext\Domain\Services\RequestIdProvider'
+            $requestIdProvider: '@App\Libraries\FluxCapacitor\Services\RequestIdProvider'
         tags:
             - { name: kernel.event_subscriber }
 

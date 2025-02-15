@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
+use App\Gateway\User\HTTP\DTOs\LogoutAUserInput;
 use App\UserContext\Application\Commands\LogoutAUserCommand;
 use App\UserContext\Application\Handlers\CommandHandlers\LogoutAUserCommandHandler;
 use App\UserContext\Domain\Ports\Outbound\EntityManagerInterface;
 use App\UserContext\Domain\Ports\Outbound\RefreshTokenManagerInterface;
 use App\UserContext\Infrastructure\Entities\RefreshToken;
-use App\UserContext\Presentation\HTTP\DTOs\LogoutAUserInput;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

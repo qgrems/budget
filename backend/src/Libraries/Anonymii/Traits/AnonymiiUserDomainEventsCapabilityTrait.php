@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Libraries\Anonymii\Traits;
 
-use App\Libraries\Anonymii\Events\AnonymiiUserDomainEventInterface;
+use App\Libraries\Anonymii\Ports\AnonymiiUserDomainEventInterface;
 
 trait AnonymiiUserDomainEventsCapabilityTrait
 {

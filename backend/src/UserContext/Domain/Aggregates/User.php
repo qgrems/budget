@@ -2,7 +2,7 @@
 
 namespace App\UserContext\Domain\Aggregates;
 
-use App\Libraries\Anonymii\Services\EventEncryptorInterface;
+use App\Libraries\Anonymii\Ports\EventEncryptorInterface;
 use App\Libraries\Anonymii\Traits\AnonymiiUserDomainEventsCapabilityTrait;
 use App\Libraries\Anonymii\Traits\EncryptedKeyCacheTrait;
 use App\SharedContext\Domain\Ports\Inbound\EventClassMapInterface;

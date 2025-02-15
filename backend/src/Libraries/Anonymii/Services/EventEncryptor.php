@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Libraries\Anonymii\Services;
 
 use App\Libraries\Anonymii\Attributes\PersonalData;
-use App\Libraries\Anonymii\Events\AnonymiiUserDomainEventInterface;
-use App\Libraries\Anonymii\Events\AnonymiiUserSignedUpDomainEventInterface;
+use App\Libraries\Anonymii\Ports\AnonymiiUserDomainEventInterface;
+use App\Libraries\Anonymii\Ports\AnonymiiUserSignedUpDomainEventInterface;
+use App\Libraries\Anonymii\Ports\EncryptionServiceInterface;
+use App\Libraries\Anonymii\Ports\EventEncryptorInterface;
 use ReflectionClass;
 use ReflectionProperty;
 

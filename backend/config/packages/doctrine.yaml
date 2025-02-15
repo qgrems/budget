@@ -31,8 +31,8 @@ doctrine:
             EventStore:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/SharedContext/Infrastructure/Entities'
-                prefix: 'App\SharedContext\Infrastructure\Entities'
+                dir: '%kernel.project_dir%/src/Libraries/FluxCapacitor/Entities'
+                prefix: 'App\Libraries\FluxCapacitor\Entities'
                 alias: EventStore
             EncryptionKey:
                 type: attribute

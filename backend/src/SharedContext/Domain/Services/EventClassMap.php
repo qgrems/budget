@@ -12,7 +12,7 @@ use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRenamedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeReplayedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRewoundDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeTargetedAmountChangedDomainEvent;
-use App\BudgetEnvelopeContext\Domain\Ports\Inbound\EventClassMapInterface as BudgetEnvelopeEventClassMapInterface;
+use App\Libraries\FluxCapacitor\Ports\EventClassMapInterface as FluxCapacitorEventClassMapInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventClassMapInterface;
 use App\UserContext\Domain\Events\UserDeletedDomainEvent;
 use App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent;
@@ -24,9 +24,8 @@ use App\UserContext\Domain\Events\UserPasswordResetRequestedDomainEvent;
 use App\UserContext\Domain\Events\UserReplayedDomainEvent;
 use App\UserContext\Domain\Events\UserRewoundDomainEvent;
 use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
-use App\UserContext\Domain\Ports\Inbound\EventClassMapInterface as UserEventClassMapInterface;
 
-final readonly class EventClassMap implements EventClassMapInterface, UserEventClassMapInterface, BudgetEnvelopeEventClassMapInterface
+final readonly class EventClassMap implements EventClassMapInterface, FluxCapacitorEventClassMapInterface
 {
     public function getClassNameByEventPath(string $eventPath): string
     {

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\UserContext\Application\Commands;
 
-use App\UserContext\Domain\Ports\Inbound\CommandInterface;
-use App\UserContext\Domain\ValueObjects\UserLanguagePreference;
+use App\SharedContext\Domain\Ports\Inbound\CommandInterface;
 use App\UserContext\Domain\ValueObjects\UserId;
+use App\UserContext\Domain\ValueObjects\UserLanguagePreference;
 
 final readonly class ChangeAUserLanguagePreferenceCommand implements CommandInterface
 {

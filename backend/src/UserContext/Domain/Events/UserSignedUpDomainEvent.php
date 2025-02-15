@@ -3,12 +3,11 @@
 namespace App\UserContext\Domain\Events;
 
 use App\Libraries\Anonymii\Attributes\PersonalData;
-use App\Libraries\Anonymii\Events\AnonymiiUserDomainEventInterface;
-use App\Libraries\Anonymii\Events\AnonymiiUserSignedUpDomainEventInterface;
+use App\Libraries\Anonymii\Ports\AnonymiiUserSignedUpDomainEventInterface;
 use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
 use App\UserContext\Domain\Ports\Inbound\UserDomainEventInterface;
 
-final class UserSignedUpDomainEvent implements AnonymiiUserDomainEventInterface, AnonymiiUserSignedUpDomainEventInterface, UserDomainEventInterface
+final class UserSignedUpDomainEvent implements UserDomainEventInterface, AnonymiiUserSignedUpDomainEventInterface
 {
     public string $aggregateId;
     #[PersonalData]

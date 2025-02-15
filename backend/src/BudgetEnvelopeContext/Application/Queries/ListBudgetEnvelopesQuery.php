@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\BudgetEnvelopeContext\Application\Queries;
 
-use App\BudgetEnvelopeContext\Domain\Ports\Inbound\QueryInterface;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
+use App\SharedContext\Domain\Ports\Inbound\QueryInterface;
 
 final readonly class ListBudgetEnvelopesQuery implements QueryInterface
 {

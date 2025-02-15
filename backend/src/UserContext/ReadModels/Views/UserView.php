@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\UserContext\ReadModels\Views;
 
 use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
-use App\SharedContext\Domain\Ports\Inbound\SharedUserInterface;
 use App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent;
 use App\UserContext\Domain\Events\UserLanguagePreferenceChangedDomainEvent;
 use App\UserContext\Domain\Events\UserLastnameChangedDomainEvent;
@@ -30,7 +29,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'user_view')]
-final class UserView implements UserViewInterface, UserInterface, PasswordAuthenticatedUserInterface, SharedUserInterface, \JsonSerializable
+final class UserView implements UserViewInterface, UserInterface, PasswordAuthenticatedUserInterface, \JsonSerializable
 {
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]

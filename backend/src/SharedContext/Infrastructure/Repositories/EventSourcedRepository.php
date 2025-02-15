@@ -2,8 +2,8 @@
 
 namespace App\SharedContext\Infrastructure\Repositories;
 
+use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
-use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 
 final readonly class EventSourcedRepository implements EventSourcedRepositoryInterface
 {
