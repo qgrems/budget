@@ -8,9 +8,9 @@ use App\BudgetEnvelopeContext\Application\Handlers\QueryHandlers\ListBudgetEnvel
 use App\BudgetEnvelopeContext\Application\Queries\ListBudgetEnvelopesQuery;
 use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
-use App\BudgetEnvelopeContext\Presentation\HTTP\DTOs\ListBudgetEnvelopesInput;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopesPaginated;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeView;
+use App\Gateway\BudgetEnvelope\HTTP\DTOs\ListBudgetEnvelopesInput;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

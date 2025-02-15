@@ -14,9 +14,9 @@ use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryI
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeName;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
-use App\BudgetEnvelopeContext\Presentation\HTTP\DTOs\RenameABudgetEnvelopeInput;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeView;
-use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
+use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
+use App\Gateway\BudgetEnvelope\HTTP\DTOs\RenameABudgetEnvelopeInput;
 use App\SharedContext\Domain\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;

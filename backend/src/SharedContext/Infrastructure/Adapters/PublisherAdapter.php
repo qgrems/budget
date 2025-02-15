@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\SharedContext\Infrastructure\Adapters;
 
+use App\Libraries\FluxCapacitor\Ports\DomainEventPublisherInterface;
 use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
 
-final readonly class PublisherAdapter implements PublisherInterface
+final readonly class PublisherAdapter implements PublisherInterface, DomainEventPublisherInterface
 {
     private const int DELIVERY_MODE_PERSISTENT = 2;
 

@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\Libraries\Anonymii\Services;
 
 use App\Libraries\Anonymii\Exceptions\UserEncryptionException;
-use App\Libraries\Anonymii\Repositories\KeyManagementRepositoryInterface;
+use App\Libraries\Anonymii\Ports\EncryptionServiceInterface;
+use App\Libraries\Anonymii\Ports\KeyManagementRepositoryInterface;
 use App\Libraries\Anonymii\Traits\EncryptedKeyCacheTrait;
 
 final class EncryptionService implements EncryptionServiceInterface

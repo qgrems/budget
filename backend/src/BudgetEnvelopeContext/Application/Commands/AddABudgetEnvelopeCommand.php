@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\BudgetEnvelopeContext\Application\Commands;
 
-use App\BudgetEnvelopeContext\Domain\Ports\Inbound\CommandInterface;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeName;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
+use App\SharedContext\Domain\Ports\Inbound\CommandInterface;
 
 final readonly class AddABudgetEnvelopeCommand implements CommandInterface
 {

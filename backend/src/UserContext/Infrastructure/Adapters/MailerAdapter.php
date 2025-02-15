@@ -2,9 +2,9 @@
 
 namespace App\UserContext\Infrastructure\Adapters;
 
+use App\SharedContext\Domain\Ports\Outbound\UrlGeneratorInterface;
 use App\UserContext\Domain\Ports\Inbound\UserViewInterface;
 use App\UserContext\Domain\Ports\Outbound\MailerInterface;
-use App\UserContext\Domain\Ports\Outbound\UrlGeneratorInterface;
 use Symfony\Component\Mailer\Envelope;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface as SymfonyMailerInterface;

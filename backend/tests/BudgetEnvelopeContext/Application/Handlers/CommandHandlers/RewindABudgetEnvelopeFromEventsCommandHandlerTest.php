@@ -10,7 +10,7 @@ use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeAddedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
-use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
+use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
 use App\SharedContext\Domain\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;

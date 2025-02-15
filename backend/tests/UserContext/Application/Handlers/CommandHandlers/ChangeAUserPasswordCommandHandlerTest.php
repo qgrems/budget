@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
-use App\Libraries\Anonymii\Services\EventEncryptorInterface;
-use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
+use App\Libraries\Anonymii\Ports\EventEncryptorInterface;
+use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
+use App\Gateway\User\HTTP\DTOs\ChangeAUserPasswordInput;
 use App\SharedContext\Domain\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
@@ -22,7 +23,6 @@ use App\UserContext\Domain\ValueObjects\UserId;
 use App\UserContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\ValueObjects\UserLastname;
 use App\UserContext\Domain\ValueObjects\UserPassword;
-use App\UserContext\Presentation\HTTP\DTOs\ChangeAUserPasswordInput;
 use App\UserContext\ReadModels\Views\UserView;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
