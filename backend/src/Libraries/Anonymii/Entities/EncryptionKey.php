@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\UserContext\Infrastructure\Entities;
+namespace App\Libraries\Anonymii\Entities;
 
 use Doctrine\ORM\Mapping as ORM;
 

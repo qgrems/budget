@@ -37,8 +37,8 @@ doctrine:
             EncryptionKey:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/UserContext/Infrastructure/Entities'
-                prefix: 'App\UserContext\Infrastructure\Entities'
+                dir: '%kernel.project_dir%/src/Libraries/Anonymii/Entities'
+                prefix: 'App\Libraries\Anonymii\Entities'
                 alias: EncryptionKey
             RefreshToken:
                 type: attribute

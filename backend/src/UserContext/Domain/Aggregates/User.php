@@ -2,25 +2,25 @@
 
 namespace App\UserContext\Domain\Aggregates;
 
+use App\Libraries\Anonymii\Services\EventEncryptorInterface;
+use App\Libraries\Anonymii\Traits\AnonymiiUserDomainEventsCapabilityTrait;
+use App\Libraries\Anonymii\Traits\EncryptedKeyCacheTrait;
 use App\SharedContext\Domain\Ports\Inbound\EventClassMapInterface;
-use App\SharedContext\Domain\Traits\DomainEventsCapabilityTrait;
 use App\UserContext\Domain\Events\UserDeletedDomainEvent;
 use App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent;
 use App\UserContext\Domain\Events\UserLanguagePreferenceChangedDomainEvent;
 use App\UserContext\Domain\Events\UserLastnameChangedDomainEvent;
+use App\UserContext\Domain\Events\UserPasswordChangedDomainEvent;
 use App\UserContext\Domain\Events\UserPasswordResetDomainEvent;
 use App\UserContext\Domain\Events\UserPasswordResetRequestedDomainEvent;
-use App\UserContext\Domain\Events\UserPasswordChangedDomainEvent;
 use App\UserContext\Domain\Events\UserReplayedDomainEvent;
 use App\UserContext\Domain\Events\UserRewoundDomainEvent;
 use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 use App\UserContext\Domain\Exceptions\InvalidUserOperationException;
 use App\UserContext\Domain\Exceptions\UserAlreadyExistsException;
 use App\UserContext\Domain\Exceptions\UserIsNotOwnedByUserException;
-use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\Ports\Inbound\UserDomainEventInterface;
 use App\UserContext\Domain\Ports\Inbound\UserViewRepositoryInterface;
-use App\UserContext\Domain\Traits\EncryptedKeyCacheTrait;
 use App\UserContext\Domain\ValueObjects\UserConsent;
 use App\UserContext\Domain\ValueObjects\UserEmail;
 use App\UserContext\Domain\ValueObjects\UserFirstname;
@@ -32,7 +32,7 @@ use App\UserContext\Domain\ValueObjects\UserPasswordResetToken;
 
 final class User
 {
-    use DomainEventsCapabilityTrait;
+    use AnonymiiUserDomainEventsCapabilityTrait;
     use EncryptedKeyCacheTrait;
 
     private UserId $userId;

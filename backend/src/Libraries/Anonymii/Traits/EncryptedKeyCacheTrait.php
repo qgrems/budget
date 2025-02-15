@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\UserContext\Domain\Traits;
+namespace App\Libraries\Anonymii\Traits;
 
 trait EncryptedKeyCacheTrait
 {

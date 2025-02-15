@@ -112,7 +112,7 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    App\UserContext\Infrastructure\Persistence\Repositories\KeyManagementRepository:
+    App\Libraries\Anonymii\Repositories\KeyManagementRepository:
         arguments:
             $connection: '@doctrine.dbal.default_connection'
             $passphrase: '%env(KEY_MANAGEMENT_SECRET)%'

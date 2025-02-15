@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
+use App\Libraries\Anonymii\Services\EventEncryptorInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
@@ -11,7 +12,6 @@ use App\UserContext\Application\Commands\SignUpAUserCommand;
 use App\UserContext\Application\Handlers\CommandHandlers\SignUpAUserCommandHandler;
 use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 use App\UserContext\Domain\Exceptions\UserAlreadyExistsException;
-use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserContext\Domain\Ports\Outbound\PasswordHasherInterface;
 use App\UserContext\Domain\ValueObjects\UserConsent;

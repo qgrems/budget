@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\UserContext\Application\Handlers\CommandHandlers;
 
+use App\Libraries\Anonymii\Services\EventEncryptorInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\UserContext\Application\Commands\SignUpAUserCommand;
 use App\UserContext\Domain\Aggregates\User;
 use App\UserContext\Domain\Exceptions\UserAlreadyExistsException;
-use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserContext\Domain\Ports\Outbound\PasswordHasherInterface;
 use App\UserContext\Domain\ValueObjects\UserPassword;

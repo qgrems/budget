@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
+use App\Libraries\Anonymii\Services\EventEncryptorInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventStoreInterface;
 use App\SharedContext\Domain\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
@@ -12,7 +13,6 @@ use App\UserContext\Application\Commands\RequestAUserPasswordResetCommand;
 use App\UserContext\Application\Handlers\CommandHandlers\RequestAUserPasswordResetCommandHandler;
 use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 use App\UserContext\Domain\Exceptions\UserNotFoundException;
-use App\UserContext\Domain\Ports\Inbound\EventEncryptorInterface;
 use App\UserContext\Domain\Ports\Inbound\PasswordResetTokenGeneratorInterface;
 use App\UserContext\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserContext\Domain\ValueObjects\UserConsent;

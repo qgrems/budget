@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\UserContext\Domain\Exceptions;
+namespace App\Libraries\Anonymii\Exceptions;
 
 final class UserEncryptionException extends \RuntimeException
 {
     private function __construct(
-        string $message = 'users.encryptionError',
+        string $message = 'User encryption error.',
         int $code = 500,
         ?\Throwable $previous = null,
     ) {
@@ -16,16 +16,16 @@ final class UserEncryptionException extends \RuntimeException
 
     public static function fromGetKeyFailure(): self
     {
-        return new self('error.get_key', 500);
+        return new self('Failure on get key.', 500);
     }
 
     public static function fromEncryptFailure(): self
     {
-        return new self('error.encrypt', 500);
+        return new self('Failure on encrypt.', 500);
     }
 
     public static function fromDecryptFailure(): self
     {
-        return new self('error.decrypt', 500);
+        return new self('Failure on decrypt.', 500);
     }
 }
