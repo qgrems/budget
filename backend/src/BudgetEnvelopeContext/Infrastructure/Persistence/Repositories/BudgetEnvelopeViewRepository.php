@@ -30,14 +30,15 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
     public function save(BudgetEnvelopeViewInterface $budgetEnvelope): void
     {
         $this->connection->executeStatement('
-    INSERT INTO budget_envelope_view (uuid, created_at, updated_at, current_amount, targeted_amount, name, user_uuid, is_deleted)
-    VALUES (:uuid, :created_at, :updated_at, :current_amount, :targeted_amount, :name, :user_uuid, :is_deleted)
+    INSERT INTO budget_envelope_view (uuid, created_at, updated_at, current_amount, targeted_amount, name, user_uuid, currency, is_deleted)
+    VALUES (:uuid, :created_at, :updated_at, :current_amount, :targeted_amount, :name, :user_uuid, :currency, :is_deleted)
     ON DUPLICATE KEY UPDATE
         updated_at = VALUES(updated_at),
         current_amount = VALUES(current_amount),
         targeted_amount = VALUES(targeted_amount),
         name = VALUES(name),
         user_uuid = VALUES(user_uuid),
+        currency = VALUES(currency),
         is_deleted = VALUES(is_deleted)
 ', [
             'uuid' => $budgetEnvelope->uuid,
@@ -47,6 +48,7 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
             'targeted_amount' => $budgetEnvelope->targetedAmount,
             'name' => $budgetEnvelope->name,
             'user_uuid' => $budgetEnvelope->userUuid,
+            'currency' => $budgetEnvelope->currency,
             'is_deleted' => $budgetEnvelope->isDeleted ? 1 : 0,
         ]);
     }
@@ -80,7 +82,7 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
     public function findOneEnvelopeWithItsLedgerBy(array $criteria, ?array $orderBy = null): array
     {
         $sql = sprintf(
-            'SELECT ev.uuid, ev.created_at, ev.updated_at, ev.current_amount, ev.targeted_amount, ev.name, ev.user_uuid, ev.is_deleted, ehv.budget_envelope_uuid, ehv.created_at AS ledger_created_at, ehv.monetary_amount, ehv.entry_type, ehv.description
+            'SELECT ev.uuid, ev.created_at, ev.updated_at, ev.current_amount, ev.targeted_amount, ev.name, ev.user_uuid, ev.is_deleted, ev.currency, ehv.budget_envelope_uuid, ehv.created_at AS ledger_created_at, ehv.monetary_amount, ehv.entry_type, ehv.description
          FROM budget_envelope_view ev
          LEFT JOIN budget_envelope_ledger_entry_view ehv ON ev.uuid = ehv.budget_envelope_uuid
          WHERE %s

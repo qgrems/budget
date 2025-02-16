@@ -5,6 +5,7 @@ namespace App\UserContext\Domain\Aggregates;
 use App\Libraries\Anonymii\Ports\EventEncryptorInterface;
 use App\Libraries\Anonymii\Traits\AnonymiiUserDomainEventsCapabilityTrait;
 use App\Libraries\Anonymii\Traits\EncryptedKeyCacheTrait;
+use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventClassMapInterface;
 use App\UserContext\Domain\Events\UserDeletedDomainEvent;
 use App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent;
@@ -61,8 +62,10 @@ final class User
     ): self {
         $aggregate = new self();
 
+        /** @var array{stream_version: int, event_name: string, payload: string} $event */
         foreach ($events as $event) {
             $aggregate->apply(
+            /** @var DomainEventInterface $eventClassMap->getEventPathByClassName($event['event_name']) */
                 $eventClassMap->getEventPathByClassName($event['event_name'])::fromArray(
                     json_decode(
                         $event['payload'],

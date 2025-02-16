@@ -18,8 +18,8 @@ use App\BudgetEnvelopeContext\Domain\Exceptions\InvalidBudgetEnvelopeOperationEx
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
+use App\Gateway\BudgetEnvelope\Presentation\HTTP\DTOs\ChangeABudgetEnvelopeTargetedAmountInput;
 use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
-use App\Gateway\BudgetEnvelope\HTTP\DTOs\ChangeABudgetEnvelopeTargetedAmountInput;
 use App\SharedContext\Domain\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
@@ -74,6 +74,7 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                                 'requestId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e566',
                                 'targetedAmount' => '2000.00',
+                                'currency' => 'USD',
                             ]),
                         ],
                         [
@@ -174,6 +175,7 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
                                 'requestId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e568',
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                                 'targetedAmount' => '2000.00',
+                                'currency' => 'USD',
                             ]),
                         ],
                         [
@@ -228,6 +230,7 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
                                 'requestId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e567',
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                                 'targetedAmount' => '2000.00',
+                                'currency' => 'USD',
                             ]),
                         ],
                         [
@@ -296,6 +299,7 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                                 'requestId' => 'a871e446-ddcd-4e7a-9bf9-525bab84e567',
                                 'targetedAmount' => '2000.00',
+                                'currency' => 'USD',
                             ]),
                         ],
                         [

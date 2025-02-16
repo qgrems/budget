@@ -4,6 +4,7 @@ namespace App\Tests\BudgetEnvelopeContext\ReadModels\Projections;
 
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeAddedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedDomainEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCurrencyChangedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDebitedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDeletedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRenamedDomainEvent;
@@ -37,6 +38,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
             'Test',
             '1000.00',
+            'USD',
         );
 
         $this->envelopeViewRepository->expects($this->once())
@@ -49,7 +51,8 @@ class BudgetEnvelopeProjectionTest extends TestCase
                     && $view->targetedAmount === $event->targetedAmount
                     && '0.00' === $view->currentAmount
                     && $view->name === $event->name
-                    && $view->userUuid === $event->userId;
+                    && $view->userUuid === $event->userId
+                    && $view->currency === $event->currency;
             }));
         $this->publisher->expects($this->once())->method('publishNotificationEvents');
 
@@ -70,6 +73,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test',
                 '1000.00',
+                'USD',
             ),
         );
 
@@ -114,6 +118,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test',
                 '1000.00',
+                'USD',
             ),
         );
 
@@ -157,6 +162,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test',
                 '1000.00',
+                'USD',
             ),
         );
 
@@ -199,6 +205,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test',
                 '1000.00',
+                'USD',
             ),
         );
 
@@ -241,6 +248,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test',
                 '1000.00',
+                'USD',
             ),
         );
 
@@ -252,6 +260,50 @@ class BudgetEnvelopeProjectionTest extends TestCase
 
         $this->budgetEnvelopeProjection->__invoke($event);
     }
+
+    public function testHandleEnvelopeCurrencyChangedEvent(): void
+    {
+        $event = new BudgetEnvelopeCurrencyChangedDomainEvent(
+            'b7e685be-db83-4866-9f85-102fac30a50b',
+            '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
+            'USD',
+        );
+        $envelopeView = BudgetEnvelopeView::fromBudgetEnvelopeAddedDomainEvent(
+            new BudgetEnvelopeAddedDomainEvent(
+                'b7e685be-db83-4866-9f85-102fac30a50b',
+                '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
+                'Test',
+                '1000.00',
+                'USD',
+            ),
+        );
+
+        $this->envelopeViewRepository->expects($this->once())
+            ->method('findOneBy')
+            ->with(['uuid' => $event->aggregateId, 'is_deleted' => false])
+            ->willReturn($envelopeView);
+        $this->publisher->expects($this->once())->method('publishNotificationEvents');
+
+        $this->budgetEnvelopeProjection->__invoke($event);
+    }
+
+    public function testHandleEnvelopeCurrencyChangedWithEnvelopeThatDoesNotExist(): void
+    {
+        $event = new BudgetEnvelopeCurrencyChangedDomainEvent(
+            'b7e685be-db83-4866-9f85-102fac30a50b',
+            '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
+            'USD',
+        );
+
+        $this->envelopeViewRepository->expects($this->once())
+            ->method('findOneBy')
+            ->with(['uuid' => $event->aggregateId, 'is_deleted' => false])
+            ->willReturn(null);
+        $this->publisher->expects($this->never())->method('publishNotificationEvents');
+
+        $this->budgetEnvelopeProjection->__invoke($event);
+    }
+
 
     public function testHandleEnvelopeTargetedAmountUpdatedWithEnvelopeThatDoesNotExist(): void
     {
@@ -278,6 +330,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             'Test',
             '1000.00',
             '0.00',
+            'USD',
             '2024-01-01 00:00:00',
             '2024-01-01 00:00:00',
             false,
@@ -288,6 +341,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test',
                 '1000.00',
+                'USD',
             ),
         );
 
@@ -308,6 +362,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             'Test',
             '1000.00',
             '0.00',
+            'USD',
             '2024-01-01 00:00:00',
             '2024-01-01 00:00:00',
             false,
@@ -330,6 +385,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             'Test',
             '1000.00',
             '0.00',
+            'USD',
             '2024-01-01 00:00:00',
             false,
         );
@@ -339,6 +395,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test',
                 '1000.00',
+                'USD',
             ),
         );
 
@@ -359,6 +416,7 @@ class BudgetEnvelopeProjectionTest extends TestCase
             'Test',
             '1000.00',
             '0.00',
+            'USD',
             '2024-01-01 00:00:00',
             false,
         );

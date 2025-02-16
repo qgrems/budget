@@ -10,7 +10,7 @@ use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryI
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopesPaginated;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeView;
-use App\Gateway\BudgetEnvelope\HTTP\DTOs\ListBudgetEnvelopesInput;
+use App\Gateway\BudgetEnvelope\Presentation\HTTP\DTOs\ListBudgetEnvelopesInput;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -38,6 +38,7 @@ class ListBudgetEnvelopesQueryHandlerTest extends TestCase
                 'targeted_amount' => '300.00',
                 'current_amount' => '150.00',
                 'user_uuid' => 'd26cc02e-99e7-428c-9d61-572dff3f84a7',
+                'currency' => 'USD',
                 'created_at' => (new \DateTime())->format('Y-m-d H:i:s'),
                 'updated_at' => (new \DateTime())->format('Y-m-d H:i:s'),
                 'is_deleted' => false,

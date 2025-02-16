@@ -15,8 +15,8 @@ use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeName;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeView;
+use App\Gateway\BudgetEnvelope\Presentation\HTTP\DTOs\RenameABudgetEnvelopeInput;
 use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
-use App\Gateway\BudgetEnvelope\HTTP\DTOs\RenameABudgetEnvelopeInput;
 use App\SharedContext\Domain\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
@@ -73,6 +73,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                                 'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                                 'targetedAmount' => '2000.00',
+                                'currency' => 'USD',
                             ]),
                         ],
                     ],
@@ -110,6 +111,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                                 'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                                 'targetedAmount' => '2000.00',
+                                'currency' => 'USD',
                             ]),
                         ],
                     ],
@@ -124,6 +126,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
                     'targeted_amount' => '300.00',
                     'current_amount' => '150.00',
                     'user_uuid' => 'd26cc02e-99e7-428c-9d61-572dff3f84a7',
+                    'currency' => 'USD',
                     'created_at' => (new \DateTime())->format('Y-m-d H:i:s'),
                     'updated_at' => (new \DateTime())->format('Y-m-d H:i:s'),
                     'is_deleted' => false,
@@ -183,6 +186,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                                 'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                                 'targetedAmount' => '2000.00',
+                                'currency' => 'USD',
                             ]),
                         ],
                     ],

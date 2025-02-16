@@ -10,13 +10,14 @@ use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeAddedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeAlreadyExistsException;
 use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeNameAlreadyExistsForUserException;
 use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
+use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCurrency;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeName;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeView;
+use App\Gateway\BudgetEnvelope\Presentation\HTTP\DTOs\AddABudgetEnvelopeInput;
 use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
-use App\Gateway\BudgetEnvelope\HTTP\DTOs\AddABudgetEnvelopeInput;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -47,7 +48,8 @@ class AddABudgetEnvelopeCommandHandlerTest extends TestCase
         $addABudgetEnvelopeInput = new AddABudgetEnvelopeInput(
             '0099c0ce-3b53-4318-ba7b-994e437a859b',
             'test name',
-            '200.00'
+            '200.00',
+            'USD',
         );
         $addABudgetEnvelopeCommand = new AddABudgetEnvelopeCommand(
             BudgetEnvelopeId::fromString($addABudgetEnvelopeInput->uuid),
@@ -57,6 +59,7 @@ class AddABudgetEnvelopeCommandHandlerTest extends TestCase
                 $addABudgetEnvelopeInput->targetedAmount,
                 '0.00',
             ),
+            BudgetEnvelopeCurrency::fromString($addABudgetEnvelopeInput->currency),
         );
 
         $this->eventStore->expects($this->once())->method('load')->willReturn(CreateEventGenerator::create([]));
@@ -70,7 +73,8 @@ class AddABudgetEnvelopeCommandHandlerTest extends TestCase
         $addABudgetEnvelopeInput = new AddABudgetEnvelopeInput(
             '0099c0ce-3b53-4318-ba7b-994e437a859b',
             'test name',
-            '200.00'
+            '200.00',
+            'USD',
         );
         $addABudgetEnvelopeCommand = new AddABudgetEnvelopeCommand(
             BudgetEnvelopeId::fromString($addABudgetEnvelopeInput->uuid),
@@ -80,6 +84,7 @@ class AddABudgetEnvelopeCommandHandlerTest extends TestCase
                 $addABudgetEnvelopeInput->targetedAmount,
                 '0.00',
             ),
+            BudgetEnvelopeCurrency::fromString($addABudgetEnvelopeInput->currency),
         );
 
         $envelopeView = BudgetEnvelopeView::fromRepository(
@@ -88,6 +93,7 @@ class AddABudgetEnvelopeCommandHandlerTest extends TestCase
                 'name' => 'another envelope name',
                 'targeted_amount' => '300.00',
                 'current_amount' => '150.00',
+                'currency' => 'USD',
                 'user_uuid' => 'd26cc02e-99e7-428c-9d61-572dff3f84a7',
                 'created_at' => (new \DateTime())->format('Y-m-d H:i:s'),
                 'updated_at' => (new \DateTime())->format('Y-m-d H:i:s'),
@@ -109,7 +115,8 @@ class AddABudgetEnvelopeCommandHandlerTest extends TestCase
         $addABudgetEnvelopeInput = new AddABudgetEnvelopeInput(
             '0099c0ce-3b53-4318-ba7b-994e437a859b',
             'test name',
-            '200.00'
+            '200.00',
+            'USD',
         );
         $addABudgetEnvelopeCommand = new AddABudgetEnvelopeCommand(
             BudgetEnvelopeId::fromString($addABudgetEnvelopeInput->uuid),
@@ -119,6 +126,7 @@ class AddABudgetEnvelopeCommandHandlerTest extends TestCase
                 $addABudgetEnvelopeInput->targetedAmount,
                 '0.00',
             ),
+            BudgetEnvelopeCurrency::fromString($addABudgetEnvelopeInput->currency),
         );
 
         $this->eventStore->expects($this->once())->method('load')->willReturn(
@@ -135,6 +143,7 @@ class AddABudgetEnvelopeCommandHandlerTest extends TestCase
                             'occurredOn' => '2024-12-07T22:03:35+00:00',
                             'aggregateId' => $addABudgetEnvelopeInput->uuid,
                             'targetedAmount' => '20.00',
+                            'currency' => 'USD',
                         ]),
                     ],
                 ],

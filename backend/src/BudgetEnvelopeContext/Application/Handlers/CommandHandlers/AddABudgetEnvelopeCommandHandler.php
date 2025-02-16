@@ -31,6 +31,7 @@ final readonly class AddABudgetEnvelopeCommandHandler
             $addABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
             $addABudgetEnvelopeCommand->getBudgetEnvelopeTargetedAmount(),
             $addABudgetEnvelopeCommand->getBudgetEnvelopeName(),
+            $addABudgetEnvelopeCommand->getBudgetEnvelopeCurrency(),
             $this->budgetEnvelopeViewRepository,
         );
 

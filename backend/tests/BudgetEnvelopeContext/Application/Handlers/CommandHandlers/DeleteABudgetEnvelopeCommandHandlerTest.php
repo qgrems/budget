@@ -61,6 +61,7 @@ class DeleteABudgetEnvelopeCommandHandlerTest extends TestCase
                             'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                             'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                             'targetedAmount' => '20.00',
+                            'currency' => 'USD',
                         ]),
                     ],
                 ],
@@ -94,6 +95,7 @@ class DeleteABudgetEnvelopeCommandHandlerTest extends TestCase
                             'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                             'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                             'targetedAmount' => '20.00',
+                            'currency' => 'USD',
                         ]),
                     ],
                     [
@@ -143,6 +145,7 @@ class DeleteABudgetEnvelopeCommandHandlerTest extends TestCase
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                                 'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                                 'targetedAmount' => '2000.00',
+                                'currency' => 'USD',
                             ]),
                         ],
                         [

@@ -19,6 +19,7 @@ class BudgetEnvelopeViewTest extends TestCase
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test Envelope',
                 '1000.00',
+                'USD',
             ),
         );
 
@@ -36,6 +37,7 @@ class BudgetEnvelopeViewTest extends TestCase
             'currentAmount' => '500',
             'targetedAmount' => '1000.00',
             'name' => 'Test Envelope',
+            'currency' => 'USD',
         ];
 
         $this->assertEquals($expected, $envelopeView->jsonSerialize());
@@ -49,6 +51,7 @@ class BudgetEnvelopeViewTest extends TestCase
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test Envelope',
                 '1000.00',
+                'USD',
             ),
         );
 
@@ -58,6 +61,7 @@ class BudgetEnvelopeViewTest extends TestCase
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test Envelope',
                 '1000.00',
+                'USD',
             ),
         );
 
@@ -66,6 +70,7 @@ class BudgetEnvelopeViewTest extends TestCase
             'currentAmount' => '0.00',
             'targetedAmount' => '1000.00',
             'name' => 'Test Envelope',
+            'currency' => 'USD',
         ];
 
         $this->assertEquals($expected, $envelopeView->jsonSerialize());
@@ -83,6 +88,7 @@ class BudgetEnvelopeViewTest extends TestCase
                         'name' => 'Test Envelope',
                         'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                         'targetedAmount' => '1000.00',
+                        'currency' => 'USD',
                         'occurredOn' => '2023-01-01T00:00:00+00:00',
                     ]),
                 ];
@@ -105,6 +111,7 @@ class BudgetEnvelopeViewTest extends TestCase
             'currentAmount' => '500',
             'targetedAmount' => '1000.00',
             'name' => 'Test Envelope',
+            'currency' => 'USD',
         ];
 
         $this->assertEquals($expected, $envelopeView->jsonSerialize());

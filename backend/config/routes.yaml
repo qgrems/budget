@@ -1,13 +1,13 @@
 controllers_rest_envelope:
     resource:
-        path: ../src/Gateway/BudgetEnvelope/HTTP/Controllers/
-        namespace: App\Gateway\BudgetEnvelope\HTTP\Controllers
+        path: ../src/Gateway/BudgetEnvelope/Presentation/HTTP/Controllers/
+        namespace: App\Gateway\BudgetEnvelope\Presentation\HTTP\Controllers
     type: attribute
 
 controllers_rest_user:
     resource:
-        path: ../src/Gateway/User/HTTP/Controllers/
-        namespace: App\Gateway\User\HTTP\Controllers
+        path: ../src/Gateway/User/Presentation/HTTP/Controllers/
+        namespace: App\Gateway\User\Presentation\HTTP\Controllers
     type: attribute
 
 api_login_check:

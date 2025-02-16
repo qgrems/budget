@@ -17,8 +17,9 @@ class BudgetEnvelopeReplayedDomainEventTest extends TestCase
             'Test',
             '1000.00',
             '500.00',
+            'USD',
             '2024-12-07T22:03:35+00:00',
-            false
+            false,
         );
         $array = $event->toArray();
 
@@ -28,6 +29,7 @@ class BudgetEnvelopeReplayedDomainEventTest extends TestCase
         $this->assertEquals('1000.00', $array['targetedAmount']);
         $this->assertEquals('500.00', $array['currentAmount']);
         $this->assertEquals('2024-12-07T22:03:35+00:00', $array['updatedAt']);
+        $this->assertEquals('USD', $array['currency']);
         $this->assertEquals($event->occurredOn->format(\DateTimeInterface::ATOM), $array['occurredOn']);
         $this->assertFalse($array['isDeleted']);
     }
@@ -41,6 +43,7 @@ class BudgetEnvelopeReplayedDomainEventTest extends TestCase
             'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
             'targetedAmount' => '1000.00',
             'currentAmount' => '500.00',
+            'currency' => 'USD',
             'updatedAt' => '2024-12-07T22:03:35+00:00',
             'occurredOn' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
             'isDeleted' => false,
@@ -53,6 +56,7 @@ class BudgetEnvelopeReplayedDomainEventTest extends TestCase
         $this->assertEquals($data['name'], $event->name);
         $this->assertEquals($data['targetedAmount'], $event->targetedAmount);
         $this->assertEquals($data['currentAmount'], $event->currentAmount);
+        $this->assertEquals($data['currency'], $event->currency);
         $this->assertEquals($data['updatedAt'], $event->updatedAt->format(\DateTimeInterface::ATOM));
         $this->assertEquals($data['occurredOn'], $event->occurredOn->format(\DateTimeInterface::ATOM));
         $this->assertFalse($event->isDeleted);

@@ -12,6 +12,7 @@ final class BudgetEnvelopeAddedDomainEvent implements DomainEventInterface
     public string $userId;
     public string $name;
     public string $targetedAmount;
+    public string $currency;
     public string $requestId;
     public \DateTimeImmutable $occurredOn;
 
@@ -20,12 +21,14 @@ final class BudgetEnvelopeAddedDomainEvent implements DomainEventInterface
         string $userId,
         string $name,
         string $targetedAmount,
+        string $currency,
         string $requestId = DomainEventInterface::DEFAULT_REQUEST_ID,
     ){
         $this->aggregateId = $aggregateId;
         $this->userId = $userId;
         $this->name = $name;
         $this->targetedAmount = $targetedAmount;
+        $this->currency = $currency;
         $this->requestId = $requestId;
         $this->occurredOn = new \DateTimeImmutable();
     }
@@ -39,6 +42,7 @@ final class BudgetEnvelopeAddedDomainEvent implements DomainEventInterface
             'requestId' => $this->requestId,
             'name' => $this->name,
             'targetedAmount' => $this->targetedAmount,
+            'currency' => $this->currency,
             'occurredOn' => $this->occurredOn->format(\DateTimeInterface::ATOM),
         ];
     }
@@ -51,6 +55,7 @@ final class BudgetEnvelopeAddedDomainEvent implements DomainEventInterface
             $data['userId'],
             $data['name'],
             $data['targetedAmount'],
+            $data['currency'],
             $data['requestId'],
         );
         $event->occurredOn = new \DateTimeImmutable($data['occurredOn']);

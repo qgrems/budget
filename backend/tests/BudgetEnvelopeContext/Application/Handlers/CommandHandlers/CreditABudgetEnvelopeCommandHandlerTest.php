@@ -19,8 +19,8 @@ use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCreditMoney;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeEntryDescription;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
+use App\Gateway\BudgetEnvelope\Presentation\HTTP\DTOs\CreditABudgetEnvelopeInput;
 use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
-use App\Gateway\BudgetEnvelope\HTTP\DTOs\CreditABudgetEnvelopeInput;
 use App\SharedContext\Domain\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
@@ -73,6 +73,7 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                                 'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                                 'targetedAmount' => '2000.00',
+                                'currency' => 'USD',
                             ]),
                         ],
                         [
@@ -169,6 +170,7 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                                 'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                                 'targetedAmount' => '2000.00',
+                                'currency' => 'USD',
                             ]),
                         ],
                         [
@@ -220,6 +222,7 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                                 'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                                 'targetedAmount' => '2000.00',
+                                'currency' => 'USD',
                             ]),
                         ],
                         [
@@ -285,6 +288,7 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
                                 'aggregateId' => '10a33b8c-853a-4df8-8fc9-e8bb00b78da4',
                                 'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                                 'targetedAmount' => '2000.00',
+                                'currency' => 'USD',
                             ]),
                         ],
                         [

@@ -66,9 +66,6 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
     #[ORM\Column(name: 'updated_at', type: 'datetime')]
     private(set) \DateTime $updatedAt;
 
-    /**
-     * @var array<string> $roles
-     */
     #[ORM\Column(name: 'roles', type: 'json')]
     private(set) array $roles = ['ROLE_USER'];
 
@@ -105,7 +102,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
         $this->roles = $roles;
-        $this->passwordResetToken = (string) $passwordResetToken ?? null;
+        $this->passwordResetToken = $passwordResetToken instanceof UserPasswordResetToken ? (string) $passwordResetToken : null;
         $this->passwordResetTokenExpiry = $passwordResetTokenExpiry;
     }
 
@@ -123,7 +120,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
             new \DateTimeImmutable($user['created_at']),
             new \DateTime($user['updated_at']),
             json_decode($user['roles'], true),
-            UserPasswordResetToken::fromString($user['password_reset_token']) ?? null,
+            $user['password_reset_token'] ? UserPasswordResetToken::fromString($user['password_reset_token']) : null,
             $user['password_reset_token_expiry'] ?
                 new \DateTimeImmutable($user['password_reset_token_expiry']) :
                 null,
@@ -149,6 +146,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
 
     public function fromEvents(\Generator $events): void
     {
+        /** @var array{type: string, payload: string} $event */
         foreach ($events as $event) {
             $this->apply($event['type']::fromArray(json_decode($event['payload'], true)));
         }
@@ -159,7 +157,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
         $this->apply($event);
     }
 
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }
