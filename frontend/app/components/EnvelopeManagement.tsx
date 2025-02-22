@@ -17,6 +17,13 @@ import ActionButton from "./buttons/actionButton"
 import InputNameEnvelope from "./inputs/inputNameEnvelope"
 import InputText from "./inputs/inputText"
 import ValidInputButton from "./buttons/validInputButton"
+import EnvelopeCard from "./card/EnvelopeCard"
+import DeletButton from "./buttons/deletButton"
+import cancelEditing from "../utils/form/CancelEditing"
+import isInvalidInput from "../utils/validation/IsInvalidValidInput"
+import { handleDebitEnvelope } from "../services/envelopeService/debitEnvelope"
+import { handleCreditEnvelope } from "../services/envelopeService/creditEnvelope"
+import handleNameChange from "../utils/envelope/changeName"
 
 export default function EnvelopeManagement() {
     const {
@@ -44,6 +51,11 @@ export default function EnvelopeManagement() {
     const { t } = useTranslation()
     const { error, setError } = useError()
     const { validMessage, setValidMessage } = useValidMessage()
+    const [isEmptyEnvelopes, setIsEmptyEnvelopes] = useState(true)
+    useEffect(() => {
+        console.log(amounts);
+    }, [amounts]);
+
     const handleAmountChange = useCallback((id: string, value: string, isNewEnvelope = false) => {
         // Remove any non-digit and non-dot characters
         value = value.replace(/[^\d.]/g, "")
@@ -95,32 +107,7 @@ export default function EnvelopeManagement() {
         [],
     )
 
-    const handleCreditEnvelope = (id: string, currentAmount: string, targetedAmount: string) => {
-        if (amounts[id]) {
-            const formattedAmount = formatAmount(amounts[id])
-            const maxCredit = (Number.parseFloat(targetedAmount) - Number.parseFloat(currentAmount)).toFixed(2)
-            if (validateAmount(formattedAmount, currentAmount, targetedAmount, true)) {
-                setCurrentAction({ type: "credit", id, amount: formattedAmount })
-                setDescriptionModalOpen(true)
-                setError(null)
-            } else {
-                setError(t("envelopes.creditError").replace("${amount}", formattedAmount).replace("${max}", maxCredit))
-            }
-        }
-    }
-    const handleDebitEnvelope = (id: string, currentAmount: string) => {
-        if (amounts[id]) {
-            const formattedAmount = formatAmount(amounts[id])
-            const maxDebit = Number.parseFloat(currentAmount).toFixed(2)
-            if (validateAmount(formattedAmount, currentAmount, "0", false)) {
-                setCurrentAction({ type: "debit", id, amount: formattedAmount })
-                setDescriptionModalOpen(true)
-                setError(null)
-            } else {
-                setError(t("envelopes.debitError").replace("${amount}", formattedAmount).replace("${max}", maxDebit))
-            }
-        }
-    }
+
 
     const handleDescriptionSubmit = async (description: string) => {
         if (currentAction) {
@@ -176,11 +163,6 @@ export default function EnvelopeManagement() {
         setEditingName({ id, name: currentName })
     }
 
-    const handleNameChange = (newName: string) => {
-        if (editingName) {
-            setEditingName({ ...editingName, name: newName })
-        }
-    }
 
     const handleUpdateEnvelopeName = async (e: React.MouseEvent, name: string) => {
         e.preventDefault(); // Prevent the default link behavior
@@ -231,23 +213,12 @@ export default function EnvelopeManagement() {
         }
 
     }
-    const cancelNameEdit = (e: any) => {
-        e.preventDefault()
-        setEditingName(null)
-    }
-    const [isEmptyEnvelopes, setIsEmptyEnvelopes] = useState(true)
     useEffect(() => {
         if (envelopesData?.envelopes.length === 0) {
             setIsEmptyEnvelopes(false)
         } else setIsEmptyEnvelopes(true)
     }, [envelopesData])
-    const isInvalidInput = (value: string): boolean => {
-        // Allow empty input
-        if (value === "") return false
 
-        // Check if the input is a valid number or a partial decimal input
-        return !/^\d{1,10}(\.\d{0,2})?$/.test(value)
-    }
     const validateAmount = useMemo(
         () =>
             (amount: string, currentAmount: string, targetedAmount: string, isCredit: boolean): boolean => {
@@ -286,46 +257,44 @@ export default function EnvelopeManagement() {
                         }
                     }}
                 >
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="flex-grow">
-                            <div className="flex items-center">
-                                {editingName && editingName.id === envelope.uuid ? (
-                                    <div className="flex items-center flex-grow">
-                                        <InputNameEnvelope
-                                            value={editingName.name}
-                                            onChange={handleNameChange}
-                                            autoFocus
-                                            className="custom-input-class"
-                                        />
-                                        <ValidInputButton
-                                            onClick={(e) => handleUpdateEnvelopeName(e, editingName.name)}
-                                            icon={<Check className="h-4 w-4 md:h-5 md:w-5" />}
-                                            className=" text-green-500 mr-1 "
-                                            disabled={envelope.pending || !!pendingActions[envelope.uuid]}
-                                            text=""
-                                        />
+                    <EnvelopeCard>
+                        {editingName && editingName.id === envelope.uuid ? (
+                            <div className="flex items-center flex-grow">
+                                <InputNameEnvelope
+                                    value={editingName.name}
+                                    onChange={(value) => handleNameChange(value, editingName, setEditingName)}
+                                    autoFocus
+                                    className="custom-input-class"
+                                />
+                                <ValidInputButton
+                                    onClick={(e) => handleUpdateEnvelopeName(e, editingName.name)}
+                                    icon={<Check className="h-4 w-4 md:h-5 md:w-5" />}
+                                    className=" text-green-500 mr-1 "
+                                    disabled={envelope.pending || !!pendingActions[envelope.uuid]}
+                                    text=""
+                                />
 
-                                        {/* Utilisation pour le bouton de l'annulation */}
-                                        <ValidInputButton
-                                            onClick={(e) => {
-                                                setEditingName((prev) => ({ ...prev, name: envelope.name }));
-                                                cancelNameEdit(e);
-                                            }}
-                                            icon={<X className="h-4 w-4 md:h-5 md:w-5" />}
-                                            className="text-red-500"
-                                            disabled={envelope.pending || !!pendingActions[envelope.uuid]}
-                                            text=""
-                                        />
-                                    </div>
-                                ) : (
-                                    <>
-                                        <InputNameEnvelope
-                                            value={envelope.name}
-                                            onChange={() => handleStartEditingName(envelope.uuid, envelope.name)}
-                                            onFocus={() => handleStartEditingName(envelope.uuid, envelope.name)}
-                                            className="custom-input-class cursor-pointer"
-                                        />
-                                        {/* <button
+                                {/* Utilisation pour le bouton de l'annulation */}
+                                <ValidInputButton
+                                    onClick={(e) => {
+                                        setEditingName((prev) => ({ ...prev, name: envelope.name }));
+                                        cancelEditing({ e, setEditing: setEditingName });
+                                    }}
+                                    icon={<X className="h-4 w-4 md:h-5 md:w-5" />}
+                                    className="text-red-500"
+                                    disabled={envelope.pending || !!pendingActions[envelope.uuid]}
+                                    text=""
+                                />
+                            </div>
+                        ) : (
+                            <>
+                                <InputNameEnvelope
+                                    value={envelope.name}
+                                    onChange={() => handleStartEditingName(envelope.uuid, envelope.name)}
+                                    onFocus={() => handleStartEditingName(envelope.uuid, envelope.name)}
+                                    className="custom-input-class cursor-pointer"
+                                />
+                                {/* <button
                                             onClick={(e) => {
                                                 e.preventDefault()
                                                 handleStartEditingName(envelope.uuid, envelope.name)
@@ -335,13 +304,11 @@ export default function EnvelopeManagement() {
                                         >
                                             <Edit2 className="h-4 w-4 md:h-5 md:w-5" />
                                         </button> */}
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                        <div className="flex items-center">
-                            {envelope.pending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-                        </div>
+                            </>
+                        )}
+                    </EnvelopeCard>
+                    <div className="flex items-center">
+                        {envelope.pending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
                     </div>
                     <div className="flex justify-between items-center mb-4">
                         <div>
@@ -398,7 +365,16 @@ export default function EnvelopeManagement() {
                                     disabled={envelope.pending || !!pendingActions[envelope.uuid]}
                                 />
                                 <ActionButton
-                                    onClick={() => handleCreditEnvelope(envelope.uuid, envelope.currentAmount, envelope.targetedAmount)}
+                                    onClick={() => handleCreditEnvelope(
+                                        envelope.uuid,
+                                        envelope.currentAmount,
+                                        envelope.targetedAmount,
+                                        amounts,
+                                        setCurrentAction,
+                                        setDescriptionModalOpen,
+                                        setError,
+                                        t
+                                    )}
                                     label={t("envelopes.credit")}
                                     disabled={
                                         envelope.pending ||
@@ -410,7 +386,15 @@ export default function EnvelopeManagement() {
                                 />
 
                                 <ActionButton
-                                    onClick={() => handleDebitEnvelope(envelope.uuid, envelope.currentAmount)}
+                                    onClick={() => handleDebitEnvelope(
+                                        envelope.uuid,
+                                        envelope.currentAmount,
+                                        amounts,
+                                        setCurrentAction,
+                                        setDescriptionModalOpen,
+                                        setError,
+                                        t
+                                    )}
                                     label={t("envelopes.debit")}
                                     disabled={
                                         envelope.pending ||
@@ -423,19 +407,19 @@ export default function EnvelopeManagement() {
 
                             </div>
                         </div>
-                        <div className="flex justify-end mt-4">
-                            <button
+                        <div className="flex justify-end mt-4" >
+                            <DeletButton
                                 onClick={(e) => openDeleteModal(envelope.uuid, envelope.name, e)}
-                                className="p-2 neomorphic-button text-red-500 hover:text-red-600"
+                                icon={<Trash2 className="h-4 w-4 md:h-5 md:w-5" />
+                                }
+                                className={''}
                                 disabled={envelope.pending || !!pendingActions[envelope.uuid]}
-                            >
-                                <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
-                            </button>
+                            />
                         </div>
                     </div>
                     {envelope.deleted && <p className="text-red-500 mt-2">Deleting...</p>}
                 </motion.div>
-            </Link>
+            </Link >
         ))
     }, [
         envelopesData,
@@ -443,7 +427,6 @@ export default function EnvelopeManagement() {
         editingName,
         pendingActions,
         handleAmountChange,
-        handleCreditEnvelope,
         handleDebitEnvelope,
         handleUpdateEnvelopeName,
         openDeleteModal,
