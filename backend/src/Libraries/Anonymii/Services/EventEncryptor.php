@@ -12,9 +12,9 @@ use App\Libraries\Anonymii\Ports\EventEncryptorInterface;
 use ReflectionClass;
 use ReflectionProperty;
 
-final class EventEncryptor implements EventEncryptorInterface
+final readonly class EventEncryptor implements EventEncryptorInterface
 {
-    public function __construct(private readonly EncryptionServiceInterface $encryptionService)
+    public function __construct(private EncryptionServiceInterface $encryptionService)
     {
     }
 

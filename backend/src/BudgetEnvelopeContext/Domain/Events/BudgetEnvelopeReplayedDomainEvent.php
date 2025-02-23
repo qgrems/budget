@@ -13,6 +13,7 @@ final class BudgetEnvelopeReplayedDomainEvent implements DomainEventInterface
     public string $name;
     public string $targetedAmount;
     public string $currentAmount;
+    public string $currency;
     public bool $isDeleted;
     public \DateTime $updatedAt;
     public string $requestId;
@@ -24,6 +25,7 @@ final class BudgetEnvelopeReplayedDomainEvent implements DomainEventInterface
         string $name,
         string $targetedAmount,
         string $currentAmount,
+        string $currency,
         string $updatedAt,
         bool $isDeleted,
         string $requestId = DomainEventInterface::DEFAULT_REQUEST_ID,
@@ -33,6 +35,7 @@ final class BudgetEnvelopeReplayedDomainEvent implements DomainEventInterface
         $this->name = $name;
         $this->targetedAmount = $targetedAmount;
         $this->currentAmount = $currentAmount;
+        $this->currency = $currency;
         $this->updatedAt = new \DateTime($updatedAt);
         $this->requestId = $requestId;
         $this->isDeleted = $isDeleted;
@@ -49,6 +52,7 @@ final class BudgetEnvelopeReplayedDomainEvent implements DomainEventInterface
             'name' => $this->name,
             'targetedAmount' => $this->targetedAmount,
             'currentAmount' => $this->currentAmount,
+            'currency' => $this->currency,
             'updatedAt' => $this->updatedAt->format(\DateTimeInterface::ATOM),
             'occurredOn' => $this->occurredOn->format(\DateTimeInterface::ATOM),
             'isDeleted' => $this->isDeleted,
@@ -64,6 +68,7 @@ final class BudgetEnvelopeReplayedDomainEvent implements DomainEventInterface
             $data['name'],
             $data['targetedAmount'],
             $data['currentAmount'],
+            $data['currency'],
             $data['updatedAt'],
             $data['isDeleted'],
             $data['requestId'],

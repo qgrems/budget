@@ -65,6 +65,7 @@ class BudgetLedgerEntryProjectionTest extends TestCase
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test',
                 '1000.00',
+                'USD',
             ),
         );
         $envelopeView->fromEvent(new BudgetEnvelopeCreditedDomainEvent(

@@ -58,6 +58,7 @@ class ReplayABudgetEnvelopeEventsCommandHandlerTest extends TestCase
                         'aggregateId' => '3e6a6763-4c4d-4648-bc3f-e9447dbed12c',
                         'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
                         'targetedAmount' => '2000.00',
+                        'currency' => 'USD',
                     ]),
                 ],
                 [

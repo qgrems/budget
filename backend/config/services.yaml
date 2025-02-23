@@ -19,12 +19,12 @@ services:
             $user: '%env(RABBITMQ_USER)%'
             $password: '%env(RABBITMQ_PASSWORD)%'
 
-    App\Gateway\User\HTTP\Controllers\:
-        resource: '../src/Gateway/User/HTTP/Controllers'
+    App\Gateway\User\Presentation\HTTP\Controllers\:
+        resource: '../src/Gateway/User/Presentation/HTTP/Controllers'
         tags: [ 'controller.service_arguments' ]
 
-    App\Gateway\BudgetEnvelope\HTTP\Controllers\:
-        resource: '../src/Gateway/BudgetEnvelope/HTTP/Controllers'
+    App\Gateway\BudgetEnvelope\Presentation\HTTP\Controllers\:
+        resource: '../src/Gateway/BudgetEnvelope/Presentation/HTTP/Controllers'
         tags: [ 'controller.service_arguments' ]
 
     App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\AddABudgetEnvelopeCommandHandler:
@@ -49,6 +49,9 @@ services:
         tags: [ 'messenger.message_handler' ]
 
     App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\ChangeABudgetEnvelopeTargetedAmountCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\ChangeABudgetEnvelopeCurrencyCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
     App\BudgetEnvelopeContext\Application\Handlers\QueryHandlers\GetABudgetEnvelopeWithItsLedgerQueryHandler:

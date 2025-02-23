@@ -6,6 +6,7 @@ namespace App\BudgetEnvelopeContext\ReadModels\Projections;
 
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeAddedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedDomainEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCurrencyChangedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDebitedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDeletedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRenamedDomainEvent;
@@ -16,6 +17,7 @@ use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeViewInterface;
 use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
 use App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeAddedNotificationEvent;
 use App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeCreditedNotificationEvent;
+use App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeCurrencyChangedNotificationEvent;
 use App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeDebitedNotificationEvent;
 use App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeDeletedNotificationEvent;
 use App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeRenamedNotificationEvent;
@@ -45,6 +47,7 @@ final readonly class BudgetEnvelopeProjection
             BudgetEnvelopeRewoundDomainEvent::class => $this->handleBudgetEnvelopeRewoundDomainEvent($event),
             BudgetEnvelopeReplayedDomainEvent::class => $this->handleBudgetEnvelopeReplayedDomainEvent($event),
             BudgetEnvelopeTargetedAmountChangedDomainEvent::class => $this->handleBudgetEnvelopeTargetedAmountChangedDomainEvent($event),
+            BudgetEnvelopeCurrencyChangedDomainEvent::class => $this->handleBudgetEnvelopeCurrencyChangedDomainEvent($event),
             default => null,
         };
     }
@@ -55,9 +58,12 @@ final readonly class BudgetEnvelopeProjection
         $this->budgetEnvelopeViewRepository->save(
             BudgetEnvelopeView::fromBudgetEnvelopeAddedDomainEvent($budgetEnvelopeAddedDomainEvent),
         );
-        $this->publisher->publishNotificationEvents(
-            [BudgetEnvelopeAddedNotificationEvent::fromDomainEvent($budgetEnvelopeAddedDomainEvent)],
-        );
+        try {
+            $this->publisher->publishNotificationEvents(
+                [BudgetEnvelopeAddedNotificationEvent::fromDomainEvent($budgetEnvelopeAddedDomainEvent)],
+            );
+        } catch (\Exception $e) {
+        }
     }
 
     private function handleBudgetEnvelopeCreditedDomainEvent(
@@ -203,6 +209,29 @@ final readonly class BudgetEnvelopeProjection
             $this->publisher->publishNotificationEvents([
                 BudgetEnvelopeTargetedAmountChangedNotificationEvent::fromDomainEvent(
                     $budgetEnvelopeTargetedAmountChangedDomainEvent,
+                ),
+            ]);
+        } catch (\Exception $e) {
+        }
+    }
+
+    private function handleBudgetEnvelopeCurrencyChangedDomainEvent(
+        BudgetEnvelopeCurrencyChangedDomainEvent $budgetEnvelopeCurrencyChangedDomainEvent,
+    ): void {
+        $budgetEnvelopeView = $this->budgetEnvelopeViewRepository->findOneBy(
+            ['uuid' => $budgetEnvelopeCurrencyChangedDomainEvent->aggregateId, 'is_deleted' => false],
+        );
+
+        if (!$budgetEnvelopeView instanceof BudgetEnvelopeViewInterface) {
+            return;
+        }
+
+        $budgetEnvelopeView->fromEvent($budgetEnvelopeCurrencyChangedDomainEvent);
+        $this->budgetEnvelopeViewRepository->save($budgetEnvelopeView);
+        try {
+            $this->publisher->publishNotificationEvents([
+                BudgetEnvelopeCurrencyChangedNotificationEvent::fromDomainEvent(
+                    $budgetEnvelopeCurrencyChangedDomainEvent,
                 ),
             ]);
         } catch (\Exception $e) {

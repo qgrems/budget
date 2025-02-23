@@ -19,6 +19,7 @@ class BudgetEnvelopesPaginatedTest extends TestCase
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test Envelope 1',
                 '1000.00',
+                'USD',
             ),
         );
         $envelope2 = BudgetEnvelopeView::fromBudgetEnvelopeAddedDomainEvent(
@@ -27,6 +28,7 @@ class BudgetEnvelopesPaginatedTest extends TestCase
                 '1ced5c7e-fd3a-4a36-808e-75ddc478f67b',
                 'Test Envelope 2',
                 '1000.00',
+                'USD',
             ),
         );
 

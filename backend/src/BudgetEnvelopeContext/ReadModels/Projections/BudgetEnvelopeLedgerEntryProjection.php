@@ -80,6 +80,7 @@ final readonly class BudgetEnvelopeLedgerEntryProjection
             $budgetEnvelopeRewoundDomainEvent->desiredDateTime,
         );
 
+        /** @var array{type: string, payload: string} $budgetEnvelopeEvent */
         foreach ($budgetEnvelopeEvents as $budgetEnvelopeEvent) {
             match ($budgetEnvelopeEvent['type']) {
                 BudgetEnvelopeCreditedDomainEvent::class => $this->handleBudgetEnvelopeCreditedDomainEvent(
@@ -114,6 +115,7 @@ final readonly class BudgetEnvelopeLedgerEntryProjection
             $budgetEnvelopeReplayedDomainEvent->occurredOn,
         );
 
+        /** @var array{type: string, payload: string} $budgetEnvelopeEvent */
         foreach ($budgetEnvelopeEvents as $budgetEnvelopeEvent) {
             match ($budgetEnvelopeEvent['type']) {
                 BudgetEnvelopeCreditedDomainEvent::class => $this->handleBudgetEnvelopeCreditedDomainEvent(

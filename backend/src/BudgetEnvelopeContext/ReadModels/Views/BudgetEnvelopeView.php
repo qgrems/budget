@@ -6,6 +6,7 @@ namespace App\BudgetEnvelopeContext\ReadModels\Views;
 
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeAddedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedDomainEvent;
+use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCurrencyChangedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDebitedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDeletedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRenamedDomainEvent;
@@ -13,6 +14,7 @@ use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeReplayedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRewoundDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeTargetedAmountChangedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeViewInterface;
+use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCurrency;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCurrentAmount;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeName;
@@ -50,6 +52,9 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
     #[ORM\Column(name: 'name', type: 'string', length: 50)]
     private(set) string $name;
 
+    #[ORM\Column(name: 'currency', type: 'string', length: 3)]
+    private(set) string $currency;
+
     #[ORM\Column(name: 'user_uuid', type: 'string', length: 36)]
     private(set) string $userUuid;
 
@@ -62,6 +67,7 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
         BudgetEnvelopeName $name,
         BudgetEnvelopeUserId $userId,
         BudgetEnvelopeCurrentAmount $currentAmount,
+        BudgetEnvelopeCurrency $currency,
         \DateTimeImmutable $createdAt,
         \DateTime $updatedAt,
         bool $isDeleted,
@@ -71,6 +77,7 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
         $this->targetedAmount = (string) $targetedAmount;
         $this->name = (string) $name;
         $this->userUuid = (string) $userId;
+        $this->currency = (string) $currency;
         $this->isDeleted = $isDeleted;
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
@@ -91,6 +98,7 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
                 $budgetEnvelope['current_amount'],
                 $budgetEnvelope['targeted_amount'],
             ),
+            BudgetEnvelopeCurrency::fromString($budgetEnvelope['currency']),
             new \DateTimeImmutable($budgetEnvelope['created_at']),
             new \DateTime($budgetEnvelope['updated_at']),
             (bool) $budgetEnvelope['is_deleted'],
@@ -113,6 +121,7 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
                 '0.00',
                 $budgetEnvelopeAddedDomainEvent->targetedAmount,
             ),
+            BudgetEnvelopeCurrency::fromString($budgetEnvelopeAddedDomainEvent->currency),
             $budgetEnvelopeAddedDomainEvent->occurredOn,
             \DateTime::createFromImmutable($budgetEnvelopeAddedDomainEvent->occurredOn),
             false,
@@ -123,6 +132,7 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
     {
         $budgetEnvelope = null;
 
+        /** @var array{type: string, payload: string} $event */
         foreach ($events as $event) {
             if ($event['type'] !== BudgetEnvelopeAddedDomainEvent::class && $budgetEnvelope instanceof self) {
                 $budgetEnvelope->apply($event['type']::fromArray(json_decode($event['payload'], true)));
@@ -153,6 +163,7 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
             BudgetEnvelopeRewoundDomainEvent::class => $this->applyBudgetEnvelopeRewoundDomainEvent($event),
             BudgetEnvelopeReplayedDomainEvent::class => $this->applyBudgetEnvelopeReplayedDomainEvent($event),
             BudgetEnvelopeTargetedAmountChangedDomainEvent::class => $this->applyBudgetEnvelopeTargetedAmountChangedDomainEvent($event),
+            BudgetEnvelopeCurrencyChangedDomainEvent::class => $this->applyBudgetEnvelopeCurrencyChangedDomainEvent($event),
             default => throw new \RuntimeException('envelopes.unknownEvent'),
         };
     }
@@ -165,6 +176,7 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
         $this->name = $budgetEnvelopeAddedDomainEvent->name;
         $this->targetedAmount = $budgetEnvelopeAddedDomainEvent->targetedAmount;
         $this->currentAmount = '0.00';
+        $this->currency = $budgetEnvelopeAddedDomainEvent->currency;
         $this->createdAt = $budgetEnvelopeAddedDomainEvent->occurredOn;
         $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeAddedDomainEvent->occurredOn);
         $this->isDeleted = false;
@@ -208,6 +220,7 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
         $this->targetedAmount = $budgetEnvelopeRewoundDomainEvent->targetedAmount;
         $this->currentAmount = $budgetEnvelopeRewoundDomainEvent->currentAmount;
         $this->name = $budgetEnvelopeRewoundDomainEvent->name;
+        $this->currency = $budgetEnvelopeRewoundDomainEvent->currency;
         $this->isDeleted = $budgetEnvelopeRewoundDomainEvent->isDeleted;
         $this->updatedAt = $budgetEnvelopeRewoundDomainEvent->updatedAt;
     }
@@ -218,6 +231,7 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
         $this->targetedAmount = $budgetEnvelopeReplayedDomainEvent->targetedAmount;
         $this->currentAmount = $budgetEnvelopeReplayedDomainEvent->currentAmount;
         $this->name = $budgetEnvelopeReplayedDomainEvent->name;
+        $this->currency = $budgetEnvelopeReplayedDomainEvent->currency;
         $this->isDeleted = $budgetEnvelopeReplayedDomainEvent->isDeleted;
         $this->updatedAt = $budgetEnvelopeReplayedDomainEvent->updatedAt;
     }
@@ -229,6 +243,13 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
         $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeTargetedAmountChangedDomainEvent->occurredOn);
     }
 
+    private function applyBudgetEnvelopeCurrencyChangedDomainEvent(
+        BudgetEnvelopeCurrencyChangedDomainEvent $budgetEnvelopeCurrencyChangedDomainEvent,
+    ): void {
+        $this->currency = $budgetEnvelopeCurrencyChangedDomainEvent->currency;
+        $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeCurrencyChangedDomainEvent->occurredOn);
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -236,6 +257,7 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
             'currentAmount' => $this->currentAmount,
             'targetedAmount' => $this->targetedAmount,
             'name' => $this->name,
+            'currency' => $this->currency,
         ];
     }
 }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
+use App\Gateway\User\Presentation\HTTP\DTOs\RequestAUserPasswordResetInput;
 use App\Libraries\Anonymii\Ports\EventEncryptorInterface;
 use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
-use App\Gateway\User\HTTP\DTOs\RequestAUserPasswordResetInput;
 use App\SharedContext\Domain\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
