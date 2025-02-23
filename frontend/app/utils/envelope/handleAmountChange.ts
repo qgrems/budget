@@ -1,6 +1,6 @@
 import React from "react"
 
-const handleAmountChange = (id: string, value: string, isNewEnvelope = false, setNewEnvelopeTarget: React.Dispatch<React.SetStateAction<string>>, setAmounts: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>
+const handleAmountChange = (id: string, value: string, isNewEnvelope = false, setNewEnvelopeTarget: React.Dispatch<React.SetStateAction<string>>, setAmounts: React.Dispatch<React.SetStateAction<{ [key: string]: string } >>
 ) => {
     // Remove any non-digit and non-dot characters
     value = value.replace(/[^\d.]/g, "")

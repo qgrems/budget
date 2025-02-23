@@ -137,7 +137,7 @@ export function useEnvelopes() {
     return cleanup;
   }, [socket, refreshEnvelopes, envelopeState.envelopesData?.envelopes]);
 
-  const createEnvelope = async (name: string, targetBudget: string, setErrors: any, setValidMessage: any) => {
+  const createEnvelope = async (name: string, targetBudget: string, currency: string) => {
     setLoading(true)
     const requestId = uuidv4()
     setPendingRequests(prev => new Set([...prev, requestId]));
@@ -145,6 +145,7 @@ export function useEnvelopes() {
       uuid: requestId,
       name,
       targetedAmount: targetBudget,
+      currency,
       currentAmount: "0",
       updatedAt: new Date().toISOString(),
       userUuid: "",

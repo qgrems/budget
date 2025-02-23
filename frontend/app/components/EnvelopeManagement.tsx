@@ -56,49 +56,6 @@ export default function EnvelopeManagement() {
     const { setValidMessage } = useValidMessage()
     const [isEmptyEnvelopes, setIsEmptyEnvelopes] = useState(true)
 
-    // const handleAmountChange = useCallback((id: string, value: string, isNewEnvelope = false) => {
-    //     console.log(isNewEnvelope)
-    //     // Remove any non-digit and non-dot characters
-    //     value = value.replace(/[^\d.]/g, "")
-
-    //     // Handle cases where the decimal point might be the first character
-    //     if (value.startsWith(".")) {
-    //         value = "0" + value
-    //     }
-
-    //     // Ensure only one decimal point
-    //     const parts = value.split(".")
-    //     if (parts.length > 2) {
-    //         parts.pop()
-    //         value = parts.join(".")
-    //     }
-
-    //     // Enforce character limits
-    //     if (value.includes(".")) {
-    //         // With decimal: limit to 13 characters (10 before decimal, 1 decimal point, 2 after decimal)
-    //         const [integerPart, decimalPart] = value.split(".")
-    //         value = `${integerPart.slice(0, 10)}.${decimalPart.slice(0, 2)}`
-    //     } else {
-    //         // Without decimal: limit to 10 characters
-    //         value = value.slice(0, 10)
-    //     }
-
-    //     // Remove leading zeros, except if it's "0." or "0"
-    //     if (value.length > 1 && value.startsWith("0") && !value.startsWith("0.")) {
-    //         value = value.replace(/^0+/, "")
-    //     }
-
-    //     if (isNewEnvelope) {
-    //         setNewEnvelopeTarget(value)
-    //     } else {
-    //         setAmounts((prev) => ({ ...prev, [id]: value }))
-    //     }
-    // }, [])
-
-
-
-
-
     const handleDescriptionSubmit = async (description: string) => {
         if (currentAction) {
             const { type, id, amount } = currentAction
@@ -121,7 +78,7 @@ export default function EnvelopeManagement() {
         if (newEnvelopeName && newEnvelopeTarget && !isInvalidInput(newEnvelopeTarget)) {
             if (newEnvelopeName.length <= 25) {
                 const formattedTarget = formatAmount(newEnvelopeTarget)
-                await createEnvelope(newEnvelopeName, formattedTarget, setError, setValidMessage)
+                await createEnvelope(newEnvelopeName, formattedTarget, 'USD')
                 setIsCreating(false)
                 setNewEnvelopeName("")
                 setNewEnvelopeTarget("")

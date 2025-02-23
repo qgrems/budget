@@ -1,6 +1,6 @@
 'use client'
 
-import {createContext, ReactNode, useContext, useState} from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 import ValidModal from "../components/ValidModal";
 import { useTranslation } from "../hooks/useTranslation";
 
@@ -10,12 +10,12 @@ type ValidContextType = {
 }
 const ValidContext = createContext<ValidContextType | undefined>(undefined);
 
-export function ValidProvider({children}: { children: ReactNode }) {
+export function ValidProvider({ children }: { children: ReactNode }) {
     const [validMessage, setValidMessage] = useState<string>('');
     const { t } = useTranslation()
 
     const addMessage = (message: string) => {
-        setValidMessage(t(message));
+        setValidMessage((message));
 
         setTimeout(() => {
             setValidMessage('');
@@ -23,7 +23,7 @@ export function ValidProvider({children}: { children: ReactNode }) {
     }
 
     return (
-        <ValidContext.Provider value={{validMessage, setValidMessage: addMessage}}>
+        <ValidContext.Provider value={{ validMessage, setValidMessage: addMessage }}>
             {children}
             {validMessage && <ValidModal />}
         </ValidContext.Provider>
