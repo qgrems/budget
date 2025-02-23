@@ -17,6 +17,18 @@ import ActionButton from "./buttons/actionButton"
 import InputNameEnvelope from "./inputs/inputNameEnvelope"
 import InputText from "./inputs/inputText"
 import ValidInputButton from "./buttons/validInputButton"
+import EnvelopeCard from "./card/EnvelopeCard"
+import DeletButton from "./buttons/deletButton"
+import cancelEditing from "../utils/form/CancelEditing"
+import isInvalidInput from "../utils/validation/IsInvalidValidInput"
+import { handleDebitEnvelope } from "../services/envelopeService/debitEnvelope"
+import { handleCreditEnvelope } from "../services/envelopeService/creditEnvelope"
+import handleNameChange from "../utils/envelope/changeName"
+import handleStartEditingName from "../utils/form/startEditing"
+import formatAmount from "../utils/envelope/formatAmount"
+import handleDeleteEntity from "../utils/envelope/deleteUtils"
+import handleUpdateEnvelopeName from "../function/EnvelopeFunction/handleUpdateEnvelopeName"
+import handleAmountChange from "../utils/envelope/handleAmountChange"
 
 export default function EnvelopeManagement() {
     const {
@@ -26,8 +38,6 @@ export default function EnvelopeManagement() {
         debitEnvelope,
         deleteEnvelope,
         updateEnvelopeName,
-        loading,
-        errorEnvelope,
     } = useEnvelopes()
     const [amounts, setAmounts] = useState<{ [key: string]: string }>({})
     const [isCreating, setIsCreating] = useState(false)
@@ -42,96 +52,63 @@ export default function EnvelopeManagement() {
         null,
     )
     const { t } = useTranslation()
-    const { error, setError } = useError()
-    const { validMessage, setValidMessage } = useValidMessage()
-    const handleAmountChange = useCallback((id: string, value: string, isNewEnvelope = false) => {
-        // Remove any non-digit and non-dot characters
-        value = value.replace(/[^\d.]/g, "")
+    const { setError } = useError()
+    const { setValidMessage } = useValidMessage()
+    const [isEmptyEnvelopes, setIsEmptyEnvelopes] = useState(true)
 
-        // Handle cases where the decimal point might be the first character
-        if (value.startsWith(".")) {
-            value = "0" + value
-        }
+    // const handleAmountChange = useCallback((id: string, value: string, isNewEnvelope = false) => {
+    //     console.log(isNewEnvelope)
+    //     // Remove any non-digit and non-dot characters
+    //     value = value.replace(/[^\d.]/g, "")
 
-        // Ensure only one decimal point
-        const parts = value.split(".")
-        if (parts.length > 2) {
-            parts.pop()
-            value = parts.join(".")
-        }
+    //     // Handle cases where the decimal point might be the first character
+    //     if (value.startsWith(".")) {
+    //         value = "0" + value
+    //     }
 
-        // Enforce character limits
-        if (value.includes(".")) {
-            // With decimal: limit to 13 characters (10 before decimal, 1 decimal point, 2 after decimal)
-            const [integerPart, decimalPart] = value.split(".")
-            value = `${integerPart.slice(0, 10)}.${decimalPart.slice(0, 2)}`
-        } else {
-            // Without decimal: limit to 10 characters
-            value = value.slice(0, 10)
-        }
+    //     // Ensure only one decimal point
+    //     const parts = value.split(".")
+    //     if (parts.length > 2) {
+    //         parts.pop()
+    //         value = parts.join(".")
+    //     }
 
-        // Remove leading zeros, except if it's "0." or "0"
-        if (value.length > 1 && value.startsWith("0") && !value.startsWith("0.")) {
-            value = value.replace(/^0+/, "")
-        }
+    //     // Enforce character limits
+    //     if (value.includes(".")) {
+    //         // With decimal: limit to 13 characters (10 before decimal, 1 decimal point, 2 after decimal)
+    //         const [integerPart, decimalPart] = value.split(".")
+    //         value = `${integerPart.slice(0, 10)}.${decimalPart.slice(0, 2)}`
+    //     } else {
+    //         // Without decimal: limit to 10 characters
+    //         value = value.slice(0, 10)
+    //     }
 
-        if (isNewEnvelope) {
-            setNewEnvelopeTarget(value)
-        } else {
-            setAmounts((prev) => ({ ...prev, [id]: value }))
-        }
-    }, [])
+    //     // Remove leading zeros, except if it's "0." or "0"
+    //     if (value.length > 1 && value.startsWith("0") && !value.startsWith("0.")) {
+    //         value = value.replace(/^0+/, "")
+    //     }
 
-    const formatAmount = useMemo(
-        () =>
-            (amount: string): string => {
-                if (!amount) return ""
-                let [integerPart, decimalPart] = amount.split(".")
-                integerPart = integerPart || "0"
-                decimalPart = decimalPart || "00"
-                decimalPart = decimalPart.padEnd(2, "0").slice(0, 2)
-                return `${integerPart}.${decimalPart}`
-            },
-        [],
-    )
+    //     if (isNewEnvelope) {
+    //         setNewEnvelopeTarget(value)
+    //     } else {
+    //         setAmounts((prev) => ({ ...prev, [id]: value }))
+    //     }
+    // }, [])
 
-    const handleCreditEnvelope = (id: string, currentAmount: string, targetedAmount: string) => {
-        if (amounts[id]) {
-            const formattedAmount = formatAmount(amounts[id])
-            const maxCredit = (Number.parseFloat(targetedAmount) - Number.parseFloat(currentAmount)).toFixed(2)
-            if (validateAmount(formattedAmount, currentAmount, targetedAmount, true)) {
-                setCurrentAction({ type: "credit", id, amount: formattedAmount })
-                setDescriptionModalOpen(true)
-                setError(null)
-            } else {
-                setError(t("envelopes.creditError").replace("${amount}", formattedAmount).replace("${max}", maxCredit))
-            }
-        }
-    }
-    const handleDebitEnvelope = (id: string, currentAmount: string) => {
-        if (amounts[id]) {
-            const formattedAmount = formatAmount(amounts[id])
-            const maxDebit = Number.parseFloat(currentAmount).toFixed(2)
-            if (validateAmount(formattedAmount, currentAmount, "0", false)) {
-                setCurrentAction({ type: "debit", id, amount: formattedAmount })
-                setDescriptionModalOpen(true)
-                setError(null)
-            } else {
-                setError(t("envelopes.debitError").replace("${amount}", formattedAmount).replace("${max}", maxDebit))
-            }
-        }
-    }
+
+
+
 
     const handleDescriptionSubmit = async (description: string) => {
         if (currentAction) {
             const { type, id, amount } = currentAction
             try {
                 if (type === "credit") {
-                    await creditEnvelope(id, amount, description, setError, setValidMessage)
+                    await creditEnvelope(id, amount, description, setError)
                 } else {
-                    await debitEnvelope(id, amount, description, setError, setValidMessage)
+                    await debitEnvelope(id, amount, description, setError)
                 }
-                handleAmountChange(id, "")
+                handleAmountChange(id, "", false, setNewEnvelopeTarget, setAmounts)
             } catch (err) {
                 console.error("Error in handleDescriptionSubmit:", err)
             }
@@ -141,12 +118,10 @@ export default function EnvelopeManagement() {
     }
 
     const handleCreateEnvelope = async () => {
-        console.log('test1')
         if (newEnvelopeName && newEnvelopeTarget && !isInvalidInput(newEnvelopeTarget)) {
             if (newEnvelopeName.length <= 25) {
                 const formattedTarget = formatAmount(newEnvelopeTarget)
                 await createEnvelope(newEnvelopeName, formattedTarget, setError, setValidMessage)
-                setValidMessage('envelopes.validationSuccess.createNewEnvelope')
                 setIsCreating(false)
                 setNewEnvelopeName("")
                 setNewEnvelopeTarget("")
@@ -158,12 +133,13 @@ export default function EnvelopeManagement() {
     }
 
     const handleDeleteEnvelope = async () => {
-        if (envelopeToDelete) {
-            const { id } = envelopeToDelete
-            setDeleteModalOpen(false)
-            await deleteEnvelope(id, setError, setValidMessage)
-            setEnvelopeToDelete(null)
-        }
+        await handleDeleteEntity({
+            entityToDelete: envelopeToDelete,
+            deleteFunction: deleteEnvelope,
+            setDeleteModalOpen,
+            setError,
+            setEntityToDelete: setEnvelopeToDelete
+        });
     }
 
     const openDeleteModal = (id: string, name: string, e: any) => {
@@ -172,98 +148,11 @@ export default function EnvelopeManagement() {
         setDeleteModalOpen(true)
     }
 
-    const handleStartEditingName = (id: string, currentName: string) => {
-        setEditingName({ id, name: currentName })
-    }
-
-    const handleNameChange = (newName: string) => {
-        if (editingName) {
-            setEditingName({ ...editingName, name: newName })
-        }
-    }
-
-    const handleUpdateEnvelopeName = async (e: React.MouseEvent, name: string) => {
-        e.preventDefault(); // Prevent the default link behavior
-
-        if (editingName && editingName.name.trim() !== '') {
-            const { id, name } = editingName;
-            const currentEnvelope = envelopesData?.envelopes.find((env) => env.uuid === id);
-
-            // Vérification : moins de 25 caractères
-            if (name.length > 25) {
-                console.error('Le nom ne doit pas dépasser 25 caractères.');
-                setError('envelopes.validationError.nameTooLong');
-                return;
-            }
-            const nameExists = envelopesData?.envelopes.some(
-                (envelope) => envelope.name === name && envelope.uuid !== id
-            );
-            // Vérification : nom identique
-
-            if (name === currentEnvelope.name) {
-                setError('envelopes.validationError.sameName');
-                return;
-            }
-
-            // Vérification : unicité du nom
-
-            if (nameExists) {
-                setError('envelopes.validationError.sameName');
-                return;
-            }
-
-            setPendingActions((prev) => ({ ...prev, [id]: 'updating' }));
-
-            try {
-                await updateEnvelopeName(id, name, setError);
-            } catch (error) {
-                console.error('Failed to update envelope name:', error);
-            } finally {
-                setValidMessage('envelopes.validationSuccess.name');
-
-                setPendingActions((prev) => {
-                    const newPending = { ...prev };
-                    delete newPending[id];
-                    return newPending;
-                });
-                setEditingName(null);
-            }
-        }
-
-    }
-    const cancelNameEdit = (e: any) => {
-        e.preventDefault()
-        setEditingName(null)
-    }
-    const [isEmptyEnvelopes, setIsEmptyEnvelopes] = useState(true)
     useEffect(() => {
         if (envelopesData?.envelopes.length === 0) {
             setIsEmptyEnvelopes(false)
         } else setIsEmptyEnvelopes(true)
     }, [envelopesData])
-    const isInvalidInput = (value: string): boolean => {
-        // Allow empty input
-        if (value === "") return false
-
-        // Check if the input is a valid number or a partial decimal input
-        return !/^\d{1,10}(\.\d{0,2})?$/.test(value)
-    }
-    const validateAmount = useMemo(
-        () =>
-            (amount: string, currentAmount: string, targetedAmount: string, isCredit: boolean): boolean => {
-                const amountFloat = Number.parseFloat(amount)
-                const currentAmountFloat = Number.parseFloat(currentAmount)
-                const targetedAmountFloat = Number.parseFloat(targetedAmount)
-
-                if (isCredit) {
-                    return currentAmountFloat + amountFloat <= targetedAmountFloat
-                } else {
-                    return currentAmountFloat - amountFloat >= 0
-                }
-            },
-        [],
-    )
-
 
     const renderedEnvelopes = useMemo(() => {
         return envelopesData?.envelopes.map((envelope) => (
@@ -286,46 +175,53 @@ export default function EnvelopeManagement() {
                         }
                     }}
                 >
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="flex-grow">
-                            <div className="flex items-center">
-                                {editingName && editingName.id === envelope.uuid ? (
-                                    <div className="flex items-center flex-grow">
-                                        <InputNameEnvelope
-                                            value={editingName.name}
-                                            onChange={handleNameChange}
-                                            autoFocus
-                                            className="custom-input-class"
-                                        />
-                                        <ValidInputButton
-                                            onClick={(e) => handleUpdateEnvelopeName(e, editingName.name)}
-                                            icon={<Check className="h-4 w-4 md:h-5 md:w-5" />}
-                                            className=" text-green-500 mr-1 "
-                                            disabled={envelope.pending || !!pendingActions[envelope.uuid]}
-                                            text=""
-                                        />
+                    <EnvelopeCard>
+                        {editingName && editingName.id === envelope.uuid ? (
+                            <div className="flex items-center flex-grow">
+                                <InputNameEnvelope
+                                    value={editingName.name}
+                                    onChange={(value) => handleNameChange(value, editingName, setEditingName)}
+                                    autoFocus
+                                    className="custom-input-class"
+                                />
+                                <ValidInputButton
+                                    onClick={(e) => handleUpdateEnvelopeName({
+                                        e,
+                                        editingName,
+                                        name: editingName.name,
+                                        envelopesData,
+                                        updateEnvelopeName,
+                                        setError,
+                                        setPendingActions,
+                                        setEditingName
+                                    })}
+                                    icon={<Check className="h-4 w-4 md:h-5 md:w-5" />}
+                                    className=" text-green-500 mr-1 "
+                                    disabled={envelope.pending || !!pendingActions[envelope.uuid]}
+                                    text=""
+                                />
 
-                                        {/* Utilisation pour le bouton de l'annulation */}
-                                        <ValidInputButton
-                                            onClick={(e) => {
-                                                setEditingName((prev) => ({ ...prev, name: envelope.name }));
-                                                cancelNameEdit(e);
-                                            }}
-                                            icon={<X className="h-4 w-4 md:h-5 md:w-5" />}
-                                            className="text-red-500"
-                                            disabled={envelope.pending || !!pendingActions[envelope.uuid]}
-                                            text=""
-                                        />
-                                    </div>
-                                ) : (
-                                    <>
-                                        <InputNameEnvelope
-                                            value={envelope.name}
-                                            onChange={() => handleStartEditingName(envelope.uuid, envelope.name)}
-                                            onFocus={() => handleStartEditingName(envelope.uuid, envelope.name)}
-                                            className="custom-input-class cursor-pointer"
-                                        />
-                                        {/* <button
+                                {/* Utilisation pour le bouton de l'annulation */}
+                                <ValidInputButton
+                                    onClick={(e) => {
+                                        setEditingName((prev) => ({ ...prev, name: envelope.name }));
+                                        cancelEditing({ e, setEditing: setEditingName });
+                                    }}
+                                    icon={<X className="h-4 w-4 md:h-5 md:w-5" />}
+                                    className="text-red-500"
+                                    disabled={envelope.pending || !!pendingActions[envelope.uuid]}
+                                    text=""
+                                />
+                            </div>
+                        ) : (
+                            <>
+                                <InputNameEnvelope
+                                    value={envelope.name}
+                                    onChange={() => handleStartEditingName(envelope.uuid, envelope.name, setEditingName)}
+                                    onFocus={() => handleStartEditingName(envelope.uuid, envelope.name, setEditingName)}
+                                    className="custom-input-class cursor-pointer"
+                                />
+                                {/* <button
                                             onClick={(e) => {
                                                 e.preventDefault()
                                                 handleStartEditingName(envelope.uuid, envelope.name)
@@ -335,13 +231,11 @@ export default function EnvelopeManagement() {
                                         >
                                             <Edit2 className="h-4 w-4 md:h-5 md:w-5" />
                                         </button> */}
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                        <div className="flex items-center">
-                            {envelope.pending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-                        </div>
+                            </>
+                        )}
+                    </EnvelopeCard>
+                    <div className="flex items-center">
+                        {envelope.pending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
                     </div>
                     <div className="flex justify-between items-center mb-4">
                         <div>
@@ -393,12 +287,21 @@ export default function EnvelopeManagement() {
                             <div className="flex items-center space-x-2">
                                 <InputNumber
                                     value={amounts[envelope.uuid] || ""}
-                                    onChange={(value) => handleAmountChange(envelope.uuid, value)}
+                                    onChange={(value) => handleAmountChange(envelope.uuid, value, false, setNewEnvelopeTarget, setAmounts)}
                                     placeholder={t("envelopes.amount")}
                                     disabled={envelope.pending || !!pendingActions[envelope.uuid]}
                                 />
                                 <ActionButton
-                                    onClick={() => handleCreditEnvelope(envelope.uuid, envelope.currentAmount, envelope.targetedAmount)}
+                                    onClick={() => handleCreditEnvelope(
+                                        envelope.uuid,
+                                        envelope.currentAmount,
+                                        envelope.targetedAmount,
+                                        amounts,
+                                        setCurrentAction,
+                                        setDescriptionModalOpen,
+                                        setError,
+                                        t
+                                    )}
                                     label={t("envelopes.credit")}
                                     disabled={
                                         envelope.pending ||
@@ -410,7 +313,15 @@ export default function EnvelopeManagement() {
                                 />
 
                                 <ActionButton
-                                    onClick={() => handleDebitEnvelope(envelope.uuid, envelope.currentAmount)}
+                                    onClick={() => handleDebitEnvelope(
+                                        envelope.uuid,
+                                        envelope.currentAmount,
+                                        amounts,
+                                        setCurrentAction,
+                                        setDescriptionModalOpen,
+                                        setError,
+                                        t
+                                    )}
                                     label={t("envelopes.debit")}
                                     disabled={
                                         envelope.pending ||
@@ -423,19 +334,19 @@ export default function EnvelopeManagement() {
 
                             </div>
                         </div>
-                        <div className="flex justify-end mt-4">
-                            <button
+                        <div className="flex justify-end mt-4" >
+                            <DeletButton
                                 onClick={(e) => openDeleteModal(envelope.uuid, envelope.name, e)}
-                                className="p-2 neomorphic-button text-red-500 hover:text-red-600"
+                                icon={<Trash2 className="h-4 w-4 md:h-5 md:w-5" />
+                                }
+                                className={''}
                                 disabled={envelope.pending || !!pendingActions[envelope.uuid]}
-                            >
-                                <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
-                            </button>
+                            />
                         </div>
                     </div>
                     {envelope.deleted && <p className="text-red-500 mt-2">Deleting...</p>}
                 </motion.div>
-            </Link>
+            </Link >
         ))
     }, [
         envelopesData,
@@ -443,7 +354,6 @@ export default function EnvelopeManagement() {
         editingName,
         pendingActions,
         handleAmountChange,
-        handleCreditEnvelope,
         handleDebitEnvelope,
         handleUpdateEnvelopeName,
         openDeleteModal,
@@ -494,7 +404,7 @@ export default function EnvelopeManagement() {
                         <div className="mb-4">
                             <InputNumber
                                 value={newEnvelopeTarget}
-                                onChange={(value) => handleAmountChange("new", value, true)}
+                                onChange={(value) => handleAmountChange("new", value, true, setNewEnvelopeTarget, setAmounts)}
                                 placeholder={t("envelopes.targetedAmount")}
                                 className="w-full p-2 md:p-3 neomorphic-input"
 

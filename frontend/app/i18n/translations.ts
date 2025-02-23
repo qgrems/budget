@@ -134,12 +134,16 @@ export const translations = {
                 nameTooLong: "The name must not exceed 25 characters.",
                 sameTargetedAmount: 'The targeted amount is the same, no changes needed.',
                 targetBudgetLessThanCurrentAmount: 'The targeted amount is less than the current amount, modification not possible.',
-                createNewEnvelopeTooLong:"The name must not exceed 25 characters.",
+                createNewEnvelopeTooLong: "The name must not exceed 25 characters."
             },
             validationSuccess: {
                 name: "The name has been successfully updated.",
                 targetBudget: 'The target budget has been successfully updated.',
-                createNewEnvelope:"The envelope has been successfully created",
+                createNewEnvelope: "The envelope has been successfully created",
+                creditEnvelope: "The envelope has been successfully credited",
+                debitEnvelope: "The envelope has been successfully debited",
+                deleteEnvelope: "The envelope has been successfully deleted."
+
             }
         },
         users: {
@@ -390,12 +394,15 @@ export const translations = {
                 nameTooLong: "Le nom ne doit pas dépasser 25 caractères.",
                 sameTargetedAmount: 'Le montant ciblé est identique, aucune modification nécessaire. ',
                 targetBudgetLessThanCurrentAmount: 'Le montant ciblé est inférieur au montant actuel, modification impossible',
-                createNewEnvelopeTooLong:"Le nom ne doit pas dépasser 25 caractères.",
+                createNewEnvelopeTooLong: "Le nom ne doit pas dépasser 25 caractères.",
             },
             validationSuccess: {
                 name: "Le nom a été mis à jour avec succès.",
                 targetBudget: 'Le budget cible a été changé avec succès.',
-                createNewEnvelope:"L'enveloppe a été créée avec succès.",
+                createNewEnvelope: "L'enveloppe a été créée avec succès.",
+                creditEnvelope: "L'enveloppe a été créditée avec succès.",
+                debitEnvelope: "L'enveloppe a été débitée avec succès.",
+                deleteEnvelope: "L'enveloppe a été supprimée avec succès."
             }
         },
         users: {

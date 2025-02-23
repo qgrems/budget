@@ -1,6 +1,6 @@
 import React from "react";
 
-type ValidInputButtonProps = {
+interface ValidInputButtonProps {
     onClick: () => void;
     icon: React.ReactNode;
     className: string;

@@ -6,16 +6,23 @@ import { api } from "../../infrastructure/api"
 import { v4 as uuidv4 } from "uuid"
 import type { Envelope, EnvelopeState } from "./envelopeTypes"
 import { useSocket } from "../../hooks/useSocket"
+import { useError } from "../../contexts/ErrorContext"
+import { useValidMessage } from "../../contexts/ValidContext"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export function useEnvelopes() {
   const { state } = useAppContext()
   const { user } = state
+  const { setValidMessage } = useValidMessage()
+  const { setError } = useError()
+  const { t } = useTranslation()
   const [pendingRequests, setPendingRequests] = useState<Set<string>>(new Set());
   const [envelopeState, setEnvelopeState] = useState<EnvelopeState>({
     envelopesData: state.envelopesData,
     loading: false,
     errorEnvelope: null,
   })
+
   const { socket } = useSocket()
   const userRef = useRef(user)
 
@@ -24,7 +31,7 @@ export function useEnvelopes() {
   }, [user])
 
   const setLoading = (loading: boolean) => setEnvelopeState(prev => ({ ...prev, loading }))
-  const setError = (errorEnvelope: string | null) => setEnvelopeState(prev => ({ ...prev, errorEnvelope }))
+  const setErrors = (errorEnvelope: string | null) => setEnvelopeState(prev => ({ ...prev, errorEnvelope }))
 
   const updateEnvelopeState = useCallback((updatedEnvelope: Envelope) => {
     setEnvelopeState(prev => ({
@@ -44,7 +51,7 @@ export function useEnvelopes() {
     if (!force && (envelopeState.loading || envelopeState.envelopesData)) return
 
     setLoading(true)
-    setError(null)
+    setErrors(null)
 
     try {
       const updatedEnvelopes = await api.envelopeQueries.listEnvelopes()
@@ -55,10 +62,10 @@ export function useEnvelopes() {
       }))
     } catch (err) {
       console.error("Refresh error:", err)
-      setError("Failed to refresh envelopes")
+      setErrors("Failed to refresh envelopes")
       setLoading(false)
     }
-  }, [envelopeState.loading, envelopeState.envelopesData, setLoading, setError])
+  }, [envelopeState.loading, envelopeState.envelopesData, setLoading, setErrors])
 
   useEffect(() => {
     refreshEnvelopes()
@@ -69,7 +76,8 @@ export function useEnvelopes() {
     'BudgetEnvelopeCredited',
     'BudgetEnvelopeDebited',
     'BudgetEnvelopeDeleted',
-    'BudgetEnvelopeRenamed'
+    'BudgetEnvelopeRenamed',
+    'BudgetEnvelopeTargetedAmountChanged'
   ];
 
   useEffect(() => {
@@ -81,7 +89,6 @@ export function useEnvelopes() {
       requestId: string
       type: string
     }) => {
-      // Match request ID to remove pending state
       const pendingEnvelope = envelopeState.envelopesData?.envelopes
         .find(env => env.uuid === event.aggregateId);
       if (pendingEnvelope) {
@@ -96,9 +103,24 @@ export function useEnvelopes() {
       }
 
       if (event.userId === userRef.current?.uuid) {
+        console.log(event.type);
         refreshEnvelopes(true);
+
+        const validationMessages: { [key: string]: string } = {
+          'BudgetEnvelopeCredited': t('envelopes.validationSuccess.creditEnvelope'),
+          'BudgetEnvelopeDebited': t('envelopes.validationSuccess.debitEnvelope'),
+          'BudgetEnvelopeRenamed': t('envelopes.validationSuccess.name'),
+          'BudgetEnvelopeAdded': t('envelopes.validationSuccess.createNewEnvelope'),
+          'BudgetEnvelopeDeleted': t('envelopes.validationSuccess.deleteEnvelope'),
+        };
+
+        const message = validationMessages[event.type];
+        if (message) {
+          setValidMessage(message);
+        }
       }
-    };
+    }
+
 
     // Cleanup function
     const cleanup = () => {
@@ -115,11 +137,7 @@ export function useEnvelopes() {
     return cleanup;
   }, [socket, refreshEnvelopes, envelopeState.envelopesData?.envelopes]);
 
-  useEffect(() => {
-    console.log("Envelope state updated:", envelopeState)
-  }, [envelopeState])
-
-  const createEnvelope = async (name: string, targetBudget: string, setError: any, setValidMessage: any) => {
+  const createEnvelope = async (name: string, targetBudget: string, setErrors: any, setValidMessage: any) => {
     setLoading(true)
     const requestId = uuidv4()
     setPendingRequests(prev => new Set([...prev, requestId]));
@@ -152,7 +170,7 @@ export function useEnvelopes() {
         newSet.delete(requestId);
         return newSet;
       });
-      setError(err.message)
+      setErrors(err.message)
       setEnvelopeState((prev) => ({
         ...prev,
         envelopesData: {
@@ -164,7 +182,7 @@ export function useEnvelopes() {
     }
   }
 
-  const deleteEnvelope = async (envelopeId: string, setError: any, setValidMessage: any) => {
+  const deleteEnvelope = async (envelopeId: string, setErrors: any) => {
     setLoading(true)
     const requestId = uuidv4()
     setPendingRequests(prev => new Set([...prev, requestId]));
@@ -188,7 +206,7 @@ export function useEnvelopes() {
         newSet.delete(requestId);
         return newSet;
       });
-      setError(err.message)
+      setErrors(err.message)
       setEnvelopeState((prev) => ({
         ...prev,
         envelopesData: {
@@ -207,7 +225,7 @@ export function useEnvelopes() {
     envelopeId: string,
     amount: string,
     description: string,
-    setError: any,
+    setErrors: any,
     setValidMessage: any,
   ) => {
     setLoading(true)
@@ -221,14 +239,12 @@ export function useEnvelopes() {
     try {
       await api.envelopeCommands.creditEnvelope(envelopeId, amount, description, requestId)
     } catch (err: any) {
-      console.log('iciiiiii')
-      setError('test')
+      setErrors('test')
       setPendingRequests(prev => {
         const newSet = new Set(prev);
         newSet.delete(requestId);
         return newSet;
       });
-     
       if (updatedEnvelope) {
         updateEnvelopeState({ ...updatedEnvelope, pending: false })
       }
@@ -240,7 +256,7 @@ export function useEnvelopes() {
     envelopeId: string,
     amount: string,
     description: string,
-    setError: any,
+    setErrors: any,
     setValidMessage: any,
   ) => {
     setLoading(true)
@@ -259,7 +275,7 @@ export function useEnvelopes() {
         newSet.delete(requestId);
         return newSet;
       });
-      setError(err.message)
+      setErrors(err.message)
       if (updatedEnvelope) {
         updateEnvelopeState({ ...updatedEnvelope, pending: false })
       }
@@ -267,7 +283,7 @@ export function useEnvelopes() {
     }
   }
 
-  const updateEnvelopeName = async (envelopeId: string, name: string, setError: any) => {
+  const updateEnvelopeName = async (envelopeId: string, name: string, setErrors: any) => {
     setLoading(true)
     const requestId = uuidv4()
     setPendingRequests(prev => new Set([...prev, requestId]));
@@ -283,7 +299,7 @@ export function useEnvelopes() {
         newSet.delete(requestId);
         return newSet;
       });
-      setError(err.message)
+      setErrors(err.message)
       if (updatedEnvelope) {
         updateEnvelopeState({ ...updatedEnvelope, pending: false })
       }
