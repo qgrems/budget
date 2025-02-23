@@ -5,10 +5,12 @@ export interface Envelope {
   updatedAt: string
   currentAmount: string
   targetedAmount: string
+  currency: string
   name: string
   userUuid: string
   createdAt: string
   deleted: boolean
+  pending: boolean
 }
 export interface EnvelopesData {
   envelopes: Envelope[];
