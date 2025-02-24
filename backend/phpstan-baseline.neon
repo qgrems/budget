@@ -7,6 +7,18 @@ parameters:
 			path: src/BudgetEnvelopeContext/ReadModels/Views/BudgetEnvelopeView.php
 
 		-
+			message: '#^Cannot access offset ''date'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/BudgetPlanContext/Application/Handlers/QueryHandlers/ListBudgetPlansCalendarQueryHandler.php
+
+		-
+			message: '#^Cannot access offset ''uuid'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/BudgetPlanContext/Application/Handlers/QueryHandlers/ListBudgetPlansCalendarQueryHandler.php
+
+		-
 			message: '#^Property App\\BudgetPlanContext\\Domain\\Aggregates\\BudgetPlan\:\:\$budgetPlanId is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
