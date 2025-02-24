@@ -17,5 +17,5 @@ interface BudgetPlanViewRepositoryInterface
         ?array $orderBy = null,
         ?int $limit = null,
         ?int $offset = null,
-    ): BudgetPlansPaginatedInterface;
+    ): array;
 }

@@ -79,6 +79,9 @@ services:
     App\BudgetPlanContext\Application\Handlers\QueryHandlers\GetABudgetPlanWithItsEntriesQueryHandler:
         tags: [ 'messenger.message_handler' ]
 
+    App\BudgetPlanContext\Application\Handlers\QueryHandlers\ListBudgetPlansCalendarQueryHandler:
+        tags: [ 'messenger.message_handler' ]
+
     App\BudgetPlanContext\ReadModels\Projections\BudgetPlanIncomeEntryProjection:
         tags: [ 'messenger.message_handler' ]
 

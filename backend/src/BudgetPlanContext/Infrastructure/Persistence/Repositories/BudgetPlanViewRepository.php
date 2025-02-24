@@ -6,12 +6,10 @@ namespace App\BudgetPlanContext\Infrastructure\Persistence\Repositories;
 
 use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanViewInterface;
 use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanViewRepositoryInterface;
-use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlansPaginatedInterface;
 use App\BudgetPlanContext\ReadModels\Views\BudgetPlanIncomeEntryView;
 use App\BudgetPlanContext\ReadModels\Views\BudgetPlanNeedEntryView;
 use App\BudgetPlanContext\ReadModels\Views\BudgetPlanSavingEntryView;
 use App\BudgetPlanContext\ReadModels\Views\BudgetPlanView;
-use App\BudgetPlanContext\ReadModels\Views\BudgetPlansPaginated;
 use App\BudgetPlanContext\ReadModels\Views\BudgetPlanWantEntryView;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -141,8 +139,8 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
         ?array $orderBy = null,
         ?int $limit = null,
         ?int $offset = null
-    ): BudgetPlansPaginatedInterface {
-        $sql = sprintf('SELECT * FROM budget_plan_view WHERE %s', $this->buildWhereClause($criteria));
+    ): array {
+        $sql = sprintf('SELECT uuid, date FROM budget_plan_view WHERE %s', $this->buildWhereClause($criteria));
 
         if ($orderBy) {
             $sql = sprintf(
@@ -163,15 +161,7 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
             $sql = sprintf('%s OFFSET %d', $sql, $offset);
         }
 
-        $stmt = $this->connection->prepare($sql);
-        $query = $stmt->executeQuery($this->filterCriteria($criteria));
-        $results = $query->fetchAllAssociative();
-        $count = $query->rowCount();
-
-        return new BudgetPlansPaginated(
-            array_map([$this, 'mapToBudgetPlanView'], $results),
-            $count
-        );
+        return $this->connection->prepare($sql)->executeQuery($this->filterCriteria($criteria))->fetchAllAssociative();
     }
 
     private function buildWhereClause(array $criteria): string
@@ -193,11 +183,6 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
     private function filterCriteria(array $criteria): array
     {
         return array_filter($criteria, fn ($value) => null !== $value);
-    }
-
-    private function mapToBudgetPlanView(array $data): BudgetPlanViewInterface
-    {
-        return BudgetPlanView::fromRepository($data);
     }
 
     private function mapToBudgetPlanNeedEntryView(array $data): BudgetPlanNeedEntryView
