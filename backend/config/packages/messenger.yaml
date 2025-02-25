@@ -41,6 +41,8 @@ framework:
             'App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeTargetedAmountChangedDomainEvent': domain_events
             # BUDGET PLAN CONTEXT
             'App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedDomainEvent': domain_events
+            'App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent': domain_events
+            'App\BudgetPlanContext\Domain\Events\BudgetPlanRemovedDomainEvent': domain_events
             # USER CONTEXT
             'App\UserContext\Domain\Events\UserDeletedDomainEvent': domain_events
             'App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent': domain_events
@@ -69,6 +71,8 @@ framework:
             'App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeLedgerEntriesReplayedNotificationEvent': notification_events
             # BUDGET PLAN CONTEXT
             'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanGeneratedNotificationEvent': notification_events
+            'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanGeneratedWithOneThatAlreadyExistsNotificationEvent': notification_events
+            'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanRemovedNotificationEvent': notification_events
             'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanIncomeAddedNotificationEvent': notification_events
             'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanWantAddedNotificationEvent': notification_events
             'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanNeedAddedNotificationEvent': notification_events

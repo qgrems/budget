@@ -6,7 +6,7 @@ namespace App\BudgetPlanContext\Domain\Events;
 
 use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
 
-final class BudgetPlanGeneratedDomainEvent implements DomainEventInterface
+final class BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent implements DomainEventInterface
 {
     public string $aggregateId;
     public string $userId;

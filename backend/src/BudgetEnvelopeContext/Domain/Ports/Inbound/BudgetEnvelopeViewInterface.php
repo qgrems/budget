@@ -15,8 +15,6 @@ interface BudgetEnvelopeViewInterface
         BudgetEnvelopeAddedDomainEvent $budgetEnvelopeAddedDomainEvent,
     ): self;
 
-    public static function fromEvents(\Generator $events): self;
-
     public function fromEvent(DomainEventInterface $event): void;
 
     public function jsonSerialize(): array;

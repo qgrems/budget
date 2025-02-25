@@ -6,6 +6,7 @@ namespace App\BudgetPlanContext\ReadModels\Views;
 
 use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanWantEntryViewInterface;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanId;
+use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanSaving;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanWant;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -65,6 +66,19 @@ final readonly class BudgetPlanWantEntryView implements \JsonSerializable, Budge
         );
     }
 
+    public static function fromArrayOnBudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent(
+        array $want,
+        string $budgetPlanUuid,
+        \DateTimeImmutable $occurredOn,
+    ): self {
+        return new self(
+            BudgetPlanId::fromString($budgetPlanUuid),
+            BudgetPlanWant::fromArray($want),
+            $occurredOn,
+            \DateTime::createFromImmutable($occurredOn),
+        );
+    }
+
     public static function fromRepository(array $budgetPlanWantEntry): self
     {
         return new self(
@@ -79,6 +93,18 @@ final readonly class BudgetPlanWantEntryView implements \JsonSerializable, Budge
             new \DateTimeImmutable($budgetPlanWantEntry['created_at']),
             \DateTime::createFromImmutable(new \DateTimeImmutable($budgetPlanWantEntry['updated_at']))
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'uuid' => $this->uuid,
+            'budgetPlanUuid' => $this->budgetPlanUuid,
+            'wantName' => $this->wantName,
+            'wantAmount' => $this->wantAmount,
+            'createdAt' => $this->createdAt->format(\DateTime::ATOM),
+            'updatedAt' => $this->updatedAt->format(\DateTime::ATOM),
+        ];
     }
 
     public function jsonSerialize(): array

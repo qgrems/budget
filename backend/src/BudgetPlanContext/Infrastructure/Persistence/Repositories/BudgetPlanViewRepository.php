@@ -123,10 +123,10 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
 
         return [
             'budgetPlan' => BudgetPlanView::fromRepository($result),
-            'needs' => array_map([$this, 'mapToBudgetPlanNeedEntryView'], json_decode($result['needs'], true)),
-            'savings' => array_map([$this, 'mapToBudgetPlanSavingEntryView'], json_decode($result['savings'], true)),
-            'wants' => array_map([$this, 'mapToBudgetPlanWantEntryView'], json_decode($result['wants'], true)),
-            'incomes' => array_map([$this, 'mapToBudgetPlanIncomeEntryView'], json_decode($result['incomes'], true)),
+            'needs' => array_map([$this, 'mapToBudgetPlanNeedEntryView'], json_decode($result['needs'] ?? [''], true) ?? []),
+            'savings' => array_map([$this, 'mapToBudgetPlanSavingEntryView'], json_decode($result['savings'] ?? '', true) ?? []),
+            'wants' => array_map([$this, 'mapToBudgetPlanWantEntryView'], json_decode($result['wants'] ?? '', true) ?? []),
+            'incomes' => array_map([$this, 'mapToBudgetPlanIncomeEntryView'], json_decode($result['incomes'] ?? '', true) ?? []),
         ];
     }
 

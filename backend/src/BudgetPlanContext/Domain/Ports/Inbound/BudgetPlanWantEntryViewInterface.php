@@ -12,7 +12,15 @@ interface BudgetPlanWantEntryViewInterface
         \DateTimeImmutable $occurredOn,
     ): self;
 
+    public static function fromArrayOnBudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent(
+        array $want,
+        string $budgetPlanUuid,
+        \DateTimeImmutable $occurredOn,
+    ): self;
+
     public static function fromRepository(array $budgetPlanWantEntry): self;
+
+    public function toArray(): array;
 
     public function jsonSerialize(): array;
 }

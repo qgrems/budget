@@ -15,9 +15,9 @@ interface BudgetPlanViewInterface
         BudgetPlanGeneratedDomainEvent $budgetPlanGeneratedDomainEvent,
     ): self;
 
-    public static function fromEvents(\Generator $events): self;
-
     public function fromEvent(DomainEventInterface $event): void;
+
+    public function toArray(): array;
 
     public function jsonSerialize(): array;
 }

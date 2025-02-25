@@ -1,12 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Method App\\BudgetEnvelopeContext\\ReadModels\\Views\\BudgetEnvelopeView\:\:fromEvents\(\) should return App\\BudgetEnvelopeContext\\ReadModels\\Views\\BudgetEnvelopeView but returns App\\BudgetEnvelopeContext\\ReadModels\\Views\\BudgetEnvelopeView\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: src/BudgetEnvelopeContext/ReadModels/Views/BudgetEnvelopeView.php
-
-		-
 			message: '#^Cannot access offset ''date'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -19,12 +13,6 @@ parameters:
 			path: src/BudgetPlanContext/Application/Handlers/QueryHandlers/ListBudgetPlansCalendarQueryHandler.php
 
 		-
-			message: '#^Property App\\BudgetPlanContext\\Domain\\Aggregates\\BudgetPlan\:\:\$budgetPlanId is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
-
-		-
 			message: '#^Property App\\BudgetPlanContext\\Domain\\Aggregates\\BudgetPlan\:\:\$date is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
@@ -32,12 +20,6 @@ parameters:
 
 		-
 			message: '#^Property App\\BudgetPlanContext\\Domain\\Aggregates\\BudgetPlan\:\:\$incomes is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
-
-		-
-			message: '#^Property App\\BudgetPlanContext\\Domain\\Aggregates\\BudgetPlan\:\:\$isDeleted is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
 			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
@@ -55,7 +37,7 @@ parameters:
 			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
 
 		-
-			message: '#^Property App\\BudgetPlanContext\\Domain\\Aggregates\\BudgetPlan\:\:\$userId is never read, only written\.$#'
+			message: '#^Property App\\BudgetPlanContext\\Domain\\Aggregates\\BudgetPlan\:\:\$updatedAt is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
 			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
@@ -65,12 +47,6 @@ parameters:
 			identifier: property.onlyWritten
 			count: 1
 			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
-
-		-
-			message: '#^Readonly property App\\BudgetPlanContext\\Domain\\Events\\BudgetPlanGeneratedDomainEvent\:\:\$occurredOn is assigned outside of the constructor\.$#'
-			identifier: property.readOnlyAssignNotInConstructor
-			count: 1
-			path: src/BudgetPlanContext/Domain/Events/BudgetPlanGeneratedDomainEvent.php
 
 		-
 			message: '#^Class App\\BudgetPlanContext\\ReadModels\\Views\\BudgetPlanIncomeEntryView has an uninitialized readonly property \$id\. Assign it in the constructor\.$#'
@@ -89,30 +65,6 @@ parameters:
 			identifier: property.uninitializedReadonly
 			count: 1
 			path: src/BudgetPlanContext/ReadModels/Views/BudgetPlanSavingEntryView.php
-
-		-
-			message: '#^Cannot access offset ''payload'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: src/BudgetPlanContext/ReadModels/Views/BudgetPlanView.php
-
-		-
-			message: '#^Cannot access offset ''type'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: src/BudgetPlanContext/ReadModels/Views/BudgetPlanView.php
-
-		-
-			message: '#^Cannot call static method fromArray\(\) on mixed\.$#'
-			identifier: staticMethod.nonObject
-			count: 2
-			path: src/BudgetPlanContext/ReadModels/Views/BudgetPlanView.php
-
-		-
-			message: '#^Method App\\BudgetPlanContext\\ReadModels\\Views\\BudgetPlanView\:\:fromEvents\(\) should return App\\BudgetPlanContext\\ReadModels\\Views\\BudgetPlanView but returns App\\BudgetPlanContext\\ReadModels\\Views\\BudgetPlanView\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: src/BudgetPlanContext/ReadModels/Views/BudgetPlanView.php
 
 		-
 			message: '#^Class App\\BudgetPlanContext\\ReadModels\\Views\\BudgetPlanWantEntryView has an uninitialized readonly property \$id\. Assign it in the constructor\.$#'

@@ -65,6 +65,19 @@ final readonly class BudgetPlanNeedEntryView implements \JsonSerializable, Budge
         );
     }
 
+    public static function fromArrayOnBudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent(
+        array $need,
+        string $budgetPlanUuid,
+        \DateTimeImmutable $occurredOn,
+    ): self {
+        return new self(
+            BudgetPlanId::fromString($budgetPlanUuid),
+            BudgetPlanNeed::fromArray($need),
+            $occurredOn,
+            \DateTime::createFromImmutable($occurredOn),
+        );
+    }
+
     public static function fromRepository(array $budgetPlanNeedEntry): self
     {
         return new self(
@@ -79,6 +92,18 @@ final readonly class BudgetPlanNeedEntryView implements \JsonSerializable, Budge
             new \DateTimeImmutable($budgetPlanNeedEntry['created_at']),
             \DateTime::createFromImmutable(new \DateTimeImmutable($budgetPlanNeedEntry['updated_at']))
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'uuid' => $this->uuid,
+            'budgetPlanUuid' => $this->budgetPlanUuid,
+            'needName' => $this->needName,
+            'needAmount' => $this->needAmount,
+            'createdAt' => $this->createdAt->format(\DateTime::ATOM),
+            'updatedAt' => $this->updatedAt->format(\DateTime::ATOM),
+        ];
     }
 
     public function jsonSerialize(): array
