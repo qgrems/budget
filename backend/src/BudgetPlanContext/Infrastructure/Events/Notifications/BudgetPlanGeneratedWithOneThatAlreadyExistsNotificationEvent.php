@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\BudgetPlanContext\Infrastructure\Events\Notifications;
 
-use App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedDomainEvent;
 use App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent;
 
-final readonly class BudgetPlanIncomeAddedNotificationEvent
+final readonly class BudgetPlanGeneratedWithOneThatAlreadyExistsNotificationEvent
 {
     public string $aggregateId;
     public string $userId;
@@ -22,20 +21,10 @@ final readonly class BudgetPlanIncomeAddedNotificationEvent
         $this->aggregateId = $aggregateId;
         $this->userId = $userId;
         $this->requestId = $requestId;
-        $this->type = 'BudgetPlanIncomeAdded';
+        $this->type = 'BudgetPlanGeneratedWithOneThatAlreadyExists';
     }
 
-    public static function fromBudgetPlanGeneratedDomainEvent(
-        BudgetPlanGeneratedDomainEvent $budgetPlanGeneratedDomainEvent,
-    ): self {
-        return new self(
-            $budgetPlanGeneratedDomainEvent->aggregateId,
-            $budgetPlanGeneratedDomainEvent->userId,
-            $budgetPlanGeneratedDomainEvent->requestId,
-        );
-    }
-
-    public static function fromBudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent(
+    public static function fromDomainEvent(
         BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent $budgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent,
     ): self {
         return new self(

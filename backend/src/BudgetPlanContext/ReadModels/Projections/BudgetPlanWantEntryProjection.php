@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\BudgetPlanContext\ReadModels\Projections;
 
 use App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedDomainEvent;
+use App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent;
 use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanWantEntryViewRepositoryInterface;
 use App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanWantAddedNotificationEvent;
 use App\BudgetPlanContext\ReadModels\Views\BudgetPlanWantEntryView;
@@ -23,6 +24,7 @@ final readonly class BudgetPlanWantEntryProjection
     {
         match($event::class) {
             BudgetPlanGeneratedDomainEvent::class => $this->handleBudgetPlanGeneratedDomainEvent($event),
+            BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent::class => $this->handleBudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent($event),
             default => null,
         };
     }
@@ -43,6 +45,30 @@ final readonly class BudgetPlanWantEntryProjection
                     [
                         BudgetPlanWantAddedNotificationEvent::fromBudgetPlanGeneratedDomainEvent(
                             $budgetPlanGeneratedDomainEvent
+                        ),
+                    ],
+                );
+            } catch (\Exception $e) {
+            }
+        }
+    }
+
+    private function handleBudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent(
+        BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent $budgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent,
+    ): void {
+        foreach ($budgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent->wants as $want) {
+            $this->budgetPlanWantEntryViewRepository->save(
+                BudgetPlanWantEntryView::fromArrayOnBudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent(
+                    $want,
+                    $budgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent->aggregateId,
+                    $budgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent->occurredOn,
+                ),
+            );
+            try {
+                $this->publisher->publishNotificationEvents(
+                    [
+                        BudgetPlanWantAddedNotificationEvent::fromBudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent(
+                            $budgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent,
                         ),
                     ],
                 );

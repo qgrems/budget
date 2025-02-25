@@ -76,6 +76,12 @@ services:
     App\BudgetPlanContext\Application\Handlers\CommandHandlers\GenerateABudgetPlanCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
+    App\BudgetPlanContext\Application\Handlers\CommandHandlers\GenerateABudgetPlanWithOneThatAlreadyExistsCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\BudgetPlanContext\Application\Handlers\CommandHandlers\RemoveABudgetPlanCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
     App\BudgetPlanContext\Application\Handlers\QueryHandlers\GetABudgetPlanWithItsEntriesQueryHandler:
         tags: [ 'messenger.message_handler' ]
 

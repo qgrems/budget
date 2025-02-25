@@ -128,25 +128,6 @@ final class BudgetEnvelopeView implements BudgetEnvelopeViewInterface, \JsonSeri
         );
     }
 
-    public static function fromEvents(\Generator $events): self
-    {
-        $budgetEnvelope = null;
-
-        /** @var array{type: string, payload: string} $event */
-        foreach ($events as $event) {
-            if ($event['type'] !== BudgetEnvelopeAddedDomainEvent::class && $budgetEnvelope instanceof self) {
-                $budgetEnvelope->apply($event['type']::fromArray(json_decode($event['payload'], true)));
-                continue;
-            }
-
-            $budgetEnvelope = self::fromBudgetEnvelopeAddedDomainEvent(
-                $event['type']::fromArray(json_decode($event['payload'], true)),
-            );
-        }
-
-        return $budgetEnvelope;
-    }
-
     public function fromEvent(DomainEventInterface $event): void
     {
         $this->apply($event);

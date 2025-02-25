@@ -8,22 +8,22 @@ use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanId;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanUserId;
 use App\SharedContext\Domain\Ports\Inbound\CommandInterface;
 
-final readonly class GenerateABudgetPlanCommand implements CommandInterface
+final readonly class GenerateABudgetPlanWithOneThatAlreadyExistsCommand implements CommandInterface
 {
     private string $budgetPlanId;
+    private string $budgetPlanIdThatAlreadyExists;
     private \DateTimeImmutable $date;
-    private array $incomes;
     private string $userId;
 
     public function __construct(
         BudgetPlanId $budgetPlanId,
+        BudgetPlanId $budgetPlanIdThatAlreadyExists,
         \DateTimeImmutable $date,
-        array $incomes,
         BudgetPlanUserId $userId,
     ) {
         $this->budgetPlanId = (string) $budgetPlanId;
+        $this->budgetPlanIdThatAlreadyExists = (string) $budgetPlanIdThatAlreadyExists;
         $this->date = $date;
-        $this->incomes = $incomes;
         $this->userId = (string) $userId;
     }
 
@@ -32,14 +32,14 @@ final readonly class GenerateABudgetPlanCommand implements CommandInterface
         return BudgetPlanId::fromString($this->budgetPlanId);
     }
 
+    public function getBudgetPlanIdThatAlreadyExists(): BudgetPlanId
+    {
+        return BudgetPlanId::fromString($this->budgetPlanIdThatAlreadyExists);
+    }
+
     public function getDate(): \DateTimeImmutable
     {
         return $this->date;
-    }
-
-    public function getIncomes(): array
-    {
-        return $this->incomes;
     }
 
     public function getUserId(): BudgetPlanUserId

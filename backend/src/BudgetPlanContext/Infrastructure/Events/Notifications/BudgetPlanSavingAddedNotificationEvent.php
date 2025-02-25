@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\BudgetPlanContext\Infrastructure\Events\Notifications;
 
 use App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedDomainEvent;
+use App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent;
 
 final readonly class BudgetPlanSavingAddedNotificationEvent
 {
@@ -31,6 +32,16 @@ final readonly class BudgetPlanSavingAddedNotificationEvent
             $budgetPlanGeneratedDomainEvent->aggregateId,
             $budgetPlanGeneratedDomainEvent->userId,
             $budgetPlanGeneratedDomainEvent->requestId,
+        );
+    }
+
+    public static function fromBudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent(
+        BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent $budgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent,
+    ): self {
+        return new self(
+            $budgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent->aggregateId,
+            $budgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent->userId,
+            $budgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent->requestId,
         );
     }
 
