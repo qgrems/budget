@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace App\BudgetPlanContext\ReadModels\Views;
 
+use App\BudgetPlanContext\Domain\Events\BudgetPlanNeedAddedDomainEvent;
+use App\BudgetPlanContext\Domain\Events\BudgetPlanNeedAdjustedDomainEvent;
 use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanNeedEntryViewInterface;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanId;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanNeed;
+use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'budget_plan_need_entry_view')]
 #[ORM\Index(name: 'idx_budget_plan_need_entry_view_uuid', columns: ['uuid'])]
 #[ORM\Index(name: 'idx_budget_plan_need_entry_budget_plan_view_uuid', columns: ['budget_plan_uuid'])]
-final readonly class BudgetPlanNeedEntryView implements \JsonSerializable, BudgetPlanNeedEntryViewInterface
+final class BudgetPlanNeedEntryView implements \JsonSerializable, BudgetPlanNeedEntryViewInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
@@ -65,6 +68,23 @@ final readonly class BudgetPlanNeedEntryView implements \JsonSerializable, Budge
         );
     }
 
+    public static function fromBudgetPlanNeedAddedDomainEvent(
+        BudgetPlanNeedAddedDomainEvent $budgetPlanNeedAddedDomainEvent,
+    ): self {
+        return new self(
+            BudgetPlanId::fromString($budgetPlanNeedAddedDomainEvent->aggregateId),
+            BudgetPlanNeed::fromArray(
+                [
+                    'uuid' => $budgetPlanNeedAddedDomainEvent->uuid,
+                    'needName' => $budgetPlanNeedAddedDomainEvent->name,
+                    'amount' => $budgetPlanNeedAddedDomainEvent->amount,
+                ]
+            ),
+            $budgetPlanNeedAddedDomainEvent->occurredOn,
+            \DateTime::createFromImmutable($budgetPlanNeedAddedDomainEvent->occurredOn),
+        );
+    }
+
     public static function fromArrayOnBudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent(
         array $need,
         string $budgetPlanUuid,
@@ -92,6 +112,26 @@ final readonly class BudgetPlanNeedEntryView implements \JsonSerializable, Budge
             new \DateTimeImmutable($budgetPlanNeedEntry['created_at']),
             \DateTime::createFromImmutable(new \DateTimeImmutable($budgetPlanNeedEntry['updated_at']))
         );
+    }
+
+    public function fromEvent(DomainEventInterface $event): void
+    {
+        $this->apply($event);
+    }
+
+    private function apply(DomainEventInterface $event): void
+    {
+        match ($event::class) {
+            BudgetPlanNeedAdjustedDomainEvent::class => $this->applyBudgetPlanNeedAdjustedDomainEvent($event),
+            default => throw new \RuntimeException('budgetPlan.unknownEvent'),
+        };
+    }
+
+    private function applyBudgetPlanNeedAdjustedDomainEvent(BudgetPlanNeedAdjustedDomainEvent $event): void
+    {
+        $this->needName = $event->name;
+        $this->needAmount = $event->amount;
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
     public function toArray(): array

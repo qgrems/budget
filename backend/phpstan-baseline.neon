@@ -13,25 +13,13 @@ parameters:
 			path: src/BudgetPlanContext/Application/Handlers/QueryHandlers/ListBudgetPlansCalendarQueryHandler.php
 
 		-
+			message: '#^Property App\\BudgetPlanContext\\Domain\\Aggregates\\BudgetPlan\:\:\$currency is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
+
+		-
 			message: '#^Property App\\BudgetPlanContext\\Domain\\Aggregates\\BudgetPlan\:\:\$date is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
-
-		-
-			message: '#^Property App\\BudgetPlanContext\\Domain\\Aggregates\\BudgetPlan\:\:\$incomes is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
-
-		-
-			message: '#^Property App\\BudgetPlanContext\\Domain\\Aggregates\\BudgetPlan\:\:\$needs is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
-
-		-
-			message: '#^Property App\\BudgetPlanContext\\Domain\\Aggregates\\BudgetPlan\:\:\$savings is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
 			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
@@ -43,34 +31,28 @@ parameters:
 			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
 
 		-
-			message: '#^Property App\\BudgetPlanContext\\Domain\\Aggregates\\BudgetPlan\:\:\$wants is never read, only written\.$#'
-			identifier: property.onlyWritten
+			message: '#^Call to an undefined method App\\BudgetPlanContext\\Domain\\Ports\\Inbound\\BudgetPlanIncomeEntryViewInterface\:\:fromEvent\(\)\.$#'
+			identifier: method.notFound
 			count: 1
-			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
+			path: src/BudgetPlanContext/ReadModels/Projections/BudgetPlanIncomeEntryProjection.php
 
 		-
-			message: '#^Class App\\BudgetPlanContext\\ReadModels\\Views\\BudgetPlanIncomeEntryView has an uninitialized readonly property \$id\. Assign it in the constructor\.$#'
-			identifier: property.uninitializedReadonly
+			message: '#^Call to an undefined method App\\BudgetPlanContext\\Domain\\Ports\\Inbound\\BudgetPlanNeedEntryViewInterface\:\:fromEvent\(\)\.$#'
+			identifier: method.notFound
 			count: 1
-			path: src/BudgetPlanContext/ReadModels/Views/BudgetPlanIncomeEntryView.php
+			path: src/BudgetPlanContext/ReadModels/Projections/BudgetPlanNeedEntryProjection.php
 
 		-
-			message: '#^Class App\\BudgetPlanContext\\ReadModels\\Views\\BudgetPlanNeedEntryView has an uninitialized readonly property \$id\. Assign it in the constructor\.$#'
-			identifier: property.uninitializedReadonly
+			message: '#^Call to an undefined method App\\BudgetPlanContext\\Domain\\Ports\\Inbound\\BudgetPlanSavingEntryViewInterface\:\:fromEvent\(\)\.$#'
+			identifier: method.notFound
 			count: 1
-			path: src/BudgetPlanContext/ReadModels/Views/BudgetPlanNeedEntryView.php
+			path: src/BudgetPlanContext/ReadModels/Projections/BudgetPlanSavingEntryProjection.php
 
 		-
-			message: '#^Class App\\BudgetPlanContext\\ReadModels\\Views\\BudgetPlanSavingEntryView has an uninitialized readonly property \$id\. Assign it in the constructor\.$#'
-			identifier: property.uninitializedReadonly
+			message: '#^Call to an undefined method App\\BudgetPlanContext\\Domain\\Ports\\Inbound\\BudgetPlanWantEntryViewInterface\:\:fromEvent\(\)\.$#'
+			identifier: method.notFound
 			count: 1
-			path: src/BudgetPlanContext/ReadModels/Views/BudgetPlanSavingEntryView.php
-
-		-
-			message: '#^Class App\\BudgetPlanContext\\ReadModels\\Views\\BudgetPlanWantEntryView has an uninitialized readonly property \$id\. Assign it in the constructor\.$#'
-			identifier: property.uninitializedReadonly
-			count: 1
-			path: src/BudgetPlanContext/ReadModels/Views/BudgetPlanWantEntryView.php
+			path: src/BudgetPlanContext/ReadModels/Projections/BudgetPlanWantEntryProjection.php
 
 		-
 			message: '#^Call to an undefined method Symfony\\Component\\Console\\Helper\\HelperInterface\:\:ask\(\)\.$#'

@@ -26,6 +26,12 @@ final readonly class GenerateABudgetPlanWithOneThatAlreadyExistsInput
         #[Assert\NotBlank]
         #[Assert\Type(\DateTimeImmutable::class)]
         private(set) \DateTimeImmutable $date,
+
+        #[Assert\Regex(
+            pattern: '/^[A-Z]{3}$/',
+            message: 'budgetPlan.currencyInvalid'
+        )]
+        private(set) string $currency,
     ) {
     }
 }

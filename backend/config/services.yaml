@@ -82,6 +82,42 @@ services:
     App\BudgetPlanContext\Application\Handlers\CommandHandlers\RemoveABudgetPlanCommandHandler:
         tags: [ 'messenger.message_handler' ]
 
+    App\BudgetPlanContext\Application\Handlers\CommandHandlers\AddABudgetPlanIncomeCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\BudgetPlanContext\Application\Handlers\CommandHandlers\AddABudgetPlanWantCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\BudgetPlanContext\Application\Handlers\CommandHandlers\AddABudgetPlanNeedCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\BudgetPlanContext\Application\Handlers\CommandHandlers\AddABudgetPlanSavingCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\BudgetPlanContext\Application\Handlers\CommandHandlers\AdjustABudgetPlanIncomeCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\BudgetPlanContext\Application\Handlers\CommandHandlers\AdjustABudgetPlanWantCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\BudgetPlanContext\Application\Handlers\CommandHandlers\AdjustABudgetPlanNeedCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\BudgetPlanContext\Application\Handlers\CommandHandlers\AdjustABudgetPlanSavingCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\BudgetPlanContext\Application\Handlers\CommandHandlers\RemoveABudgetPlanIncomeCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\BudgetPlanContext\Application\Handlers\CommandHandlers\RemoveABudgetPlanWantCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\BudgetPlanContext\Application\Handlers\CommandHandlers\RemoveABudgetPlanNeedCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
+    App\BudgetPlanContext\Application\Handlers\CommandHandlers\RemoveABudgetPlanSavingCommandHandler:
+        tags: [ 'messenger.message_handler' ]
+
     App\BudgetPlanContext\Application\Handlers\QueryHandlers\GetABudgetPlanWithItsEntriesQueryHandler:
         tags: [ 'messenger.message_handler' ]
 
@@ -102,6 +138,7 @@ services:
 
     App\BudgetPlanContext\ReadModels\Projections\BudgetPlanWantEntryProjection:
         tags: [ 'messenger.message_handler' ]
+
     # USER CONTEXT
 
     App\UserContext\Application\Handlers\CommandHandlers\SignUpAUserCommandHandler:

@@ -11,6 +11,7 @@ final class BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent implements Do
     public string $aggregateId;
     public string $userId;
     public string $date;
+    public string $currency;
     public array $incomes;
     public array $needs;
     public array $wants;
@@ -21,6 +22,7 @@ final class BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent implements Do
     public function __construct(
         string $aggregateId,
         string $date,
+        string $currency,
         array $incomes,
         array $needs,
         array $wants,
@@ -31,6 +33,7 @@ final class BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent implements Do
         $this->aggregateId = $aggregateId;
         $this->userId = $userId;
         $this->date = $date;
+        $this->currency = $currency;
         $this->incomes = $incomes;
         $this->needs = $needs;
         $this->wants = $wants;
@@ -45,6 +48,7 @@ final class BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent implements Do
             'aggregateId' => $this->aggregateId,
             'userId' => $this->userId,
             'date' => $this->date,
+            'currency' => $this->currency,
             'incomes' => $this->incomes,
             'needs' => $this->needs,
             'wants' => $this->wants,
@@ -59,6 +63,7 @@ final class BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent implements Do
         $event = new self(
             $data['aggregateId'],
             $data['date'],
+            $data['currency'],
             $data['incomes'],
             $data['needs'],
             $data['wants'],

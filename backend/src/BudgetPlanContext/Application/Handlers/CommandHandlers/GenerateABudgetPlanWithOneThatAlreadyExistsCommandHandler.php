@@ -36,6 +36,7 @@ final readonly class GenerateABudgetPlanWithOneThatAlreadyExistsCommandHandler
             $generateABudgetPlanWithOneThatAlreadyExistsCommand->getBudgetPlanIdThatAlreadyExists(),
             $generateABudgetPlanWithOneThatAlreadyExistsCommand->getDate(),
             $generateABudgetPlanWithOneThatAlreadyExistsCommand->getUserId(),
+            $generateABudgetPlanWithOneThatAlreadyExistsCommand->getCurrency(),
             $this->budgetPlanViewRepository,
             $this->uuidGenerator,
         );

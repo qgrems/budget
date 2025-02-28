@@ -6,6 +6,7 @@ namespace App\BudgetPlanContext\Infrastructure\Persistence\Repositories;
 
 use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanIncomeEntryViewInterface;
 use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanIncomeEntryViewRepositoryInterface;
+use App\BudgetPlanContext\ReadModels\Views\BudgetPlanIncomeEntryView;
 use Doctrine\DBAL\Connection;
 
 final class BudgetPlanIncomeEntryViewRepository implements BudgetPlanIncomeEntryViewRepositoryInterface
@@ -15,6 +16,21 @@ final class BudgetPlanIncomeEntryViewRepository implements BudgetPlanIncomeEntry
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
+    }
+
+    public function findOneByUuid(string $uuid): ?BudgetPlanIncomeEntryViewInterface
+    {
+        $sql = 'SELECT uuid, budget_plan_uuid, income_name, income_amount, created_at, updated_at
+            FROM budget_plan_income_entry_view
+            WHERE uuid = :uuid';
+
+        $result = $this->connection->fetchAssociative($sql, ['uuid' => $uuid]);
+
+        if ($result === false) {
+            return null;
+        }
+
+        return BudgetPlanIncomeEntryView::fromRepository($result);
     }
 
     #[\Override]
