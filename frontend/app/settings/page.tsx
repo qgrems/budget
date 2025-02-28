@@ -58,9 +58,7 @@ export default function SettingsPage() {
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log(newPassword !== confirmNewPassword)
     if (newPassword !== confirmNewPassword) {
-      console.log(newPassword !== confirmNewPassword)
       setError(("users.oldPasswordIsIncorrect"))
       return
     }
@@ -76,7 +74,6 @@ export default function SettingsPage() {
   }
 
   const handleSignOut = async () => {
-    console.log('test')
     await signOut(setError, setValidMessage)
     router.push('/')
   }
