@@ -29,6 +29,10 @@ import formatAmount from "../utils/envelope/formatAmount"
 import handleDeleteEntity from "../utils/envelope/deleteUtils"
 import handleUpdateEnvelopeName from "../function/EnvelopeFunction/handleUpdateEnvelopeName"
 import handleAmountChange from "../utils/envelope/handleAmountChange"
+import CurrencySelect from "./inputs/currencySelect"
+import { currencyOptions, getCurrencySymbol } from "../constants/currencyOption"
+import { formatCurrency } from "../utils/envelope/currencyUtils"
+import AnimatedCard from "./card/AnimatedCard"
 
 export default function EnvelopeManagement() {
     const {
@@ -55,7 +59,10 @@ export default function EnvelopeManagement() {
     const { setError } = useError()
     const { setValidMessage } = useValidMessage()
     const [isEmptyEnvelopes, setIsEmptyEnvelopes] = useState(true)
-
+    const [currency, setCurrency] = useState("USD");
+    const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setCurrency(e.target.value);
+    };
     const handleDescriptionSubmit = async (description: string) => {
         if (currentAction) {
             const { type, id, amount } = currentAction
@@ -78,7 +85,7 @@ export default function EnvelopeManagement() {
         if (newEnvelopeName && newEnvelopeTarget && !isInvalidInput(newEnvelopeTarget)) {
             if (newEnvelopeName.length <= 25) {
                 const formattedTarget = formatAmount(newEnvelopeTarget)
-                await createEnvelope(newEnvelopeName, formattedTarget, 'USD')
+                await createEnvelope(newEnvelopeName, formattedTarget, currency)
                 setIsCreating(false)
                 setNewEnvelopeName("")
                 setNewEnvelopeTarget("")
@@ -110,27 +117,15 @@ export default function EnvelopeManagement() {
             setIsEmptyEnvelopes(false)
         } else setIsEmptyEnvelopes(true)
     }, [envelopesData])
-
     const renderedEnvelopes = useMemo(() => {
         return envelopesData?.envelopes.map((envelope) => (
             <Link key={envelope.uuid} href={`/envelopes/${envelope.uuid}`} className="block">
-                <motion.div
-                    layout
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    transition={{ duration: 0.3 }}
-                    className={`neomorphic p-3 md:p-4 ${envelope.pending ? "opacity-70" : ""} ${envelope.deleted ? "bg-red-100" : ""}`}
-                    onClick={(e) => {
-                        // Prevent navigation if clicking on interactive elements
-                        if (
-                            e.target instanceof HTMLButtonElement ||
-                            e.target instanceof HTMLInputElement ||
-                            (e.target instanceof HTMLElement && e.target.closest("button, input"))
-                        ) {
-                            e.preventDefault()
-                        }
-                    }}
+                <AnimatedCard
+                    pending={envelope.pending}
+                    deleted={envelope.deleted}
+                    className="my-custom-class"
+                    onClick={() => console.log("Card clicked!")}
+                    preventClickOnSelectors="button, input"
                 >
                     <EnvelopeCard>
                         {editingName && editingName.id === envelope.uuid ? (
@@ -178,16 +173,6 @@ export default function EnvelopeManagement() {
                                     onFocus={() => handleStartEditingName(envelope.uuid, envelope.name, setEditingName)}
                                     className="custom-input-class cursor-pointer"
                                 />
-                                {/* <button
-                                            onClick={(e) => {
-                                                e.preventDefault()
-                                                handleStartEditingName(envelope.uuid, envelope.name)
-                                            }}
-                                            className="p-1 neomorphic-button text-primary"
-                                            disabled={envelope.pending || !!pendingActions[envelope.uuid]}
-                                        >
-                                            <Edit2 className="h-4 w-4 md:h-5 md:w-5" />
-                                        </button> */}
                             </>
                         )}
                     </EnvelopeCard>
@@ -197,10 +182,10 @@ export default function EnvelopeManagement() {
                     <div className="flex justify-between items-center mb-4">
                         <div>
                             <p className="text-lg md:text-xl font-semibold">
-                                ${Number.parseFloat(envelope.currentAmount).toFixed(2)}
+                                {formatCurrency(envelope.currentAmount, envelope.currency)}
                             </p>
                             <p className="text-xs md:text-sm text-muted-foreground">
-                                {t("envelopes.of")} ${Number.parseFloat(envelope.targetedAmount).toFixed(2)}
+                                {t("envelopes.of")} {formatCurrency(envelope.targetedAmount, envelope.currency)}
                             </p>
                         </div>
                         <div className="w-16 h-16 md:w-20 md:h-20 neomorphic-circle flex items-center justify-center">
@@ -302,7 +287,7 @@ export default function EnvelopeManagement() {
                         </div>
                     </div>
                     {envelope.deleted && <p className="text-red-500 mt-2">Deleting...</p>}
-                </motion.div>
+                </AnimatedCard>
             </Link >
         ))
     }, [
@@ -364,9 +349,13 @@ export default function EnvelopeManagement() {
                                 onChange={(value) => handleAmountChange("new", value, true, setNewEnvelopeTarget, setAmounts)}
                                 placeholder={t("envelopes.targetedAmount")}
                                 className="w-full p-2 md:p-3 neomorphic-input"
-
                             />
-
+                        </div>
+                        <div>
+                            <CurrencySelect options={currencyOptions}
+                                onChange={handleCurrencyChange}
+                                value={currency} className={''}
+                            />
                         </div>
                         <div className="flex justify-between">
                             <ActionButton

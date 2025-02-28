@@ -52,7 +52,7 @@ const handleUpdateEnvelopeName = async ({
         setPendingActions((prev) => ({ ...prev, [id]: 'updating' }));
 
         try {
-            await updateEnvelopeName(id, name, setError); // Assurez-vous que updateEnvelopeName est bien importée
+            await updateEnvelopeName(id, name, setError);
         } catch (error) {
             console.error('Failed to update envelope name:', error);
         } finally {

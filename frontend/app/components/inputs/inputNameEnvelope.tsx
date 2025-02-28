@@ -29,7 +29,7 @@ export default function InputNameEnvelope({
     }, [value]); // Se déclenche à chaque changement du texte
 
     return (
-        <div className="relative">
+        <div className="relative ">
             {/* ✅ Élément invisible pour mesurer la largeur du texte */}
             <span
                 ref={spanRef}

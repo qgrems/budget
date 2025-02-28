@@ -47,7 +47,6 @@ export function useEnvelopes() {
 
   const refreshEnvelopes = useCallback(async (force = false) => {
 
-    console.log(envelopeState)
     if (!force && (envelopeState.loading || envelopeState.envelopesData)) return
 
     setLoading(true)
@@ -82,7 +81,6 @@ export function useEnvelopes() {
 
   useEffect(() => {
     if (!socket) return;
-
     const handleEnvelopeEvent = (event: {
       aggregateId: string
       userId: string
@@ -101,9 +99,7 @@ export function useEnvelopes() {
           }
         }));
       }
-
       if (event.userId === userRef.current?.uuid) {
-        console.log(event.type);
         refreshEnvelopes(true);
 
         const validationMessages: { [key: string]: string } = {
@@ -112,6 +108,8 @@ export function useEnvelopes() {
           'BudgetEnvelopeRenamed': t('envelopes.validationSuccess.name'),
           'BudgetEnvelopeAdded': t('envelopes.validationSuccess.createNewEnvelope'),
           'BudgetEnvelopeDeleted': t('envelopes.validationSuccess.deleteEnvelope'),
+          'BudgetEnvelopeTargetedAmountChanged': t('envelopes.validationSuccess.targetBudget'),
+
         };
 
         const message = validationMessages[event.type];
@@ -120,8 +118,6 @@ export function useEnvelopes() {
         }
       }
     }
-
-
     // Cleanup function
     const cleanup = () => {
       eventTypes.forEach(eventType => {
@@ -165,7 +161,6 @@ export function useEnvelopes() {
     try {
       await api.envelopeCommands.createEnvelope(newEnvelope, requestId)
     } catch (err: any) {
-      console.log(err)
       setPendingRequests(prev => {
         const newSet = new Set(prev);
         newSet.delete(requestId);

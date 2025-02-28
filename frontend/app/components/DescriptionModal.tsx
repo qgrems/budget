@@ -66,7 +66,7 @@ export function DescriptionModal({ isOpen, onClose, onSubmit, actionType }: Desc
                             className="py-2 px-4 neomorphic-button text-primary"
                         />
                         <ActionButton
-                            onClick={() => onClose}
+                            onClick={onClose}
                             label={t("envelopes.cancel")}
                             className="py-2 px-4 neomorphic-button text-red-500"
                         />

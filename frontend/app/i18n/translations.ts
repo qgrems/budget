@@ -142,8 +142,7 @@ export const translations = {
                 createNewEnvelope: "The envelope has been successfully created",
                 creditEnvelope: "The envelope has been successfully credited",
                 debitEnvelope: "The envelope has been successfully debited",
-                deleteEnvelope: "The envelope has been successfully deleted."
-
+                deleteEnvelope: "The envelope has been successfully deleted.",
             }
         },
         users: {
