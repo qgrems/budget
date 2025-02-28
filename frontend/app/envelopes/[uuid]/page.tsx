@@ -30,6 +30,7 @@ import handleDeleteEntity from "../../utils/envelope/deleteUtils"
 import { DeleteConfirmationModal } from "../../components/DeleteConfirmationModal"
 import { DescriptionModal } from "../../components/DescriptionModal"
 import handleTargetedAmountChange from "../../utils/envelope/handletargetedAmount"
+import { getCurrencySymbol } from "../../constants/currencyOption"
 
 const RETRY_INTERVAL = 2000 // 2 seconds
 const MAX_RETRIES = 10
@@ -38,11 +39,9 @@ export default function EnvelopeDetailsPage() {
     const { t, language } = useTranslation()
     const {
         envelopesData,
-        createEnvelope,
         creditEnvelope,
         debitEnvelope,
         deleteEnvelope,
-        nameEnvelope,
         updateEnvelopeName,
     } = useEnvelopes()
     const router = useRouter()
@@ -284,7 +283,7 @@ export default function EnvelopeDetailsPage() {
                     {details.envelope.pending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
                 </div>
                 <div className="flex justify-between items-center mb-4">
-                    <div className='flex items-center'>
+                    <div className='flex items-center flex-wrap'>
                         <p className="text-lg md:text-xl font-semibold">
                             {formatCurrency(details.envelope.currentAmount, details.envelope.currency)}
                         </p>
@@ -292,14 +291,16 @@ export default function EnvelopeDetailsPage() {
                             className=""
 
                         >
-                            <div className="flex items-center">
-                                <p>/</p>
+                            <div className="flex items-center ">
+
                                 {newValues !== null ? (<div className="flex items-center flex-grow ">
+                                    <strong>{details.envelope.currency !== "EUR" ? `/${getCurrencySymbol(details.envelope.currency)}` : ""}</strong>
                                     <InputNameEnvelope
                                         value={newValues || ""}
                                         onChange={(value) => handleTargetedAmountChange(value, setNewValues)}
                                         className="custom-input-class"
                                     />
+                                    <strong>{details.envelope.currency === "EUR" ? `/${getCurrencySymbol(details.envelope.currency)}` : ""}</strong>
                                     <ValidInputButton
                                         onClick={(e) => handleTargetedAmount()}
                                         icon={<Check className="h-4 w-4 md:h-5 md:w-5" />}
@@ -317,20 +318,19 @@ export default function EnvelopeDetailsPage() {
                                 </div>
                                 ) : (
                                     <>
-
+                                        <strong>{details.envelope.currency !== "EUR" ? `/${getCurrencySymbol(details.envelope.currency)}` : ""}</strong>
                                         <InputNameEnvelope
                                             value={details.envelope.targetedAmount}
                                             onChange={() => setNewValues(details.envelope.targetedAmount)}
                                             onFocus={() => setNewValues(details.envelope.targetedAmount)}
                                             className="custom-input-class cursor-pointer "
                                         />
+                                        <strong>{details.envelope.currency === "EUR" ? `/${getCurrencySymbol(details.envelope.currency)}` : ""}</strong>
+
                                     </>
                                 )}
-
-
                             </div>
                         </motion.div>
-
                     </div>
                     <div className="w-16 h-16 md:w-20 md:h-20 neomorphic-circle flex items-center justify-center">
                         <ResponsiveContainer width="100%" height="100%">
@@ -440,15 +440,22 @@ export default function EnvelopeDetailsPage() {
                                     <td className="p-3">
                                         <div>
                                             <p>
-                                                <strong>{formatDate(transaction.created_at)}</strong>
+                                                <strong> {transaction.description || "-"}</strong>
                                             </p>
                                             <p>
-                                                {transaction.description || "-"}
+                                                {formatDate(transaction.created_at)}
                                             </p>
+
                                         </div>
                                     </td>
-                                    <td className="p-3"></td>
-                                    <td className={`p-3 ${transaction.entry_type === "credit" ? "text-green-600" : "text-red-600"}`}>{transaction.monetary_amount}</td>
+                                    <td
+                                        className={`p-1 inline-block ${transaction.entry_type === "credit"
+                                            ? "text-green-600 bg-green-100/50"
+                                            : "text-red-600 bg-red-100/50"
+                                            }`}
+                                    >
+                                        {transaction.entry_type === "credit" ? `+${transaction.monetary_amount}` : `-${transaction.monetary_amount}`}
+                                    </td>
                                 </motion.tr>
                             ))}
                         </tbody>

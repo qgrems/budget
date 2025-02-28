@@ -175,6 +175,15 @@ export default function EnvelopeManagement() {
                                 />
                             </>
                         )}
+
+                        <DeletButton
+                            onClick={(e) => openDeleteModal(envelope.uuid, envelope.name, e)}
+                            icon={<Trash2 className="h-4 w-4 md:h-5 md:w-5" />
+                            }
+                            className={''}
+                            disabled={envelope.pending || !!pendingActions[envelope.uuid]}
+                        />
+
                     </EnvelopeCard>
                     <div className="flex items-center">
                         {envelope.pending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
@@ -276,15 +285,7 @@ export default function EnvelopeManagement() {
 
                             </div>
                         </div>
-                        <div className="flex justify-end mt-4" >
-                            <DeletButton
-                                onClick={(e) => openDeleteModal(envelope.uuid, envelope.name, e)}
-                                icon={<Trash2 className="h-4 w-4 md:h-5 md:w-5" />
-                                }
-                                className={''}
-                                disabled={envelope.pending || !!pendingActions[envelope.uuid]}
-                            />
-                        </div>
+
                     </div>
                     {envelope.deleted && <p className="text-red-500 mt-2">Deleting...</p>}
                 </AnimatedCard>
