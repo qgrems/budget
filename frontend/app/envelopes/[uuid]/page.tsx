@@ -285,7 +285,7 @@ export default function EnvelopeDetailsPage() {
                 <div className="flex justify-between items-center mb-4">
                     <div className='flex items-center flex-wrap'>
                         <p className="text-lg md:text-xl font-semibold">
-                            {formatCurrency(details.envelope.currentAmount, details.envelope.currency)}
+                            {`${formatCurrency(details.envelope.currentAmount, details.envelope.currency)} / `}
                         </p>
                         <motion.div
                             className=""
@@ -294,13 +294,13 @@ export default function EnvelopeDetailsPage() {
                             <div className="flex items-center ">
 
                                 {newValues !== null ? (<div className="flex items-center flex-grow ">
-                                    <strong>{details.envelope.currency !== "EUR" ? `/${getCurrencySymbol(details.envelope.currency)}` : ""}</strong>
+                                    <strong>{details.envelope.currency !== "EUR" ? `${getCurrencySymbol(details.envelope.currency)}` : ""}</strong>
                                     <InputNameEnvelope
                                         value={newValues || ""}
                                         onChange={(value) => handleTargetedAmountChange(value, setNewValues)}
                                         className="custom-input-class"
                                     />
-                                    <strong>{details.envelope.currency === "EUR" ? `/${getCurrencySymbol(details.envelope.currency)}` : ""}</strong>
+                                    <strong>{details.envelope.currency === "EUR" ? `${getCurrencySymbol(details.envelope.currency)}` : ""}</strong>
                                     <ValidInputButton
                                         onClick={(e) => handleTargetedAmount()}
                                         icon={<Check className="h-4 w-4 md:h-5 md:w-5" />}
@@ -318,14 +318,14 @@ export default function EnvelopeDetailsPage() {
                                 </div>
                                 ) : (
                                     <>
-                                        <strong>{details.envelope.currency !== "EUR" ? `/${getCurrencySymbol(details.envelope.currency)}` : ""}</strong>
+                                        <strong>{details.envelope.currency !== "EUR" ? `${getCurrencySymbol(details.envelope.currency)}` : ""}</strong>
                                         <InputNameEnvelope
                                             value={details.envelope.targetedAmount}
                                             onChange={() => setNewValues(details.envelope.targetedAmount)}
                                             onFocus={() => setNewValues(details.envelope.targetedAmount)}
                                             className="custom-input-class cursor-pointer "
                                         />
-                                        <strong>{details.envelope.currency === "EUR" ? `/${getCurrencySymbol(details.envelope.currency)}` : ""}</strong>
+                                        <strong>{details.envelope.currency === "EUR" ? `${getCurrencySymbol(details.envelope.currency)}` : ""}</strong>
 
                                     </>
                                 )}
@@ -435,7 +435,8 @@ export default function EnvelopeDetailsPage() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.3, delay: index * 0.1 }}
-                                    className="border-b hover:bg-gray-50 transition-colors duration-150"
+                                    className="flex justify-between items-center border-b hover:bg-gray-50 transition-colors duration-150"
+
                                 >
                                     <td className="p-3">
                                         <div>
