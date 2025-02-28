@@ -16,14 +16,14 @@ final readonly class ListBudgetPlansCalendarQueryHandler
 
     public function __invoke(ListBudgetPlansCalendarQuery $listBudgetPlansCalendarQuery): array
     {
-        $budgetPlans = $this->budgetPlanViewRepository->findBy(
-            [
-                'user_uuid' => (string) $listBudgetPlansCalendarQuery->getBudgetPlanUserId(),
-                'is_deleted' => false,
-            ],
+        return $this->generateCalendarFromBudgetPlans(
+            $this->budgetPlanViewRepository->findBy(
+                [
+                    'user_uuid' => (string) $listBudgetPlansCalendarQuery->getBudgetPlanUserId(),
+                    'is_deleted' => false,
+                ],
+            ),
         );
-
-        return $this->generateCalendarFromBudgetPlans($budgetPlans);
     }
 
     private function generateCalendarFromBudgetPlans(array $budgetPlans): array {

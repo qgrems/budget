@@ -33,6 +33,7 @@ final readonly class GenerateABudgetPlanCommandHandler
             $generateABudgetPlanCommand->getDate(),
             $generateABudgetPlanCommand->getIncomes(),
             $generateABudgetPlanCommand->getUserId(),
+            $generateABudgetPlanCommand->getCurrency(),
             $this->budgetPlanViewRepository,
             $this->uuidGenerator,
         );

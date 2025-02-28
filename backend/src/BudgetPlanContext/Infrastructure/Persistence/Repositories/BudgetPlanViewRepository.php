@@ -30,17 +30,19 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
     public function save(BudgetPlanViewInterface $budgetPlanView): void
     {
         $this->connection->executeStatement('
-            INSERT INTO budget_plan_view (uuid, user_uuid, date, created_at, updated_at, is_deleted)
-            VALUES (:uuid, :user_uuid, :date, :created_at, :updated_at, :is_deleted)
+            INSERT INTO budget_plan_view (uuid, user_uuid, date, currency, created_at, updated_at, is_deleted)
+            VALUES (:uuid, :user_uuid, :date, :currency, :created_at, :updated_at, :is_deleted)
             ON DUPLICATE KEY UPDATE
                 user_uuid = VALUES(user_uuid),
                 date = VALUES(date),
+                currency = VALUES(currency),
                 updated_at = VALUES(updated_at),
                 is_deleted = VALUES(is_deleted)
         ', [
             'uuid' => $budgetPlanView->uuid,
             'user_uuid' => $budgetPlanView->userId,
             'date' => $budgetPlanView->date->format(\DateTimeImmutable::ATOM),
+            'currency' => $budgetPlanView->currency,
             'created_at' => $budgetPlanView->createdAt->format(\DateTimeImmutable::ATOM),
             'updated_at' => $budgetPlanView->updatedAt->format(\DateTime::ATOM),
             'is_deleted' => $budgetPlanView->isDeleted ? 1 : 0,

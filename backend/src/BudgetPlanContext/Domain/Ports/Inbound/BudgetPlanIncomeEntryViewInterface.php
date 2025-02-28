@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\BudgetPlanContext\Domain\Ports\Inbound;
 
+use App\BudgetPlanContext\Domain\Events\BudgetPlanIncomeAddedDomainEvent;
+
 interface BudgetPlanIncomeEntryViewInterface
 {
     public static function fromArrayOnBudgetPlanGeneratedDomainEvent(
@@ -16,6 +18,10 @@ interface BudgetPlanIncomeEntryViewInterface
         array $income,
         string $budgetPlanUuid,
         \DateTimeImmutable $occurredOn,
+    ): self;
+
+    public static function fromBudgetPlanIncomeAddedDomainEvent(
+        BudgetPlanIncomeAddedDomainEvent $budgetPlanIncomeAddedDomainEvent,
     ): self;
 
     public static function fromRepository(array $budgetPlanIncomeEntry): self;

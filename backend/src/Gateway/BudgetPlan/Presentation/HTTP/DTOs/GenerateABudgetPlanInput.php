@@ -40,7 +40,7 @@ final readonly class GenerateABudgetPlanInput
                         new Assert\Type('string'),
                         new Assert\Regex(
                             pattern: '/^\d+(\.\d{2})?$/',
-                            message: 'incomes.amountInvalid'
+                            message: 'budgetPlan.amountInvalid'
                         ),
                     ]),
                 ],
@@ -48,6 +48,11 @@ final readonly class GenerateABudgetPlanInput
             ]),
         ])]
         private(set) array $incomes,
+        #[Assert\Regex(
+            pattern: '/^[A-Z]{3}$/',
+            message: 'budgetPlan.currencyInvalid'
+        )]
+        private(set) string $currency,
     ) {
     }
 }

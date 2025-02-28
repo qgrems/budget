@@ -6,7 +6,9 @@ namespace App\BudgetPlanContext\Domain\Ports\Inbound;
 
 interface BudgetPlanSavingEntryViewRepositoryInterface
 {
+    public function findOneByUuid(string $uuid): ?BudgetPlanSavingEntryViewInterface;
+
     public function save(BudgetPlanSavingEntryViewInterface $budgetPlanSavingEntryView): void;
 
-    public function delete(string $budgetPlanSavingEntryUuid): void;
+    public function delete(string $uuid): void;
 }

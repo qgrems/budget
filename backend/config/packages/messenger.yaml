@@ -43,6 +43,18 @@ framework:
             'App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedDomainEvent': domain_events
             'App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent': domain_events
             'App\BudgetPlanContext\Domain\Events\BudgetPlanRemovedDomainEvent': domain_events
+            'App\BudgetPlanContext\Domain\Events\BudgetPlanIncomeAddedDomainEvent': domain_events
+            'App\BudgetPlanContext\Domain\Events\BudgetPlanWantAddedDomainEvent': domain_events
+            'App\BudgetPlanContext\Domain\Events\BudgetPlanNeedAddedDomainEvent': domain_events
+            'App\BudgetPlanContext\Domain\Events\BudgetPlanSavingAddedDomainEvent': domain_events
+            'App\BudgetPlanContext\Domain\Events\BudgetPlanIncomeAdjustedDomainEvent': domain_events
+            'App\BudgetPlanContext\Domain\Events\BudgetPlanWantAdjustedDomainEvent': domain_events
+            'App\BudgetPlanContext\Domain\Events\BudgetPlanNeedAdjustedDomainEvent': domain_events
+            'App\BudgetPlanContext\Domain\Events\BudgetPlanSavingAdjustedDomainEvent': domain_events
+            'App\BudgetPlanContext\Domain\Events\BudgetPlanIncomeRemovedDomainEvent': domain_events
+            'App\BudgetPlanContext\Domain\Events\BudgetPlanWantRemovedDomainEvent': domain_events
+            'App\BudgetPlanContext\Domain\Events\BudgetPlanNeedRemovedDomainEvent': domain_events
+            'App\BudgetPlanContext\Domain\Events\BudgetPlanSavingRemovedDomainEvent': domain_events
             # USER CONTEXT
             'App\UserContext\Domain\Events\UserDeletedDomainEvent': domain_events
             'App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent': domain_events
@@ -77,6 +89,14 @@ framework:
             'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanWantAddedNotificationEvent': notification_events
             'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanNeedAddedNotificationEvent': notification_events
             'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanSavingAddedNotificationEvent': notification_events
+            'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanIncomeAdjustedNotificationEvent': notification_events
+            'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanWantAdjustedNotificationEvent': notification_events
+            'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanNeedAdjustedNotificationEvent': notification_events
+            'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanSavingAdjustedNotificationEvent': notification_events
+            'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanIncomeRemovedNotificationEvent': notification_events
+            'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanWantRemovedNotificationEvent': notification_events
+            'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanNeedRemovedNotificationEvent': notification_events
+            'App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanSavingRemovedNotificationEvent': notification_events
             # USER CONTEXT
             'App\UserContext\Infrastructure\Events\Notifications\UserDeletedNotificationEvent': notification_events
             'App\UserContext\Infrastructure\Events\Notifications\UserFirstnameChangedNotificationEvent': notification_events

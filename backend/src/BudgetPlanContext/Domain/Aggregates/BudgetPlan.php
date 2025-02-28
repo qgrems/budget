@@ -4,9 +4,22 @@ declare(strict_types=1);
 
 namespace App\BudgetPlanContext\Domain\Aggregates;
 
+use App\BudgetPlanContext\Domain\Events\BudgetPlanCurrencyChangedDomainEvent;
 use App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedDomainEvent;
 use App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent;
+use App\BudgetPlanContext\Domain\Events\BudgetPlanIncomeAddedDomainEvent;
+use App\BudgetPlanContext\Domain\Events\BudgetPlanIncomeAdjustedDomainEvent;
+use App\BudgetPlanContext\Domain\Events\BudgetPlanIncomeRemovedDomainEvent;
+use App\BudgetPlanContext\Domain\Events\BudgetPlanNeedAddedDomainEvent;
+use App\BudgetPlanContext\Domain\Events\BudgetPlanNeedAdjustedDomainEvent;
+use App\BudgetPlanContext\Domain\Events\BudgetPlanNeedRemovedDomainEvent;
 use App\BudgetPlanContext\Domain\Events\BudgetPlanRemovedDomainEvent;
+use App\BudgetPlanContext\Domain\Events\BudgetPlanSavingAddedDomainEvent;
+use App\BudgetPlanContext\Domain\Events\BudgetPlanSavingAdjustedDomainEvent;
+use App\BudgetPlanContext\Domain\Events\BudgetPlanSavingRemovedDomainEvent;
+use App\BudgetPlanContext\Domain\Events\BudgetPlanWantAddedDomainEvent;
+use App\BudgetPlanContext\Domain\Events\BudgetPlanWantAdjustedDomainEvent;
+use App\BudgetPlanContext\Domain\Events\BudgetPlanWantRemovedDomainEvent;
 use App\BudgetPlanContext\Domain\Exceptions\BudgetPlanAlreadyExistsException;
 use App\BudgetPlanContext\Domain\Exceptions\BudgetPlanIsNotOwnedByUserException;
 use App\BudgetPlanContext\Domain\Exceptions\InvalidBudgetPlanOperationException;
@@ -15,6 +28,10 @@ use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanNeedEntryViewInterface;
 use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanSavingEntryViewInterface;
 use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanViewRepositoryInterface;
 use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanWantEntryViewInterface;
+use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanCurrency;
+use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanEntryAmount;
+use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanEntryId;
+use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanEntryName;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanId;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanIncome;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanNeed;
@@ -32,6 +49,7 @@ final class BudgetPlan
 
     private BudgetPlanId $budgetPlanId;
     private BudgetPlanUserId $userId;
+    private BudgetPlanCurrency $currency;
     private array $incomes;
     private array $needs;
     private array $wants;
@@ -68,6 +86,7 @@ final class BudgetPlan
         \DateTimeImmutable $date,
         array $incomes,
         BudgetPlanUserId $userId,
+        BudgetPlanCurrency $currency,
         BudgetPlanViewRepositoryInterface $budgetPlanViewRepository,
         UuidGeneratorInterface $uuidGenerator,
     ): self {
@@ -82,6 +101,7 @@ final class BudgetPlan
         $budgetPlanGeneratedDomainEvent = new BudgetPlanGeneratedDomainEvent(
             (string) $budgetPlanId,
             $date->format(\DateTimeInterface::ATOM),
+            (string) $currency,
             array_map(fn(BudgetPlanIncome $income) => $income->toArray(), $incomes),
             array_map(fn(BudgetPlanNeed $need) => $need->toArray(), self::generateFakeNeeds($incomes, $uuidGenerator)),
             array_map(fn(BudgetPlanWant $want) => $want->toArray(), self::generateFakeWants($incomes, $uuidGenerator)),
@@ -101,6 +121,7 @@ final class BudgetPlan
         BudgetPlanId $budgetPlanIdThatAlreadyExists,
         \DateTimeImmutable $date,
         BudgetPlanUserId $userId,
+        BudgetPlanCurrency $currency,
         BudgetPlanViewRepositoryInterface $budgetPlanViewRepository,
         UuidGeneratorInterface $uuidGenerator,
     ): self {
@@ -127,6 +148,7 @@ final class BudgetPlan
         $budgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent = new BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent(
             $budgetPlanId,
             $date->format(\DateTimeInterface::ATOM),
+            (string) $currency,
             array_map(fn(BudgetPlanIncome $income) => $income->toArray(),
                 self::generateIncomesFromABudgetPlanThatAlreadyExists(
                     $existingBudgetPlan['incomes'],
@@ -169,6 +191,251 @@ final class BudgetPlan
         return $aggregate;
     }
 
+    public function changeCurrency(
+        BudgetPlanCurrency $budgetPlanCurrency,
+        BudgetPlanUserId $userId,
+    ): void {
+        $this->assertNotDeleted();
+        $this->assertOwnership($userId);
+
+        $budgetPlanCurrencyChangedDomainEvent = new BudgetPlanCurrencyChangedDomainEvent(
+            (string) $this->budgetPlanId,
+            (string) $this->userId,
+            (string) $budgetPlanCurrency,
+        );
+
+        $this->apply($budgetPlanCurrencyChangedDomainEvent);
+        $this->raiseDomainEvents($budgetPlanCurrencyChangedDomainEvent);
+    }
+
+    public function addIncome(
+        BudgetPlanId $budgetPlanId,
+        BudgetPlanEntryId $incomeId,
+        BudgetPlanEntryName $name,
+        BudgetPlanEntryAmount $amount,
+        BudgetPlanUserId $userId,
+    ): void {
+        $this->assertNotDeleted();
+        $this->assertOwnership($userId);
+        $budgetPlanIncomeAddedDomainEvent = new BudgetPlanIncomeAddedDomainEvent(
+            (string) $budgetPlanId,
+            (string) $incomeId,
+            (string) $userId,
+            (string) $amount,
+            (string) $name,
+        );
+        $this->apply($budgetPlanIncomeAddedDomainEvent);
+        $this->raiseDomainEvents($budgetPlanIncomeAddedDomainEvent);
+    }
+
+    public function addWant(
+        BudgetPlanId $budgetPlanId,
+        BudgetPlanEntryId $wantId,
+        BudgetPlanEntryName $name,
+        BudgetPlanEntryAmount $amount,
+        BudgetPlanUserId $userId,
+    ): void {
+        $this->assertNotDeleted();
+        $this->assertOwnership($userId);
+        $budgetPlanWantAddedDomainEvent = new BudgetPlanWantAddedDomainEvent(
+            (string) $budgetPlanId,
+            (string) $wantId,
+            (string) $userId,
+            (string) $amount,
+            (string) $name,
+        );
+        $this->apply($budgetPlanWantAddedDomainEvent);
+        $this->raiseDomainEvents($budgetPlanWantAddedDomainEvent);
+    }
+
+    public function addNeed(
+        BudgetPlanId $budgetPlanId,
+        BudgetPlanEntryId $needId,
+        BudgetPlanEntryName $name,
+        BudgetPlanEntryAmount $amount,
+        BudgetPlanUserId $userId,
+    ): void {
+        $this->assertNotDeleted();
+        $this->assertOwnership($userId);
+        $budgetPlanNeedAddedDomainEvent = new BudgetPlanNeedAddedDomainEvent(
+            (string) $budgetPlanId,
+            (string) $needId,
+            (string) $userId,
+            (string) $amount,
+            (string) $name,
+        );
+        $this->apply($budgetPlanNeedAddedDomainEvent);
+        $this->raiseDomainEvents($budgetPlanNeedAddedDomainEvent);
+    }
+
+    public function addSaving(
+        BudgetPlanId $budgetPlanId,
+        BudgetPlanEntryId $savingId,
+        BudgetPlanEntryName $name,
+        BudgetPlanEntryAmount $amount,
+        BudgetPlanUserId $userId,
+    ): void {
+        $this->assertNotDeleted();
+        $this->assertOwnership($userId);
+        $budgetPlanSavingAddedDomainEvent = new BudgetPlanSavingAddedDomainEvent(
+            (string) $budgetPlanId,
+            (string) $savingId,
+            (string) $userId,
+            (string) $amount,
+            (string) $name,
+        );
+        $this->apply($budgetPlanSavingAddedDomainEvent);
+        $this->raiseDomainEvents($budgetPlanSavingAddedDomainEvent);
+    }
+
+    public function adjustAWant(
+        BudgetPlanId $budgetPlanId,
+        BudgetPlanEntryId $wantId,
+        BudgetPlanEntryName $name,
+        BudgetPlanEntryAmount $amount,
+        BudgetPlanUserId $userId,
+    ): void {
+        $this->assertNotDeleted();
+        $this->assertOwnership($userId);
+        $budgetPlanWantAdjustedDomainEvent = new BudgetPlanWantAdjustedDomainEvent(
+            (string) $budgetPlanId,
+            (string) $wantId,
+            (string) $userId,
+            (string) $amount,
+            (string) $name,
+        );
+        $this->apply($budgetPlanWantAdjustedDomainEvent);
+        $this->raiseDomainEvents($budgetPlanWantAdjustedDomainEvent);
+    }
+
+    public function adjustANeed(
+        BudgetPlanId $budgetPlanId,
+        BudgetPlanEntryId $needId,
+        BudgetPlanEntryName $name,
+        BudgetPlanEntryAmount $amount,
+        BudgetPlanUserId $userId,
+    ): void {
+        $this->assertNotDeleted();
+        $this->assertOwnership($userId);
+        $budgetPlanNeedAdjustedDomainEvent = new BudgetPlanNeedAdjustedDomainEvent(
+            (string) $budgetPlanId,
+            (string) $needId,
+            (string) $userId,
+            (string) $amount,
+            (string) $name,
+        );
+        $this->apply($budgetPlanNeedAdjustedDomainEvent);
+        $this->raiseDomainEvents($budgetPlanNeedAdjustedDomainEvent);
+    }
+
+    public function adjustASaving(
+        BudgetPlanId $budgetPlanId,
+        BudgetPlanEntryId $savingId,
+        BudgetPlanEntryName $name,
+        BudgetPlanEntryAmount $amount,
+        BudgetPlanUserId $userId,
+    ): void {
+        $this->assertNotDeleted();
+        $this->assertOwnership($userId);
+        $budgetPlanSavingAdjustedDomainEvent = new BudgetPlanSavingAdjustedDomainEvent(
+            (string) $budgetPlanId,
+            (string) $savingId,
+            (string) $userId,
+            (string) $amount,
+            (string) $name,
+        );
+        $this->apply($budgetPlanSavingAdjustedDomainEvent);
+        $this->raiseDomainEvents($budgetPlanSavingAdjustedDomainEvent);
+    }
+
+    public function adjustAnIncome(
+        BudgetPlanId $budgetPlanId,
+        BudgetPlanEntryId $incomeId,
+        BudgetPlanEntryName $name,
+        BudgetPlanEntryAmount $amount,
+        BudgetPlanUserId $userId,
+    ): void {
+        $this->assertNotDeleted();
+        $this->assertOwnership($userId);
+        $budgetPlanIncomeAdjustedDomainEvent = new BudgetPlanIncomeAdjustedDomainEvent(
+            (string) $budgetPlanId,
+            (string) $incomeId,
+            (string) $userId,
+            (string) $amount,
+            (string) $name,
+        );
+        $this->apply($budgetPlanIncomeAdjustedDomainEvent);
+        $this->raiseDomainEvents($budgetPlanIncomeAdjustedDomainEvent);
+    }
+
+    public function removeAnIncome(
+        BudgetPlanEntryId $incomeId,
+        BudgetPlanUserId $userId,
+    ): void
+    {
+        $this->assertNotDeleted();
+        $this->assertOwnership($userId);
+
+        $budgetPlanIncomeRemovedDomainEvent = new BudgetPlanIncomeRemovedDomainEvent(
+            (string) $this->budgetPlanId,
+            (string) $incomeId,
+            (string) $userId,
+        );
+        $this->apply($budgetPlanIncomeRemovedDomainEvent);
+        $this->raiseDomainEvents($budgetPlanIncomeRemovedDomainEvent);
+    }
+
+    public function removeASaving(
+        BudgetPlanEntryId $savingId,
+        BudgetPlanUserId $userId,
+    ): void
+    {
+        $this->assertNotDeleted();
+        $this->assertOwnership($userId);
+
+        $budgetPlanSavingRemovedDomainEvent = new BudgetPlanSavingRemovedDomainEvent(
+            (string) $this->budgetPlanId,
+            (string) $savingId,
+            (string) $userId,
+        );
+        $this->apply($budgetPlanSavingRemovedDomainEvent);
+        $this->raiseDomainEvents($budgetPlanSavingRemovedDomainEvent);
+    }
+
+    public function removeAWant(
+        BudgetPlanEntryId $wantId,
+        BudgetPlanUserId $userId,
+    ): void
+    {
+        $this->assertNotDeleted();
+        $this->assertOwnership($userId);
+
+        $budgetPlanWantRemovedDomainEvent = new BudgetPlanWantRemovedDomainEvent(
+            (string) $this->budgetPlanId,
+            (string) $wantId,
+            (string) $userId,
+        );
+        $this->apply($budgetPlanWantRemovedDomainEvent);
+        $this->raiseDomainEvents($budgetPlanWantRemovedDomainEvent);
+    }
+
+    public function removeANeed(
+        BudgetPlanEntryId $needId,
+        BudgetPlanUserId $userId,
+    ): void
+    {
+        $this->assertNotDeleted();
+        $this->assertOwnership($userId);
+
+        $budgetPlanNeedRemovedDomainEvent = new BudgetPlanNeedRemovedDomainEvent(
+            (string) $this->budgetPlanId,
+            (string) $needId,
+            (string) $userId,
+        );
+        $this->apply($budgetPlanNeedRemovedDomainEvent);
+        $this->raiseDomainEvents($budgetPlanNeedRemovedDomainEvent);
+    }
+
     public function remove(BudgetPlanUserId $userId): void
     {
         $this->assertNotDeleted();
@@ -190,6 +457,19 @@ final class BudgetPlan
             BudgetPlanGeneratedDomainEvent::class => $this->applyBudgetPlanGeneratedDomainEvent($event),
             BudgetPlanRemovedDomainEvent::class => $this->applyBudgetPlanRemovedDomainEvent($event),
             BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent::class => $this->applyBudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent($event),
+            BudgetPlanCurrencyChangedDomainEvent::class => $this->applyBudgetPlanCurrencyChangedDomainEvent($event),
+            BudgetPlanIncomeAddedDomainEvent::class => $this->applyBudgetPlanIncomeAddedDomainEvent($event),
+            BudgetPlanWantAddedDomainEvent::class => $this->applyBudgetPlanWantAddedDomainEvent($event),
+            BudgetPlanNeedAddedDomainEvent::class => $this->applyBudgetPlanNeedAddedDomainEvent($event),
+            BudgetPlanSavingAddedDomainEvent::class => $this->applyBudgetPlanSavingAddedDomainEvent($event),
+            BudgetPlanIncomeAdjustedDomainEvent::class => $this->applyBudgetPlanIncomeAdjustedDomainEvent($event),
+            BudgetPlanWantAdjustedDomainEvent::class => $this->applyBudgetPlanWantAdjustedDomainEvent($event),
+            BudgetPlanNeedAdjustedDomainEvent::class => $this->applyBudgetPlanNeedAdjustedDomainEvent($event),
+            BudgetPlanSavingAdjustedDomainEvent::class => $this->applyBudgetPlanSavingAdjustedDomainEvent($event),
+            BudgetPlanIncomeRemovedDomainEvent::class => $this->applyBudgetPlanIncomeRemovedDomainEvent($event),
+            BudgetPlanWantRemovedDomainEvent::class => $this->applyBudgetPlanWantRemovedDomainEvent($event),
+            BudgetPlanNeedRemovedDomainEvent::class => $this->applyBudgetPlanNeedRemovedDomainEvent($event),
+            BudgetPlanSavingRemovedDomainEvent::class => $this->applyBudgetPlanSavingRemovedDomainEvent($event),
             default => throw new \RuntimeException('Unknown event type'),
         };
     }
@@ -199,6 +479,7 @@ final class BudgetPlan
         $this->budgetPlanId = BudgetPlanId::fromString($event->aggregateId);
         $this->userId = BudgetPlanUserId::fromString($event->userId);
         $this->date = new \DateTimeImmutable($event->date);
+        $this->currency = BudgetPlanCurrency::fromString($event->currency);
         $this->incomes = array_map(fn(array $income) => BudgetPlanIncome::fromArray($income), $event->incomes);
         $this->needs = array_map(fn(array $income) => BudgetPlanNeed::fromArray($income), $event->needs);
         $this->wants = array_map(fn(array $income) => BudgetPlanWant::fromArray($income), $event->wants);
@@ -213,6 +494,7 @@ final class BudgetPlan
         $this->budgetPlanId = BudgetPlanId::fromString($event->aggregateId);
         $this->userId = BudgetPlanUserId::fromString($event->userId);
         $this->date = new \DateTimeImmutable($event->date);
+        $this->currency = BudgetPlanCurrency::fromString($event->currency);
         $this->incomes = array_map(fn(array $income) => BudgetPlanIncome::fromArray($income), $event->incomes);
         $this->needs = array_map(fn(array $income) => BudgetPlanNeed::fromArray($income), $event->needs);
         $this->wants = array_map(fn(array $income) => BudgetPlanWant::fromArray($income), $event->wants);
@@ -221,11 +503,156 @@ final class BudgetPlan
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
+    private function applyBudgetPlanCurrencyChangedDomainEvent(
+        BudgetPlanCurrencyChangedDomainEvent $budgetPlanCurrencyChangedDomainEvent,
+    ): void {
+        $this->currency = BudgetPlanCurrency::fromString(
+            $budgetPlanCurrencyChangedDomainEvent->currency,
+        );
+        $this->updatedAt = \DateTime::createFromImmutable($budgetPlanCurrencyChangedDomainEvent->occurredOn);
+    }
+
     private function applyBudgetPlanRemovedDomainEvent(
         BudgetPlanRemovedDomainEvent $budgetPlanRemovedDomainEvent,
     ): void {
         $this->isDeleted = $budgetPlanRemovedDomainEvent->isDeleted;
         $this->updatedAt = \DateTime::createFromImmutable($budgetPlanRemovedDomainEvent->occurredOn);
+    }
+
+    private function applyBudgetPlanIncomeAddedDomainEvent(
+        BudgetPlanIncomeAddedDomainEvent $event,
+    ): void {
+        $this->incomes[] = BudgetPlanIncome::fromArray([
+            'uuid' => $event->uuid,
+            'incomeName' => $event->name,
+            'amount' => $event->amount,
+        ]);
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+    }
+
+    private function applyBudgetPlanWantAddedDomainEvent(
+        BudgetPlanWantAddedDomainEvent $event,
+    ): void {
+        $this->wants[] = BudgetPlanWant::fromArray([
+            'uuid' => $event->uuid,
+            'wantName' => $event->name,
+            'amount' => $event->amount,
+        ]);
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+    }
+
+    private function applyBudgetPlanNeedAddedDomainEvent(
+        BudgetPlanNeedAddedDomainEvent $event,
+    ): void {
+        $this->needs[] = BudgetPlanNeed::fromArray([
+            'uuid' => $event->uuid,
+            'needName' => $event->name,
+            'amount' => $event->amount,
+        ]);
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+    }
+
+    private function applyBudgetPlanSavingAddedDomainEvent(
+        BudgetPlanSavingAddedDomainEvent $event,
+    ): void {
+        $this->savings[] = BudgetPlanSaving::fromArray([
+            'uuid' => $event->uuid,
+            'savingName' => $event->name,
+            'amount' => $event->amount,
+        ]);
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+    }
+
+    private function applyBudgetPlanIncomeAdjustedDomainEvent(
+        BudgetPlanIncomeAdjustedDomainEvent $event,
+    ): void {
+        $this->incomes = array_map(function(BudgetPlanIncome $income) use ($event) {
+            if ($income->getUuid() === $event->uuid) {
+                return BudgetPlanIncome::fromArray([
+                    'uuid' => $event->uuid,
+                    'incomeName' => $event->name,
+                    'amount' => $event->amount,
+                ]);
+            }
+            return $income;
+        }, $this->incomes);
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+    }
+
+    private function applyBudgetPlanWantAdjustedDomainEvent(
+        BudgetPlanWantAdjustedDomainEvent $event,
+    ): void {
+        $this->wants = array_map(function(BudgetPlanWant $want) use ($event) {
+            if ($want->getUuid() === $event->uuid) {
+                return BudgetPlanWant::fromArray([
+                    'uuid' => $event->uuid,
+                    'wantName' => $event->name,
+                    'amount' => $event->amount,
+                ]);
+            }
+            return $want;
+        }, $this->wants);
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+    }
+
+    private function applyBudgetPlanNeedAdjustedDomainEvent(
+        BudgetPlanNeedAdjustedDomainEvent $event,
+    ): void {
+        $this->needs = array_map(function(BudgetPlanNeed $need) use ($event) {
+            if ($need->getUuid() === $event->uuid) {
+                return BudgetPlanNeed::fromArray([
+                    'uuid' => $event->uuid,
+                    'needName' => $event->name,
+                    'amount' => $event->amount,
+                ]);
+            }
+            return $need;
+        }, $this->needs);
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+    }
+
+    private function applyBudgetPlanSavingAdjustedDomainEvent(
+        BudgetPlanSavingAdjustedDomainEvent $event,
+    ): void {
+        $this->savings = array_map(function(BudgetPlanSaving $saving) use ($event) {
+            if ($saving->getUuid() === $event->uuid) {
+                return BudgetPlanSaving::fromArray([
+                    'uuid' => $event->uuid,
+                    'savingName' => $event->name,
+                    'amount' => $event->amount,
+                ]);
+            }
+            return $saving;
+        }, $this->savings);
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+    }
+
+    private function applyBudgetPlanIncomeRemovedDomainEvent(
+        BudgetPlanIncomeRemovedDomainEvent $event,
+    ): void {
+        $this->incomes = array_filter($this->incomes, fn(BudgetPlanIncome $income) => $income->getUuid() !== $event->uuid);
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+    }
+
+    private function applyBudgetPlanWantRemovedDomainEvent(
+        BudgetPlanWantRemovedDomainEvent $event,
+    ): void {
+        $this->wants = array_filter($this->wants, fn(BudgetPlanWant $want) => $want->getUuid() !== $event->uuid);
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+    }
+
+    private function applyBudgetPlanNeedRemovedDomainEvent(
+        BudgetPlanNeedRemovedDomainEvent $event,
+    ): void {
+        $this->needs = array_filter($this->needs, fn(BudgetPlanNeed $need) => $need->getUuid() !== $event->uuid);
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+    }
+
+    private function applyBudgetPlanSavingRemovedDomainEvent(
+        BudgetPlanSavingRemovedDomainEvent $event,
+    ): void {
+        $this->savings = array_filter($this->savings, fn(BudgetPlanSaving $saving) => $saving->getUuid() !== $event->uuid);
+        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
     public function aggregateVersion(): int
