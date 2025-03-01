@@ -8,13 +8,13 @@ use App\Gateway\User\Presentation\HTTP\DTOs\ChangeAUserLanguagePreferenceInput;
 use App\Libraries\Anonymii\Ports\EventEncryptorInterface;
 use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
 use App\SharedContext\Domain\Services\EventClassMap;
+use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use App\UserContext\Application\Commands\ChangeAUserLanguagePreferenceCommand;
 use App\UserContext\Application\Handlers\CommandHandlers\ChangeAUserLanguagePreferenceCommandHandler;
 use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 use App\UserContext\Domain\ValueObjects\UserId;
-use App\UserContext\Domain\ValueObjects\UserLanguagePreference;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

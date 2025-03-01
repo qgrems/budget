@@ -11,6 +11,7 @@ use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanIncome;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanUserId;
 use App\Gateway\BudgetPlan\Presentation\HTTP\DTOs\GenerateABudgetPlanInput;
 use App\SharedContext\Domain\Ports\Outbound\CommandBusInterface;
+use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\Ports\Inbound\UserViewInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,6 +42,7 @@ final readonly class GenerateABudgetPlanController
                     $generateABudgetPlanInput->incomes
                 ),
                 BudgetPlanUserId::fromString($user->getUuid()),
+                UserLanguagePreference::fromString($user->languagePreference),
                 BudgetPlanCurrency::fromString($generateABudgetPlanInput->currency)
             ),
         );

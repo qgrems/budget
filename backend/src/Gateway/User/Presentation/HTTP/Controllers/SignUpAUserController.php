@@ -6,12 +6,12 @@ namespace App\Gateway\User\Presentation\HTTP\Controllers;
 
 use App\Gateway\User\Presentation\HTTP\DTOs\SignUpAUserInput;
 use App\SharedContext\Domain\Ports\Outbound\CommandBusInterface;
+use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Application\Commands\SignUpAUserCommand;
 use App\UserContext\Domain\ValueObjects\UserConsent;
 use App\UserContext\Domain\ValueObjects\UserEmail;
 use App\UserContext\Domain\ValueObjects\UserFirstname;
 use App\UserContext\Domain\ValueObjects\UserId;
-use App\UserContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\ValueObjects\UserLastname;
 use App\UserContext\Domain\ValueObjects\UserPassword;
 use Symfony\Component\HttpFoundation\JsonResponse;

@@ -31,6 +31,7 @@ final readonly class AddABudgetPlanNeedCommandHandler
             $addABudgetPlanNeedCommand->getEntryId(),
             $addABudgetPlanNeedCommand->getName(),
             $addABudgetPlanNeedCommand->getAmount(),
+            $addABudgetPlanNeedCommand->getCategory(),
             $addABudgetPlanNeedCommand->getUserId(),
         );
         $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), $aggregate->aggregateVersion());

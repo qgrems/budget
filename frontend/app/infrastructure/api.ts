@@ -180,5 +180,9 @@ export const api = {
     budgetQueries: {
         getBudgetPlansCalendar: () => fetchWithAuth("/budget-plans-calendar"),
         getBudgetPlan: (uuid: string) => fetchWithAuth(`/budget-plans/${uuid}`),
+        getNeedsCategories: () => fetchWithAuth("/needs-categories"),
+        getWantsCategories: () => fetchWithAuth("/wants-categories"),
+        getSavingsCategories: () => fetchWithAuth("/savings-categories"),
+        getIncomesCategories: () => fetchWithAuth("/incomes-categories"),
     },
 }

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\ReadModels\Views;
 
+use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 use App\UserContext\Domain\ValueObjects\UserConsent;
 use App\UserContext\Domain\ValueObjects\UserEmail;
 use App\UserContext\Domain\ValueObjects\UserFirstname;
 use App\UserContext\Domain\ValueObjects\UserId;
-use App\UserContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\ValueObjects\UserLastname;
 use App\UserContext\Domain\ValueObjects\UserPassword;
 use App\UserContext\Domain\ValueObjects\UserPasswordResetToken;

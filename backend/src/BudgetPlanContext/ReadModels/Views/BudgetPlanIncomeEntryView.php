@@ -35,6 +35,9 @@ final class BudgetPlanIncomeEntryView implements \JsonSerializable, BudgetPlanIn
     #[ORM\Column(name: 'income_amount', type: 'string', length: 13)]
     private(set) string $incomeAmount;
 
+    #[ORM\Column(name: 'category', type: 'string', length: 35)]
+    private(set) string $category;
+
     #[ORM\Column(name: 'created_at', type: 'datetime_immutable')]
     private(set) \DateTimeImmutable $createdAt;
 
@@ -51,6 +54,7 @@ final class BudgetPlanIncomeEntryView implements \JsonSerializable, BudgetPlanIn
         $this->uuid = $budgetPlanIncome->getUuid();
         $this->incomeName = $budgetPlanIncome->getIncomeName();
         $this->incomeAmount = $budgetPlanIncome->getAmount();
+        $this->category = $budgetPlanIncome->getCategory();
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
     }
@@ -77,6 +81,7 @@ final class BudgetPlanIncomeEntryView implements \JsonSerializable, BudgetPlanIn
                 [
                     'uuid' => $budgetPlanIncomeAddedDomainEvent->uuid,
                     'incomeName' => $budgetPlanIncomeAddedDomainEvent->name,
+                    'category' => $budgetPlanIncomeAddedDomainEvent->category,
                     'amount' => $budgetPlanIncomeAddedDomainEvent->amount,
                 ]
             ),
@@ -106,8 +111,9 @@ final class BudgetPlanIncomeEntryView implements \JsonSerializable, BudgetPlanIn
                 [
                     'uuid' => $budgetPlanIncomeEntry['uuid'],
                     'incomeName' => $budgetPlanIncomeEntry['income_name'],
+                    'category' => $budgetPlanIncomeEntry['category'],
                     'amount' => $budgetPlanIncomeEntry['income_amount'],
-                ]
+                ],
             ),
             new \DateTimeImmutable($budgetPlanIncomeEntry['created_at']),
             \DateTime::createFromImmutable(new \DateTimeImmutable($budgetPlanIncomeEntry['updated_at']))
@@ -131,6 +137,7 @@ final class BudgetPlanIncomeEntryView implements \JsonSerializable, BudgetPlanIn
     {
         $this->incomeName = $event->name;
         $this->incomeAmount = $event->amount;
+        $this->category = $event->category;
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
@@ -141,6 +148,7 @@ final class BudgetPlanIncomeEntryView implements \JsonSerializable, BudgetPlanIn
             'budgetPlanUuid' => $this->budgetPlanUuid,
             'incomeName' => $this->incomeName,
             'incomeAmount' => $this->incomeAmount,
+            'category' => $this->category,
             'createdAt' => $this->createdAt->format(\DateTime::ATOM),
             'updatedAt' => $this->updatedAt->format(\DateTime::ATOM),
         ];
@@ -151,6 +159,7 @@ final class BudgetPlanIncomeEntryView implements \JsonSerializable, BudgetPlanIn
         return [
             'uuid' => $this->uuid,
             'budgetPlanUuid' => $this->budgetPlanUuid,
+            'category' => $this->category,
             'incomeName' => $this->incomeName,
             'incomeAmount' => $this->incomeAmount,
         ];

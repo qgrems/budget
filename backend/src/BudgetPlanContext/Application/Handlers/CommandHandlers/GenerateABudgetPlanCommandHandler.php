@@ -9,6 +9,7 @@ use App\BudgetPlanContext\Domain\Aggregates\BudgetPlan;
 use App\BudgetPlanContext\Domain\Exceptions\BudgetPlanAlreadyExistsException;
 use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanViewRepositoryInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
+use App\SharedContext\Domain\Ports\Outbound\TranslatorInterface;
 use App\SharedContext\Domain\Ports\Outbound\UuidGeneratorInterface;
 
 final readonly class GenerateABudgetPlanCommandHandler
@@ -17,6 +18,7 @@ final readonly class GenerateABudgetPlanCommandHandler
         private EventSourcedRepositoryInterface $eventSourcedRepository,
         private BudgetPlanViewRepositoryInterface $budgetPlanViewRepository,
         private UuidGeneratorInterface $uuidGenerator,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -33,9 +35,11 @@ final readonly class GenerateABudgetPlanCommandHandler
             $generateABudgetPlanCommand->getDate(),
             $generateABudgetPlanCommand->getIncomes(),
             $generateABudgetPlanCommand->getUserId(),
+            $generateABudgetPlanCommand->getUserLanguagePreference(),
             $generateABudgetPlanCommand->getCurrency(),
             $this->budgetPlanViewRepository,
             $this->uuidGenerator,
+            $this->translator,
         );
         $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), 0);
         $aggregate->clearRaisedDomainEvents();

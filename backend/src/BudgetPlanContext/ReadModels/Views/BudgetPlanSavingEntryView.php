@@ -35,6 +35,9 @@ final class BudgetPlanSavingEntryView implements \JsonSerializable, BudgetPlanSa
     #[ORM\Column(name: 'saving_amount', type: 'string', length: 13)]
     private(set) string $savingAmount;
 
+    #[ORM\Column(name: 'category', type: 'string', length: 35)]
+    private(set) string $category;
+
     #[ORM\Column(name: 'created_at', type: 'datetime_immutable')]
     private(set) \DateTimeImmutable $createdAt;
 
@@ -51,6 +54,7 @@ final class BudgetPlanSavingEntryView implements \JsonSerializable, BudgetPlanSa
         $this->uuid = $budgetPlanSaving->getUuid();
         $this->savingName = $budgetPlanSaving->getSavingName();
         $this->savingAmount = $budgetPlanSaving->getAmount();
+        $this->category = $budgetPlanSaving->getCategory();
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
     }
@@ -77,6 +81,7 @@ final class BudgetPlanSavingEntryView implements \JsonSerializable, BudgetPlanSa
                 [
                     'uuid' => $budgetPlanSavingAddedDomainEvent->uuid,
                     'savingName' => $budgetPlanSavingAddedDomainEvent->name,
+                    'category' => $budgetPlanSavingAddedDomainEvent->category,
                     'amount' => $budgetPlanSavingAddedDomainEvent->amount,
                 ]
             ),
@@ -98,6 +103,23 @@ final class BudgetPlanSavingEntryView implements \JsonSerializable, BudgetPlanSa
         );
     }
 
+    public static function fromRepository(array $budgetPlanSavingEntry): self
+    {
+        return new self(
+            BudgetPlanId::fromString($budgetPlanSavingEntry['budget_plan_uuid']),
+            BudgetPlanSaving::fromArray(
+                [
+                    'uuid' => $budgetPlanSavingEntry['uuid'],
+                    'savingName' => $budgetPlanSavingEntry['saving_name'],
+                    'category' => $budgetPlanSavingEntry['category'],
+                    'amount' => $budgetPlanSavingEntry['saving_amount'],
+                ],
+            ),
+            new \DateTimeImmutable($budgetPlanSavingEntry['created_at']),
+            \DateTime::createFromImmutable(new \DateTimeImmutable($budgetPlanSavingEntry['updated_at']))
+        );
+    }
+
     public function fromEvent(DomainEventInterface $event): void
     {
         $this->apply($event);
@@ -115,23 +137,8 @@ final class BudgetPlanSavingEntryView implements \JsonSerializable, BudgetPlanSa
     {
         $this->savingName = $event->name;
         $this->savingAmount = $event->amount;
+        $this->category = $event->category;
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
-    }
-
-    public static function fromRepository(array $budgetPlanSavingEntry): self
-    {
-        return new self(
-            BudgetPlanId::fromString($budgetPlanSavingEntry['budget_plan_uuid']),
-            BudgetPlanSaving::fromArray(
-                [
-                    'uuid' => $budgetPlanSavingEntry['uuid'],
-                    'savingName' => $budgetPlanSavingEntry['saving_name'],
-                    'amount' => $budgetPlanSavingEntry['saving_amount'],
-                ]
-            ),
-            new \DateTimeImmutable($budgetPlanSavingEntry['created_at']),
-            \DateTime::createFromImmutable(new \DateTimeImmutable($budgetPlanSavingEntry['updated_at']))
-        );
     }
 
     public function toArray(): array
@@ -141,6 +148,7 @@ final class BudgetPlanSavingEntryView implements \JsonSerializable, BudgetPlanSa
             'budgetPlanUuid' => $this->budgetPlanUuid,
             'savingName' => $this->savingName,
             'savingAmount' => $this->savingAmount,
+            'category' => $this->category,
             'createdAt' => $this->createdAt->format(\DateTime::ATOM),
             'updatedAt' => $this->updatedAt->format(\DateTime::ATOM),
         ];
@@ -151,6 +159,7 @@ final class BudgetPlanSavingEntryView implements \JsonSerializable, BudgetPlanSa
         return [
             'uuid' => $this->uuid,
             'budgetPlanUuid' => $this->budgetPlanUuid,
+            'category' => $this->category,
             'savingName' => $this->savingName,
             'savingAmount' => $this->savingAmount,
         ];

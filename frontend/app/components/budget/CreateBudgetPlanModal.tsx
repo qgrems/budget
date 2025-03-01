@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { useTranslation } from "../../hooks/useTranslation"
 import { useBudgetPlans } from "../../domain/budget/budgetHooks"
@@ -12,13 +12,19 @@ import ActionButton from "../buttons/actionButton"
 import InputText from "../inputs/inputText"
 import InputNumber from "../inputs/inputNumber"
 import CurrencySelect from "../inputs/currencySelect"
-import type { Income } from "../../domain/budget/budgetTypes"
+import type { Income, Category } from "../../domain/budget/budgetTypes"
 
 interface CreateBudgetPlanModalProps {
     isOpen: boolean
     onClose: () => void
     onCreateFromExisting: () => void
     selectedDate: { year: number; month: number }
+    categories: {
+        needs: Category[]
+        wants: Category[]
+        savings: Category[]
+        incomes: Category[]
+    }
 }
 
 export default function CreateBudgetPlanModal({
@@ -26,29 +32,39 @@ export default function CreateBudgetPlanModal({
                                                   onClose,
                                                   onCreateFromExisting,
                                                   selectedDate,
+                                                  categories,
                                               }: CreateBudgetPlanModalProps) {
     const { t } = useTranslation()
-    const { createBudgetPlan, loading } = useBudgetPlans()
+    const { createBudgetPlan, loading, redirectToBudgetPlanId } = useBudgetPlans(categories)
 
     const [currency, setCurrency] = useState("USD")
-    const [incomes, setIncomes] = useState<Income[]>([{ name: t("budgetTracker.salary"), amount: "" }])
+    const [incomes, setIncomes] = useState<Income[]>([{ name: t("budgetTracker.salary"), amount: "", category: "" }])
+
+    useEffect(() => {
+        console.log("CreateBudgetPlanModal rendered. isOpen:", isOpen)
+    }, [isOpen])
 
     const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setCurrency(e.target.value)
+        console.log("Currency changed to:", e.target.value)
     }
 
     const handleAddIncome = () => {
-        setIncomes([...incomes, { name: "", amount: "" }])
+        setIncomes([...incomes, { name: "", amount: "", category: "" }])
+        console.log("Income added. New incomes:", incomes)
     }
 
     const handleRemoveIncome = (index: number) => {
-        setIncomes(incomes.filter((_, i) => i !== index))
+        const newIncomes = incomes.filter((_, i) => i !== index)
+        setIncomes(newIncomes)
+        console.log("Income removed. New incomes:", newIncomes)
     }
 
     const handleIncomeNameChange = (index: number, value: string) => {
         const newIncomes = [...incomes]
         newIncomes[index].name = value
         setIncomes(newIncomes)
+        console.log("Income name changed. New incomes:", newIncomes)
     }
 
     const handleIncomeAmountChange = (index: number, value: string) => {
@@ -85,24 +101,53 @@ export default function CreateBudgetPlanModal({
         const newIncomes = [...incomes]
         newIncomes[index].amount = value
         setIncomes(newIncomes)
+        console.log("Income amount changed. New incomes:", newIncomes)
+    }
+
+    const handleIncomeCategoryChange = (index: number, value: string) => {
+        const newIncomes = [...incomes]
+        newIncomes[index].category = value
+        setIncomes(newIncomes)
+        console.log("Income category changed. New incomes:", newIncomes)
     }
 
     const isFormValid = () => {
-        return currency && incomes.length > 0 && incomes.every((income) => income.name.trim() && income.amount.trim())
+        const valid =
+            currency &&
+            incomes.length > 0 &&
+            incomes.every((income) => income.name.trim() && income.amount.trim() && income.category.trim())
+        console.log("Form validation result:", valid)
+        return valid
     }
 
     const handleSubmit = async () => {
-        if (!isFormValid()) return
+        if (!isFormValid()) {
+            console.log("Form is not valid. Submission prevented.")
+            return
+        }
+
+        console.log("Submitting form with data:", { selectedDate, currency, incomes })
 
         // Create a Date object for the first day of the selected month in UTC
         const date = new Date(Date.UTC(selectedDate.year, selectedDate.month - 1, 1))
 
-        const success = await createBudgetPlan(date, currency, incomes)
-
-        if (success) {
-            onClose()
+        try {
+            const newBudgetPlanId = await createBudgetPlan(date, currency, incomes)
+            console.log("Budget plan creation initiated with ID:", newBudgetPlanId)
+        } catch (error) {
+            console.error("Error creating budget plan:", error)
         }
     }
+
+    // Add a useEffect to handle redirection
+    useEffect(() => {
+        if (redirectToBudgetPlanId) {
+            console.log("Redirecting to newly created budget plan:", redirectToBudgetPlanId)
+            onClose()
+            // You might want to use router.push here to navigate to the new budget plan page
+            // router.push(`/budget-tracker/${redirectToBudgetPlanId}`)
+        }
+    }, [redirectToBudgetPlanId, onClose])
 
     if (!isOpen) return null
 
@@ -171,6 +216,21 @@ export default function CreateBudgetPlanModal({
                                     placeholder="0.00"
                                     className="mb-0 w-full"
                                 />
+                            </div>
+                            <div className="w-1/3">
+                                <select
+                                    value={income.category}
+                                    onChange={(e) => handleIncomeCategoryChange(index, e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                                >
+                                    <option value="">{t("budgetTracker.selectCategory")}</option>
+                                    {categories.incomes &&
+                                        categories.incomes.map((category: Category) => (
+                                            <option key={category.id} value={category.id}>
+                                                {category.name}
+                                            </option>
+                                        ))}
+                                </select>
                             </div>
                             {incomes.length > 1 && (
                                 <button

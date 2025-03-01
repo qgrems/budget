@@ -13,16 +13,44 @@ import type {
     Income,
     CreateBudgetPlanPayload,
     CreateFromExistingPayload,
+    Category,
 } from "./budgetTypes"
 
 export function useBudgetPlans() {
     const [budgetPlansCalendar, setBudgetPlansCalendar] = useState<BudgetPlansCalendar | null>(null)
     const [selectedBudgetPlan, setSelectedBudgetPlan] = useState<BudgetPlan | null>(null)
     const [loading, setLoading] = useState(false)
+    const [newlyCreatedBudgetPlanId, setNewlyCreatedBudgetPlanId] = useState<string | null>(null)
+    const [needsCategories, setNeedsCategories] = useState<Category[]>([])
+    const [wantsCategories, setWantsCategories] = useState<Category[]>([])
+    const [savingsCategories, setSavingsCategories] = useState<Category[]>([])
+    const [incomesCategories, setIncomesCategories] = useState<Category[]>([])
     const { socket } = useSocket()
     const { setError } = useError()
     const { setValidMessage } = useValidMessage()
     const { t } = useTranslation()
+
+    const fetchCategories = useCallback(async () => {
+        try {
+            const [needs, wants, savings, incomes] = await Promise.all([
+                api.budgetQueries.getNeedsCategories(),
+                api.budgetQueries.getWantsCategories(),
+                api.budgetQueries.getSavingsCategories(),
+                api.budgetQueries.getIncomesCategories(),
+            ])
+            setNeedsCategories(needs)
+            setWantsCategories(wants)
+            setSavingsCategories(savings)
+            setIncomesCategories(incomes)
+        } catch (err) {
+            console.error("Failed to fetch categories:", err)
+            setError("budgetTracker.fetchCategoriesError")
+        }
+    }, [setError])
+
+    useEffect(() => {
+        fetchCategories()
+    }, [fetchCategories])
 
     const fetchBudgetPlansCalendar = useCallback(async () => {
         setLoading(true)
@@ -61,24 +89,25 @@ export function useBudgetPlans() {
         async (date: Date | string, currency: string, incomes: Income[]) => {
             setLoading(true)
             const requestId = uuidv4()
-            const uuid = uuidv4()
 
             try {
                 const formattedDate = typeof date === "string" ? date : date.toISOString()
 
                 const payload: CreateBudgetPlanPayload = {
-                    uuid: uuid,
+                    uuid: requestId,
                     currency,
                     date: formattedDate,
                     incomes: incomes.map((income) => ({
                         uuid: uuidv4(),
                         incomeName: income.name,
                         amount: income.amount,
+                        category: income.category,
                     })),
                 }
 
                 await api.budgetCommands.createBudgetPlan(payload, requestId)
                 setValidMessage("budgetTracker.createSuccess")
+                setNewlyCreatedBudgetPlanId(requestId)
                 return true
             } catch (err) {
                 console.error("Failed to create budget plan:", err)
@@ -95,11 +124,10 @@ export function useBudgetPlans() {
         async (date: Date, existingBudgetPlanId: string) => {
             setLoading(true)
             const requestId = uuidv4()
-            const uuid = uuidv4()
 
             try {
                 const payload: CreateFromExistingPayload = {
-                    uuid: uuid,
+                    uuid: requestId,
                     budgetPlanUuidThatAlreadyExists: existingBudgetPlanId,
                     date: date.toISOString(),
                 }
@@ -120,7 +148,7 @@ export function useBudgetPlans() {
 
     // Budget item management functions
     const addBudgetItem = useCallback(
-        async (type: "need" | "want" | "saving" | "income", name: string, amount: string) => {
+        async (type: "need" | "want" | "saving" | "income", name: string, amount: string, category: string) => {
             if (!selectedBudgetPlan) return false
 
             setLoading(true)
@@ -132,6 +160,7 @@ export function useBudgetPlans() {
                     uuid: itemId,
                     name,
                     amount,
+                    category,
                 }
 
                 let apiFunction
@@ -165,7 +194,13 @@ export function useBudgetPlans() {
     )
 
     const adjustBudgetItem = useCallback(
-        async (type: "need" | "want" | "saving" | "income", itemId: string, name: string, amount: string) => {
+        async (
+            type: "need" | "want" | "saving" | "income",
+            itemId: string,
+            name: string,
+            amount: string,
+            category: string,
+        ) => {
             if (!selectedBudgetPlan) return false
 
             setLoading(true)
@@ -175,6 +210,7 @@ export function useBudgetPlans() {
                 const payload = {
                     name,
                     amount,
+                    category,
                 }
 
                 let apiFunction
@@ -260,6 +296,12 @@ export function useBudgetPlans() {
             if (selectedBudgetPlan && event.aggregateId === selectedBudgetPlan.budgetPlan.uuid) {
                 fetchBudgetPlan(event.aggregateId)
             }
+
+            // If this is a newly created budget plan, set it as the selected plan
+            if (event.type === "BudgetPlanGenerated" && event.aggregateId === newlyCreatedBudgetPlanId) {
+                fetchBudgetPlan(event.aggregateId)
+                setNewlyCreatedBudgetPlanId(null)
+            }
         }
 
         const eventTypes = [
@@ -290,7 +332,7 @@ export function useBudgetPlans() {
                 socket.off(eventType, handleBudgetPlanEvent)
             })
         }
-    }, [socket, fetchBudgetPlansCalendar, fetchBudgetPlan, selectedBudgetPlan])
+    }, [socket, fetchBudgetPlansCalendar, fetchBudgetPlan, selectedBudgetPlan, newlyCreatedBudgetPlanId])
 
     return {
         budgetPlansCalendar,
@@ -305,5 +347,11 @@ export function useBudgetPlans() {
         addBudgetItem,
         adjustBudgetItem,
         removeBudgetItem,
+        newlyCreatedBudgetPlanId,
+        needsCategories,
+        wantsCategories,
+        savingsCategories,
+        incomesCategories,
     }
 }
+

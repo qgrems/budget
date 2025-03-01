@@ -35,6 +35,16 @@ final readonly class GenerateABudgetPlanInput
                     'incomeName' => new Assert\Required([
                         new Assert\NotBlank(),
                     ]),
+                    'category' => new Assert\Required([
+                        new Assert\NotBlank(),
+                        new Assert\Type('string'),
+                        new Assert\Length(
+                            min: 1,
+                            max: 35,
+                            minMessage: 'budgetPlan.categoryMinLength',
+                            maxMessage: 'budgetPlan.categoryMaxLength'
+                        ),
+                    ]),
                     'amount' => new Assert\Required([
                         new Assert\NotBlank(),
                         new Assert\Type('string'),

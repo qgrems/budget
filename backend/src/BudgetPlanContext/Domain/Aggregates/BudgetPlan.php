@@ -34,14 +34,20 @@ use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanEntryId;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanEntryName;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanId;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanIncome;
+use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanIncomeCategory;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanNeed;
+use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanNeedCategory;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanSaving;
+use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanSavingCategory;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanUserId;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanWant;
+use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanWantCategory;
 use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventClassMapInterface;
+use App\SharedContext\Domain\Ports\Outbound\TranslatorInterface;
 use App\SharedContext\Domain\Ports\Outbound\UuidGeneratorInterface;
 use App\SharedContext\Domain\Traits\DomainEventsCapabilityTrait;
+use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
 
 final class BudgetPlan
 {
@@ -86,9 +92,11 @@ final class BudgetPlan
         \DateTimeImmutable $date,
         array $incomes,
         BudgetPlanUserId $userId,
+        UserLanguagePreference $userLanguagePreference,
         BudgetPlanCurrency $currency,
         BudgetPlanViewRepositoryInterface $budgetPlanViewRepository,
         UuidGeneratorInterface $uuidGenerator,
+        TranslatorInterface $translator,
     ): self {
         if ($budgetPlanViewRepository->findOneBy([
             'uuid' => (string) $budgetPlanId,
@@ -103,9 +111,9 @@ final class BudgetPlan
             $date->format(\DateTimeInterface::ATOM),
             (string) $currency,
             array_map(fn(BudgetPlanIncome $income) => $income->toArray(), $incomes),
-            array_map(fn(BudgetPlanNeed $need) => $need->toArray(), self::generateFakeNeeds($incomes, $uuidGenerator)),
-            array_map(fn(BudgetPlanWant $want) => $want->toArray(), self::generateFakeWants($incomes, $uuidGenerator)),
-            array_map(fn(BudgetPlanSaving $saving) => $saving->toArray(), self::generateFakeSavings($incomes, $uuidGenerator)),
+            array_map(fn(BudgetPlanNeed $need) => $need->toArray(), self::generateFakeNeeds($incomes, (string) $userLanguagePreference, $uuidGenerator, $translator)),
+            array_map(fn(BudgetPlanWant $want) => $want->toArray(), self::generateFakeWants($incomes, (string) $userLanguagePreference, $uuidGenerator, $translator)),
+            array_map(fn(BudgetPlanSaving $saving) => $saving->toArray(), self::generateFakeSavings($incomes, (string) $userLanguagePreference, $uuidGenerator, $translator)),
             (string) $userId,
         );
 
@@ -212,6 +220,7 @@ final class BudgetPlan
         BudgetPlanEntryId $incomeId,
         BudgetPlanEntryName $name,
         BudgetPlanEntryAmount $amount,
+        BudgetPlanIncomeCategory $category,
         BudgetPlanUserId $userId,
     ): void {
         $this->assertNotDeleted();
@@ -222,6 +231,7 @@ final class BudgetPlan
             (string) $userId,
             (string) $amount,
             (string) $name,
+            (string) $category,
         );
         $this->apply($budgetPlanIncomeAddedDomainEvent);
         $this->raiseDomainEvents($budgetPlanIncomeAddedDomainEvent);
@@ -232,6 +242,7 @@ final class BudgetPlan
         BudgetPlanEntryId $wantId,
         BudgetPlanEntryName $name,
         BudgetPlanEntryAmount $amount,
+        BudgetPlanWantCategory $category,
         BudgetPlanUserId $userId,
     ): void {
         $this->assertNotDeleted();
@@ -242,6 +253,7 @@ final class BudgetPlan
             (string) $userId,
             (string) $amount,
             (string) $name,
+            (string) $category,
         );
         $this->apply($budgetPlanWantAddedDomainEvent);
         $this->raiseDomainEvents($budgetPlanWantAddedDomainEvent);
@@ -252,6 +264,7 @@ final class BudgetPlan
         BudgetPlanEntryId $needId,
         BudgetPlanEntryName $name,
         BudgetPlanEntryAmount $amount,
+        BudgetPlanNeedCategory $category,
         BudgetPlanUserId $userId,
     ): void {
         $this->assertNotDeleted();
@@ -262,6 +275,7 @@ final class BudgetPlan
             (string) $userId,
             (string) $amount,
             (string) $name,
+            (string) $category,
         );
         $this->apply($budgetPlanNeedAddedDomainEvent);
         $this->raiseDomainEvents($budgetPlanNeedAddedDomainEvent);
@@ -272,6 +286,7 @@ final class BudgetPlan
         BudgetPlanEntryId $savingId,
         BudgetPlanEntryName $name,
         BudgetPlanEntryAmount $amount,
+        BudgetPlanSavingCategory $category,
         BudgetPlanUserId $userId,
     ): void {
         $this->assertNotDeleted();
@@ -282,6 +297,7 @@ final class BudgetPlan
             (string) $userId,
             (string) $amount,
             (string) $name,
+            (string) $category,
         );
         $this->apply($budgetPlanSavingAddedDomainEvent);
         $this->raiseDomainEvents($budgetPlanSavingAddedDomainEvent);
@@ -292,6 +308,7 @@ final class BudgetPlan
         BudgetPlanEntryId $wantId,
         BudgetPlanEntryName $name,
         BudgetPlanEntryAmount $amount,
+        BudgetPlanWantCategory $category,
         BudgetPlanUserId $userId,
     ): void {
         $this->assertNotDeleted();
@@ -302,6 +319,7 @@ final class BudgetPlan
             (string) $userId,
             (string) $amount,
             (string) $name,
+            (string) $category,
         );
         $this->apply($budgetPlanWantAdjustedDomainEvent);
         $this->raiseDomainEvents($budgetPlanWantAdjustedDomainEvent);
@@ -312,6 +330,7 @@ final class BudgetPlan
         BudgetPlanEntryId $needId,
         BudgetPlanEntryName $name,
         BudgetPlanEntryAmount $amount,
+        BudgetPlanNeedCategory $category,
         BudgetPlanUserId $userId,
     ): void {
         $this->assertNotDeleted();
@@ -322,6 +341,7 @@ final class BudgetPlan
             (string) $userId,
             (string) $amount,
             (string) $name,
+            (string) $category,
         );
         $this->apply($budgetPlanNeedAdjustedDomainEvent);
         $this->raiseDomainEvents($budgetPlanNeedAdjustedDomainEvent);
@@ -332,6 +352,7 @@ final class BudgetPlan
         BudgetPlanEntryId $savingId,
         BudgetPlanEntryName $name,
         BudgetPlanEntryAmount $amount,
+        BudgetPlanSavingCategory $category,
         BudgetPlanUserId $userId,
     ): void {
         $this->assertNotDeleted();
@@ -342,6 +363,7 @@ final class BudgetPlan
             (string) $userId,
             (string) $amount,
             (string) $name,
+            (string) $category,
         );
         $this->apply($budgetPlanSavingAdjustedDomainEvent);
         $this->raiseDomainEvents($budgetPlanSavingAdjustedDomainEvent);
@@ -352,6 +374,7 @@ final class BudgetPlan
         BudgetPlanEntryId $incomeId,
         BudgetPlanEntryName $name,
         BudgetPlanEntryAmount $amount,
+        BudgetPlanIncomeCategory $category,
         BudgetPlanUserId $userId,
     ): void {
         $this->assertNotDeleted();
@@ -362,6 +385,7 @@ final class BudgetPlan
             (string) $userId,
             (string) $amount,
             (string) $name,
+            (string) $category,
         );
         $this->apply($budgetPlanIncomeAdjustedDomainEvent);
         $this->raiseDomainEvents($budgetPlanIncomeAdjustedDomainEvent);
@@ -524,6 +548,7 @@ final class BudgetPlan
         $this->incomes[] = BudgetPlanIncome::fromArray([
             'uuid' => $event->uuid,
             'incomeName' => $event->name,
+            'category' => $event->category,
             'amount' => $event->amount,
         ]);
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
@@ -535,6 +560,7 @@ final class BudgetPlan
         $this->wants[] = BudgetPlanWant::fromArray([
             'uuid' => $event->uuid,
             'wantName' => $event->name,
+            'category' => $event->category,
             'amount' => $event->amount,
         ]);
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
@@ -546,6 +572,7 @@ final class BudgetPlan
         $this->needs[] = BudgetPlanNeed::fromArray([
             'uuid' => $event->uuid,
             'needName' => $event->name,
+            'category' => $event->category,
             'amount' => $event->amount,
         ]);
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
@@ -557,6 +584,7 @@ final class BudgetPlan
         $this->savings[] = BudgetPlanSaving::fromArray([
             'uuid' => $event->uuid,
             'savingName' => $event->name,
+            'category' => $event->category,
             'amount' => $event->amount,
         ]);
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
@@ -570,6 +598,7 @@ final class BudgetPlan
                 return BudgetPlanIncome::fromArray([
                     'uuid' => $event->uuid,
                     'incomeName' => $event->name,
+                    'category' => $event->category,
                     'amount' => $event->amount,
                 ]);
             }
@@ -586,6 +615,7 @@ final class BudgetPlan
                 return BudgetPlanWant::fromArray([
                     'uuid' => $event->uuid,
                     'wantName' => $event->name,
+                    'category' => $event->category,
                     'amount' => $event->amount,
                 ]);
             }
@@ -602,6 +632,7 @@ final class BudgetPlan
                 return BudgetPlanNeed::fromArray([
                     'uuid' => $event->uuid,
                     'needName' => $event->name,
+                    'category' => $event->category,
                     'amount' => $event->amount,
                 ]);
             }
@@ -618,6 +649,7 @@ final class BudgetPlan
                 return BudgetPlanSaving::fromArray([
                     'uuid' => $event->uuid,
                     'savingName' => $event->name,
+                    'category' => $event->category,
                     'amount' => $event->amount,
                 ]);
             }
@@ -659,8 +691,12 @@ final class BudgetPlan
         return $this->aggregateVersion;
     }
 
-    private static function generateFakeNeeds(array $incomes, UuidGeneratorInterface $uuidGenerator): array
-    {
+    private static function generateFakeNeeds(
+        array $incomes,
+        string $userPreferredLanguage,
+        UuidGeneratorInterface $uuidGenerator,
+        TranslatorInterface $translator
+    ): array {
         $needsAmount = array_reduce(
                 $incomes,
                 fn(float $carry, BudgetPlanIncome $income) => $carry + (float) $income->getAmount(),
@@ -670,24 +706,43 @@ final class BudgetPlan
         return [
             BudgetPlanNeed::fromArray([
                 'uuid' => $uuidGenerator->generate(),
-                'needName' => 'Rent',
+                'needName' => $translator->trans(
+                    id:'needs.rent',
+                    domain: 'messages',
+                    locale: $userPreferredLanguage,
+                ),
+                'category' => 'rent',
                 'amount' => (string) ($needsAmount * 0.40),
             ]),
             BudgetPlanNeed::fromArray([
                 'uuid' => $uuidGenerator->generate(),
-                'needName' => 'Utilities',
+                'needName' => $translator->trans(
+                    id:'needs.utilities',
+                    domain: 'messages',
+                    locale: $userPreferredLanguage,
+                ),
+                'category' => 'utilities',
                 'amount' => (string) ($needsAmount * 0.20),
             ]),
             BudgetPlanNeed::fromArray([
                 'uuid' => $uuidGenerator->generate(),
-                'needName' => 'Groceries',
+                'needName' => $translator->trans(
+                    id:'needs.food',
+                    domain: 'messages',
+                    locale: $userPreferredLanguage,
+                ),
+                'category' => 'food',
                 'amount' => (string) ($needsAmount * 0.40),
             ]),
         ];
     }
 
-    private static function generateFakeWants(array $incomes, UuidGeneratorInterface $uuidGenerator): array
-    {
+    private static function generateFakeWants(
+        array $incomes,
+        string $userPreferredLanguage,
+        UuidGeneratorInterface $uuidGenerator,
+        TranslatorInterface $translator,
+    ): array {
         $wantsAmount = array_reduce(
                 $incomes,
                 fn(float $carry, BudgetPlanIncome $income) => $carry + (float) $income->getAmount(),
@@ -697,19 +752,33 @@ final class BudgetPlan
         return [
             BudgetPlanWant::fromArray(
                 ['uuid' => $uuidGenerator->generate(),
-                    'wantName' => 'Entertainment',
+                    'wantName' => $translator->trans(
+                        id:'wants.entertainment',
+                        domain: 'messages',
+                        locale: $userPreferredLanguage,
+                    ),
+                    'category' => 'entertainment',
                     'amount' => (string) ($wantsAmount * 0.50),
                 ]),
             BudgetPlanWant::fromArray([
                 'uuid' => $uuidGenerator->generate(),
-                'wantName' => 'Dining Out',
+                'wantName' => $translator->trans(
+                    id:'wants.dining-out',
+                    domain: 'messages',
+                    locale: $userPreferredLanguage,
+                ),
+                'category' => 'dining-out',
                 'amount' => (string) ($wantsAmount * 0.50),
             ]),
         ];
     }
 
-    private static function generateFakeSavings(array $incomes, UuidGeneratorInterface $uuidGenerator): array
-    {
+    private static function generateFakeSavings(
+        array $incomes,
+        string $userPreferredLanguage,
+        UuidGeneratorInterface $uuidGenerator,
+        TranslatorInterface $translator,
+    ): array {
         $savingsAmount = array_reduce(
                 $incomes,
                 fn(float $carry, BudgetPlanIncome $income) => $carry + (float) $income->getAmount(),
@@ -719,12 +788,22 @@ final class BudgetPlan
         return [
             BudgetPlanSaving::fromArray([
                 'uuid' => $uuidGenerator->generate(),
-                'savingName' => 'Emergency Fund',
+                'savingName' => $translator->trans(
+                    id:'savings.emergency-fund',
+                    domain: 'messages',
+                    locale: $userPreferredLanguage,
+                ),
+                'category' => 'emergency-fund',
                 'amount' => (string) ($savingsAmount * 0.50),
             ]),
             BudgetPlanSaving::fromArray([
                 'uuid' => $uuidGenerator->generate(),
-                'savingName' => 'Retirement',
+                'savingName' => $translator->trans(
+                    id:'savings.retirement',
+                    domain: 'messages',
+                    locale: $userPreferredLanguage,
+                ),
+                'category' => 'retirement',
                 'amount' => (string) ($savingsAmount * 0.50),
             ]),
         ];
@@ -743,6 +822,7 @@ final class BudgetPlan
             $incomeArray['created_at'] = $currentDate->format(\DateTimeInterface::ATOM);
             $incomeArray['updated_at'] = $currentDate->format(\DateTimeInterface::ATOM);
             $incomeArray['amount'] = $income->incomeAmount;
+            $incomeArray['category'] = $income->category;
             $incomeArray['income_name'] = $income->incomeName;
             return BudgetPlanIncome::fromArray($incomeArray);
         }, $existingIncomes);
@@ -761,6 +841,7 @@ final class BudgetPlan
             $needArray['created_at'] = $currentDate->format(\DateTimeInterface::ATOM);
             $needArray['updated_at'] = $currentDate->format(\DateTimeInterface::ATOM);
             $needArray['amount'] = $need->needAmount;
+            $needArray['category'] = $need->category;
             $needArray['need_name'] = $need->needName;
             return BudgetPlanNeed::fromArray($needArray);
         }, $existingNeeds);
@@ -779,6 +860,7 @@ final class BudgetPlan
             $savingArray['created_at'] = $currentDate->format(\DateTimeInterface::ATOM);
             $savingArray['updated_at'] = $currentDate->format(\DateTimeInterface::ATOM);
             $savingArray['amount'] = $saving->savingAmount;
+            $savingArray['category'] = $saving->category;
             $savingArray['saving_name'] = $saving->savingName;
             return BudgetPlanSaving::fromArray($savingArray);
         }, $existingSavings);
@@ -798,6 +880,7 @@ final class BudgetPlan
             $wantArray['updated_at'] = $currentDate->format(\DateTimeInterface::ATOM);
             $wantArray['amount'] = $want->wantAmount;
             $wantArray['want_name'] = $want->wantName;
+            $wantArray['category'] = $want->category;
             return BudgetPlanWant::fromArray($wantArray);
         }, $existingWants);
     }

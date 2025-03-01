@@ -9,6 +9,7 @@ use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanEntryAmount;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanEntryId;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanEntryName;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanId;
+use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanNeedCategory;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanUserId;
 use App\Gateway\BudgetPlan\Presentation\HTTP\DTOs\AddABudgetPlanNeedInput;
 use App\SharedContext\Domain\Ports\Outbound\CommandBusInterface;
@@ -40,6 +41,7 @@ final readonly class AddABudgetPlanNeedController
                 BudgetPlanEntryId::fromString($addABudgetPlanNeedInput->uuid),
                 BudgetPlanEntryName::fromString($addABudgetPlanNeedInput->name),
                 BudgetPlanEntryAmount::fromString($addABudgetPlanNeedInput->amount),
+                BudgetPlanNeedCategory::fromString($addABudgetPlanNeedInput->category),
                 BudgetPlanUserId::fromString($user->getUuid()),
             ),
         );

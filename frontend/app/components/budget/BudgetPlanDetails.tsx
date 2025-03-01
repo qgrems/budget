@@ -6,15 +6,25 @@ import { useTranslation } from "../../hooks/useTranslation"
 import { formatCurrency } from "../../utils/envelope/currencyUtils"
 import { useBudgetPlans } from "../../domain/budget/budgetHooks"
 import type { BudgetPlan } from "../../domain/budget/budgetTypes"
-import { Calculator, DollarSign, PiggyBank, ShoppingBag, Plus, Edit2, Trash2, Loader2 } from "lucide-react"
+import { Calculator, DollarSign, PiggyBank, ShoppingBag, Plus, Edit2, Trash2, Loader2, Tag } from "lucide-react"
 import BudgetItemModal from "./BudgetItemModal"
 import DeleteConfirmationModal from "./DeleteConfirmationModal"
+import { useSocket } from "../../hooks/useSocket"
+import type { Category } from "../../domain/category/categoryTypes"
 
 interface BudgetPlanDetailsProps {
     budgetPlan: BudgetPlan
+    categories: {
+        needs: Category[]
+        wants: Category[]
+        savings: Category[]
+        incomes: Category[]
+    }
 }
 
-export default function BudgetPlanDetails({ budgetPlan }: BudgetPlanDetailsProps) {
+type TabType = "overview" | "needs" | "wants" | "savings" | "incomes"
+
+export default function BudgetPlanDetails({ budgetPlan, categories }: BudgetPlanDetailsProps) {
     const { t, language } = useTranslation()
     const {
         addBudgetItem,
@@ -25,18 +35,68 @@ export default function BudgetPlanDetails({ budgetPlan }: BudgetPlanDetailsProps
         selectedBudgetPlan,
         setSelectedBudgetPlan,
     } = useBudgetPlans()
-    const [activeTab, setActiveTab] = useState<"overview" | "needs" | "wants" | "savings" | "incomes">("overview")
+
+    const [activeTab, setActiveTab] = useState<TabType>(() => {
+        if (typeof window !== "undefined") {
+            return (localStorage.getItem("budgetActiveTab") as TabType) || "overview"
+        }
+        return "overview"
+    })
 
     // Modal states
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
     const [currentItemType, setCurrentItemType] = useState<"need" | "want" | "saving" | "income">("need")
-    const [currentItem, setCurrentItem] = useState<{ id: string; name: string; amount: string } | null>(null)
+    const [currentItem, setCurrentItem] = useState<{ id: string; name: string; amount: string; category: string } | null>(
+        null,
+    )
+
+    const { socket } = useSocket()
 
     useEffect(() => {
         setSelectedBudgetPlan(budgetPlan)
     }, [budgetPlan, setSelectedBudgetPlan])
+
+    useEffect(() => {
+        if (!socket) return
+
+        const handleBudgetPlanEvent = (event: { aggregateId: string; type: string }) => {
+            if (selectedBudgetPlan && event.aggregateId === selectedBudgetPlan.budgetPlan.uuid) {
+                fetchBudgetPlan(event.aggregateId)
+            }
+        }
+
+        const eventTypes = [
+            "BudgetPlanIncomeAdded",
+            "BudgetPlanIncomeAdjusted",
+            "BudgetPlanIncomeRemoved",
+            "BudgetPlanNeedAdded",
+            "BudgetPlanNeedAdjusted",
+            "BudgetPlanNeedRemoved",
+            "BudgetPlanSavingAdded",
+            "BudgetPlanSavingAdjusted",
+            "BudgetPlanSavingRemoved",
+            "BudgetPlanWantAdded",
+            "BudgetPlanWantAdjusted",
+            "BudgetPlanWantRemoved",
+        ]
+
+        eventTypes.forEach((eventType) => {
+            socket.on(eventType, handleBudgetPlanEvent)
+        })
+
+        return () => {
+            eventTypes.forEach((eventType) => {
+                socket.off(eventType, handleBudgetPlanEvent)
+            })
+        }
+    }, [socket, fetchBudgetPlan, selectedBudgetPlan])
+
+    const handleTabChange = useCallback((tab: TabType) => {
+        setActiveTab(tab)
+        localStorage.setItem("budgetActiveTab", tab)
+    }, [])
 
     const { budgetPlan: planDetails, needs, wants, savings, incomes } = selectedBudgetPlan || {}
 
@@ -78,23 +138,24 @@ export default function BudgetPlanDetails({ budgetPlan }: BudgetPlanDetailsProps
         id: string,
         name: string,
         amount: string,
+        category: string,
     ) => {
         setCurrentItemType(type)
-        setCurrentItem({ id, name, amount })
+        setCurrentItem({ id, name, amount, category })
         setIsEditModalOpen(true)
     }
 
     // Handle opening delete modal
     const handleOpenDeleteModal = (type: "need" | "want" | "saving" | "income", id: string, name: string) => {
         setCurrentItemType(type)
-        setCurrentItem({ id, name, amount: "" })
+        setCurrentItem({ id, name, amount: "", category: "" })
         setIsDeleteModalOpen(true)
     }
 
     // Handle add item
     const handleAddItem = useCallback(
-        async (name: string, amount: string) => {
-            if (await addBudgetItem(currentItemType, name, amount)) {
+        async (name: string, amount: string, category: string) => {
+            if (await addBudgetItem(currentItemType, name, amount, category)) {
                 setIsAddModalOpen(false)
                 if (planDetails) {
                     await fetchBudgetPlan(planDetails.uuid)
@@ -106,9 +167,9 @@ export default function BudgetPlanDetails({ budgetPlan }: BudgetPlanDetailsProps
 
     // Handle edit item
     const handleEditItem = useCallback(
-        async (name: string, amount: string) => {
+        async (name: string, amount: string, category: string) => {
             if (currentItem && planDetails) {
-                if (await adjustBudgetItem(currentItemType, currentItem.id, name, amount)) {
+                if (await adjustBudgetItem(currentItemType, currentItem.id, name, amount, category)) {
                     setIsEditModalOpen(false)
                     await fetchBudgetPlan(planDetails.uuid)
                 }
@@ -131,14 +192,21 @@ export default function BudgetPlanDetails({ budgetPlan }: BudgetPlanDetailsProps
     const getFieldNames = (type: "need" | "want" | "saving" | "income") => {
         switch (type) {
             case "need":
-                return { name: "needName", amount: "needAmount" }
+                return { name: "needName", amount: "needAmount", category: "category" }
             case "want":
-                return { name: "wantName", amount: "wantAmount" }
+                return { name: "wantName", amount: "wantAmount", category: "category" }
             case "saving":
-                return { name: "savingName", amount: "savingAmount" }
+                return { name: "savingName", amount: "savingAmount", category: "category" }
             case "income":
-                return { name: "incomeName", amount: "incomeAmount" }
+                return { name: "incomeName", amount: "incomeAmount", category: "category" }
         }
+    }
+
+    // Use the categories prop instead of fetching it from useBudgetPlans
+    const getCategoryName = (type: "need" | "want" | "saving" | "income", categoryId: string) => {
+        const categoryList =
+            categories[type === "need" ? "needs" : type === "want" ? "wants" : type === "saving" ? "savings" : "incomes"]
+        return categoryList.find((cat) => cat.id === categoryId)?.name || categoryId
     }
 
     // Render item list based on type
@@ -172,12 +240,26 @@ export default function BudgetPlanDetails({ budgetPlan }: BudgetPlanDetailsProps
                 <ul className="space-y-3">
                     {items?.map((item) => (
                         <li key={item.uuid} className="flex justify-between items-center p-3 hover:bg-accent rounded-md group">
-                            <span className="font-medium">{item[fields.name]}</span>
+                            <div className="flex items-center">
+                                <span className="font-medium mr-2">{item[fields.name]}</span>
+                                <span className="text-sm bg-gray-200 text-gray-700 px-2 py-1 rounded-full flex items-center">
+                  <Tag className="w-3 h-3 mr-1" />
+                                    {getCategoryName(type, item[fields.category])}
+                </span>
+                            </div>
                             <div className="flex items-center">
                                 <span className="font-semibold mr-3">{formatCurrency(item[fields.amount], planDetails?.currency)}</span>
                                 <div className="flex space-x-2">
                                     <button
-                                        onClick={() => handleOpenEditModal(type, item.uuid, item[fields.name], item[fields.amount])}
+                                        onClick={() =>
+                                            handleOpenEditModal(
+                                                type,
+                                                item.uuid,
+                                                item[fields.name],
+                                                item[fields.amount],
+                                                item[fields.category],
+                                            )
+                                        }
                                         className="p-1 text-blue-500 hover:text-blue-700"
                                         disabled={loading}
                                     >
@@ -238,7 +320,7 @@ export default function BudgetPlanDetails({ budgetPlan }: BudgetPlanDetailsProps
                     {["overview", "needs", "wants", "savings", "incomes"].map((tab) => (
                         <button
                             key={tab}
-                            onClick={() => setActiveTab(tab as any)}
+                            onClick={() => handleTabChange(tab as TabType)}
                             className={`py-2 px-3 rounded-md text-sm ${
                                 activeTab === tab
                                     ? "neomorphic-inset text-primary font-semibold"
@@ -348,6 +430,8 @@ export default function BudgetPlanDetails({ budgetPlan }: BudgetPlanDetailsProps
                 onClose={() => setIsAddModalOpen(false)}
                 onSubmit={handleAddItem}
                 title={t(`budgetTracker.add${currentItemType.charAt(0).toUpperCase() + currentItemType.slice(1)}`)}
+                itemType={currentItemType}
+                categories={categories}
             />
 
             {/* Edit Item Modal */}
@@ -358,7 +442,10 @@ export default function BudgetPlanDetails({ budgetPlan }: BudgetPlanDetailsProps
                 title={t(`budgetTracker.edit${currentItemType.charAt(0).toUpperCase() + currentItemType.slice(1)}`)}
                 initialName={currentItem?.name || ""}
                 initialAmount={currentItem?.amount || ""}
+                initialCategory={currentItem?.category || ""}
                 isEdit={true}
+                itemType={currentItemType}
+                categories={categories}
             />
 
             {/* Delete Confirmation Modal */}

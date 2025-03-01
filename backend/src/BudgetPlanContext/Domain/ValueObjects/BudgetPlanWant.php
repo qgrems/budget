@@ -11,6 +11,7 @@ final readonly class BudgetPlanWant
     private function __construct(
         protected string $uuid,
         protected string $wantName,
+        protected string $category,
         protected string $amount
     ) {
         Assert::that($uuid)
@@ -23,6 +24,12 @@ final readonly class BudgetPlanWant
             ->minLength(1, 'The want name must be at least 1 character long.')
             ->maxLength(35, 'The want name must be at most 35 characters long.');
 
+        Assert::that($category)
+            ->notBlank('Category should not be blank.')
+            ->string('Category must be a string.')
+            ->minLength(1, 'The category must be at least 1 character long.')
+            ->maxLength(35, 'The category must be at most 35 characters long.');
+
         Assert::that($amount)
             ->notBlank('Amount should not be blank.')
             ->string('Amount must be a string.')
@@ -33,7 +40,7 @@ final readonly class BudgetPlanWant
 
     public static function fromArray(array $want): self
     {
-        return new self($want['uuid'], $want['wantName'], $want['amount']);
+        return new self($want['uuid'], $want['wantName'], $want['category'], $want['amount']);
     }
 
     public function getUuid(): string
@@ -51,17 +58,23 @@ final readonly class BudgetPlanWant
         return $this->amount;
     }
 
-    public function toArray(): array
+    public function getCategory(): string
     {
-        return [
-            'uuid' => $this->uuid,
-            'wantName' => $this->wantName,
-            'amount' => $this->amount
-        ];
+        return $this->category;
     }
 
     public function __toString(): string
     {
         return sprintf('%s: %s', $this->wantName, $this->amount);
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'uuid' => $this->uuid,
+            'wantName' => $this->wantName,
+            'category' => $this->category,
+            'amount' => $this->amount
+        ];
     }
 }

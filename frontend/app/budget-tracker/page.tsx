@@ -12,6 +12,8 @@ import CreateFromExistingModal from "../components/budget/CreateFromExistingModa
 import { useError } from "../contexts/ErrorContext"
 import { useValidMessage } from "../contexts/ValidContext"
 import { PieChart, Calculator, Calendar } from "lucide-react"
+import { api } from "../infrastructure/api"
+import type { Category } from "../domain/budget/budgetTypes"
 
 export default function BudgetTrackerPage() {
     const router = useRouter()
@@ -27,19 +29,67 @@ export default function BudgetTrackerPage() {
         fetchBudgetPlan,
         clearSelectedBudgetPlan,
         createBudgetPlan,
+        newlyCreatedBudgetPlanId,
     } = useBudgetPlans()
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [isCreateFromExistingModalOpen, setIsCreateFromExistingModalOpen] = useState(false)
     const [selectedDate, setSelectedDate] = useState<{ year: number; month: number } | null>(null)
+    const [categories, setCategories] = useState<{
+        needs: Category[]
+        wants: Category[]
+        savings: Category[]
+        incomes: Category[]
+    }>({
+        needs: [],
+        wants: [],
+        savings: [],
+        incomes: [],
+    })
+
+    // Initialize currentYear state
+    const [currentYear, setCurrentYear] = useState(() => {
+        if (typeof window !== "undefined") {
+            const storedYear = localStorage.getItem("selectedYear")
+            return storedYear ? Number.parseInt(storedYear, 10) : new Date().getFullYear()
+        }
+        return new Date().getFullYear()
+    })
 
     useEffect(() => {
         if (!userLoading && !user) {
             router.push("/signin")
         } else if (user) {
             fetchBudgetPlansCalendar()
+            fetchCategories()
         }
     }, [user, userLoading, router, fetchBudgetPlansCalendar])
+
+    useEffect(() => {
+        if (newlyCreatedBudgetPlanId) {
+            router.push(`/budget-tracker/${newlyCreatedBudgetPlanId}`)
+        }
+    }, [newlyCreatedBudgetPlanId, router])
+
+    // Update local storage when currentYear changes
+    useEffect(() => {
+        localStorage.setItem("selectedYear", currentYear.toString())
+    }, [currentYear])
+
+    const fetchCategories = async () => {
+        try {
+            const [needs, wants, savings, incomes] = await Promise.all([
+                api.budgetQueries.getNeedsCategories(),
+                api.budgetQueries.getWantsCategories(),
+                api.budgetQueries.getSavingsCategories(),
+                api.budgetQueries.getIncomesCategories(),
+            ])
+            setCategories({ needs, wants, savings, incomes })
+        } catch (err) {
+            console.error("Failed to fetch categories:", err)
+            setError("Failed to fetch categories")
+        }
+    }
 
     const handleMonthClick = async (year: number, month: number) => {
         setSelectedDate({ year, month })
@@ -70,18 +120,12 @@ export default function BudgetTrackerPage() {
     const handleCreateNewBudgetPlan = async (currency: string, incomes: { name: string; amount: number }[]) => {
         if (!selectedDate) return
 
-        const success = await createBudgetPlan(new Date(selectedDate.year, selectedDate.month - 1), currency, incomes)
-
-        if (success) {
-            // Fetch the newly created budget plan
-            await fetchBudgetPlansCalendar()
-            const newBudgetPlanId = budgetPlansCalendar?.[selectedDate.year]?.[selectedDate.month]
-            if (newBudgetPlanId) {
-                router.push(`/budget-tracker/${newBudgetPlanId}`)
-            }
-        }
-
+        await createBudgetPlan(new Date(selectedDate.year, selectedDate.month - 1), currency, incomes)
         handleCloseModals()
+    }
+
+    const handleYearChange = (newYear: number) => {
+        setCurrentYear(newYear)
     }
 
     if (userLoading || loading) {
@@ -117,13 +161,18 @@ export default function BudgetTrackerPage() {
                             <Calendar className="mr-2 h-5 w-5 text-primary" />
                             {t("budgetTracker.calendar")}
                         </h2>
-                        <BudgetCalendar budgetPlansCalendar={budgetPlansCalendar} onMonthClick={handleMonthClick} />
+                        <BudgetCalendar
+                            budgetPlansCalendar={budgetPlansCalendar}
+                            onMonthClick={handleMonthClick}
+                            currentYear={currentYear}
+                            onYearChange={handleYearChange}
+                        />
                     </div>
                 </div>
 
                 <div className="md:col-span-7 lg:col-span-8">
                     {selectedBudgetPlan ? (
-                        <BudgetPlanDetails budgetPlan={selectedBudgetPlan} />
+                        <BudgetPlanDetails budgetPlan={selectedBudgetPlan} categories={categories} />
                     ) : (
                         <div className="neomorphic p-6 rounded-lg h-full flex flex-col items-center justify-center text-center">
                             <PieChart className="h-16 w-16 text-primary mb-4" />
@@ -147,6 +196,7 @@ export default function BudgetTrackerPage() {
                     onCreateFromExisting={handleCreateFromExisting}
                     onCreateNew={handleCreateNewBudgetPlan}
                     selectedDate={selectedDate}
+                    categories={categories}
                 />
             )}
 

@@ -20,7 +20,7 @@ final class BudgetPlanWantEntryViewRepository implements BudgetPlanWantEntryView
 
     public function findOneByUuid(string $uuid): ?BudgetPlanWantEntryViewInterface
     {
-        $sql = 'SELECT uuid, budget_plan_uuid, want_name, want_amount, created_at, updated_at
+        $sql = 'SELECT uuid, budget_plan_uuid, want_name, want_amount, category, created_at, updated_at
             FROM budget_plan_want_entry_view
             WHERE uuid = :uuid';
 
@@ -37,17 +37,19 @@ final class BudgetPlanWantEntryViewRepository implements BudgetPlanWantEntryView
     public function save(BudgetPlanWantEntryViewInterface $budgetPlanWantEntryView): void
     {
         $this->connection->executeStatement('
-            INSERT INTO budget_plan_want_entry_view (uuid, budget_plan_uuid, want_name, want_amount, created_at, updated_at)
-            VALUES (:uuid, :budget_plan_uuid, :want_name, :want_amount, :created_at, :updated_at)
+            INSERT INTO budget_plan_want_entry_view (uuid, budget_plan_uuid, want_name, want_amount, category, created_at, updated_at)
+            VALUES (:uuid, :budget_plan_uuid, :want_name, :want_amount, :category, :created_at, :updated_at)
             ON DUPLICATE KEY UPDATE
                 want_name = VALUES(want_name),
                 want_amount = VALUES(want_amount),
-                updated_at = VALUES(updated_at)
+                updated_at = VALUES(updated_at),
+                category = VALUES(category)
         ', [
             'uuid' => $budgetPlanWantEntryView->uuid,
             'budget_plan_uuid' => $budgetPlanWantEntryView->budgetPlanUuid,
             'want_name' => $budgetPlanWantEntryView->wantName,
             'want_amount' => $budgetPlanWantEntryView->wantAmount,
+            'category' => $budgetPlanWantEntryView->category,
             'created_at' => $budgetPlanWantEntryView->createdAt->format(\DateTimeImmutable::ATOM),
             'updated_at' => $budgetPlanWantEntryView->updatedAt->format(\DateTime::ATOM),
         ]);
