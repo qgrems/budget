@@ -1,20 +1,14 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Cannot access offset ''date'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: src/BudgetPlanContext/Application/Handlers/QueryHandlers/ListBudgetPlansCalendarQueryHandler.php
-
-		-
-			message: '#^Cannot access offset ''uuid'' on mixed\.$#'
+			message: '#^Cannot access offset 1\|2\|3\|4\|5\|6\|7\|8\|9\|10\|11\|12 on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: src/BudgetPlanContext/Application/Handlers/QueryHandlers/ListBudgetPlansCalendarQueryHandler.php
 
 		-
-			message: '#^Property App\\BudgetPlanContext\\Domain\\Aggregates\\BudgetPlan\:\:\$currency is never read, only written\.$#'
-			identifier: property.onlyWritten
+			message: '#^Cannot access property \$currency on mixed\.$#'
+			identifier: property.nonObject
 			count: 1
 			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
 

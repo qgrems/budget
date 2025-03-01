@@ -26,20 +26,20 @@ final readonly class ListBudgetPlansCalendarQueryHandler
         );
     }
 
-    private function generateCalendarFromBudgetPlans(array $budgetPlans): array {
-        $currentYear = (int) new \DateTimeImmutable()->format('Y');
-        $years = array_map(fn($plan) => (int) new \DateTimeImmutable($plan['date'])->format('Y'), $budgetPlans);
-        $minYear = !empty($years) ? min(min($years), $currentYear - 1) : $currentYear - 1;
-        $maxYear = !empty($years) ? max(max($years), $currentYear) : $currentYear;
-        $calendarStructure = array_combine(
-            range($minYear, $maxYear + 1),
-            array_map(fn() => array_fill(1, 12, null), range($minYear, $maxYear + 1))
-        );
-        array_walk($budgetPlans, function ($plan) use (&$calendarStructure) {
+    private function generateCalendarFromBudgetPlans(array $budgetPlans): array
+    {
+        return array_reduce($budgetPlans, function (array $calendarStructure, array $plan) {
             $date = new \DateTimeImmutable($plan['date']);
-            $calendarStructure[(int) $date->format('Y')][(int) $date->format('n')] = $plan['uuid'];
-        });
+            $year = (int)$date->format('Y');
+            $month = (int)$date->format('n');
 
-        return $calendarStructure;
+            if (!isset($calendarStructure[$year])) {
+                $calendarStructure[$year] = [];
+            }
+
+            $calendarStructure[$year][$month] = $plan['uuid'];
+
+            return $calendarStructure;
+        }, []);
     }
 }

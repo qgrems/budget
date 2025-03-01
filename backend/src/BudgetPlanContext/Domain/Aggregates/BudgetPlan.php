@@ -121,7 +121,6 @@ final class BudgetPlan
         BudgetPlanId $budgetPlanIdThatAlreadyExists,
         \DateTimeImmutable $date,
         BudgetPlanUserId $userId,
-        BudgetPlanCurrency $currency,
         BudgetPlanViewRepositoryInterface $budgetPlanViewRepository,
         UuidGeneratorInterface $uuidGenerator,
     ): self {
@@ -148,7 +147,7 @@ final class BudgetPlan
         $budgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent = new BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent(
             $budgetPlanId,
             $date->format(\DateTimeInterface::ATOM),
-            (string) $currency,
+            $existingBudgetPlan['budgetPlan']->currency,
             array_map(fn(BudgetPlanIncome $income) => $income->toArray(),
                 self::generateIncomesFromABudgetPlanThatAlreadyExists(
                     $existingBudgetPlan['incomes'],

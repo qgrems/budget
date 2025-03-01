@@ -39,7 +39,6 @@ final readonly class GenerateABudgetPlanWithOneThatAlreadyExistsController
                 ),
                 $generateABudgetPlanWithOneThatAlreadyExistsInput->date,
                 BudgetPlanUserId::fromString($user->getUuid()),
-                BudgetPlanCurrency::fromString($generateABudgetPlanWithOneThatAlreadyExistsInput->currency),
             ),
         );
 
