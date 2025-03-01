@@ -26,6 +26,7 @@ export default function BudgetTrackerPage() {
         fetchBudgetPlansCalendar,
         fetchBudgetPlan,
         clearSelectedBudgetPlan,
+        createBudgetPlan,
     } = useBudgetPlans()
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
@@ -40,14 +41,14 @@ export default function BudgetTrackerPage() {
         }
     }, [user, userLoading, router, fetchBudgetPlansCalendar])
 
-    const handleMonthClick = (year: number, month: number) => {
+    const handleMonthClick = async (year: number, month: number) => {
         setSelectedDate({ year, month })
 
         // Check if there's a budget plan for this month
         const budgetPlanId = budgetPlansCalendar?.[year]?.[month]
 
         if (budgetPlanId) {
-            fetchBudgetPlan(budgetPlanId)
+            router.push(`/budget-tracker/${budgetPlanId}`)
         } else {
             // Ask if user wants to create a new budget plan
             clearSelectedBudgetPlan()
@@ -64,6 +65,23 @@ export default function BudgetTrackerPage() {
     const handleCloseModals = () => {
         setIsCreateModalOpen(false)
         setIsCreateFromExistingModalOpen(false)
+    }
+
+    const handleCreateNewBudgetPlan = async (currency: string, incomes: { name: string; amount: number }[]) => {
+        if (!selectedDate) return
+
+        const success = await createBudgetPlan(new Date(selectedDate.year, selectedDate.month - 1), currency, incomes)
+
+        if (success) {
+            // Fetch the newly created budget plan
+            await fetchBudgetPlansCalendar()
+            const newBudgetPlanId = budgetPlansCalendar?.[selectedDate.year]?.[selectedDate.month]
+            if (newBudgetPlanId) {
+                router.push(`/budget-tracker/${newBudgetPlanId}`)
+            }
+        }
+
+        handleCloseModals()
     }
 
     if (userLoading || loading) {
@@ -127,6 +145,7 @@ export default function BudgetTrackerPage() {
                     isOpen={isCreateModalOpen}
                     onClose={handleCloseModals}
                     onCreateFromExisting={handleCreateFromExisting}
+                    onCreateNew={handleCreateNewBudgetPlan}
                     selectedDate={selectedDate}
                 />
             )}
