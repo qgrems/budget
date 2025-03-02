@@ -24,15 +24,19 @@ final readonly class MailerAdapter implements MailerInterface
     #[\Override]
     public function sendPasswordResetEmail(UserViewInterface $user, string $token): void
     {
-        $locale = 'fr';
-        $passwordResetUrl = $this->generatePasswordResetUrl($token);
-        $email = (new Email())
-            ->from('no-reply@gogobudgeto.com')
-            ->to($user->getEmail())
-            ->subject($this->translator->trans('password_reset.subject', [], 'messages', $locale))
-            ->html($this->generateEmailContent($user, $passwordResetUrl, $locale));
-
-        $this->mailer->send($email);
+        $this->mailer->send(
+            new Email()
+                ->from('no-reply@gogobudgeto.com')
+                ->to($user->getEmail())
+                ->subject($this->translator->trans('password_reset.subject', [], 'messages', $user->languagePreference))
+                ->html(
+                    $this->generateEmailContent(
+                        $user,
+                        $this->generatePasswordResetUrl($token),
+                        $user->languagePreference,
+                    ),
+                ),
+        );
     }
 
     private function generateEmailContent(UserViewInterface $user, string $passwordResetUrl, string $locale): string

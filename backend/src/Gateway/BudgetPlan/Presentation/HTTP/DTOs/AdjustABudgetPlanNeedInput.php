@@ -30,6 +30,16 @@ final readonly class AdjustABudgetPlanNeedInput
             message: 'budgetPlan.amountInvalid'
         )]
         private(set) string $amount,
+
+        #[Assert\NotBlank]
+        #[Assert\Type('string')]
+        #[Assert\Length(
+            min: 1,
+            max: 35,
+            minMessage: 'budgetPlan.categoryMinLength',
+            maxMessage: 'budgetPlan.categoryMaxLength'
+        )]
+        private(set) string $category,
     ) {
     }
 }

@@ -18,30 +18,35 @@ export interface BudgetPlan {
         budgetPlanUuid: string
         needName: string
         needAmount: string
+        category: string
     }>
     savings: Array<{
         uuid: string
         budgetPlanUuid: string
         savingName: string
         savingAmount: string
+        category: string
     }>
     wants: Array<{
         uuid: string
         budgetPlanUuid: string
         wantName: string
         wantAmount: string
+        category: string
     }>
     incomes: Array<{
         uuid: string
         budgetPlanUuid: string
         incomeName: string
         incomeAmount: string
+        category: string
     }>
 }
 
 export interface Income {
     name: string
     amount: string
+    category: string
 }
 
 export interface CreateBudgetPlanPayload {
@@ -52,6 +57,7 @@ export interface CreateBudgetPlanPayload {
         uuid: string
         incomeName: string
         amount: string
+        category: string
     }>
 }
 
@@ -59,4 +65,9 @@ export interface CreateFromExistingPayload {
     uuid: string
     budgetPlanUuidThatAlreadyExists: string
     date: string
+}
+
+export interface Category {
+    id: string
+    name: string
 }

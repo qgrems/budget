@@ -13,6 +13,7 @@ final class BudgetPlanWantAdjustedDomainEvent implements DomainEventInterface
     public string $userId;
     public string $amount;
     public string $name;
+    public string $category;
     public string $requestId;
     public \DateTimeImmutable $occurredOn;
 
@@ -22,6 +23,7 @@ final class BudgetPlanWantAdjustedDomainEvent implements DomainEventInterface
         string $userId,
         string $amount,
         string $name,
+        string $category,
         string $requestId = DomainEventInterface::DEFAULT_REQUEST_ID,
     ) {
         $this->aggregateId = $aggregateId;
@@ -29,6 +31,7 @@ final class BudgetPlanWantAdjustedDomainEvent implements DomainEventInterface
         $this->uuid = $uuid;
         $this->amount = $amount;
         $this->name = $name;
+        $this->category = $category;
         $this->requestId = $requestId;
         $this->occurredOn = new \DateTimeImmutable();
     }
@@ -41,6 +44,7 @@ final class BudgetPlanWantAdjustedDomainEvent implements DomainEventInterface
             'uuid' => $this->uuid,
             'amount' => $this->amount,
             'name' => $this->name,
+            'category' => $this->category,
             'requestId' => $this->requestId,
             'occurredOn' => $this->occurredOn->format(\DateTimeInterface::ATOM),
         ];
@@ -54,6 +58,7 @@ final class BudgetPlanWantAdjustedDomainEvent implements DomainEventInterface
             $data['userId'],
             $data['amount'],
             $data['name'],
+            $data['category'],
             $data['requestId'],
         );
         $event->occurredOn = new \DateTimeImmutable($data['occurredOn']);

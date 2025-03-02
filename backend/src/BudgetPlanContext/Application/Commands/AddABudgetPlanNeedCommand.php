@@ -8,6 +8,7 @@ use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanEntryAmount;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanEntryId;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanEntryName;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanId;
+use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanNeedCategory;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanUserId;
 use App\SharedContext\Domain\Ports\Inbound\CommandInterface;
 
@@ -16,6 +17,7 @@ final readonly class AddABudgetPlanNeedCommand implements CommandInterface
     private string $budgetPlanId;
     private string $entryId;
     private string $amount;
+    private string $category;
     private string $name;
     private string $userId;
 
@@ -24,12 +26,14 @@ final readonly class AddABudgetPlanNeedCommand implements CommandInterface
         BudgetPlanEntryId $entryId,
         BudgetPlanEntryName $name,
         BudgetPlanEntryAmount $amount,
+        BudgetPlanNeedCategory $category,
         BudgetPlanUserId $userId,
     ) {
         $this->budgetPlanId = (string) $budgetPlanId;
         $this->entryId = (string) $entryId;
         $this->name = (string) $name;
         $this->amount = (string) $amount;
+        $this->category = (string) $category;
         $this->userId = (string) $userId;
     }
 
@@ -51,6 +55,11 @@ final readonly class AddABudgetPlanNeedCommand implements CommandInterface
     public function getName(): BudgetPlanEntryName
     {
         return BudgetPlanEntryName::fromString($this->name);
+    }
+
+    public function getCategory(): BudgetPlanNeedCategory
+    {
+        return BudgetPlanNeedCategory::fromString($this->category);
     }
 
     public function getUserId(): BudgetPlanUserId

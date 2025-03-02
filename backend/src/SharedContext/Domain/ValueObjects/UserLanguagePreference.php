@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\UserContext\Domain\ValueObjects;
+namespace App\SharedContext\Domain\ValueObjects;
 
 use Assert\Assert;
 
@@ -12,8 +12,7 @@ final readonly class UserLanguagePreference
     {
         Assert::that($language)
             ->notBlank('Language preference should not be blank.')
-            ->minLength(2, 'The language preference must be at least 2 characters long.')
-            ->maxLength(35, 'The language preference cannot be longer than 35 characters.')
+            ->length(2, 'The language preference must be 2 characters long.')
         ;
     }
 

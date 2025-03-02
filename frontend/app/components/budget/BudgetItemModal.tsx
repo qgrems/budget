@@ -6,15 +6,24 @@ import { useTranslation } from "../../hooks/useTranslation"
 import InputText from "../inputs/inputText"
 import InputNumber from "../inputs/inputNumber"
 import ActionButton from "../buttons/actionButton"
+import type { Category } from "../../domain/budget/budgetTypes"
 
 interface BudgetItemModalProps {
     isOpen: boolean
     onClose: () => void
-    onSubmit: (name: string, amount: string) => void
+    onSubmit: (name: string, amount: string, category: string) => void
     title: string
     initialName?: string
     initialAmount?: string
+    initialCategory?: string
     isEdit?: boolean
+    itemType: "need" | "want" | "saving" | "income"
+    categories: {
+        needs: Category[]
+        wants: Category[]
+        savings: Category[]
+        incomes: Category[]
+    }
 }
 
 export default function BudgetItemModal({
@@ -24,11 +33,20 @@ export default function BudgetItemModal({
                                             title,
                                             initialName = "",
                                             initialAmount = "",
+                                            initialCategory = "",
                                             isEdit = false,
+                                            itemType,
+                                            categories,
                                         }: BudgetItemModalProps) {
     const { t } = useTranslation()
     const [name, setName] = useState(initialName)
     const [amount, setAmount] = useState(initialAmount)
+    const [category, setCategory] = useState(initialCategory)
+
+    const itemCategories =
+        categories[
+            itemType === "need" ? "needs" : itemType === "want" ? "wants" : itemType === "saving" ? "savings" : "incomes"
+            ]
 
     const handleAmountChange = (value: string) => {
         // Remove any non-digit and non-dot characters
@@ -74,11 +92,11 @@ export default function BudgetItemModal({
             formattedAmount = `${formattedAmount}.00`
         }
 
-        onSubmit(name, formattedAmount)
+        onSubmit(name, formattedAmount, category)
         onClose()
     }
 
-    const isValid = name.trim() !== "" && amount.trim() !== "" && /^\d+(\.\d{0,2})?$/.test(amount)
+    const isValid = name.trim() !== "" && amount.trim() !== "" && /^\d+(\.\d{0,2})?$/.test(amount) && category !== ""
 
     if (!isOpen) return null
 
@@ -102,9 +120,25 @@ export default function BudgetItemModal({
                     <InputText value={name} onChange={setName} placeholder={t("budgetTracker.itemName")} className="mb-0" />
                 </div>
 
-                <div className="mb-6">
+                <div className="mb-4">
                     <label className="block text-sm font-medium mb-1">{t("budgetTracker.itemAmount")}</label>
                     <InputNumber value={amount} onChange={handleAmountChange} placeholder="0.00" className="w-full mb-0" />
+                </div>
+
+                <div className="mb-6">
+                    <label className="block text-sm font-medium mb-1">{t("budgetTracker.itemCategory")}</label>
+                    <select
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    >
+                        <option value="">{t("budgetTracker.selectCategory")}</option>
+                        {itemCategories.map((category: Category) => (
+                            <option key={category.id} value={category.id}>
+                                {category.name}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
                 <div className="flex justify-between">

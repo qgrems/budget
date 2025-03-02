@@ -35,6 +35,9 @@ final class BudgetPlanNeedEntryView implements \JsonSerializable, BudgetPlanNeed
     #[ORM\Column(name: 'need_amount', type: 'string', length: 13)]
     private(set) string $needAmount;
 
+    #[ORM\Column(name: 'category', type: 'string', length: 35)]
+    private(set) string $category;
+
     #[ORM\Column(name: 'created_at', type: 'datetime_immutable')]
     private(set) \DateTimeImmutable $createdAt;
 
@@ -51,6 +54,7 @@ final class BudgetPlanNeedEntryView implements \JsonSerializable, BudgetPlanNeed
         $this->uuid = $budgetPlanNeed->getUuid();
         $this->needName = $budgetPlanNeed->getNeedName();
         $this->needAmount = $budgetPlanNeed->getAmount();
+        $this->category = $budgetPlanNeed->getCategory();
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
     }
@@ -77,6 +81,7 @@ final class BudgetPlanNeedEntryView implements \JsonSerializable, BudgetPlanNeed
                 [
                     'uuid' => $budgetPlanNeedAddedDomainEvent->uuid,
                     'needName' => $budgetPlanNeedAddedDomainEvent->name,
+                    'category' => $budgetPlanNeedAddedDomainEvent->category,
                     'amount' => $budgetPlanNeedAddedDomainEvent->amount,
                 ]
             ),
@@ -106,8 +111,9 @@ final class BudgetPlanNeedEntryView implements \JsonSerializable, BudgetPlanNeed
                 [
                     'uuid' => $budgetPlanNeedEntry['uuid'],
                     'needName' => $budgetPlanNeedEntry['need_name'],
+                    'category' => $budgetPlanNeedEntry['category'],
                     'amount' => $budgetPlanNeedEntry['need_amount'],
-                ]
+                ],
             ),
             new \DateTimeImmutable($budgetPlanNeedEntry['created_at']),
             \DateTime::createFromImmutable(new \DateTimeImmutable($budgetPlanNeedEntry['updated_at']))
@@ -131,6 +137,7 @@ final class BudgetPlanNeedEntryView implements \JsonSerializable, BudgetPlanNeed
     {
         $this->needName = $event->name;
         $this->needAmount = $event->amount;
+        $this->category = $event->category;
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
@@ -141,6 +148,7 @@ final class BudgetPlanNeedEntryView implements \JsonSerializable, BudgetPlanNeed
             'budgetPlanUuid' => $this->budgetPlanUuid,
             'needName' => $this->needName,
             'needAmount' => $this->needAmount,
+            'category' => $this->category,
             'createdAt' => $this->createdAt->format(\DateTime::ATOM),
             'updatedAt' => $this->updatedAt->format(\DateTime::ATOM),
         ];
@@ -151,6 +159,7 @@ final class BudgetPlanNeedEntryView implements \JsonSerializable, BudgetPlanNeed
         return [
             'uuid' => $this->uuid,
             'budgetPlanUuid' => $this->budgetPlanUuid,
+            'category' => $this->category,
             'needName' => $this->needName,
             'needAmount' => $this->needAmount,
         ];

@@ -11,6 +11,7 @@ final readonly class BudgetPlanSaving
     private function __construct(
         protected string $uuid,
         protected string $savingName,
+        protected string $category,
         protected string $amount
     ) {
         Assert::that($uuid)
@@ -23,6 +24,12 @@ final readonly class BudgetPlanSaving
             ->minLength(1, 'The saving name must be at least 1 character long.')
             ->maxLength(35, 'The saving name must be at most 35 characters long.');
 
+        Assert::that($category)
+            ->notBlank('Category should not be blank.')
+            ->string('Category must be a string.')
+            ->minLength(1, 'The category must be at least 1 character long.')
+            ->maxLength(35, 'The category must be at most 35 characters long.');
+
         Assert::that($amount)
             ->notBlank('Amount should not be blank.')
             ->string('Amount must be a string.')
@@ -33,7 +40,7 @@ final readonly class BudgetPlanSaving
 
     public static function fromArray(array $saving): self
     {
-        return new self($saving['uuid'], $saving['savingName'], $saving['amount']);
+        return new self($saving['uuid'], $saving['savingName'], $saving['category'], $saving['amount']);
     }
 
     public function getUuid(): string
@@ -51,17 +58,23 @@ final readonly class BudgetPlanSaving
         return $this->amount;
     }
 
-    public function toArray(): array
+    public function getCategory(): string
     {
-        return [
-            'uuid' => $this->uuid,
-            'savingName' => $this->savingName,
-            'amount' => $this->amount
-        ];
+        return $this->category;
     }
 
     public function __toString(): string
     {
         return sprintf('%s: %s', $this->savingName, $this->amount);
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'uuid' => $this->uuid,
+            'savingName' => $this->savingName,
+            'category' => $this->category,
+            'amount' => $this->amount
+        ];
     }
 }

@@ -31,6 +31,7 @@ final readonly class AdjustABudgetPlanIncomeCommandHandler
             $adjustABudgetPlanIncomeCommand->getEntryId(),
             $adjustABudgetPlanIncomeCommand->getName(),
             $adjustABudgetPlanIncomeCommand->getAmount(),
+            $adjustABudgetPlanIncomeCommand->getCategory(),
             $adjustABudgetPlanIncomeCommand->getUserId(),
         );
         $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), $aggregate->aggregateVersion());

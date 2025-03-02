@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useTranslation } from "../../hooks/useTranslation"
 import type { BudgetPlansCalendar } from "../../domain/budget/budgetTypes"
@@ -8,12 +7,17 @@ import type { BudgetPlansCalendar } from "../../domain/budget/budgetTypes"
 interface BudgetCalendarProps {
     budgetPlansCalendar: BudgetPlansCalendar | null
     onMonthClick: (year: number, month: number) => void
+    currentYear: number
+    onYearChange: (year: number) => void
 }
 
-export default function BudgetCalendar({ budgetPlansCalendar, onMonthClick }: BudgetCalendarProps) {
+export default function BudgetCalendar({
+                                           budgetPlansCalendar,
+                                           onMonthClick,
+                                           currentYear,
+                                           onYearChange,
+                                       }: BudgetCalendarProps) {
     const { t, language } = useTranslation()
-    const currentDate = new Date()
-    const [currentYear, setCurrentYear] = useState(currentDate.getFullYear())
 
     const months =
         language === "fr"
@@ -25,11 +29,11 @@ export default function BudgetCalendar({ budgetPlansCalendar, onMonthClick }: Bu
     }
 
     const handlePreviousYear = () => {
-        setCurrentYear((prev) => prev - 1)
+        onYearChange(currentYear - 1)
     }
 
     const handleNextYear = () => {
-        setCurrentYear((prev) => prev + 1)
+        onYearChange(currentYear + 1)
     }
 
     return (
@@ -55,7 +59,7 @@ export default function BudgetCalendar({ budgetPlansCalendar, onMonthClick }: Bu
             <div className="grid grid-cols-3 gap-2">
                 {months.map((month, index) => {
                     const hasData = hasBudgetPlan(currentYear, index + 1)
-                    const isCurrentMonth = currentYear === currentDate.getFullYear() && index === currentDate.getMonth()
+                    const isCurrentMonth = currentYear === new Date().getFullYear() && index === new Date().getMonth()
 
                     return (
                         <button

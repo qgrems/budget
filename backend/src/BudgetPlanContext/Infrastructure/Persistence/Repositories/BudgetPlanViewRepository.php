@@ -84,6 +84,7 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
                     "budget_plan_uuid", nv.budget_plan_uuid,
                     "need_name", nv.need_name,
                     "need_amount", nv.need_amount,
+                    "category", nv.category,
                     "created_at", nv.created_at,
                     "updated_at", nv.updated_at
                 )) FROM budget_plan_need_entry_view nv WHERE pv.uuid = nv.budget_plan_uuid) AS needs,
@@ -92,6 +93,7 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
                     "budget_plan_uuid", sv.budget_plan_uuid,
                     "saving_name", sv.saving_name,
                     "saving_amount", sv.saving_amount,
+                    "category", sv.category,
                     "created_at", sv.created_at,
                     "updated_at", sv.updated_at
                 )) FROM budget_plan_saving_entry_view sv WHERE pv.uuid = sv.budget_plan_uuid) AS savings,
@@ -100,6 +102,7 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
                     "budget_plan_uuid", wv.budget_plan_uuid,
                     "want_name", wv.want_name,
                     "want_amount", wv.want_amount,
+                    "category", wv.category,
                     "created_at", wv.created_at,
                     "updated_at", wv.updated_at
                 )) FROM budget_plan_want_entry_view wv WHERE pv.uuid = wv.budget_plan_uuid) AS wants,
@@ -108,6 +111,7 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
                     "budget_plan_uuid", iv.budget_plan_uuid,
                     "income_name", iv.income_name,
                     "income_amount", iv.income_amount,
+                    "category", iv.category,
                     "created_at", iv.created_at,
                     "updated_at", iv.updated_at
                 )) FROM budget_plan_income_entry_view iv WHERE pv.uuid = iv.budget_plan_uuid) AS incomes

@@ -20,7 +20,7 @@ final class BudgetPlanIncomeEntryViewRepository implements BudgetPlanIncomeEntry
 
     public function findOneByUuid(string $uuid): ?BudgetPlanIncomeEntryViewInterface
     {
-        $sql = 'SELECT uuid, budget_plan_uuid, income_name, income_amount, created_at, updated_at
+        $sql = 'SELECT uuid, budget_plan_uuid, income_name, income_amount, category, created_at, updated_at
             FROM budget_plan_income_entry_view
             WHERE uuid = :uuid';
 
@@ -37,17 +37,19 @@ final class BudgetPlanIncomeEntryViewRepository implements BudgetPlanIncomeEntry
     public function save(BudgetPlanIncomeEntryViewInterface $budgetPlanIncomeEntryView): void
     {
         $this->connection->executeStatement('
-            INSERT INTO budget_plan_income_entry_view (uuid, budget_plan_uuid, income_name, income_amount, created_at, updated_at)
-            VALUES (:uuid, :budget_plan_uuid, :income_name, :income_amount, :created_at, :updated_at)
+            INSERT INTO budget_plan_income_entry_view (uuid, budget_plan_uuid, income_name, income_amount, category, created_at, updated_at)
+            VALUES (:uuid, :budget_plan_uuid, :income_name, :income_amount, :category, :created_at, :updated_at)
             ON DUPLICATE KEY UPDATE
                 income_name = VALUES(income_name),
                 income_amount = VALUES(income_amount),
-                updated_at = VALUES(updated_at)
+                updated_at = VALUES(updated_at),
+                category = VALUES(category)
         ', [
             'uuid' => $budgetPlanIncomeEntryView->uuid,
             'budget_plan_uuid' => $budgetPlanIncomeEntryView->budgetPlanUuid,
             'income_name' => $budgetPlanIncomeEntryView->incomeName,
             'income_amount' => $budgetPlanIncomeEntryView->incomeAmount,
+            'category' => $budgetPlanIncomeEntryView->category,
             'created_at' => $budgetPlanIncomeEntryView->createdAt->format(\DateTimeImmutable::ATOM),
             'updated_at' => $budgetPlanIncomeEntryView->updatedAt->format(\DateTime::ATOM),
         ]);
