@@ -35,7 +35,7 @@ export function useBudgetPlans() {
             const [needs, wants, savings, incomes] = await Promise.all([
                 api.budgetQueries.getNeedsCategories(),
                 api.budgetQueries.getWantsCategories(),
-                api.budgetQueries.getSavingsCategories(),
+                api.budgetQueries.getWantsCategories(),
                 api.budgetQueries.getIncomesCategories(),
             ])
             setNeedsCategories(needs)
@@ -52,18 +52,21 @@ export function useBudgetPlans() {
         fetchCategories()
     }, [fetchCategories])
 
-    const fetchBudgetPlansCalendar = useCallback(async () => {
-        setLoading(true)
-        try {
-            const data = await api.budgetQueries.getBudgetPlansCalendar()
-            setBudgetPlansCalendar(data)
-        } catch (err) {
-            console.error("Failed to fetch budget plans calendar:", err)
-            setError("budgetTracker.fetchCalendarError")
-        } finally {
-            setLoading(false)
-        }
-    }, [setError])
+    const fetchBudgetPlansCalendar = useCallback(
+        async (year: number) => {
+            setLoading(true)
+            try {
+                const data = await api.budgetQueries.getBudgetPlansCalendar(year)
+                setBudgetPlansCalendar(data)
+            } catch (err) {
+                console.error("Failed to fetch budget plans calendar:", err)
+                setError("budgetTracker.fetchCalendarError")
+            } finally {
+                setLoading(false)
+            }
+        },
+        [setError],
+    )
 
     const fetchBudgetPlan = useCallback(
         async (budgetPlanId: string) => {
@@ -108,11 +111,11 @@ export function useBudgetPlans() {
                 await api.budgetCommands.createBudgetPlan(payload, requestId)
                 setValidMessage("budgetTracker.createSuccess")
                 setNewlyCreatedBudgetPlanId(requestId)
-                return true
+                return requestId
             } catch (err) {
                 console.error("Failed to create budget plan:", err)
                 setError("budgetTracker.createError")
-                return false
+                return null
             } finally {
                 setLoading(false)
             }
@@ -134,11 +137,12 @@ export function useBudgetPlans() {
 
                 await api.budgetCommands.createBudgetPlanFromExisting(payload, requestId)
                 setValidMessage("budgetTracker.createFromExistingSuccess")
-                return true
+                setNewlyCreatedBudgetPlanId(requestId)
+                return requestId
             } catch (err) {
                 console.error("Failed to create budget plan from existing:", err)
                 setError("budgetTracker.createFromExistingError")
-                return false
+                return null
             } finally {
                 setLoading(false)
             }
@@ -289,8 +293,13 @@ export function useBudgetPlans() {
             aggregateId: string
             type: string
         }) => {
+            console.log("Received WebSocket event:", event)
+
             // Refresh calendar after budget plan events
-            fetchBudgetPlansCalendar()
+            if (budgetPlansCalendar) {
+                const year = new Date().getFullYear()
+                fetchBudgetPlansCalendar(year)
+            }
 
             // If the event is for the currently selected budget plan, refresh it
             if (selectedBudgetPlan && event.aggregateId === selectedBudgetPlan.budgetPlan.uuid) {
@@ -332,7 +341,14 @@ export function useBudgetPlans() {
                 socket.off(eventType, handleBudgetPlanEvent)
             })
         }
-    }, [socket, fetchBudgetPlansCalendar, fetchBudgetPlan, selectedBudgetPlan, newlyCreatedBudgetPlanId])
+    }, [
+        socket,
+        fetchBudgetPlansCalendar,
+        fetchBudgetPlan,
+        selectedBudgetPlan,
+        newlyCreatedBudgetPlanId,
+        budgetPlansCalendar,
+    ])
 
     return {
         budgetPlansCalendar,
@@ -354,4 +370,3 @@ export function useBudgetPlans() {
         incomesCategories,
     }
 }
-

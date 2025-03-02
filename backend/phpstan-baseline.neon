@@ -1,10 +1,10 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Cannot access offset 1\|2\|3\|4\|5\|6\|7\|8\|9\|10\|11\|12 on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
+			message: '#^Method App\\BudgetPlanContext\\Application\\Queries\\GetACalendarWithItsBudgetPlansFinancialRatiosByYearQuery\:\:getDate\(\) should return DateTimeImmutable but returns DateTimeImmutable\|false\.$#'
+			identifier: return.type
 			count: 1
-			path: src/BudgetPlanContext/Application/Handlers/QueryHandlers/ListBudgetPlansCalendarQueryHandler.php
+			path: src/BudgetPlanContext/Application/Queries/GetACalendarWithItsBudgetPlansFinancialRatiosByYearQuery.php
 
 		-
 			message: '#^Cannot access property \$currency on mixed\.$#'
@@ -23,6 +23,78 @@ parameters:
 			identifier: property.onlyWritten
 			count: 1
 			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
+
+		-
+			message: '#^Binary operation "\+\=" between mixed and mixed results in an error\.$#'
+			identifier: assignOp.invalid
+			count: 1
+			path: src/BudgetPlanContext/Infrastructure/Persistence/Repositories/BudgetPlanViewRepository.php
+
+		-
+			message: '#^Binary operation "/" between mixed and \(float\|int\) results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/BudgetPlanContext/Infrastructure/Persistence/Repositories/BudgetPlanViewRepository.php
+
+		-
+			message: '#^Cannot access offset ''incomeCategoriesRatio'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/BudgetPlanContext/Infrastructure/Persistence/Repositories/BudgetPlanViewRepository.php
+
+		-
+			message: '#^Cannot access offset ''incomesTotal'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/BudgetPlanContext/Infrastructure/Persistence/Repositories/BudgetPlanViewRepository.php
+
+		-
+			message: '#^Cannot access offset ''needCategoriesRatio'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/BudgetPlanContext/Infrastructure/Persistence/Repositories/BudgetPlanViewRepository.php
+
+		-
+			message: '#^Cannot access offset ''needsTotal'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/BudgetPlanContext/Infrastructure/Persistence/Repositories/BudgetPlanViewRepository.php
+
+		-
+			message: '#^Cannot access offset ''savingCategoriesRatio'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/BudgetPlanContext/Infrastructure/Persistence/Repositories/BudgetPlanViewRepository.php
+
+		-
+			message: '#^Cannot access offset ''savingsTotal'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/BudgetPlanContext/Infrastructure/Persistence/Repositories/BudgetPlanViewRepository.php
+
+		-
+			message: '#^Cannot access offset ''wantCategoriesRatio'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/BudgetPlanContext/Infrastructure/Persistence/Repositories/BudgetPlanViewRepository.php
+
+		-
+			message: '#^Cannot access offset ''wantsTotal'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/BudgetPlanContext/Infrastructure/Persistence/Repositories/BudgetPlanViewRepository.php
+
+		-
+			message: '#^Cannot access offset mixed on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/BudgetPlanContext/Infrastructure/Persistence/Repositories/BudgetPlanViewRepository.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 2
+			path: src/BudgetPlanContext/Infrastructure/Persistence/Repositories/BudgetPlanViewRepository.php
 
 		-
 			message: '#^Call to an undefined method App\\BudgetPlanContext\\Domain\\Ports\\Inbound\\BudgetPlanIncomeEntryViewInterface\:\:fromEvent\(\)\.$#'

@@ -178,7 +178,7 @@ export const api = {
     },
 
     budgetQueries: {
-        getBudgetPlansCalendar: () => fetchWithAuth("/budget-plans-calendar"),
+        getBudgetPlansCalendar: (year: number) => fetchWithAuth(`/budget-plans-yearly-calendar?year=${year}`),
         getBudgetPlan: (uuid: string) => fetchWithAuth(`/budget-plans/${uuid}`),
         getNeedsCategories: () => fetchWithAuth("/needs-categories"),
         getWantsCategories: () => fetchWithAuth("/wants-categories"),

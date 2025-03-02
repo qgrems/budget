@@ -25,7 +25,9 @@ export default function BudgetCalendar({
             : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
     const hasBudgetPlan = (year: number, month: number): boolean => {
-        return !!budgetPlansCalendar?.[year]?.[month]
+        return (
+            budgetPlansCalendar?.[year]?.[month]?.uuid !== null && budgetPlansCalendar?.[year]?.[month]?.uuid !== undefined
+        )
     }
 
     const handlePreviousYear = () => {
