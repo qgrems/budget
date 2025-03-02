@@ -25,6 +25,10 @@
   --chart-3: 100 100% 50%;
   --chart-4: 50 100% 50%;
   --chart-5: 0 100% 50%;
+  --neomorphic-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1), -2px -2px 10px rgba(255, 255, 255, 0.7);
+  --neomorphic-inset-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.05), inset -2px -2px 5px rgba(255, 255, 255, 0.5);
+  --chart-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.7);
+  --chart-highlight: 0 0 0 2px hsl(var(--background));
 }
 
 .dark {
@@ -53,18 +57,16 @@ body {
 }
 
 .neomorphic {
-  border-radius: 10px;
-  background: linear-gradient(145deg, #f0f0f0, #ffffff);
-  box-shadow: 3px 3px 6px #d1d1d1, -3px -3px 6px #ffffff;
+  background: hsl(var(--background));
+  box-shadow: var(--neomorphic-shadow);
 }
 
 .neomorphic-inset {
-  border-radius: 15px;
-  background: linear-gradient(145deg, #ffffff, #f0f0f0);
-  box-shadow: inset 5px 5px 10px #d1d1d1, inset -5px -5px 10px #ffffff;
+  background: hsl(var(--background));
+  box-shadow: var(--neomorphic-inset-shadow);
 }
-.maxWidthInput{
-  max-width: 300px!important;
+.maxWidthInput {
+  max-width: 300px !important;
 }
 .neomorphic-button {
   border-radius: 8px;
@@ -87,13 +89,12 @@ body {
   box-shadow: inset 2px 2px 4px #d1d1d1, inset -2px -2px 4px #ffffff;
 }
 
-
 .neomorphic-circle {
   border-radius: 50%;
   background: linear-gradient(145deg, #f0f0f0, #ffffff);
   box-shadow: 5px 5px 10px #d1d1d1, -5px -5px 10px #ffffff;
 }
-.container{
+.container {
   min-height: 50vh;
 }
 /* ErrorModal.css */
@@ -113,7 +114,7 @@ body {
     width: 0%;
   }
 }
-/* Add this CSS to your stylesheet */
+
 .mobile-nav-bar {
   display: none;
   position: fixed;
@@ -126,10 +127,12 @@ body {
   justify-content: space-around;
 }
 
-@media (max-width: 1080px) {
-  .mobile-nav-bar {
-    display: flex;
-  }
+.recharts-pie-sector {
+  filter: drop-shadow(var(--chart-shadow));
+}
+
+.recharts-pie-sector:hover {
+  filter: drop-shadow(var(--chart-shadow)) brightness(1.05);
 }
 /* Add this CSS to your stylesheet */
 .mobile-nav-bar {
@@ -154,9 +157,8 @@ body {
   margin-bottom: 5rem;
 }
 @media (max-width: 1080px) {
-  .headerdislay{
+  .headerdislay {
     display: none;
-
   }
 }
 /* Add this CSS to your stylesheet */
@@ -208,5 +210,6 @@ body {
 
 @media (min-width: 1081px) {
   .language-selector-modal {
-    right: -22px;  }
+    right: -22px;
+  }
 }

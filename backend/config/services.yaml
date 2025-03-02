@@ -121,7 +121,7 @@ services:
     App\BudgetPlanContext\Application\Handlers\QueryHandlers\GetABudgetPlanWithItsEntriesQueryHandler:
         tags: [ 'messenger.message_handler' ]
 
-    App\BudgetPlanContext\Application\Handlers\QueryHandlers\ListBudgetPlansCalendarQueryHandler:
+    App\BudgetPlanContext\Application\Handlers\QueryHandlers\GetACalendarWithItsBudgetPlansFinancialRatiosByYearQueryHandler:
         tags: [ 'messenger.message_handler' ]
 
     App\BudgetPlanContext\ReadModels\Projections\BudgetPlanIncomeEntryProjection:
