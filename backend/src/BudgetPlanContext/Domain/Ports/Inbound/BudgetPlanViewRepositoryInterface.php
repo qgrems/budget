@@ -12,6 +12,13 @@ interface BudgetPlanViewRepositoryInterface
 
     public function findOnePlanWithEntriesBy(array $criteria, ?array $orderBy = null): array;
 
+    public function getACalendarWithItsBudgetPlansFinancialRatiosByYear(
+        array $criteria,
+        ?array $orderBy = null,
+        ?int $limit = null,
+        ?int $offset = null,
+    ): array;
+
     public function findBy(
         array $criteria,
         ?array $orderBy = null,

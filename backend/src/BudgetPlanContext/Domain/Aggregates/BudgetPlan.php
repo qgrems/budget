@@ -42,14 +42,15 @@ use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanSavingCategory;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanUserId;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanWant;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanWantCategory;
-use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
-use App\SharedContext\Domain\Ports\Inbound\EventClassMapInterface;
+use App\Libraries\FluxCapacitor\Ports\AggregateRootInterface;
+use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
+use App\Libraries\FluxCapacitor\Ports\EventClassMapInterface;
+use App\Libraries\FluxCapacitor\Traits\DomainEventsCapabilityTrait;
 use App\SharedContext\Domain\Ports\Outbound\TranslatorInterface;
 use App\SharedContext\Domain\Ports\Outbound\UuidGeneratorInterface;
-use App\SharedContext\Domain\Traits\DomainEventsCapabilityTrait;
 use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
 
-final class BudgetPlan
+final class BudgetPlan implements AggregateRootInterface
 {
     use DomainEventsCapabilityTrait;
 
@@ -474,6 +475,11 @@ final class BudgetPlan
         $this->raiseDomainEvents($budgetPlanRemovedDomainEvent);
     }
 
+    public function aggregateVersion(): int
+    {
+        return $this->aggregateVersion;
+    }
+
     private function apply(DomainEventInterface $event): void
     {
         match ($event::class) {
@@ -684,11 +690,6 @@ final class BudgetPlan
     ): void {
         $this->savings = array_filter($this->savings, fn(BudgetPlanSaving $saving) => $saving->getUuid() !== $event->uuid);
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
-    }
-
-    public function aggregateVersion(): int
-    {
-        return $this->aggregateVersion;
     }
 
     private static function generateFakeNeeds(

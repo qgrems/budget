@@ -3,7 +3,7 @@
 namespace App\UserContext\Domain\Events;
 
 use App\Libraries\Anonymii\Attributes\PersonalData;
-use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
+use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
 use App\UserContext\Domain\Ports\Inbound\UserDomainEventInterface;
 
 final class UserPasswordChangedDomainEvent implements UserDomainEventInterface

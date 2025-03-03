@@ -24,7 +24,7 @@ use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanViewInterface;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanCurrency;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanId;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanUserId;
-use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
+use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]

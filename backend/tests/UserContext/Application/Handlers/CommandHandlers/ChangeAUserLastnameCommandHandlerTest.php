@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
 use App\Gateway\User\Presentation\HTTP\DTOs\ChangeAUserLastnameInput;
+use App\Kernel;
 use App\Libraries\Anonymii\Ports\EventEncryptorInterface;
 use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
-use App\SharedContext\Domain\Services\EventClassMap;
+use App\Libraries\FluxCapacitor\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use App\UserContext\Application\Commands\ChangeAUserLastnameCommand;
@@ -32,7 +33,7 @@ class ChangeAUserLastnameCommandHandlerTest extends TestCase
         $this->eventStore = $this->createMock(EventStoreInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
         $this->eventEncryptor = $this->createMock(EventEncryptorInterface::class);
-        $this->eventClassMap = new EventClassMap();
+        $this->eventClassMap = new EventClassMap(new Kernel('test', false));
         $this->handler = new ChangeAUserLastnameCommandHandler(
             $this->eventSourcedRepository,
             $this->eventEncryptor,

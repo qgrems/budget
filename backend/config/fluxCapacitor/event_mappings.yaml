@@ -1,0 +1,39 @@
+events:
+  BudgetEnvelopeAddedDomainEvent: App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeAddedDomainEvent
+  BudgetEnvelopeCreditedDomainEvent: App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedDomainEvent
+  BudgetEnvelopeDebitedDomainEvent: App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDebitedDomainEvent
+  BudgetEnvelopeDeletedDomainEvent: App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeDeletedDomainEvent
+  BudgetEnvelopeRenamedDomainEvent: App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRenamedDomainEvent
+  BudgetEnvelopeReplayedDomainEvent: App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeReplayedDomainEvent
+  BudgetEnvelopeRewoundDomainEvent: App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRewoundDomainEvent
+  BudgetEnvelopeTargetedAmountChangedDomainEvent: App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeTargetedAmountChangedDomainEvent
+  BudgetPlanGeneratedDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedDomainEvent
+  BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent
+  BudgetPlanIncomeAddedDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanIncomeAddedDomainEvent
+  BudgetPlanIncomeAdjustedDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanIncomeAdjustedDomainEvent
+  BudgetPlanIncomeRemovedDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanIncomeRemovedDomainEvent
+  BudgetPlanNeedAddedDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanNeedAddedDomainEvent
+  BudgetPlanNeedAdjustedDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanNeedAdjustedDomainEvent
+  BudgetPlanNeedRemovedDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanNeedRemovedDomainEvent
+  BudgetPlanRemovedDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanRemovedDomainEvent
+  BudgetPlanSavingAddedDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanSavingAddedDomainEvent
+  BudgetPlanSavingAdjustedDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanSavingAdjustedDomainEvent
+  BudgetPlanSavingRemovedDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanSavingRemovedDomainEvent
+  BudgetPlanWantAddedDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanWantAddedDomainEvent
+  BudgetPlanWantAdjustedDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanWantAdjustedDomainEvent
+  BudgetPlanWantRemovedDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanWantRemovedDomainEvent
+  UserDeletedDomainEvent: App\UserContext\Domain\Events\UserDeletedDomainEvent
+  UserFirstnameChangedDomainEvent: App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent
+  UserLanguagePreferenceChangedDomainEvent: App\UserContext\Domain\Events\UserLanguagePreferenceChangedDomainEvent
+  UserLastnameChangedDomainEvent: App\UserContext\Domain\Events\UserLastnameChangedDomainEvent
+  UserPasswordChangedDomainEvent: App\UserContext\Domain\Events\UserPasswordChangedDomainEvent
+  UserPasswordResetDomainEvent: App\UserContext\Domain\Events\UserPasswordResetDomainEvent
+  UserPasswordResetRequestedDomainEvent: App\UserContext\Domain\Events\UserPasswordResetRequestedDomainEvent
+  UserReplayedDomainEvent: App\UserContext\Domain\Events\UserReplayedDomainEvent
+  UserRewoundDomainEvent: App\UserContext\Domain\Events\UserRewoundDomainEvent
+  UserSignedUpDomainEvent: App\UserContext\Domain\Events\UserSignedUpDomainEvent
+
+aggregates:
+  BudgetEnvelope: App\BudgetEnvelopeContext\Domain\Aggregates\BudgetEnvelope
+  BudgetPlan: App\BudgetPlanContext\Domain\Aggregates\BudgetPlan
+  User: App\UserContext\Domain\Aggregates\User

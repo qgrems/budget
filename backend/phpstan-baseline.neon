@@ -1,6 +1,12 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#^Cannot access offset 1\|2\|3\|4\|5\|6\|7\|8\|9\|10\|11\|12 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/BudgetPlanContext/Application/Handlers/QueryHandlers/ListBudgetPlansCalendarQueryHandler.php
+
+		-
 			message: '#^Method App\\BudgetPlanContext\\Application\\Queries\\GetACalendarWithItsBudgetPlansFinancialRatiosByYearQuery\:\:getDate\(\) should return DateTimeImmutable but returns DateTimeImmutable\|false\.$#'
 			identifier: return.type
 			count: 1
@@ -309,7 +315,7 @@ parameters:
 		-
 			message: '#^Cannot access constant class on mixed\.$#'
 			identifier: classConstant.nonObject
-			count: 1
+			count: 2
 			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
 
 		-
@@ -335,6 +341,48 @@ parameters:
 			identifier: cast.int
 			count: 1
 			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
+
+		-
+			message: '#^Cannot access offset ''aggregates'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Libraries/FluxCapacitor/Services/EventClassMap.php
+
+		-
+			message: '#^Cannot access offset ''events'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Libraries/FluxCapacitor/Services/EventClassMap.php
+
+		-
+			message: '#^Method App\\Libraries\\FluxCapacitor\\Services\\EventClassMap\:\:getAggregatePathByByStreamName\(\) should return string but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Libraries/FluxCapacitor/Services/EventClassMap.php
+
+		-
+			message: '#^Method App\\Libraries\\FluxCapacitor\\Services\\EventClassMap\:\:getClassNameByEventPath\(\) should return string but returns int\<min, \-1\>\|int\<1, max\>\|string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Libraries/FluxCapacitor/Services/EventClassMap.php
+
+		-
+			message: '#^Method App\\Libraries\\FluxCapacitor\\Services\\EventClassMap\:\:getEventPathByClassName\(\) should return string but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Libraries/FluxCapacitor/Services/EventClassMap.php
+
+		-
+			message: '#^Property App\\Libraries\\FluxCapacitor\\Services\\EventClassMap\:\:\$aggregateMappings \(array\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Libraries/FluxCapacitor/Services/EventClassMap.php
+
+		-
+			message: '#^Property App\\Libraries\\FluxCapacitor\\Services\\EventClassMap\:\:\$eventMappings \(array\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Libraries/FluxCapacitor/Services/EventClassMap.php
 
 		-
 			message: '#^Cannot access constant class on mixed\.$#'

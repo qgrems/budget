@@ -6,7 +6,7 @@ namespace App\BudgetPlanContext\Application\Handlers\CommandHandlers;
 
 use App\BudgetPlanContext\Application\Commands\AddABudgetPlanNeedCommand;
 use App\BudgetPlanContext\Domain\Aggregates\BudgetPlan;
-use App\SharedContext\Domain\Ports\Inbound\EventClassMapInterface;
+use App\Libraries\FluxCapacitor\Ports\EventClassMapInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 
 final readonly class AddABudgetPlanNeedCommandHandler

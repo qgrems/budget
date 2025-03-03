@@ -5,8 +5,9 @@ namespace App\UserContext\Domain\Aggregates;
 use App\Libraries\Anonymii\Ports\EventEncryptorInterface;
 use App\Libraries\Anonymii\Traits\AnonymiiUserDomainEventsCapabilityTrait;
 use App\Libraries\Anonymii\Traits\EncryptedKeyCacheTrait;
-use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
-use App\SharedContext\Domain\Ports\Inbound\EventClassMapInterface;
+use App\Libraries\FluxCapacitor\Ports\AggregateRootInterface;
+use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
+use App\Libraries\FluxCapacitor\Ports\EventClassMapInterface;
 use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\Events\UserDeletedDomainEvent;
 use App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent;
@@ -31,7 +32,7 @@ use App\UserContext\Domain\ValueObjects\UserLastname;
 use App\UserContext\Domain\ValueObjects\UserPassword;
 use App\UserContext\Domain\ValueObjects\UserPasswordResetToken;
 
-final class User
+final class User implements AggregateRootInterface
 {
     use AnonymiiUserDomainEventsCapabilityTrait;
     use EncryptedKeyCacheTrait;

@@ -6,7 +6,7 @@ namespace App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers;
 
 use App\BudgetEnvelopeContext\Application\Commands\RewindABudgetEnvelopeFromEventsCommand;
 use App\BudgetEnvelopeContext\Domain\Aggregates\BudgetEnvelope;
-use App\SharedContext\Domain\Ports\Inbound\EventClassMapInterface;
+use App\Libraries\FluxCapacitor\Ports\EventClassMapInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 
 final readonly class RewindABudgetEnvelopeFromEventsCommandHandler

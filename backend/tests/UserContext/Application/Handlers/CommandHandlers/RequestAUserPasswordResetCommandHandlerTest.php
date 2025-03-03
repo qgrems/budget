@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
 use App\Gateway\User\Presentation\HTTP\DTOs\RequestAUserPasswordResetInput;
+use App\Kernel;
 use App\Libraries\Anonymii\Ports\EventEncryptorInterface;
 use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
-use App\SharedContext\Domain\Services\EventClassMap;
+use App\Libraries\FluxCapacitor\Services\EventClassMap;
 use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
@@ -45,7 +46,7 @@ class RequestAUserPasswordResetCommandHandlerTest extends TestCase
         $this->userViewRepository = $this->createMock(UserViewRepositoryInterface::class);
         $this->passwordResetTokenGenerator = $this->createMock(PasswordResetTokenGeneratorInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
-        $this->eventClassMap = new EventClassMap();
+        $this->eventClassMap = new EventClassMap(new Kernel('test', false));
         $this->handler = new RequestAUserPasswordResetCommandHandler(
             $this->userViewRepository,
             $this->passwordResetTokenGenerator,

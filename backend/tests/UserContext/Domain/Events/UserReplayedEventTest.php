@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Domain\Events;
 
-use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
+use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
 use App\UserContext\Domain\Events\UserReplayedDomainEvent;
 use PHPUnit\Framework\TestCase;
 
