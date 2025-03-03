@@ -25,6 +25,30 @@ parameters:
 			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
 
 		-
+			message: '#^Cannot access offset ''incomeCategoriesRatio''\|''incomeCategoriesTotal''\|''needCategoriesRatio''\|''needCategoriesTotal''\|''savingCategoriesRatio''\|''savingCategoriesTotal''\|''wantCategoriesRatio''\|''wantCategoriesTotal'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/BudgetPlanContext/Domain/Services/BudgetPlanCategoriesTranslator.php
+
+		-
+			message: '#^Cannot access offset string on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/BudgetPlanContext/Domain/Services/BudgetPlanCategoriesTranslator.php
+
+		-
+			message: '#^Method App\\BudgetPlanContext\\Domain\\Services\\BudgetPlanCategoriesTranslator\:\:translate\(\) should return array but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/BudgetPlanContext/Domain/Services/BudgetPlanCategoriesTranslator.php
+
+		-
+			message: '#^Method App\\BudgetPlanContext\\Domain\\Services\\BudgetPlanCategoriesTranslator\:\:translateCategories\(\) should return array but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/BudgetPlanContext/Domain/Services/BudgetPlanCategoriesTranslator.php
+
+		-
 			message: '#^Binary operation "\+\=" between mixed and mixed results in an error\.$#'
 			identifier: assignOp.invalid
 			count: 1

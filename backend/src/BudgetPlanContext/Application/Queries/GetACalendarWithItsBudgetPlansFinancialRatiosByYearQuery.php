@@ -6,23 +6,32 @@ namespace App\BudgetPlanContext\Application\Queries;
 
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanUserId;
 use App\SharedContext\Domain\Ports\Inbound\QueryInterface;
+use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
 
 final readonly class GetACalendarWithItsBudgetPlansFinancialRatiosByYearQuery implements QueryInterface
 {
     private string $budgetPlanUserId;
+    private string $userLanguagePreference;
     private string $date;
 
     public function __construct(
         BudgetPlanUserId $budgetPlanUserId,
+        UserLanguagePreference $userLanguagePreference,
         \DateTimeImmutable $date,
     ) {
         $this->budgetPlanUserId = (string) $budgetPlanUserId;
+        $this->userLanguagePreference = (string) $userLanguagePreference;
         $this->date = $date->format('Y');
     }
 
     public function getBudgetPlanUserId(): BudgetPlanUserId
     {
         return BudgetPlanUserId::fromString($this->budgetPlanUserId);
+    }
+
+    public function getUserLanguagePreference(): string
+    {
+        return $this->userLanguagePreference;
     }
 
     public function getDate(): \DateTimeImmutable
