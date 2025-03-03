@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Gateway\BudgetPlan\Presentation\HTTP\Controllers;
 
+use App\BudgetPlanContext\Domain\Enums\IncomesCategoriesEnum;
 use App\UserContext\Domain\Ports\Inbound\UserViewInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,19 +27,11 @@ final readonly class ListIncomesCategoriesController
     ): JsonResponse {
         $locale = $user->languagePreference;
 
-        return new JsonResponse(
-            [
-                ['id' => 'salary', 'name' => $this->translator->trans('incomes.salary', [], 'messages', $locale)],
-                ['id' => 'freelance', 'name' => $this->translator->trans('incomes.freelance', [], 'messages', $locale)],
-                ['id' => 'business', 'name' => $this->translator->trans('incomes.business', [], 'messages', $locale)],
-                ['id' => 'rental-income', 'name' => $this->translator->trans('incomes.rental-income', [], 'messages', $locale)],
-                ['id' => 'investments', 'name' => $this->translator->trans('incomes.investments', [], 'messages', $locale)],
-                ['id' => 'government-benefits', 'name' => $this->translator->trans('incomes.government-benefits', [], 'messages', $locale)],
-                ['id' => 'pension', 'name' => $this->translator->trans('incomes.pension', [], 'messages', $locale)],
-                ['id' => 'side-hustle', 'name' => $this->translator->trans('incomes.side-hustle', [], 'messages', $locale)],
-                ['id' => 'child-support', 'name' => $this->translator->trans('incomes.child-support', [], 'messages', $locale)],
-                ['id' => 'other', 'name' => $this->translator->trans('incomes.other', [], 'messages', $locale)],
-            ], Response::HTTP_OK,
-        );
+        $categories = array_map(fn(IncomesCategoriesEnum $category) => [
+            'id' => $category->value,
+            'name' => $this->translator->trans('incomes.' . $category->value, [], 'messages', $locale)
+        ], IncomesCategoriesEnum::cases());
+
+        return new JsonResponse($categories, Response::HTTP_OK);
     }
 }

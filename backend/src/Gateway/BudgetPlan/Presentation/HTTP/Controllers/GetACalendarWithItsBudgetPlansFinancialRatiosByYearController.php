@@ -8,6 +8,7 @@ use App\BudgetPlanContext\Application\Queries\GetACalendarWithItsBudgetPlansFina
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanUserId;
 use App\Gateway\BudgetPlan\Presentation\HTTP\DTOs\GetACalendarWithItsBudgetPlansFinancialRatiosByYearInput;
 use App\SharedContext\Domain\Ports\Outbound\QueryBusInterface;
+use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\Ports\Inbound\UserViewInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,6 +34,7 @@ final readonly class GetACalendarWithItsBudgetPlansFinancialRatiosByYearControll
             $this->queryBus->query(
                 new GetACalendarWithItsBudgetPlansFinancialRatiosByYearQuery(
                     BudgetPlanUserId::fromString($user->getUuid()),
+                    UserLanguagePreference::fromString($user->languagePreference),
                     $getACalendarWithItsBudgetPlansFinancialRatiosByYearInput->year ?
                         \DateTimeImmutable::createFromFormat('Y', $getACalendarWithItsBudgetPlansFinancialRatiosByYearInput->year) :
                         new \DateTimeImmutable('now'),

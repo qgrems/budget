@@ -18,7 +18,8 @@ savings:
   debt-repayment: "Remboursement de dette"
   charitable-giving: "Dons caritatifs"
 needs:
-  rent-mortgage: "Loyer / Prêt immobilier"
+  rent: "Loyer"
+  mortgage: "Prêt immobilier"
   utilities: "Services publics"
   insurance: "Assurance"
   food: "Alimentation"
