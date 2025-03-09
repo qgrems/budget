@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\BudgetEnvelopeContext\Domain\Events;
 
-use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
+use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
 
 final class BudgetEnvelopeReplayedDomainEvent implements DomainEventInterface
 {

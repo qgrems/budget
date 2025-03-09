@@ -14,12 +14,13 @@ use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRenamedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeIsNotOwnedByUserException;
 use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeNotFoundException;
 use App\BudgetEnvelopeContext\Domain\Exceptions\InvalidBudgetEnvelopeOperationException;
-use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCurrency;
+use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\Gateway\BudgetEnvelope\Presentation\HTTP\DTOs\ChangeABudgetEnvelopeCurrencyInput;
+use App\Kernel;
 use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
-use App\SharedContext\Domain\Services\EventClassMap;
+use App\Libraries\FluxCapacitor\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use Assert\InvalidArgumentException;
@@ -38,7 +39,7 @@ class ChangeABudgetEnvelopeCurrencyCommandHandlerTest extends TestCase
     {
         $this->eventStore = $this->createMock(EventStoreInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
-        $this->eventClassMap = new EventClassMap();
+        $this->eventClassMap = new EventClassMap(new Kernel('test', false));
 
         $this->changeABudgetEnvelopeCurrencyCommandHandler = new ChangeABudgetEnvelopeCurrencyCommandHandler(
             $this->eventSourcedRepository,

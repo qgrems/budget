@@ -22,16 +22,17 @@ use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCreditMoney;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCurrency;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCurrentAmount;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeDebitMoney;
-use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeEntryDescription;
+use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeName;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
-use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
-use App\SharedContext\Domain\Ports\Inbound\EventClassMapInterface;
-use App\SharedContext\Domain\Traits\DomainEventsCapabilityTrait;
+use App\Libraries\FluxCapacitor\Ports\AggregateRootInterface;
+use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
+use App\Libraries\FluxCapacitor\Ports\EventClassMapInterface;
+use App\Libraries\FluxCapacitor\Traits\DomainEventsCapabilityTrait;
 
-final class BudgetEnvelope
+final class BudgetEnvelope implements AggregateRootInterface
 {
     use DomainEventsCapabilityTrait;
 

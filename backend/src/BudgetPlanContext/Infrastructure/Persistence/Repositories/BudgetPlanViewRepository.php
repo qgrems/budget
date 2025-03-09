@@ -222,7 +222,7 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
      * @throws Exception
      */
     #[\Override]
-    public function findBy(
+    public function getACalendarWithItsBudgetPlansFinancialRatiosByYear(
         array $criteria,
         ?array $orderBy = null,
         ?int $limit = null,
@@ -302,7 +302,6 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
             'wantCategories' => [],
         ];
 
-        // Initialize the formattedResults array with the required structure
         $year = $criteria['year'] ?? date('Y');
         $formattedResults[$year] = array_fill(1, 12, ['uuid' => null]);
 
@@ -330,7 +329,7 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
             });
         });
 
-        array_walk($yearlyTotals, function (&$totals, $key) use (&$formattedResults) {
+        array_walk($yearlyTotals, function ($totals, $key) use (&$formattedResults) {
             $totalAmount = array_sum($totals);
             $ratios = array_map(fn($amount) => $amount / $totalAmount, $totals);
             $formattedResults[$key . 'Ratio'] = array_map([$this, 'formatPercentage'], $ratios);
@@ -338,6 +337,40 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
         });
 
         return $formattedResults;
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[\Override]
+    public function findBy(
+        array $criteria,
+        ?array $orderBy = null,
+        ?int $limit = null,
+        ?int $offset = null
+    ): array {
+        $sql = sprintf('SELECT uuid, date FROM budget_plan_view WHERE %s', $this->buildWhereClause($criteria));
+
+        if ($orderBy) {
+            $sql = sprintf(
+                '%s ORDER BY %s',
+                $sql,
+                implode(
+                    ', ',
+                    array_map(fn ($key, $value) => sprintf('%s %s', $key, $value), array_keys($orderBy), $orderBy)
+                )
+            );
+        }
+
+        if ($limit) {
+            $sql = sprintf('%s LIMIT %d', $sql, $limit);
+        }
+
+        if ($offset) {
+            $sql = sprintf('%s OFFSET %d', $sql, $offset);
+        }
+
+        return $this->connection->prepare($sql)->executeQuery($this->filterCriteria($criteria))->fetchAllAssociative();
     }
 
     private function buildWhereClauseWithYear(array $criteria): string

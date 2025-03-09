@@ -34,7 +34,7 @@ final readonly class EventStore implements EventStoreInterface
             ->from('event_store')
             ->where('stream_id = :id')
             ->setParameter('id', $uuid)
-            ->orderBy('occurred_on', 'ASC');
+            ->orderBy('stream_version', 'ASC');
 
         if (null !== $desiredDateTime) {
             $queryBuilder->andWhere('occurred_on <= :desiredDateTime')
@@ -60,7 +60,7 @@ final readonly class EventStore implements EventStoreInterface
                 $this->eventClassMap->getClassNamesByEventsPaths($domainEventClasses),
                 ArrayParameterType::STRING,
             )
-            ->orderBy('occurred_on', 'ASC');
+            ->orderBy('stream_version', 'ASC');
 
         if (null !== $desiredDateTime) {
             $queryBuilder->andWhere('occurred_on <= :desiredDateTime')
@@ -79,6 +79,7 @@ final readonly class EventStore implements EventStoreInterface
             foreach ($events as $event) {
                 $this->connection->insert('event_store', [
                     'stream_id' => $event->aggregateId,
+                    'stream_name' => $this->eventClassMap->getStreamNameByEventPath($event::class),
                     'event_name' => $this->eventClassMap->getClassNameByEventPath($event::class),
                     'payload' => json_encode($event->toArray(), JSON_THROW_ON_ERROR),
                     'occurred_on' => $event->occurredOn->format('Y-m-d H:i:s'),

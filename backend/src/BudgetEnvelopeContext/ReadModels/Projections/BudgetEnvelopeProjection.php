@@ -25,7 +25,7 @@ use App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelope
 use App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeRewoundNotificationEvent;
 use App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeTargetedAmountChangedNotificationEvent;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeView;
-use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
+use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
 use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
 
 final readonly class BudgetEnvelopeProjection

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Gateway\BudgetPlan\Presentation\HTTP\Controllers;
 
 use App\BudgetPlanContext\Application\Commands\GenerateABudgetPlanWithOneThatAlreadyExistsCommand;
-use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanCurrency;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanId;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanUserId;
 use App\Gateway\BudgetPlan\Presentation\HTTP\DTOs\GenerateABudgetPlanWithOneThatAlreadyExistsInput;

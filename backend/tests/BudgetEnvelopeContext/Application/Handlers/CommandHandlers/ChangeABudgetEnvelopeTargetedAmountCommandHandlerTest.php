@@ -19,8 +19,9 @@ use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\Gateway\BudgetEnvelope\Presentation\HTTP\DTOs\ChangeABudgetEnvelopeTargetedAmountInput;
+use App\Kernel;
 use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
-use App\SharedContext\Domain\Services\EventClassMap;
+use App\Libraries\FluxCapacitor\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -38,7 +39,7 @@ class ChangeABudgetEnvelopeTargetedAmountCommandHandlerTest extends TestCase
     {
         $this->eventStore = $this->createMock(EventStoreInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
-        $this->eventClassMap = new EventClassMap();
+        $this->eventClassMap = new EventClassMap(new Kernel('test', false));
 
         $this->changeABudgetEnvelopeTargetedAmountCommandHandler = new ChangeABudgetEnvelopeTargetedAmountCommandHandler(
             $this->eventSourcedRepository,

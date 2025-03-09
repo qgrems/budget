@@ -20,8 +20,9 @@ use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeEntryDescription
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\Gateway\BudgetEnvelope\Presentation\HTTP\DTOs\CreditABudgetEnvelopeInput;
+use App\Kernel;
 use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
-use App\SharedContext\Domain\Services\EventClassMap;
+use App\Libraries\FluxCapacitor\Services\EventClassMap;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
 use App\Tests\CreateEventGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -39,7 +40,7 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
     {
         $this->eventStore = $this->createMock(EventStoreInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
-        $this->eventClassMap = new EventClassMap();
+        $this->eventClassMap = new EventClassMap(new Kernel('test', false));
 
         $this->creditABudgetEnvelopeCommandHandler = new CreditABudgetEnvelopeCommandHandler(
             $this->eventSourcedRepository,

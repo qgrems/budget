@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\BudgetPlanContext\Application\Handlers\QueryHandlers;
 
 use App\BudgetPlanContext\Application\Queries\GetACalendarWithItsBudgetPlansFinancialRatiosByYearQuery;
+use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanCategoriesTranslatorInterface;
 use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanViewRepositoryInterface;
-use App\BudgetPlanContext\Domain\Services\BudgetPlanCategoriesTranslator;
 
 final readonly class GetACalendarWithItsBudgetPlansFinancialRatiosByYearQueryHandler
 {
     public function __construct(
         private BudgetPlanViewRepositoryInterface $budgetPlanViewRepository,
-        private BudgetPlanCategoriesTranslator $budgetPlanCategoriesTranslator,
+        private BudgetPlanCategoriesTranslatorInterface $budgetPlanCategoriesTranslator,
     ) {
     }
 
@@ -20,7 +20,7 @@ final readonly class GetACalendarWithItsBudgetPlansFinancialRatiosByYearQueryHan
         GetACalendarWithItsBudgetPlansFinancialRatiosByYearQuery $getACalendarWithItsBudgetPlansFinancialRatiosByYearQuery,
     ): array {
         return $this->budgetPlanCategoriesTranslator->translate(
-            $this->budgetPlanViewRepository->findBy(
+            $this->budgetPlanViewRepository->getACalendarWithItsBudgetPlansFinancialRatiosByYear(
                 [
                     'user_uuid' => (string) $getACalendarWithItsBudgetPlansFinancialRatiosByYearQuery->getBudgetPlanUserId(),
                     'year' => $getACalendarWithItsBudgetPlansFinancialRatiosByYearQuery->getDate()->format('Y'),

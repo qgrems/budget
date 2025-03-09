@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\UserContext\Domain\Ports\Inbound;
 
 use App\Libraries\Anonymii\Ports\AnonymiiUserDomainEventInterface;
-use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
+use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
 
 interface UserDomainEventInterface extends DomainEventInterface, AnonymiiUserDomainEventInterface
 {

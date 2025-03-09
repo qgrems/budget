@@ -9,7 +9,7 @@ use App\BudgetPlanContext\Domain\Events\BudgetPlanSavingAdjustedDomainEvent;
 use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanSavingEntryViewInterface;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanId;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanSaving;
-use App\SharedContext\Domain\Ports\Inbound\DomainEventInterface;
+use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]

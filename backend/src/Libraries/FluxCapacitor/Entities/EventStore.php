@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'event_store')]
 #[ORM\UniqueConstraint(name: 'unique_stream_version', columns: ['stream_id', 'stream_version'])]
 #[ORM\Index(name: 'idx_stream_id', columns: ['stream_id'])]
+#[ORM\Index(name: 'idx_stream_name', columns: ['stream_name'])]
 #[ORM\Index(name: 'idx_event_name', columns: ['event_name'])]
 #[ORM\Index(name: 'idx_user_id', columns: ['user_id'])]
 #[ORM\Index(name: 'idx_occurred_on', columns: ['occurred_on'])]
@@ -64,6 +65,16 @@ final class EventStore
         }
         set {
             $this->streamVersion = $value;
+        }
+    }
+
+    #[ORM\Column(name: 'stream_name', type: 'string', length: 255)]
+    public string $streamName {
+        get {
+            return $this->streamName;
+        }
+        set {
+            $this->streamName = $value;
         }
     }
 
