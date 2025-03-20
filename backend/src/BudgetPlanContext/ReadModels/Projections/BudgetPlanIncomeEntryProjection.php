@@ -15,7 +15,7 @@ use App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanIncomeAd
 use App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanIncomeAdjustedNotificationEvent;
 use App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanIncomeRemovedNotificationEvent;
 use App\BudgetPlanContext\ReadModels\Views\BudgetPlanIncomeEntryView;
-use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
+use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
 use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
 
 final readonly class BudgetPlanIncomeEntryProjection

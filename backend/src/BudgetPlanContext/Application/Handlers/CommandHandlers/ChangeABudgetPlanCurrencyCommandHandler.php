@@ -6,31 +6,19 @@ namespace App\BudgetPlanContext\Application\Handlers\CommandHandlers;
 
 use App\BudgetPlanContext\Application\Commands\ChangeABudgetPlanCurrencyCommand;
 use App\BudgetPlanContext\Domain\Aggregates\BudgetPlan;
-use App\Libraries\FluxCapacitor\Ports\EventClassMapInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 
 final readonly class ChangeABudgetPlanCurrencyCommandHandler
 {
-    public function __construct(
-        private EventSourcedRepositoryInterface $eventSourcedRepository,
-        private EventClassMapInterface $eventClassMap,
-    ) {
+    public function __construct(private EventSourcedRepositoryInterface $eventSourcedRepository)
+    {
     }
 
-    public function __invoke(
-        ChangeABudgetPlanCurrencyCommand $changeABudgetPlanCurrencyCommand
-    ): void {
-        $aggregate = BudgetPlan::fromEvents(
-            $this->eventSourcedRepository->get(
-                (string) $changeABudgetPlanCurrencyCommand->getBudgetPlanId(),
-            ),
-            $this->eventClassMap,
-        );
-        $aggregate->changeCurrency(
-            $changeABudgetPlanCurrencyCommand->getBudgetPlanCurrency(),
-            $changeABudgetPlanCurrencyCommand->getBudgetPlanUserId(),
-        );
-        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), $aggregate->aggregateVersion());
-        $aggregate->clearRaisedDomainEvents();
+    public function __invoke(ChangeABudgetPlanCurrencyCommand $command): void
+    {
+        /** @var BudgetPlan $aggregate */
+        $aggregate = $this->eventSourcedRepository->get((string) $command->getBudgetPlanId());
+        $aggregate->changeCurrency($command->getBudgetPlanCurrency(), $command->getBudgetPlanUserId());
+        $this->eventSourcedRepository->save($aggregate);
     }
 }

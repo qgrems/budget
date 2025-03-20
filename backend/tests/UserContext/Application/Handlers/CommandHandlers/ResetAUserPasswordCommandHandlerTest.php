@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\Application\Handlers\CommandHandlers;
 
-use App\Gateway\User\Presentation\HTTP\DTOs\ResetAUserPasswordInput;
-use App\Kernel;
-use App\Libraries\Anonymii\Ports\EventEncryptorInterface;
-use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
-use App\Libraries\FluxCapacitor\Services\EventClassMap;
+use App\Libraries\FluxCapacitor\EventStore\Exceptions\EventsNotFoundForAggregateException;
+use App\Libraries\FluxCapacitor\EventStore\Ports\EventStoreInterface;
 use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
-use App\Tests\CreateEventGenerator;
 use App\UserContext\Application\Commands\ResetAUserPasswordCommand;
 use App\UserContext\Application\Handlers\CommandHandlers\ResetAUserPasswordCommandHandler;
-use App\UserContext\Domain\Events\UserPasswordResetRequestedDomainEvent;
-use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
+use App\UserContext\Domain\Aggregates\User;
 use App\UserContext\Domain\Exceptions\InvalidUserOperationException;
 use App\UserContext\Domain\Exceptions\UserNotFoundException;
 use App\UserContext\Domain\Ports\Inbound\UserViewRepositoryInterface;
@@ -34,12 +29,10 @@ use PHPUnit\Framework\TestCase;
 class ResetAUserPasswordCommandHandlerTest extends TestCase
 {
     private EventStoreInterface&MockObject $eventStore;
-    private EventEncryptorInterface&MockObject $eventEncryptor;
     private UserViewRepositoryInterface&MockObject $userViewRepository;
     private PasswordHasherInterface&MockObject $passwordHasher;
     private EventSourcedRepository $eventSourcedRepository;
     private ResetAUserPasswordCommandHandler $handler;
-    private EventClassMap $eventClassMap;
 
     #[\Override]
     protected function setUp(): void
@@ -48,177 +41,216 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
         $this->userViewRepository = $this->createMock(UserViewRepositoryInterface::class);
         $this->passwordHasher = $this->createMock(PasswordHasherInterface::class);
         $this->eventSourcedRepository = new EventSourcedRepository($this->eventStore);
-        $this->eventEncryptor = $this->createMock(EventEncryptorInterface::class);
-        $this->eventClassMap = new EventClassMap(new Kernel('test', false));
         $this->handler = new ResetAUserPasswordCommandHandler(
             $this->userViewRepository,
             $this->eventSourcedRepository,
             $this->passwordHasher,
-            $this->eventEncryptor,
-            $this->eventClassMap,
         );
     }
 
     public function testResetUserPasswordSuccess(): void
     {
-        $resetUserPasswordInput = new ResetAUserPasswordInput('token', 'password');
+        $userId = '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836';
+        $userEmail = 'test@example.com';
+        $resetToken = 'valid-reset-token';
+        $newPassword = 'newPassword123';
+        $hashedPassword = 'hashed_newPassword123';
+
         $command = new ResetAUserPasswordCommand(
-            UserPasswordResetToken::fromString($resetUserPasswordInput->token),
-            UserPassword::fromString($resetUserPasswordInput->newPassword),
+            UserPasswordResetToken::fromString($resetToken),
+            UserPassword::fromString($newPassword)
         );
 
-        $this->userViewRepository->method('findOneBy')->willReturn(
-            new UserView(
-                UserId::fromString('7ac32191-3fa0-4477-8eb2-8dd3b0b7c836'),
-                UserEmail::fromString('test@mail.com'),
-                UserPassword::fromString('password'),
-                UserFirstname::fromString('Test firstName'),
-                UserLastname::fromString('Test lastName'),
-                UserLanguagePreference::fromString('fr'),
-                UserConsent::fromBool(true),
-                new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
-                new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
-                new \DateTime('2024-12-07T22:03:35+00:00'),
-                ['ROLE_USER'],
-            ),
+        $userView = new UserView(
+            UserId::fromString($userId),
+            UserEmail::fromString($userEmail),
+            UserPassword::fromString('oldPassword123'),
+            UserFirstname::fromString('John'),
+            UserLastname::fromString('Doe'),
+            UserLanguagePreference::fromString('en'),
+            UserConsent::fromBool(true),
+            new \DateTimeImmutable(),
+            new \DateTimeImmutable(),
+            new \DateTime(),
+            ['ROLE_USER']
         );
 
-        $this->eventStore->expects($this->once())->method('load')->willReturn(
-            CreateEventGenerator::create(
-                [
-                    [
-                        'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                        'event_name' => UserSignedUpDomainEvent::class,
-                        'stream_version' => 0,
-                        'occurred_on' => new \DateTimeImmutable()->format(\DateTime::ATOM),
-                        'payload' => json_encode([
-                            'email' => 'test@mail.com',
-                            'password' => 'password',
-                            'firstname' => 'Test firstName',
-                            'lastname' => 'Test lastName',
-                            'languagePreference' => 'fr',
-                            'isConsentGiven' => true,
-                            'isDeleted' => false,
-                            'occurredOn' => new \DateTimeImmutable()->format(\DateTime::ATOM),
-                            'aggregateId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                            'userId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                            'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
-                            'roles' => ['ROLE_USER'],
-                        ]),
-                    ],
-                    [
-                        'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                        'event_name' => UserPasswordResetRequestedDomainEvent::class,
-                        'stream_version' => 1,
-                        'occurred_on' => new \DateTimeImmutable()->format(\DateTime::ATOM),
-                        'payload' => json_encode([
-                            'aggregateId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                            'passwordResetToken' => 'token',
-                            'passwordResetTokenExpiry' => new \DateTimeImmutable('+1 day')->format(\DateTime::ATOM),
-                            'userId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                            'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
-                            'occurredOn' => new \DateTimeImmutable()->format(\DateTime::ATOM),
-                        ]),
-                    ],
-                ],
-            ),
+        $user = User::create(
+            UserId::fromString($userId),
+            UserEmail::fromString($userEmail),
+            UserPassword::fromString('oldPassword123'),
+            UserFirstname::fromString('John'),
+            UserLastname::fromString('Doe'),
+            UserLanguagePreference::fromString('en'),
+            UserConsent::fromBool(true)
         );
 
-        $this->eventEncryptor->expects($this->any())->method('decrypt')->willReturnCallback(
-            static fn (UserSignedUpDomainEvent|UserPasswordResetRequestedDomainEvent $event) => $event,
-        );
+        $reflection = new \ReflectionClass($user);
+        $passwordResetTokenProperty = $reflection->getProperty('passwordResetToken');
+        $passwordResetTokenProperty->setAccessible(true);
+        $passwordResetTokenProperty->setValue($user, UserPasswordResetToken::fromString($resetToken));
 
-        $this->passwordHasher->method('hash')->willReturn('hashed-new-password');
-        $this->eventStore->expects($this->once())->method('save');
+        $passwordResetTokenExpiryProperty = $reflection->getProperty('passwordResetTokenExpiry');
+        $passwordResetTokenExpiryProperty->setAccessible(true);
+        $passwordResetTokenExpiryProperty->setValue($user, new \DateTimeImmutable('+1 hour'));
+
+        $this->userViewRepository->expects($this->once())
+            ->method('findOneBy')
+            ->with(['passwordResetToken' => $resetToken])
+            ->willReturn($userView);
+
+        $this->passwordHasher->expects($this->once())
+            ->method('hash')
+            ->willReturn($hashedPassword);
+
+        $this->eventStore->expects($this->once())
+            ->method('load')
+            ->with($userId)
+            ->willReturn($user);
+
+        $this->eventStore->expects($this->once())
+            ->method('save')
+            ->with($this->callback(function ($savedUser) {
+                return $savedUser instanceof User;
+            }));
 
         $this->handler->__invoke($command);
     }
 
-    public function testResetUserPasswordWithUserNotFound(): void
+    public function testResetUserPasswordUserNotFound(): void
     {
-        $resetUserPasswordInput = new ResetAUserPasswordInput('token', 'password');
+        $resetToken = 'invalid-reset-token';
+        $newPassword = 'newPassword123';
+
         $command = new ResetAUserPasswordCommand(
-            UserPasswordResetToken::fromString($resetUserPasswordInput->token),
-            UserPassword::fromString($resetUserPasswordInput->newPassword),
+            UserPasswordResetToken::fromString($resetToken),
+            UserPassword::fromString($newPassword)
         );
 
-        $this->userViewRepository->method('findOneBy')->willReturn(
-            null,
-        );
+        $this->userViewRepository->expects($this->once())
+            ->method('findOneBy')
+            ->with(['passwordResetToken' => $resetToken])
+            ->willReturn(null);
+
+        $this->passwordHasher->expects($this->never())
+            ->method('hash');
+
+        $this->eventStore->expects($this->never())
+            ->method('load');
+
+        $this->eventStore->expects($this->never())
+            ->method('save');
+
         $this->expectException(UserNotFoundException::class);
-
         $this->handler->__invoke($command);
     }
 
-    public function testResetUserPasswordWithExpiryDateWrong(): void
+    public function testResetUserPasswordTokenExpired(): void
     {
-        $resetUserPasswordInput = new ResetAUserPasswordInput('token', 'password');
+        $userId = '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836';
+        $userEmail = 'test@example.com';
+        $resetToken = 'expired-reset-token';
+        $newPassword = 'newPassword123';
+
         $command = new ResetAUserPasswordCommand(
-            UserPasswordResetToken::fromString($resetUserPasswordInput->token),
-            UserPassword::fromString($resetUserPasswordInput->newPassword),
+            UserPasswordResetToken::fromString($resetToken),
+            UserPassword::fromString($newPassword)
         );
 
-        $this->userViewRepository->method('findOneBy')->willReturn(
-            new UserView(
-                UserId::fromString('7ac32191-3fa0-4477-8eb2-8dd3b0b7c836'),
-                UserEmail::fromString('test@mail.com'),
-                UserPassword::fromString('password'),
-                UserFirstname::fromString('Test firstName'),
-                UserLastname::fromString('Test lastName'),
-                UserLanguagePreference::fromString('fr'),
-                UserConsent::fromBool(true),
-                new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
-                new \DateTimeImmutable('2024-12-07T22:03:35+00:00'),
-                new \DateTime('2024-12-07T22:03:35+00:00'),
-                ['ROLE_USER'],
-            ),
+        $userView = new UserView(
+            UserId::fromString($userId),
+            UserEmail::fromString($userEmail),
+            UserPassword::fromString('oldPassword123'),
+            UserFirstname::fromString('John'),
+            UserLastname::fromString('Doe'),
+            UserLanguagePreference::fromString('en'),
+            UserConsent::fromBool(true),
+            new \DateTimeImmutable(),
+            new \DateTimeImmutable(),
+            new \DateTime(),
+            ['ROLE_USER']
         );
 
-        $this->eventStore->expects($this->once())->method('load')->willReturn(
-            CreateEventGenerator::create(
-                [
-                    [
-                        'aggregate_id' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                        'event_name' => UserSignedUpDomainEvent::class,
-                        'stream_version' => 0,
-                        'occurred_on' => new \DateTimeImmutable()->format(\DateTime::ATOM),
-                        'payload' => json_encode([
-                            'email' => 'test@mail.com',
-                            'password' => 'password',
-                            'firstname' => 'Test firstName',
-                            'lastname' => 'Test lastName',
-                            'languagePreference' => 'fr',
-                            'isConsentGiven' => true,
-                            'isDeleted' => false,
-                            'occurredOn' => new \DateTimeImmutable()->format(\DateTime::ATOM),
-                            'aggregateId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                            'userId' => '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                            'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
-                            'roles' => ['ROLE_USER'],
-                        ]),
-                    ],
-                ],
-            ),
+        $user = User::create(
+            UserId::fromString($userId),
+            UserEmail::fromString($userEmail),
+            UserPassword::fromString('oldPassword123'),
+            UserFirstname::fromString('John'),
+            UserLastname::fromString('Doe'),
+            UserLanguagePreference::fromString('en'),
+            UserConsent::fromBool(true)
         );
 
-        $this->eventEncryptor->expects($this->once())->method('decrypt')->willReturn(
-            new UserSignedUpDomainEvent(
-                '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-                'test@mail.com',
-                'password',
-                'Test firstName',
-                'Test lastName',
-                'fr',
-                true,
-                ['ROLE_USER'],
-                '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836',
-            ),
-        );
+        $reflection = new \ReflectionClass($user);
+        $passwordResetTokenProperty = $reflection->getProperty('passwordResetToken');
+        $passwordResetTokenProperty->setAccessible(true);
+        $passwordResetTokenProperty->setValue($user, UserPasswordResetToken::fromString($resetToken));
 
-        $this->passwordHasher->method('hash')->willReturn('hashed-new-password');
+        $passwordResetTokenExpiryProperty = $reflection->getProperty('passwordResetTokenExpiry');
+        $passwordResetTokenExpiryProperty->setAccessible(true);
+        $passwordResetTokenExpiryProperty->setValue($user, new \DateTimeImmutable('-1 hour'));
+
+        $this->userViewRepository->expects($this->once())
+            ->method('findOneBy')
+            ->with(['passwordResetToken' => $resetToken])
+            ->willReturn($userView);
+
+        $this->passwordHasher->expects($this->once())
+            ->method('hash')
+            ->willReturn('hashed_password');
+
+        $this->eventStore->expects($this->once())
+            ->method('load')
+            ->with($userId)
+            ->willReturn($user);
+
+        $this->eventStore->expects($this->never())
+            ->method('save');
 
         $this->expectException(InvalidUserOperationException::class);
+        $this->handler->__invoke($command);
+    }
 
+    public function testResetUserPasswordUserNotFoundInEventStore(): void
+    {
+        $userId = '7ac32191-3fa0-4477-8eb2-8dd3b0b7c836';
+        $userEmail = 'test@example.com';
+        $resetToken = 'valid-reset-token';
+        $newPassword = 'newPassword123';
+
+        $command = new ResetAUserPasswordCommand(
+            UserPasswordResetToken::fromString($resetToken),
+            UserPassword::fromString($newPassword)
+        );
+
+        $userView = new UserView(
+            UserId::fromString($userId),
+            UserEmail::fromString($userEmail),
+            UserPassword::fromString('oldPassword123'),
+            UserFirstname::fromString('John'),
+            UserLastname::fromString('Doe'),
+            UserLanguagePreference::fromString('en'),
+            UserConsent::fromBool(true),
+            new \DateTimeImmutable(),
+            new \DateTimeImmutable(),
+            new \DateTime(),
+            ['ROLE_USER']
+        );
+
+        $this->userViewRepository->expects($this->once())
+            ->method('findOneBy')
+            ->with(['passwordResetToken' => $resetToken])
+            ->willReturn($userView);
+
+        $this->eventStore->expects($this->once())
+            ->method('load')
+            ->with($userId)
+            ->willThrowException(new EventsNotFoundForAggregateException());
+
+        $this->eventStore->expects($this->never())
+            ->method('save');
+
+        $this->expectException(EventsNotFoundForAggregateException::class);
         $this->handler->__invoke($command);
     }
 }

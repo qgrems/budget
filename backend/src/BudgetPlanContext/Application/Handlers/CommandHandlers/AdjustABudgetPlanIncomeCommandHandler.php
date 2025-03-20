@@ -6,35 +6,26 @@ namespace App\BudgetPlanContext\Application\Handlers\CommandHandlers;
 
 use App\BudgetPlanContext\Application\Commands\AdjustABudgetPlanIncomeCommand;
 use App\BudgetPlanContext\Domain\Aggregates\BudgetPlan;
-use App\Libraries\FluxCapacitor\Ports\EventClassMapInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 
 final readonly class AdjustABudgetPlanIncomeCommandHandler
 {
-    public function __construct(
-        private EventSourcedRepositoryInterface $eventSourcedRepository,
-        private EventClassMapInterface $eventClassMap,
-    ) {
+    public function __construct(private EventSourcedRepositoryInterface $eventSourcedRepository)
+    {
     }
 
-    public function __invoke(
-        AdjustABudgetPlanIncomeCommand $adjustABudgetPlanIncomeCommand
-    ): void {
-        $aggregate = BudgetPlan::fromEvents(
-            $this->eventSourcedRepository->get(
-                (string) $adjustABudgetPlanIncomeCommand->getBudgetPlanId(),
-            ),
-            $this->eventClassMap,
-        );
+    public function __invoke(AdjustABudgetPlanIncomeCommand $command): void
+    {
+        /** @var BudgetPlan $aggregate */
+        $aggregate = $this->eventSourcedRepository->get((string) $command->getBudgetPlanId());
         $aggregate->adjustAnIncome(
-            $adjustABudgetPlanIncomeCommand->getBudgetPlanId(),
-            $adjustABudgetPlanIncomeCommand->getEntryId(),
-            $adjustABudgetPlanIncomeCommand->getName(),
-            $adjustABudgetPlanIncomeCommand->getAmount(),
-            $adjustABudgetPlanIncomeCommand->getCategory(),
-            $adjustABudgetPlanIncomeCommand->getUserId(),
+            $command->getBudgetPlanId(),
+            $command->getEntryId(),
+            $command->getName(),
+            $command->getAmount(),
+            $command->getCategory(),
+            $command->getUserId(),
         );
-        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), $aggregate->aggregateVersion());
-        $aggregate->clearRaisedDomainEvents();
+        $this->eventSourcedRepository->save($aggregate);
     }
 }

@@ -7,7 +7,7 @@ namespace App\BudgetPlanContext\Application\Handlers\CommandHandlers;
 use App\BudgetPlanContext\Application\Commands\GenerateABudgetPlanCommand;
 use App\BudgetPlanContext\Domain\Aggregates\BudgetPlan;
 use App\BudgetPlanContext\Domain\Exceptions\BudgetPlanAlreadyExistsException;
-use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanViewRepositoryInterface;
+use App\Libraries\FluxCapacitor\EventStore\Exceptions\EventsNotFoundForAggregateException;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\SharedContext\Domain\Ports\Outbound\TranslatorInterface;
 use App\SharedContext\Domain\Ports\Outbound\UuidGeneratorInterface;
@@ -16,32 +16,32 @@ final readonly class GenerateABudgetPlanCommandHandler
 {
     public function __construct(
         private EventSourcedRepositoryInterface $eventSourcedRepository,
-        private BudgetPlanViewRepositoryInterface $budgetPlanViewRepository,
         private UuidGeneratorInterface $uuidGenerator,
         private TranslatorInterface $translator,
     ) {
     }
 
-    public function __invoke(GenerateABudgetPlanCommand $generateABudgetPlanCommand): void
+    public function __invoke(GenerateABudgetPlanCommand $command): void
     {
-        $events = $this->eventSourcedRepository->get((string) $generateABudgetPlanCommand->getBudgetPlanId());
+        try {
+            $aggregate = $this->eventSourcedRepository->get((string) $command->getBudgetPlanId());
 
-        if ($events->current()) {
-            throw new BudgetPlanAlreadyExistsException();
+            if ($aggregate instanceof BudgetPlan) {
+                throw new BudgetPlanAlreadyExistsException();
+            }
+
+        } catch (EventsNotFoundForAggregateException) {
+            $aggregate = BudgetPlan::create(
+                $command->getBudgetPlanId(),
+                $command->getDate(),
+                $command->getIncomes(),
+                $command->getUserId(),
+                $command->getUserLanguagePreference(),
+                $command->getCurrency(),
+                $this->uuidGenerator,
+                $this->translator,
+            );
+            $this->eventSourcedRepository->save($aggregate);
         }
-
-        $aggregate = BudgetPlan::create(
-            $generateABudgetPlanCommand->getBudgetPlanId(),
-            $generateABudgetPlanCommand->getDate(),
-            $generateABudgetPlanCommand->getIncomes(),
-            $generateABudgetPlanCommand->getUserId(),
-            $generateABudgetPlanCommand->getUserLanguagePreference(),
-            $generateABudgetPlanCommand->getCurrency(),
-            $this->budgetPlanViewRepository,
-            $this->uuidGenerator,
-            $this->translator,
-        );
-        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), 0);
-        $aggregate->clearRaisedDomainEvents();
     }
 }

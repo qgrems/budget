@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\BudgetPlanContext\Domain\Ports\Inbound;
 
 use App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedDomainEvent;
-use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
+use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
 
 interface BudgetPlanViewInterface
 {

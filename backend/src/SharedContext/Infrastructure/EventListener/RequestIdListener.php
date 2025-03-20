@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\SharedContext\Infrastructure\EventListener;
 
-use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
-use App\Libraries\FluxCapacitor\Services\RequestIdProvider;
+use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
+use App\Libraries\FluxCapacitor\EventStore\Services\RequestIdProvider;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 

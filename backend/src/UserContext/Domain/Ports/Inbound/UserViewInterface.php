@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserContext\Domain\Ports\Inbound;
 
-use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
+use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
 use App\UserContext\Domain\Events\UserSignedUpDomainEvent;
 
 interface UserViewInterface

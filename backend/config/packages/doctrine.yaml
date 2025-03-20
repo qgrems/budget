@@ -37,14 +37,14 @@ doctrine:
             EventStore:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Libraries/FluxCapacitor/Entities'
-                prefix: 'App\Libraries\FluxCapacitor\Entities'
+                dir: '%kernel.project_dir%/src/Libraries/FluxCapacitor/EventStore/Entities'
+                prefix: 'App\Libraries\FluxCapacitor\EventStore\Entities'
                 alias: EventStore
             EncryptionKey:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Libraries/Anonymii/Entities'
-                prefix: 'App\Libraries\Anonymii\Entities'
+                dir: '%kernel.project_dir%/src/Libraries/FluxCapacitor/Anonymizer/Entities'
+                prefix: 'App\Libraries\FluxCapacitor\Anonymizer\Entities'
                 alias: EncryptionKey
             RefreshToken:
                 type: attribute

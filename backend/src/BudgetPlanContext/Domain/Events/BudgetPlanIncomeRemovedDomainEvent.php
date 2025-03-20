@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\BudgetPlanContext\Domain\Events;
 
-use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
+use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
 
 final class BudgetPlanIncomeRemovedDomainEvent implements DomainEventInterface
 {

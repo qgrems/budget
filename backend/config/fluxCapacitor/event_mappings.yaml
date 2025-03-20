@@ -6,6 +6,8 @@ events:
   BudgetEnvelopeRenamedDomainEvent: App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRenamedDomainEvent
   BudgetEnvelopeReplayedDomainEvent: App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeReplayedDomainEvent
   BudgetEnvelopeRewoundDomainEvent: App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRewoundDomainEvent
+  BudgetEnvelopeNameRegisteredDomainEvent: App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeNameRegisteredDomainEvent
+  BudgetEnvelopeNameReleasedDomainEvent: App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeNameReleasedDomainEvent
   BudgetEnvelopeTargetedAmountChangedDomainEvent: App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeTargetedAmountChangedDomainEvent
   BudgetPlanGeneratedDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedDomainEvent
   BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent: App\BudgetPlanContext\Domain\Events\BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent
@@ -32,8 +34,51 @@ events:
   UserReplayedDomainEvent: App\UserContext\Domain\Events\UserReplayedDomainEvent
   UserRewoundDomainEvent: App\UserContext\Domain\Events\UserRewoundDomainEvent
   UserSignedUpDomainEvent: App\UserContext\Domain\Events\UserSignedUpDomainEvent
+  UserEmailRegisteredDomainEvent: App\UserContext\Domain\Events\UserEmailRegisteredDomainEvent
+  UserEmailReleasedDomainEvent: App\UserContext\Domain\Events\UserEmailReleasedDomainEvent
 
 aggregates:
   BudgetEnvelope: App\BudgetEnvelopeContext\Domain\Aggregates\BudgetEnvelope
   BudgetPlan: App\BudgetPlanContext\Domain\Aggregates\BudgetPlan
+  BudgetEnvelopeNameRegistry: App\BudgetEnvelopeContext\Domain\Aggregates\BudgetEnvelopeNameRegistry
   User: App\UserContext\Domain\Aggregates\User
+  UserEmailRegistry: App\UserContext\Domain\Aggregates\UserEmailRegistry
+
+event_to_aggregate:
+  BudgetEnvelopeNameRegisteredDomainEvent: BudgetEnvelopeNameRegistry
+  BudgetEnvelopeNameReleasedDomainEvent: BudgetEnvelopeNameRegistry
+  BudgetEnvelopeAddedDomainEvent: BudgetEnvelope
+  BudgetEnvelopeCreditedDomainEvent: BudgetEnvelope
+  BudgetEnvelopeDebitedDomainEvent: BudgetEnvelope
+  BudgetEnvelopeDeletedDomainEvent: BudgetEnvelope
+  BudgetEnvelopeRenamedDomainEvent: BudgetEnvelope
+  BudgetEnvelopeReplayedDomainEvent: BudgetEnvelope
+  BudgetEnvelopeRewoundDomainEvent: BudgetEnvelope
+  BudgetEnvelopeTargetedAmountChangedDomainEvent: BudgetEnvelope
+  BudgetPlanGeneratedDomainEvent: BudgetPlan
+  BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent: BudgetPlan
+  BudgetPlanIncomeAddedDomainEvent: BudgetPlan
+  BudgetPlanIncomeAdjustedDomainEvent: BudgetPlan
+  BudgetPlanIncomeRemovedDomainEvent: BudgetPlan
+  BudgetPlanNeedAddedDomainEvent: BudgetPlan
+  BudgetPlanNeedAdjustedDomainEvent: BudgetPlan
+  BudgetPlanNeedRemovedDomainEvent: BudgetPlan
+  BudgetPlanRemovedDomainEvent: BudgetPlan
+  BudgetPlanSavingAddedDomainEvent: BudgetPlan
+  BudgetPlanSavingAdjustedDomainEvent: BudgetPlan
+  BudgetPlanSavingRemovedDomainEvent: BudgetPlan
+  BudgetPlanWantAddedDomainEvent: BudgetPlan
+  BudgetPlanWantAdjustedDomainEvent: BudgetPlan
+  BudgetPlanWantRemovedDomainEvent: BudgetPlan
+  UserDeletedDomainEvent: User
+  UserFirstnameChangedDomainEvent: User
+  UserLanguagePreferenceChangedDomainEvent: User
+  UserLastnameChangedDomainEvent: User
+  UserPasswordChangedDomainEvent: User
+  UserPasswordResetDomainEvent: User
+  UserPasswordResetRequestedDomainEvent: User
+  UserReplayedDomainEvent: User
+  UserRewoundDomainEvent: User
+  UserSignedUpDomainEvent: User
+  UserEmailRegisteredDomainEvent: UserEmailRegistry
+  UserEmailReleasedDomainEvent: UserEmailRegistry

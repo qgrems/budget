@@ -6,29 +6,23 @@ namespace App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers;
 
 use App\BudgetEnvelopeContext\Application\Commands\DebitABudgetEnvelopeCommand;
 use App\BudgetEnvelopeContext\Domain\Aggregates\BudgetEnvelope;
-use App\Libraries\FluxCapacitor\Ports\EventClassMapInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 
 final readonly class DebitABudgetEnvelopeCommandHandler
 {
-    public function __construct(
-        private EventSourcedRepositoryInterface $eventSourcedRepository,
-        private EventClassMapInterface $eventClassMap,
-    ) {
+    public function __construct(private EventSourcedRepositoryInterface $eventSourcedRepository)
+    {
     }
 
-    public function __invoke(DebitABudgetEnvelopeCommand $debitABudgetEnvelopeCommand): void
+    public function __invoke(DebitABudgetEnvelopeCommand $command): void
     {
-        $aggregate = BudgetEnvelope::fromEvents(
-            $this->eventSourcedRepository->get((string) $debitABudgetEnvelopeCommand->getBudgetEnvelopeId()),
-            $this->eventClassMap,
-        );
+        /** @var BudgetEnvelope $aggregate */
+        $aggregate = $this->eventSourcedRepository->get((string) $command->getBudgetEnvelopeId());
         $aggregate->debit(
-            $debitABudgetEnvelopeCommand->getBudgetEnvelopeDebitMoney(),
-            $debitABudgetEnvelopeCommand->getBudgetEnvelopeEntryDescription(),
-            $debitABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
+            $command->getBudgetEnvelopeDebitMoney(),
+            $command->getBudgetEnvelopeEntryDescription(),
+            $command->getBudgetEnvelopeUserId(),
         );
-        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), $aggregate->aggregateVersion());
-        $aggregate->clearRaisedDomainEvents();
+        $this->eventSourcedRepository->save($aggregate);
     }
 }

@@ -15,7 +15,7 @@ use App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanSavingAd
 use App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanSavingAdjustedNotificationEvent;
 use App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanSavingRemovedNotificationEvent;
 use App\BudgetPlanContext\ReadModels\Views\BudgetPlanSavingEntryView;
-use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
+use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
 use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
 
 final readonly class BudgetPlanSavingEntryProjection

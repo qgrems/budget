@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\UserContext\Application\Handlers\CommandHandlers;
 
-use App\Libraries\Anonymii\Ports\EventEncryptorInterface;
+use App\Libraries\FluxCapacitor\EventStore\Exceptions\EventsNotFoundForAggregateException;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\UserContext\Application\Commands\SignUpAUserCommand;
 use App\UserContext\Domain\Aggregates\User;
+use App\UserContext\Domain\Builders\UserEmailRegistryBuilder;
 use App\UserContext\Domain\Exceptions\UserAlreadyExistsException;
-use App\UserContext\Domain\Ports\Inbound\UserViewRepositoryInterface;
 use App\UserContext\Domain\Ports\Outbound\PasswordHasherInterface;
 use App\UserContext\Domain\ValueObjects\UserPassword;
 use App\UserContext\ReadModels\Views\UserView;
@@ -18,51 +18,61 @@ final readonly class SignUpAUserCommandHandler
 {
     public function __construct(
         private EventSourcedRepositoryInterface $eventSourcedRepository,
-        private UserViewRepositoryInterface $userViewRepository,
         private PasswordHasherInterface $userPasswordHasher,
-        private EventEncryptorInterface $eventEncryptor,
     ) {
     }
 
     public function __invoke(SignUpAUserCommand $signUpAUserCommand): void
     {
-        $events = $this->eventSourcedRepository->get((string) $signUpAUserCommand->getUserId());
+        try {
+            $aggregate = $this->eventSourcedRepository->get((string)$signUpAUserCommand->getUserId());
 
-        if ($events->current()) {
-            throw new UserAlreadyExistsException();
-        }
+            if ($aggregate instanceof User) {
+                throw new UserAlreadyExistsException();
+            }
+        } catch (EventsNotFoundForAggregateException) {
+            $registryBuilder = UserEmailRegistryBuilder::build($this->eventSourcedRepository)
+                ->loadOrCreateRegistry()
+                ->ensureEmailIsAvailable($signUpAUserCommand->getUserEmail())
+                ->registerEmail(
+                    $signUpAUserCommand->getUserEmail(),
+                    $signUpAUserCommand->getUserId()
+                );
 
-        $aggregate = User::create(
-            $signUpAUserCommand->getUserId(),
-            $signUpAUserCommand->getUserEmail(),
-            UserPassword::fromString(
-                $this->userPasswordHasher->hash(
-                    new UserView(
-                        $signUpAUserCommand->getUserId(),
-                        $signUpAUserCommand->getUserEmail(),
-                        UserPassword::fromString((string) $signUpAUserCommand->getUserPassword()),
-                        $signUpAUserCommand->getUserFirstname(),
-                        $signUpAUserCommand->getUserLastname(),
-                        $signUpAUserCommand->getUserLanguagePreference(),
-                        $signUpAUserCommand->isUserConsentGiven(),
-                        new \DateTimeImmutable(),
-                        new \DateTimeImmutable(),
-                        new \DateTime(),
-                        ['ROLE_USER'],
+            $user = User::create(
+                $signUpAUserCommand->getUserId(),
+                $signUpAUserCommand->getUserEmail(),
+                UserPassword::fromString(
+                    $this->userPasswordHasher->hash(
+                        new UserView(
+                            $signUpAUserCommand->getUserId(),
+                            $signUpAUserCommand->getUserEmail(),
+                            UserPassword::fromString((string)$signUpAUserCommand->getUserPassword()),
+                            $signUpAUserCommand->getUserFirstname(),
+                            $signUpAUserCommand->getUserLastname(),
+                            $signUpAUserCommand->getUserLanguagePreference(),
+                            $signUpAUserCommand->isUserConsentGiven(),
+                            new \DateTimeImmutable(),
+                            new \DateTimeImmutable(),
+                            new \DateTime(),
+                            ['ROLE_USER'],
+                        ),
+                        (string) $signUpAUserCommand->getUserPassword(),
                     ),
-                    (string) $signUpAUserCommand->getUserPassword(),
                 ),
-            ),
-            $signUpAUserCommand->getUserFirstname(),
-            $signUpAUserCommand->getUserLastname(),
-            $signUpAUserCommand->getUserLanguagePreference(),
-            $signUpAUserCommand->isUserConsentGiven(),
-            $this->userViewRepository,
-            $this->eventEncryptor,
-        );
+                $signUpAUserCommand->getUserFirstname(),
+                $signUpAUserCommand->getUserLastname(),
+                $signUpAUserCommand->getUserLanguagePreference(),
+                $signUpAUserCommand->isUserConsentGiven(),
+            );
+            $aggregatesToSave = [];
 
-        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), 0);
-        $aggregate->clearRaisedDomainEvents();
-        $aggregate->clearKeys();
+            if ($registryAggregate = $registryBuilder->getRegistryAggregate()) {
+                $aggregatesToSave[] = $registryAggregate;
+            }
+
+            $aggregatesToSave[] = $user;
+            $this->eventSourcedRepository->saveMultiAggregate($aggregatesToSave);
+        }
     }
 }

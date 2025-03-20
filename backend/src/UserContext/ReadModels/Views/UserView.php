@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserContext\ReadModels\Views;
 
-use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
+use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
 use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent;
 use App\UserContext\Domain\Events\UserLanguagePreferenceChangedDomainEvent;

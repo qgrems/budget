@@ -15,7 +15,7 @@ use App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanWantAdde
 use App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanWantAdjustedNotificationEvent;
 use App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanWantRemovedNotificationEvent;
 use App\BudgetPlanContext\ReadModels\Views\BudgetPlanWantEntryView;
-use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
+use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
 use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
 
 final readonly class BudgetPlanWantEntryProjection

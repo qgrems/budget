@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\UserContext\ReadModels\Projections;
 
-use App\Libraries\Anonymii\Ports\EventEncryptorInterface;
-use App\Libraries\Anonymii\Ports\KeyManagementRepositoryInterface;
+use App\Libraries\FluxCapacitor\Anonymizer\Ports\EventEncryptorInterface;
+use App\Libraries\FluxCapacitor\Anonymizer\Ports\KeyManagementRepositoryInterface;
 use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
 use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
 use App\UserContext\Domain\Events\UserDeletedDomainEvent;

@@ -6,15 +6,17 @@ namespace App\Tests\BudgetEnvelopeContext\Application\Handlers\CommandHandlers;
 
 use App\BudgetEnvelopeContext\Application\Commands\RewindABudgetEnvelopeFromEventsCommand;
 use App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\RewindABudgetEnvelopeFromEventsCommandHandler;
-use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeAddedDomainEvent;
-use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeCreditedDomainEvent;
+use App\BudgetEnvelopeContext\Domain\Aggregates\BudgetEnvelope;
+use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCurrency;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
+use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeName;
+use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeNameRegistryId;
+use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
-use App\Kernel;
-use App\Libraries\FluxCapacitor\Ports\EventStoreInterface;
-use App\Libraries\FluxCapacitor\Services\EventClassMap;
+use App\Libraries\FluxCapacitor\EventStore\Exceptions\EventsNotFoundForAggregateException;
+use App\Libraries\FluxCapacitor\EventStore\Ports\EventStoreInterface;
+use App\SharedContext\Infrastructure\Adapters\UuidGeneratorAdapter;
 use App\SharedContext\Infrastructure\Repositories\EventSourcedRepository;
-use App\Tests\CreateEventGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -22,65 +24,66 @@ class RewindABudgetEnvelopeFromEventsCommandHandlerTest extends TestCase
 {
     private RewindABudgetEnvelopeFromEventsCommandHandler $rewindABudgetEnvelopeFromEventsCommandHandler;
     private EventStoreInterface&MockObject $eventStore;
-    private EventClassMap $eventClassMap;
+    private UuidGeneratorAdapter $uuidGenerator;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->eventStore = $this->createMock(EventStoreInterface::class);
-        $this->eventClassMap = new EventClassMap(new Kernel('test', false));
+        $this->uuidGenerator = new UuidGeneratorAdapter();
         $this->rewindABudgetEnvelopeFromEventsCommandHandler = new RewindABudgetEnvelopeFromEventsCommandHandler(
             new EventSourcedRepository($this->eventStore),
-            $this->eventClassMap,
+            $this->uuidGenerator,
         );
     }
 
     public function testRewindSuccess(): void
     {
+        $userId = '18e04f53-0ea6-478c-a02b-81b7f3d6e8c1';
+        $envelopeId = '3e6a6763-4c4d-4648-bc3f-e9447dbed12c';
+        $envelopeName = 'test name';
+        $desiredDateTime = new \DateTimeImmutable('2020-10-10T12:00:00Z');
+
         $rewindABudgetEnvelopeFromEventsCommand = new RewindABudgetEnvelopeFromEventsCommand(
-            BudgetEnvelopeId::fromString('3e6a6763-4c4d-4648-bc3f-e9447dbed12c'),
-            BudgetEnvelopeUserId::fromString('18e04f53-0ea6-478c-a02b-81b7f3d6e8c1'),
-            new \DateTimeImmutable('2020-10-10T12:00:00Z'),
+            BudgetEnvelopeId::fromString($envelopeId),
+            BudgetEnvelopeUserId::fromString($userId),
+            $desiredDateTime,
         );
 
-        $this->eventStore->expects($this->once())->method('load')->willReturn(CreateEventGenerator::create(
-            [
-                [
-                    'aggregate_id' => '3e6a6763-4c4d-4648-bc3f-e9447dbed12c',
-                    'event_name' => BudgetEnvelopeAddedDomainEvent::class,
-                    'stream_version' => 0,
-                    'occurred_on' => '2020-10-10T12:00:00Z',
-                    'payload' => json_encode([
-                        'name' => 'test1',
-                        'userId' => '18e04f53-0ea6-478c-a02b-81b7f3d6e8c1',
-                        'occurredOn' => '2024-12-07T22:03:35+00:00',
-                        'aggregateId' => '3e6a6763-4c4d-4648-bc3f-e9447dbed12c',
-                        'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c2',
-                        'targetedAmount' => '2000.00',
-                        'currency' => 'USD',
-                    ]),
-                ],
-                [
-                    'aggregate_id' => '3e6a6763-4c4d-4648-bc3f-e9447dbed12c',
-                    'event_name' => BudgetEnvelopeCreditedDomainEvent::class,
-                    'stream_version' => 1,
-                    'occurred_on' => '2024-12-07T22:03:35+00:00',
-                    'payload' => json_encode([
-                        'creditMoney' => '5.47',
-                        'description' => 'test',
-                        'userId' => '18e04f53-0ea6-478c-a02b-81b7f3d6e8c1',
-                        'occurredOn' => '2024-12-07T22:03:35+00:00',
-                        'requestId' => '9faff004-117b-4b51-8e4d-ed6648f745c3',
-                        'aggregateId' => '3e6a6763-4c4d-4648-bc3f-e9447dbed12c',
-                    ]),
-                ],
-            ],
-        ));
-        $this->eventStore->expects($this->once())->method('save');
+        $envelope = BudgetEnvelope::create(
+            BudgetEnvelopeId::fromString($envelopeId),
+            BudgetEnvelopeUserId::fromString($userId),
+            BudgetEnvelopeTargetedAmount::fromString('20.00', '0.00'),
+            BudgetEnvelopeName::fromString($envelopeName),
+            BudgetEnvelopeCurrency::fromString('EUR')
+        );
+
+        $nameRegistryId = BudgetEnvelopeNameRegistryId::fromUserIdAndBudgetEnvelopeName(
+            BudgetEnvelopeUserId::fromString($userId),
+            BudgetEnvelopeName::fromString($envelopeName),
+            $this->uuidGenerator
+        );
+
+        $this->eventStore->expects($this->atLeastOnce())
+            ->method('load')
+            ->willReturnCallback(function ($id) use ($envelope, $envelopeId, $nameRegistryId) {
+                if ($id === $envelopeId) {
+                    return $envelope;
+                }
+                if ($id === (string) $nameRegistryId) {
+                    throw new EventsNotFoundForAggregateException();
+                }
+                throw new EventsNotFoundForAggregateException();
+            });
+
+        $this->eventStore->expects($this->once())
+            ->method('saveMultiAggregate')
+            ->with($this->callback(function ($aggregates) {
+                return is_array($aggregates) && count($aggregates) >= 1;
+            }));
 
         $this->rewindABudgetEnvelopeFromEventsCommandHandler->__invoke($rewindABudgetEnvelopeFromEventsCommand);
     }
-
     public function testRewindFailure(): void
     {
         $rewindABudgetEnvelopeFromEventsCommand = new RewindABudgetEnvelopeFromEventsCommand(

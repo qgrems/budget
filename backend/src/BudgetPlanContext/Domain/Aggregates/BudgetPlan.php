@@ -20,14 +20,8 @@ use App\BudgetPlanContext\Domain\Events\BudgetPlanSavingRemovedDomainEvent;
 use App\BudgetPlanContext\Domain\Events\BudgetPlanWantAddedDomainEvent;
 use App\BudgetPlanContext\Domain\Events\BudgetPlanWantAdjustedDomainEvent;
 use App\BudgetPlanContext\Domain\Events\BudgetPlanWantRemovedDomainEvent;
-use App\BudgetPlanContext\Domain\Exceptions\BudgetPlanAlreadyExistsException;
 use App\BudgetPlanContext\Domain\Exceptions\BudgetPlanIsNotOwnedByUserException;
 use App\BudgetPlanContext\Domain\Exceptions\InvalidBudgetPlanOperationException;
-use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanIncomeEntryViewInterface;
-use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanNeedEntryViewInterface;
-use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanSavingEntryViewInterface;
-use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanViewRepositoryInterface;
-use App\BudgetPlanContext\Domain\Ports\Inbound\BudgetPlanWantEntryViewInterface;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanCurrency;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanEntryAmount;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanEntryId;
@@ -42,10 +36,8 @@ use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanSavingCategory;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanUserId;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanWant;
 use App\BudgetPlanContext\Domain\ValueObjects\BudgetPlanWantCategory;
-use App\Libraries\FluxCapacitor\Ports\AggregateRootInterface;
-use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
-use App\Libraries\FluxCapacitor\Ports\EventClassMapInterface;
-use App\Libraries\FluxCapacitor\Traits\DomainEventsCapabilityTrait;
+use App\Libraries\FluxCapacitor\EventStore\Ports\AggregateRootInterface;
+use App\Libraries\FluxCapacitor\EventStore\Traits\DomainEventsCapabilityTrait;
 use App\SharedContext\Domain\Ports\Outbound\TranslatorInterface;
 use App\SharedContext\Domain\Ports\Outbound\UuidGeneratorInterface;
 use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
@@ -70,24 +62,6 @@ final class BudgetPlan implements AggregateRootInterface
     {
     }
 
-    public static function fromEvents(\Generator $events, EventClassMapInterface $eventClassMap): self
-    {
-        $aggregate = new self();
-
-        /** @var array{stream_version: int, event_name: string, payload: string} $event */
-        foreach ($events as $event) {
-            $aggregate->apply(
-            /** @var DomainEventInterface $eventClassMap->getEventPathByClassName($event['event_name']) */
-            $eventClassMap->getEventPathByClassName($event['event_name'])::fromArray(
-                    json_decode($event['payload'], true)
-                )
-            );
-            $aggregate->aggregateVersion = $event['stream_version'];
-        }
-
-        return $aggregate;
-    }
-
     public static function create(
         BudgetPlanId $budgetPlanId,
         \DateTimeImmutable $date,
@@ -95,18 +69,9 @@ final class BudgetPlan implements AggregateRootInterface
         BudgetPlanUserId $userId,
         UserLanguagePreference $userLanguagePreference,
         BudgetPlanCurrency $currency,
-        BudgetPlanViewRepositoryInterface $budgetPlanViewRepository,
         UuidGeneratorInterface $uuidGenerator,
         TranslatorInterface $translator,
     ): self {
-        if ($budgetPlanViewRepository->findOneBy([
-            'uuid' => (string) $budgetPlanId,
-            'user_uuid' => (string) $userId,
-            'date' => $date->format(\DateTime::ATOM),
-        ])) {
-            throw new BudgetPlanAlreadyExistsException();
-        }
-
         $budgetPlanGeneratedDomainEvent = new BudgetPlanGeneratedDomainEvent(
             (string) $budgetPlanId,
             $date->format(\DateTimeInterface::ATOM),
@@ -117,9 +82,7 @@ final class BudgetPlan implements AggregateRootInterface
             array_map(fn(BudgetPlanSaving $saving) => $saving->toArray(), self::generateFakeSavings($incomes, (string) $userLanguagePreference, $uuidGenerator, $translator)),
             (string) $userId,
         );
-
         $aggregate = new self();
-        $aggregate->apply($budgetPlanGeneratedDomainEvent);
         $aggregate->raiseDomainEvents($budgetPlanGeneratedDomainEvent);
 
         return $aggregate;
@@ -127,39 +90,19 @@ final class BudgetPlan implements AggregateRootInterface
 
     public static function createWithOneThatAlreadyExists(
         BudgetPlanId $budgetPlanId,
-        BudgetPlanId $budgetPlanIdThatAlreadyExists,
         \DateTimeImmutable $date,
         BudgetPlanUserId $userId,
-        BudgetPlanViewRepositoryInterface $budgetPlanViewRepository,
+        BudgetPlan $budgetPlanToCopy,
         UuidGeneratorInterface $uuidGenerator,
     ): self {
-        if ($budgetPlanViewRepository->findOneBy([
-            'uuid' => (string) $budgetPlanId,
-            'user_uuid' => (string) $userId,
-            'date' => $date->format(\DateTime::ATOM),
-        ])) {
-            throw new BudgetPlanAlreadyExistsException();
-        }
-
-        $existingBudgetPlan = $budgetPlanViewRepository->findOnePlanWithEntriesBy([
-            'uuid' => (string) $budgetPlanIdThatAlreadyExists,
-            'is_deleted' => false,
-        ]);
-
-        if (empty($existingBudgetPlan)) {
-            throw new \RuntimeException('The budget plan that already exists was not found.');
-        }
-
         $currentDate = new \DateTimeImmutable();
-        $budgetPlanId = (string) $budgetPlanId;
-
         $budgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent = new BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent(
-            $budgetPlanId,
+            (string) $budgetPlanId,
             $date->format(\DateTimeInterface::ATOM),
-            $existingBudgetPlan['budgetPlan']->currency,
+            (string) $budgetPlanToCopy->currency,
             array_map(fn(BudgetPlanIncome $income) => $income->toArray(),
                 self::generateIncomesFromABudgetPlanThatAlreadyExists(
-                    $existingBudgetPlan['incomes'],
+                    $budgetPlanToCopy->incomes,
                     $uuidGenerator,
                     $currentDate,
                     $budgetPlanId,
@@ -167,7 +110,7 @@ final class BudgetPlan implements AggregateRootInterface
             ),
             array_map(fn(BudgetPlanNeed $need) => $need->toArray(),
                 self::generateNeedsFromABudgetPlanThatAlreadyExists(
-                    $existingBudgetPlan['needs'],
+                    $budgetPlanToCopy->needs,
                     $uuidGenerator,
                     $currentDate,
                     $budgetPlanId,
@@ -175,7 +118,7 @@ final class BudgetPlan implements AggregateRootInterface
             ),
             array_map(fn(BudgetPlanWant $want) => $want->toArray(),
                 self::generateWantsFromABudgetPlanThatAlreadyExists(
-                    $existingBudgetPlan['wants'],
+                    $budgetPlanToCopy->wants,
                     $uuidGenerator,
                     $currentDate,
                     $budgetPlanId,
@@ -183,7 +126,7 @@ final class BudgetPlan implements AggregateRootInterface
             ),
             array_map(fn(BudgetPlanSaving $saving) => $saving->toArray(),
                 self::generateSavingsFromABudgetPlanThatAlreadyExists(
-                    $existingBudgetPlan['savings'],
+                    $budgetPlanToCopy->savings,
                     $uuidGenerator,
                     $currentDate,
                     $budgetPlanId,
@@ -191,12 +134,15 @@ final class BudgetPlan implements AggregateRootInterface
             ),
             (string) $userId,
         );
-
         $aggregate = new self();
-        $aggregate->apply($budgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent);
         $aggregate->raiseDomainEvents($budgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent);
 
         return $aggregate;
+    }
+
+    public static function empty(): self
+    {
+        return new self();
     }
 
     public function changeCurrency(
@@ -211,8 +157,6 @@ final class BudgetPlan implements AggregateRootInterface
             (string) $this->userId,
             (string) $budgetPlanCurrency,
         );
-
-        $this->apply($budgetPlanCurrencyChangedDomainEvent);
         $this->raiseDomainEvents($budgetPlanCurrencyChangedDomainEvent);
     }
 
@@ -234,7 +178,6 @@ final class BudgetPlan implements AggregateRootInterface
             (string) $name,
             (string) $category,
         );
-        $this->apply($budgetPlanIncomeAddedDomainEvent);
         $this->raiseDomainEvents($budgetPlanIncomeAddedDomainEvent);
     }
 
@@ -256,7 +199,6 @@ final class BudgetPlan implements AggregateRootInterface
             (string) $name,
             (string) $category,
         );
-        $this->apply($budgetPlanWantAddedDomainEvent);
         $this->raiseDomainEvents($budgetPlanWantAddedDomainEvent);
     }
 
@@ -278,7 +220,6 @@ final class BudgetPlan implements AggregateRootInterface
             (string) $name,
             (string) $category,
         );
-        $this->apply($budgetPlanNeedAddedDomainEvent);
         $this->raiseDomainEvents($budgetPlanNeedAddedDomainEvent);
     }
 
@@ -300,7 +241,6 @@ final class BudgetPlan implements AggregateRootInterface
             (string) $name,
             (string) $category,
         );
-        $this->apply($budgetPlanSavingAddedDomainEvent);
         $this->raiseDomainEvents($budgetPlanSavingAddedDomainEvent);
     }
 
@@ -322,7 +262,6 @@ final class BudgetPlan implements AggregateRootInterface
             (string) $name,
             (string) $category,
         );
-        $this->apply($budgetPlanWantAdjustedDomainEvent);
         $this->raiseDomainEvents($budgetPlanWantAdjustedDomainEvent);
     }
 
@@ -344,7 +283,6 @@ final class BudgetPlan implements AggregateRootInterface
             (string) $name,
             (string) $category,
         );
-        $this->apply($budgetPlanNeedAdjustedDomainEvent);
         $this->raiseDomainEvents($budgetPlanNeedAdjustedDomainEvent);
     }
 
@@ -366,7 +304,6 @@ final class BudgetPlan implements AggregateRootInterface
             (string) $name,
             (string) $category,
         );
-        $this->apply($budgetPlanSavingAdjustedDomainEvent);
         $this->raiseDomainEvents($budgetPlanSavingAdjustedDomainEvent);
     }
 
@@ -388,7 +325,6 @@ final class BudgetPlan implements AggregateRootInterface
             (string) $name,
             (string) $category,
         );
-        $this->apply($budgetPlanIncomeAdjustedDomainEvent);
         $this->raiseDomainEvents($budgetPlanIncomeAdjustedDomainEvent);
     }
 
@@ -405,7 +341,6 @@ final class BudgetPlan implements AggregateRootInterface
             (string) $incomeId,
             (string) $userId,
         );
-        $this->apply($budgetPlanIncomeRemovedDomainEvent);
         $this->raiseDomainEvents($budgetPlanIncomeRemovedDomainEvent);
     }
 
@@ -422,7 +357,6 @@ final class BudgetPlan implements AggregateRootInterface
             (string) $savingId,
             (string) $userId,
         );
-        $this->apply($budgetPlanSavingRemovedDomainEvent);
         $this->raiseDomainEvents($budgetPlanSavingRemovedDomainEvent);
     }
 
@@ -439,7 +373,6 @@ final class BudgetPlan implements AggregateRootInterface
             (string) $wantId,
             (string) $userId,
         );
-        $this->apply($budgetPlanWantRemovedDomainEvent);
         $this->raiseDomainEvents($budgetPlanWantRemovedDomainEvent);
     }
 
@@ -456,7 +389,6 @@ final class BudgetPlan implements AggregateRootInterface
             (string) $needId,
             (string) $userId,
         );
-        $this->apply($budgetPlanNeedRemovedDomainEvent);
         $this->raiseDomainEvents($budgetPlanNeedRemovedDomainEvent);
     }
 
@@ -470,8 +402,6 @@ final class BudgetPlan implements AggregateRootInterface
             (string) $this->userId,
             true,
         );
-
-        $this->apply($budgetPlanRemovedDomainEvent);
         $this->raiseDomainEvents($budgetPlanRemovedDomainEvent);
     }
 
@@ -480,30 +410,14 @@ final class BudgetPlan implements AggregateRootInterface
         return $this->aggregateVersion;
     }
 
-    private function apply(DomainEventInterface $event): void
+    public function setAggregateVersion(int $aggregateVersion): self
     {
-        match ($event::class) {
-            BudgetPlanGeneratedDomainEvent::class => $this->applyBudgetPlanGeneratedDomainEvent($event),
-            BudgetPlanRemovedDomainEvent::class => $this->applyBudgetPlanRemovedDomainEvent($event),
-            BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent::class => $this->applyBudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent($event),
-            BudgetPlanCurrencyChangedDomainEvent::class => $this->applyBudgetPlanCurrencyChangedDomainEvent($event),
-            BudgetPlanIncomeAddedDomainEvent::class => $this->applyBudgetPlanIncomeAddedDomainEvent($event),
-            BudgetPlanWantAddedDomainEvent::class => $this->applyBudgetPlanWantAddedDomainEvent($event),
-            BudgetPlanNeedAddedDomainEvent::class => $this->applyBudgetPlanNeedAddedDomainEvent($event),
-            BudgetPlanSavingAddedDomainEvent::class => $this->applyBudgetPlanSavingAddedDomainEvent($event),
-            BudgetPlanIncomeAdjustedDomainEvent::class => $this->applyBudgetPlanIncomeAdjustedDomainEvent($event),
-            BudgetPlanWantAdjustedDomainEvent::class => $this->applyBudgetPlanWantAdjustedDomainEvent($event),
-            BudgetPlanNeedAdjustedDomainEvent::class => $this->applyBudgetPlanNeedAdjustedDomainEvent($event),
-            BudgetPlanSavingAdjustedDomainEvent::class => $this->applyBudgetPlanSavingAdjustedDomainEvent($event),
-            BudgetPlanIncomeRemovedDomainEvent::class => $this->applyBudgetPlanIncomeRemovedDomainEvent($event),
-            BudgetPlanWantRemovedDomainEvent::class => $this->applyBudgetPlanWantRemovedDomainEvent($event),
-            BudgetPlanNeedRemovedDomainEvent::class => $this->applyBudgetPlanNeedRemovedDomainEvent($event),
-            BudgetPlanSavingRemovedDomainEvent::class => $this->applyBudgetPlanSavingRemovedDomainEvent($event),
-            default => throw new \RuntimeException('Unknown event type'),
-        };
+        $this->aggregateVersion = $aggregateVersion;
+
+        return $this;
     }
 
-    private function applyBudgetPlanGeneratedDomainEvent(BudgetPlanGeneratedDomainEvent $event): void
+    public function applyBudgetPlanGeneratedDomainEvent(BudgetPlanGeneratedDomainEvent $event): void
     {
         $this->budgetPlanId = BudgetPlanId::fromString($event->aggregateId);
         $this->userId = BudgetPlanUserId::fromString($event->userId);
@@ -517,7 +431,7 @@ final class BudgetPlan implements AggregateRootInterface
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
-    private function applyBudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent(
+    public function applyBudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent(
         BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent $event
     ): void {
         $this->budgetPlanId = BudgetPlanId::fromString($event->aggregateId);
@@ -532,7 +446,7 @@ final class BudgetPlan implements AggregateRootInterface
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
-    private function applyBudgetPlanCurrencyChangedDomainEvent(
+    public function applyBudgetPlanCurrencyChangedDomainEvent(
         BudgetPlanCurrencyChangedDomainEvent $budgetPlanCurrencyChangedDomainEvent,
     ): void {
         $this->currency = BudgetPlanCurrency::fromString(
@@ -541,14 +455,14 @@ final class BudgetPlan implements AggregateRootInterface
         $this->updatedAt = \DateTime::createFromImmutable($budgetPlanCurrencyChangedDomainEvent->occurredOn);
     }
 
-    private function applyBudgetPlanRemovedDomainEvent(
+    public function applyBudgetPlanRemovedDomainEvent(
         BudgetPlanRemovedDomainEvent $budgetPlanRemovedDomainEvent,
     ): void {
         $this->isDeleted = $budgetPlanRemovedDomainEvent->isDeleted;
         $this->updatedAt = \DateTime::createFromImmutable($budgetPlanRemovedDomainEvent->occurredOn);
     }
 
-    private function applyBudgetPlanIncomeAddedDomainEvent(
+    public function applyBudgetPlanIncomeAddedDomainEvent(
         BudgetPlanIncomeAddedDomainEvent $event,
     ): void {
         $this->incomes[] = BudgetPlanIncome::fromArray([
@@ -560,7 +474,7 @@ final class BudgetPlan implements AggregateRootInterface
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
-    private function applyBudgetPlanWantAddedDomainEvent(
+    public function applyBudgetPlanWantAddedDomainEvent(
         BudgetPlanWantAddedDomainEvent $event,
     ): void {
         $this->wants[] = BudgetPlanWant::fromArray([
@@ -572,7 +486,7 @@ final class BudgetPlan implements AggregateRootInterface
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
-    private function applyBudgetPlanNeedAddedDomainEvent(
+    public function applyBudgetPlanNeedAddedDomainEvent(
         BudgetPlanNeedAddedDomainEvent $event,
     ): void {
         $this->needs[] = BudgetPlanNeed::fromArray([
@@ -584,7 +498,7 @@ final class BudgetPlan implements AggregateRootInterface
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
-    private function applyBudgetPlanSavingAddedDomainEvent(
+    public function applyBudgetPlanSavingAddedDomainEvent(
         BudgetPlanSavingAddedDomainEvent $event,
     ): void {
         $this->savings[] = BudgetPlanSaving::fromArray([
@@ -596,7 +510,7 @@ final class BudgetPlan implements AggregateRootInterface
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
-    private function applyBudgetPlanIncomeAdjustedDomainEvent(
+    public function applyBudgetPlanIncomeAdjustedDomainEvent(
         BudgetPlanIncomeAdjustedDomainEvent $event,
     ): void {
         $this->incomes = array_map(function(BudgetPlanIncome $income) use ($event) {
@@ -613,7 +527,7 @@ final class BudgetPlan implements AggregateRootInterface
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
-    private function applyBudgetPlanWantAdjustedDomainEvent(
+    public function applyBudgetPlanWantAdjustedDomainEvent(
         BudgetPlanWantAdjustedDomainEvent $event,
     ): void {
         $this->wants = array_map(function(BudgetPlanWant $want) use ($event) {
@@ -630,7 +544,7 @@ final class BudgetPlan implements AggregateRootInterface
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
-    private function applyBudgetPlanNeedAdjustedDomainEvent(
+    public function applyBudgetPlanNeedAdjustedDomainEvent(
         BudgetPlanNeedAdjustedDomainEvent $event,
     ): void {
         $this->needs = array_map(function(BudgetPlanNeed $need) use ($event) {
@@ -647,7 +561,7 @@ final class BudgetPlan implements AggregateRootInterface
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
-    private function applyBudgetPlanSavingAdjustedDomainEvent(
+    public function applyBudgetPlanSavingAdjustedDomainEvent(
         BudgetPlanSavingAdjustedDomainEvent $event,
     ): void {
         $this->savings = array_map(function(BudgetPlanSaving $saving) use ($event) {
@@ -664,28 +578,28 @@ final class BudgetPlan implements AggregateRootInterface
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
-    private function applyBudgetPlanIncomeRemovedDomainEvent(
+    public function applyBudgetPlanIncomeRemovedDomainEvent(
         BudgetPlanIncomeRemovedDomainEvent $event,
     ): void {
         $this->incomes = array_filter($this->incomes, fn(BudgetPlanIncome $income) => $income->getUuid() !== $event->uuid);
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
-    private function applyBudgetPlanWantRemovedDomainEvent(
+    public function applyBudgetPlanWantRemovedDomainEvent(
         BudgetPlanWantRemovedDomainEvent $event,
     ): void {
         $this->wants = array_filter($this->wants, fn(BudgetPlanWant $want) => $want->getUuid() !== $event->uuid);
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
-    private function applyBudgetPlanNeedRemovedDomainEvent(
+    public function applyBudgetPlanNeedRemovedDomainEvent(
         BudgetPlanNeedRemovedDomainEvent $event,
     ): void {
         $this->needs = array_filter($this->needs, fn(BudgetPlanNeed $need) => $need->getUuid() !== $event->uuid);
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
-    private function applyBudgetPlanSavingRemovedDomainEvent(
+    public function applyBudgetPlanSavingRemovedDomainEvent(
         BudgetPlanSavingRemovedDomainEvent $event,
     ): void {
         $this->savings = array_filter($this->savings, fn(BudgetPlanSaving $saving) => $saving->getUuid() !== $event->uuid);
@@ -814,18 +728,18 @@ final class BudgetPlan implements AggregateRootInterface
         array $existingIncomes,
         UuidGeneratorInterface $uuidGenerator,
         \DateTimeImmutable $currentDate,
-        string $budgetPlanId,
+        BudgetPlanId $budgetPlanId,
     ): array {
-        return array_map(function(BudgetPlanIncomeEntryViewInterface $income) use ($uuidGenerator, $currentDate, $budgetPlanId) {
-            $incomeArray = $income->toArray();
-            $incomeArray['uuid'] = $uuidGenerator->generate();
-            $incomeArray['budget_plan_uuid'] = $budgetPlanId;
-            $incomeArray['created_at'] = $currentDate->format(\DateTimeInterface::ATOM);
-            $incomeArray['updated_at'] = $currentDate->format(\DateTimeInterface::ATOM);
-            $incomeArray['amount'] = $income->incomeAmount;
-            $incomeArray['category'] = $income->category;
-            $incomeArray['income_name'] = $income->incomeName;
-            return BudgetPlanIncome::fromArray($incomeArray);
+        return array_map(function(array $income) use ($uuidGenerator, $currentDate, $budgetPlanId) {
+            $income['uuid'] = $uuidGenerator->generate();
+            $income['budget_plan_uuid'] = (string) $budgetPlanId;
+            $income['created_at'] = $currentDate->format(\DateTimeInterface::ATOM);
+            $income['updated_at'] = $currentDate->format(\DateTimeInterface::ATOM);
+            $income['amount'] = $income->incomeAmount;
+            $income['category'] = $income->category;
+            $income['income_name'] = $income->incomeName;
+
+            return BudgetPlanIncome::fromArray($income);
         }, $existingIncomes);
     }
 
@@ -833,18 +747,15 @@ final class BudgetPlan implements AggregateRootInterface
         array $existingNeeds,
         UuidGeneratorInterface $uuidGenerator,
         \DateTimeImmutable $currentDate,
-        string $budgetPlanId,
+        BudgetPlanId $budgetPlanId,
     ): array {
-        return array_map(function(BudgetPlanNeedEntryViewInterface $need) use ($uuidGenerator, $currentDate, $budgetPlanId) {
-            $needArray = $need->toArray();
-            $needArray['uuid'] = $uuidGenerator->generate();
-            $needArray['budget_plan_uuid'] = $budgetPlanId;
-            $needArray['created_at'] = $currentDate->format(\DateTimeInterface::ATOM);
-            $needArray['updated_at'] = $currentDate->format(\DateTimeInterface::ATOM);
-            $needArray['amount'] = $need->needAmount;
-            $needArray['category'] = $need->category;
-            $needArray['need_name'] = $need->needName;
-            return BudgetPlanNeed::fromArray($needArray);
+        return array_map(function(array $need) use ($uuidGenerator, $currentDate, $budgetPlanId) {
+            $need['uuid'] = $uuidGenerator->generate();
+            $need['budget_plan_uuid'] = (string) $budgetPlanId;
+            $need['created_at'] = $currentDate->format(\DateTimeInterface::ATOM);
+            $need['updated_at'] = $currentDate->format(\DateTimeInterface::ATOM);
+
+            return BudgetPlanNeed::fromArray($need);
         }, $existingNeeds);
     }
 
@@ -852,18 +763,15 @@ final class BudgetPlan implements AggregateRootInterface
         array $existingSavings,
         UuidGeneratorInterface $uuidGenerator,
         \DateTimeImmutable $currentDate,
-        string $budgetPlanId,
+        BudgetPlanId $budgetPlanId,
     ): array {
-        return array_map(function(BudgetPlanSavingEntryViewInterface $saving) use ($uuidGenerator, $currentDate, $budgetPlanId) {
-            $savingArray = $saving->toArray();
-            $savingArray['uuid'] = $uuidGenerator->generate();
-            $savingArray['budget_plan_uuid'] = $budgetPlanId;
-            $savingArray['created_at'] = $currentDate->format(\DateTimeInterface::ATOM);
-            $savingArray['updated_at'] = $currentDate->format(\DateTimeInterface::ATOM);
-            $savingArray['amount'] = $saving->savingAmount;
-            $savingArray['category'] = $saving->category;
-            $savingArray['saving_name'] = $saving->savingName;
-            return BudgetPlanSaving::fromArray($savingArray);
+        return array_map(function(array $saving) use ($uuidGenerator, $currentDate, $budgetPlanId) {
+            $saving['uuid'] = $uuidGenerator->generate();
+            $saving['budget_plan_uuid'] = (string) $budgetPlanId;
+            $saving['created_at'] = $currentDate->format(\DateTimeInterface::ATOM);
+            $saving['updated_at'] = $currentDate->format(\DateTimeInterface::ATOM);
+
+            return BudgetPlanSaving::fromArray($saving);
         }, $existingSavings);
     }
 
@@ -871,18 +779,15 @@ final class BudgetPlan implements AggregateRootInterface
         array $existingWants,
         UuidGeneratorInterface $uuidGenerator,
         \DateTimeImmutable $currentDate,
-        string $budgetPlanId,
+        BudgetPlanId $budgetPlanId,
     ): array {
-        return array_map(function(BudgetPlanWantEntryViewInterface $want) use ($uuidGenerator, $currentDate, $budgetPlanId) {
-            $wantArray = $want->toArray();
-            $wantArray['uuid'] = $uuidGenerator->generate();
-            $wantArray['budget_plan_uuid'] = $budgetPlanId;
-            $wantArray['created_at'] = $currentDate->format(\DateTimeInterface::ATOM);
-            $wantArray['updated_at'] = $currentDate->format(\DateTimeInterface::ATOM);
-            $wantArray['amount'] = $want->wantAmount;
-            $wantArray['want_name'] = $want->wantName;
-            $wantArray['category'] = $want->category;
-            return BudgetPlanWant::fromArray($wantArray);
+        return array_map(function($want) use ($uuidGenerator, $currentDate, $budgetPlanId) {
+            $want['uuid'] = $uuidGenerator->generate();
+            $want['budget_plan_uuid'] = (string) $budgetPlanId;
+            $want['created_at'] = $currentDate->format(\DateTimeInterface::ATOM);
+            $want['updated_at'] = $currentDate->format(\DateTimeInterface::ATOM);
+
+            return BudgetPlanWant::fromArray($want);
         }, $existingWants);
     }
 

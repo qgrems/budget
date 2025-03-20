@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\UserContext\Domain\Events;
 
-use App\Libraries\Anonymii\Attributes\PersonalData;
-use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
-use App\UserContext\Domain\Ports\Inbound\UserDomainEventInterface;
+use App\Libraries\FluxCapacitor\Anonymizer\Attributes\PersonalData;
+use App\Libraries\FluxCapacitor\Anonymizer\Ports\UserDomainEventInterface;
+use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
 
 final class UserReplayedDomainEvent implements UserDomainEventInterface
 {
