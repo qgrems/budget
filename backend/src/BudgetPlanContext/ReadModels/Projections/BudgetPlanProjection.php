@@ -27,7 +27,7 @@ use App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanGenerate
 use App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanGeneratedWithOneThatAlreadyExistsNotificationEvent;
 use App\BudgetPlanContext\Infrastructure\Events\Notifications\BudgetPlanRemovedNotificationEvent;
 use App\BudgetPlanContext\ReadModels\Views\BudgetPlanView;
-use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
+use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
 use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
 
 final readonly class BudgetPlanProjection

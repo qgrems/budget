@@ -189,11 +189,11 @@ services:
 
     App\SharedContext\Infrastructure\EventListener\RequestIdListener:
         arguments:
-            $requestIdProvider: '@App\Libraries\FluxCapacitor\Services\RequestIdProvider'
+            $requestIdProvider: '@App\Libraries\FluxCapacitor\EventStore\Services\RequestIdProvider'
         tags:
             - { name: kernel.event_subscriber }
 
-    App\Libraries\Anonymii\Repositories\KeyManagementRepository:
+    App\Libraries\FluxCapacitor\Anonymizer\Repositories\KeyManagementRepository:
         arguments:
             $connection: '@doctrine.dbal.default_connection'
             $passphrase: '%env(KEY_MANAGEMENT_SECRET)%'

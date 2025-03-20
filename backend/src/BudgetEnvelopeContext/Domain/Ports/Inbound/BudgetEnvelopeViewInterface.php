@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\BudgetEnvelopeContext\Domain\Ports\Inbound;
 
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeAddedDomainEvent;
-use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
+use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
 
 interface BudgetEnvelopeViewInterface
 {

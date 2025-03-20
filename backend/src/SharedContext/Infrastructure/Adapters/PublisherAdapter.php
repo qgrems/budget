@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\SharedContext\Infrastructure\Adapters;
 
-use App\Libraries\FluxCapacitor\Ports\DomainEventPublisherInterface;
+use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventPublisherInterface;
 use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;

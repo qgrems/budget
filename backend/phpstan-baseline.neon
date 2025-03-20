@@ -13,7 +13,43 @@ parameters:
 			path: src/BudgetPlanContext/Application/Queries/GetACalendarWithItsBudgetPlansFinancialRatiosByYearQuery.php
 
 		-
-			message: '#^Cannot access property \$currency on mixed\.$#'
+			message: '#^Cannot access offset ''budget_plan_uuid'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
+
+		-
+			message: '#^Cannot access offset ''created_at'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
+
+		-
+			message: '#^Cannot access offset ''updated_at'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
+
+		-
+			message: '#^Cannot access offset ''uuid'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
+
+		-
+			message: '#^Cannot access property \$category on array\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
+
+		-
+			message: '#^Cannot access property \$incomeAmount on array\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
+
+		-
+			message: '#^Cannot access property \$incomeName on array\.$#'
 			identifier: property.nonObject
 			count: 1
 			path: src/BudgetPlanContext/Domain/Aggregates/BudgetPlan.php
@@ -199,122 +235,194 @@ parameters:
 			path: src/Gateway/User/Presentation/Cli/RewindAUserCommand.php
 
 		-
-			message: '#^Property App\\Libraries\\Anonymii\\Entities\\EncryptionKey\:\:\$createdAt is unused\.$#'
+			message: '#^Property App\\Libraries\\FluxCapacitor\\Anonymizer\\Entities\\EncryptionKey\:\:\$createdAt is unused\.$#'
 			identifier: property.unused
 			count: 1
-			path: src/Libraries/Anonymii/Entities/EncryptionKey.php
+			path: src/Libraries/FluxCapacitor/Anonymizer/Entities/EncryptionKey.php
 
 		-
-			message: '#^Property App\\Libraries\\Anonymii\\Entities\\EncryptionKey\:\:\$encryptionKey is unused\.$#'
+			message: '#^Property App\\Libraries\\FluxCapacitor\\Anonymizer\\Entities\\EncryptionKey\:\:\$encryptionKey is unused\.$#'
 			identifier: property.unused
 			count: 1
-			path: src/Libraries/Anonymii/Entities/EncryptionKey.php
+			path: src/Libraries/FluxCapacitor/Anonymizer/Entities/EncryptionKey.php
 
 		-
-			message: '#^Property App\\Libraries\\Anonymii\\Entities\\EncryptionKey\:\:\$id is unused\.$#'
+			message: '#^Property App\\Libraries\\FluxCapacitor\\Anonymizer\\Entities\\EncryptionKey\:\:\$id is unused\.$#'
 			identifier: property.unused
 			count: 1
-			path: src/Libraries/Anonymii/Entities/EncryptionKey.php
+			path: src/Libraries/FluxCapacitor/Anonymizer/Entities/EncryptionKey.php
 
 		-
-			message: '#^Property App\\Libraries\\Anonymii\\Entities\\EncryptionKey\:\:\$userId is unused\.$#'
+			message: '#^Property App\\Libraries\\FluxCapacitor\\Anonymizer\\Entities\\EncryptionKey\:\:\$userId is unused\.$#'
 			identifier: property.unused
 			count: 1
-			path: src/Libraries/Anonymii/Entities/EncryptionKey.php
+			path: src/Libraries/FluxCapacitor/Anonymizer/Entities/EncryptionKey.php
 
 		-
 			message: '#^Binary operation "\." between non\-empty\-string and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
-			path: src/Libraries/Anonymii/Repositories/KeyManagementRepository.php
+			path: src/Libraries/FluxCapacitor/Anonymizer/Repositories/KeyManagementRepository.php
 
 		-
-			message: '#^Method App\\Libraries\\Anonymii\\Repositories\\KeyManagementRepository\:\:decryptKey\(\) should return string but returns string\|false\.$#'
+			message: '#^Method App\\Libraries\\FluxCapacitor\\Anonymizer\\Repositories\\KeyManagementRepository\:\:decryptKey\(\) should return string but returns string\|false\.$#'
 			identifier: return.type
 			count: 1
-			path: src/Libraries/Anonymii/Repositories/KeyManagementRepository.php
+			path: src/Libraries/FluxCapacitor/Anonymizer/Repositories/KeyManagementRepository.php
 
 		-
-			message: '#^Method App\\Libraries\\Anonymii\\Services\\EncryptionService\:\:getKeyByUserId\(\) should return string\|null but returns mixed\.$#'
+			message: '#^Method App\\Libraries\\FluxCapacitor\\Anonymizer\\Services\\EncryptionService\:\:getKeyByUserId\(\) should return string\|null but returns mixed\.$#'
 			identifier: return.type
 			count: 1
-			path: src/Libraries/Anonymii/Services/EncryptionService.php
+			path: src/Libraries/FluxCapacitor/Anonymizer/Services/EncryptionService.php
 
 		-
-			message: '#^Method App\\Libraries\\Anonymii\\Services\\EncryptionService\:\:getKeyForUser\(\) should return string but returns string\|null\.$#'
+			message: '#^Method App\\Libraries\\FluxCapacitor\\Anonymizer\\Services\\EncryptionService\:\:getKeyForUser\(\) should return string but returns string\|null\.$#'
 			identifier: return.type
 			count: 1
-			path: src/Libraries/Anonymii/Services/EncryptionService.php
+			path: src/Libraries/FluxCapacitor/Anonymizer/Services/EncryptionService.php
 
 		-
 			message: '#^Cannot access offset ''ciphertext'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: src/Libraries/Anonymii/Services/EventEncryptor.php
+			path: src/Libraries/FluxCapacitor/Anonymizer/Services/EventEncryptor.php
 
 		-
 			message: '#^Cannot access offset ''iv'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: src/Libraries/Anonymii/Services/EventEncryptor.php
+			path: src/Libraries/FluxCapacitor/Anonymizer/Services/EventEncryptor.php
 
 		-
 			message: '#^Cannot access offset ''tag'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: src/Libraries/Anonymii/Services/EventEncryptor.php
+			path: src/Libraries/FluxCapacitor/Anonymizer/Services/EventEncryptor.php
 
 		-
 			message: '#^Cannot cast mixed to string\.$#'
 			identifier: cast.string
 			count: 1
-			path: src/Libraries/Anonymii/Services/EventEncryptor.php
+			path: src/Libraries/FluxCapacitor/Anonymizer/Services/EventEncryptor.php
 
 		-
-			message: '#^Property App\\Libraries\\FluxCapacitor\\Entities\\EventStore\:\:\$eventName is unused\.$#'
+			message: '#^Property App\\Libraries\\FluxCapacitor\\EventStore\\Entities\\EventStore\:\:\$eventName is unused\.$#'
 			identifier: property.unused
 			count: 1
-			path: src/Libraries/FluxCapacitor/Entities/EventStore.php
+			path: src/Libraries/FluxCapacitor/EventStore/Entities/EventStore.php
 
 		-
-			message: '#^Property App\\Libraries\\FluxCapacitor\\Entities\\EventStore\:\:\$id is unused\.$#'
+			message: '#^Property App\\Libraries\\FluxCapacitor\\EventStore\\Entities\\EventStore\:\:\$id is unused\.$#'
 			identifier: property.unused
 			count: 1
-			path: src/Libraries/FluxCapacitor/Entities/EventStore.php
+			path: src/Libraries/FluxCapacitor/EventStore/Entities/EventStore.php
 
 		-
-			message: '#^Property App\\Libraries\\FluxCapacitor\\Entities\\EventStore\:\:\$metaData is never read, only written\.$#'
+			message: '#^Property App\\Libraries\\FluxCapacitor\\EventStore\\Entities\\EventStore\:\:\$metaData is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
-			path: src/Libraries/FluxCapacitor/Entities/EventStore.php
+			path: src/Libraries/FluxCapacitor/EventStore/Entities/EventStore.php
 
 		-
-			message: '#^Property App\\Libraries\\FluxCapacitor\\Entities\\EventStore\:\:\$occurredOn is unused\.$#'
+			message: '#^Property App\\Libraries\\FluxCapacitor\\EventStore\\Entities\\EventStore\:\:\$occurredOn is unused\.$#'
 			identifier: property.unused
 			count: 1
-			path: src/Libraries/FluxCapacitor/Entities/EventStore.php
+			path: src/Libraries/FluxCapacitor/EventStore/Entities/EventStore.php
 
 		-
-			message: '#^Property App\\Libraries\\FluxCapacitor\\Entities\\EventStore\:\:\$payload is unused\.$#'
+			message: '#^Property App\\Libraries\\FluxCapacitor\\EventStore\\Entities\\EventStore\:\:\$payload is unused\.$#'
 			identifier: property.unused
 			count: 1
-			path: src/Libraries/FluxCapacitor/Entities/EventStore.php
+			path: src/Libraries/FluxCapacitor/EventStore/Entities/EventStore.php
 
 		-
-			message: '#^Property App\\Libraries\\FluxCapacitor\\Entities\\EventStore\:\:\$streamId is unused\.$#'
+			message: '#^Property App\\Libraries\\FluxCapacitor\\EventStore\\Entities\\EventStore\:\:\$streamId is unused\.$#'
 			identifier: property.unused
 			count: 1
-			path: src/Libraries/FluxCapacitor/Entities/EventStore.php
+			path: src/Libraries/FluxCapacitor/EventStore/Entities/EventStore.php
 
 		-
-			message: '#^Property App\\Libraries\\FluxCapacitor\\Entities\\EventStore\:\:\$userId is unused\.$#'
+			message: '#^Property App\\Libraries\\FluxCapacitor\\EventStore\\Entities\\EventStore\:\:\$userId is unused\.$#'
 			identifier: property.unused
 			count: 1
-			path: src/Libraries/FluxCapacitor/Entities/EventStore.php
+			path: src/Libraries/FluxCapacitor/EventStore/Entities/EventStore.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
+
+		-
+			message: '#^Call to an undefined method App\\Libraries\\FluxCapacitor\\Anonymizer\\Ports\\AbstractUserDomainEventInterface\:\:toArray\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
+
+		-
+			message: '#^Call to an undefined method App\\Libraries\\FluxCapacitor\\EventStore\\Ports\\AggregateRootInterface&App\\Libraries\\FluxCapacitor\\EventStore\\Ports\\UserAggregateInterface\:\:clearKeys\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
+
+		-
+			message: '#^Call to an undefined method App\\Libraries\\FluxCapacitor\\EventStore\\Ports\\AggregateRootInterface\:\:aggregateVersion\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
+
+		-
+			message: '#^Call to an undefined method App\\Libraries\\FluxCapacitor\\EventStore\\Ports\\AggregateRootInterface\:\:clearRaisedDomainEvents\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
+
+		-
+			message: '#^Call to an undefined method App\\Libraries\\FluxCapacitor\\EventStore\\Ports\\AggregateRootInterface\:\:raisedDomainEvents\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
+
+		-
+			message: '#^Call to an undefined method Traversable\:\:current\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
+
+		-
+			message: '#^Call to an undefined method Traversable\:\:next\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
+
+		-
+			message: '#^Call to an undefined method Traversable\:\:rewind\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
+
+		-
+			message: '#^Call to an undefined method Traversable\:\:valid\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
 
 		-
 			message: '#^Cannot access constant class on mixed\.$#'
 			identifier: classConstant.nonObject
+			count: 3
+			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
+
+		-
+			message: '#^Cannot access offset ''stream_name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
+
+		-
+			message: '#^Cannot access offset ''stream_version'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
 			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
 
@@ -333,56 +441,92 @@ parameters:
 		-
 			message: '#^Cannot access property \$userId on mixed\.$#'
 			identifier: property.nonObject
-			count: 1
+			count: 2
 			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
 
 		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
+			count: 2
+			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
+
+		-
+			message: '#^Cannot use \+\+ on mixed\.$#'
+			identifier: preInc.type
 			count: 1
+			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
+
+		-
+			message: '#^Method App\\Libraries\\FluxCapacitor\\EventStore\\EventStore\:\:createAggregateFromEvents\(\) should return App\\Libraries\\FluxCapacitor\\EventStore\\Ports\\AggregateRootInterface but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
+
+		-
+			message: '#^Method App\\Libraries\\FluxCapacitor\\EventStore\\EventStore\:\:getEventPayload\(\) should return array but returns mixed\.$#'
+			identifier: return.type
+			count: 2
 			path: src/Libraries/FluxCapacitor/EventStore/EventStore.php
 
 		-
 			message: '#^Cannot access offset ''aggregates'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: src/Libraries/FluxCapacitor/Services/EventClassMap.php
+			path: src/Libraries/FluxCapacitor/EventStore/Services/EventClassMap.php
+
+		-
+			message: '#^Cannot access offset ''event_to_aggregate'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Libraries/FluxCapacitor/EventStore/Services/EventClassMap.php
 
 		-
 			message: '#^Cannot access offset ''events'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: src/Libraries/FluxCapacitor/Services/EventClassMap.php
+			path: src/Libraries/FluxCapacitor/EventStore/Services/EventClassMap.php
 
 		-
-			message: '#^Method App\\Libraries\\FluxCapacitor\\Services\\EventClassMap\:\:getAggregatePathByByStreamName\(\) should return string but returns mixed\.$#'
+			message: '#^Method App\\Libraries\\FluxCapacitor\\EventStore\\Services\\EventClassMap\:\:getAggregatePathByByStreamName\(\) should return string but returns mixed\.$#'
 			identifier: return.type
 			count: 1
-			path: src/Libraries/FluxCapacitor/Services/EventClassMap.php
+			path: src/Libraries/FluxCapacitor/EventStore/Services/EventClassMap.php
 
 		-
-			message: '#^Method App\\Libraries\\FluxCapacitor\\Services\\EventClassMap\:\:getClassNameByEventPath\(\) should return string but returns int\<min, \-1\>\|int\<1, max\>\|string\.$#'
+			message: '#^Method App\\Libraries\\FluxCapacitor\\EventStore\\Services\\EventClassMap\:\:getClassNameByEventPath\(\) should return string but returns int\<min, \-1\>\|int\<1, max\>\|string\.$#'
 			identifier: return.type
 			count: 1
-			path: src/Libraries/FluxCapacitor/Services/EventClassMap.php
+			path: src/Libraries/FluxCapacitor/EventStore/Services/EventClassMap.php
 
 		-
-			message: '#^Method App\\Libraries\\FluxCapacitor\\Services\\EventClassMap\:\:getEventPathByClassName\(\) should return string but returns mixed\.$#'
+			message: '#^Method App\\Libraries\\FluxCapacitor\\EventStore\\Services\\EventClassMap\:\:getEventPathByClassName\(\) should return string but returns mixed\.$#'
 			identifier: return.type
 			count: 1
-			path: src/Libraries/FluxCapacitor/Services/EventClassMap.php
+			path: src/Libraries/FluxCapacitor/EventStore/Services/EventClassMap.php
 
 		-
-			message: '#^Property App\\Libraries\\FluxCapacitor\\Services\\EventClassMap\:\:\$aggregateMappings \(array\) does not accept mixed\.$#'
+			message: '#^Method App\\Libraries\\FluxCapacitor\\EventStore\\Services\\EventClassMap\:\:getStreamNameByEventPath\(\) should return string but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Libraries/FluxCapacitor/EventStore/Services/EventClassMap.php
+
+		-
+			message: '#^Property App\\Libraries\\FluxCapacitor\\EventStore\\Services\\EventClassMap\:\:\$aggregateMappings \(array\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
-			path: src/Libraries/FluxCapacitor/Services/EventClassMap.php
+			path: src/Libraries/FluxCapacitor/EventStore/Services/EventClassMap.php
 
 		-
-			message: '#^Property App\\Libraries\\FluxCapacitor\\Services\\EventClassMap\:\:\$eventMappings \(array\) does not accept mixed\.$#'
+			message: '#^Property App\\Libraries\\FluxCapacitor\\EventStore\\Services\\EventClassMap\:\:\$eventMappings \(array\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
-			path: src/Libraries/FluxCapacitor/Services/EventClassMap.php
+			path: src/Libraries/FluxCapacitor/EventStore/Services/EventClassMap.php
+
+		-
+			message: '#^Property App\\Libraries\\FluxCapacitor\\EventStore\\Services\\EventClassMap\:\:\$eventToAggregateMap \(array\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Libraries/FluxCapacitor/EventStore/Services/EventClassMap.php
 
 		-
 			message: '#^Cannot access constant class on mixed\.$#'
@@ -391,7 +535,7 @@ parameters:
 			path: src/SharedContext/Infrastructure/Adapters/PublisherAdapter.php
 
 		-
-			message: '#^Property App\\Libraries\\FluxCapacitor\\Services\\RequestIdProvider\:\:\$requestId \(string\) does not accept string\|null\.$#'
+			message: '#^Property App\\Libraries\\FluxCapacitor\\EventStore\\Services\\RequestIdProvider\:\:\$requestId \(string\) does not accept string\|null\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/SharedContext/Infrastructure/EventListener/RequestIdListener.php
@@ -413,6 +557,24 @@ parameters:
 			identifier: property.onlyWritten
 			count: 1
 			path: src/UserContext/Domain/Aggregates/User.php
+
+		-
+			message: '#^Cannot access offset ''isRegistered'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: src/UserContext/Domain/Aggregates/UserEmailRegistry.php
+
+		-
+			message: '#^Cannot access offset ''userId'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/UserContext/Domain/Aggregates/UserEmailRegistry.php
+
+		-
+			message: '#^Method App\\UserContext\\Domain\\Aggregates\\UserEmailRegistry\:\:getEmailOwner\(\) should return string\|null but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/UserContext/Domain/Aggregates/UserEmailRegistry.php
 
 		-
 			message: '#^Method App\\UserContext\\ReadModels\\Views\\UserView\:\:getRoles\(\) should return array\<string\> but returns array\.$#'

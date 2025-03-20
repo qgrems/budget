@@ -13,4 +13,9 @@ final class UuidGeneratorAdapter implements UuidGeneratorInterface
     {
         return Uuid::v4()->toRfc4122();
     }
+
+    public static function uuidV5(string $namespace, string $name): string
+    {
+        return Uuid::v5(Uuid::fromString($namespace), $name)->toRfc4122();
+    }
 }

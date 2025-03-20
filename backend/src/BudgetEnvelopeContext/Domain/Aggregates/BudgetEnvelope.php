@@ -14,10 +14,7 @@ use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeReplayedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeRewoundDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Events\BudgetEnvelopeTargetedAmountChangedDomainEvent;
 use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeIsNotOwnedByUserException;
-use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeNameAlreadyExistsForUserException;
 use App\BudgetEnvelopeContext\Domain\Exceptions\InvalidBudgetEnvelopeOperationException;
-use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeViewInterface;
-use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCreditMoney;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCurrency;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeCurrentAmount;
@@ -27,10 +24,8 @@ use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeName;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
-use App\Libraries\FluxCapacitor\Ports\AggregateRootInterface;
-use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
-use App\Libraries\FluxCapacitor\Ports\EventClassMapInterface;
-use App\Libraries\FluxCapacitor\Traits\DomainEventsCapabilityTrait;
+use App\Libraries\FluxCapacitor\EventStore\Ports\AggregateRootInterface;
+use App\Libraries\FluxCapacitor\EventStore\Traits\DomainEventsCapabilityTrait;
 
 final class BudgetEnvelope implements AggregateRootInterface
 {
@@ -50,43 +45,13 @@ final class BudgetEnvelope implements AggregateRootInterface
     {
     }
 
-    public static function fromEvents(\Generator $events, EventClassMapInterface $eventClassMap): self
-    {
-        $aggregate = new self();
-
-        /** @var array{stream_version: int, event_name: string, payload: string} $event */
-        foreach ($events as $event) {
-            $aggregate->apply(
-                /** @var DomainEventInterface $eventClassMap->getEventPathByClassName($event['event_name']) */
-                $eventClassMap->getEventPathByClassName($event['event_name'])::fromArray(
-                    json_decode(
-                        $event['payload'],
-                        true,
-                    )
-                ),
-            );
-            $aggregate->aggregateVersion = $event['stream_version'];
-        }
-
-        return $aggregate;
-    }
-
     public static function create(
         BudgetEnvelopeId $budgetEnvelopeId,
         BudgetEnvelopeUserId $budgetEnvelopeUserId,
         BudgetEnvelopeTargetedAmount $budgetEnvelopeTargetedAmount,
         BudgetEnvelopeName $budgetEnvelopeName,
         BudgetEnvelopeCurrency $budgetEnvelopeCurrency,
-        BudgetEnvelopeViewRepositoryInterface $budgetEnvelopeViewRepository,
     ): self {
-        if ($budgetEnvelopeViewRepository->findOneBy([
-            'user_uuid' => (string) $budgetEnvelopeUserId,
-            'name' => (string) $budgetEnvelopeName,
-            'is_deleted' => false,
-        ])) {
-            throw new BudgetEnvelopeNameAlreadyExistsForUserException();
-        }
-
         $budgetEnvelopeAddedDomainEvent = new BudgetEnvelopeAddedDomainEvent(
             (string) $budgetEnvelopeId,
             (string) $budgetEnvelopeUserId,
@@ -95,41 +60,25 @@ final class BudgetEnvelope implements AggregateRootInterface
             (string) $budgetEnvelopeCurrency,
         );
         $aggregate = new self();
-        $aggregate->apply($budgetEnvelopeAddedDomainEvent);
         $aggregate->raiseDomainEvents($budgetEnvelopeAddedDomainEvent);
 
         return $aggregate;
     }
 
-    public function rename(
-        BudgetEnvelopeName $budgetEnvelopeName,
-        BudgetEnvelopeUserId $budgetEnvelopeUserId,
-        BudgetEnvelopeId $budgetEnvelopeId,
-        BudgetEnvelopeViewRepositoryInterface $budgetEnvelopeViewRepository,
-    ): void {
+    public static function empty(): self
+    {
+        return new self();
+    }
+
+    public function rename(BudgetEnvelopeName $budgetEnvelopeName, BudgetEnvelopeUserId $budgetEnvelopeUserId): void
+    {
         $this->assertNotDeleted();
         $this->assertOwnership($budgetEnvelopeUserId);
-        $budgetEnvelope = $budgetEnvelopeViewRepository->findOneBy(
-            [
-                'user_uuid' => (string) $budgetEnvelopeUserId,
-                'name' => (string) $budgetEnvelopeName,
-                'is_deleted' => false,
-            ],
-        );
-
-        if (
-            $budgetEnvelope instanceof BudgetEnvelopeViewInterface &&
-            $budgetEnvelope->uuid !== (string) $budgetEnvelopeId
-        ) {
-            throw new BudgetEnvelopeNameAlreadyExistsForUserException();
-        }
-
         $budgetEnvelopeRenamedDomainEvent = new BudgetEnvelopeRenamedDomainEvent(
             (string) $this->budgetEnvelopeId,
             (string) $this->userId,
             (string) $budgetEnvelopeName,
         );
-        $this->apply($budgetEnvelopeRenamedDomainEvent);
         $this->raiseDomainEvents($budgetEnvelopeRenamedDomainEvent);
     }
 
@@ -140,15 +89,12 @@ final class BudgetEnvelope implements AggregateRootInterface
     ): void {
         $this->assertNotDeleted();
         $this->assertOwnership($userId);
-
         $budgetEnvelopeCreditedDomainEvent = new BudgetEnvelopeCreditedDomainEvent(
             (string) $this->budgetEnvelopeId,
             (string) $this->userId,
             (string) $budgetEnvelopeCreditMoney,
             (string) $budgetEnvelopeEntryDescription,
         );
-
-        $this->apply($budgetEnvelopeCreditedDomainEvent);
         $this->raiseDomainEvents($budgetEnvelopeCreditedDomainEvent);
     }
 
@@ -166,8 +112,6 @@ final class BudgetEnvelope implements AggregateRootInterface
             (string) $budgetEnvelopeDebitMoney,
             (string) $budgetEnvelopeEntryDescription,
         );
-
-        $this->apply($budgetEnvelopeDebitedDomainEvent);
         $this->raiseDomainEvents($budgetEnvelopeDebitedDomainEvent);
     }
 
@@ -181,8 +125,6 @@ final class BudgetEnvelope implements AggregateRootInterface
             (string) $this->userId,
             true,
         );
-
-        $this->apply($budgetEnvelopeDeletedDomainEvent);
         $this->raiseDomainEvents($budgetEnvelopeDeletedDomainEvent);
     }
 
@@ -198,15 +140,11 @@ final class BudgetEnvelope implements AggregateRootInterface
             (string) $this->userId,
             (string) $budgetEnvelopeTargetedAmount,
         );
-
-        $this->apply($budgetEnvelopeTargetedAmountChangedDomainEvent);
         $this->raiseDomainEvents($budgetEnvelopeTargetedAmountChangedDomainEvent);
     }
 
-    public function changeCurrency(
-        BudgetEnvelopeCurrency $budgetEnvelopeCurrency,
-        BudgetEnvelopeUserId $userId,
-    ): void {
+    public function changeCurrency(BudgetEnvelopeCurrency $budgetEnvelopeCurrency, BudgetEnvelopeUserId $userId): void
+    {
         $this->assertNotDeleted();
         $this->assertOwnership($userId);
 
@@ -215,15 +153,11 @@ final class BudgetEnvelope implements AggregateRootInterface
             (string) $this->userId,
             (string) $budgetEnvelopeCurrency,
         );
-
-        $this->apply($budgetEnvelopeCurrencyChangedDomainEvent);
         $this->raiseDomainEvents($budgetEnvelopeCurrencyChangedDomainEvent);
     }
 
-    public function rewind(
-        BudgetEnvelopeUserId $userId,
-        \DateTimeImmutable $desiredDateTime,
-    ): void {
+    public function rewind(BudgetEnvelopeUserId $userId, \DateTimeImmutable $desiredDateTime): void
+    {
         $this->assertOwnership($userId);
         $budgetEnvelopeRewoundDomainEvent = new BudgetEnvelopeRewoundDomainEvent(
             (string) $this->budgetEnvelopeId,
@@ -236,13 +170,11 @@ final class BudgetEnvelope implements AggregateRootInterface
             $desiredDateTime->format(\DateTimeInterface::ATOM),
             $this->isDeleted,
         );
-        $this->apply($budgetEnvelopeRewoundDomainEvent);
         $this->raiseDomainEvents($budgetEnvelopeRewoundDomainEvent);
     }
 
-    public function replay(
-        BudgetEnvelopeUserId $userId,
-    ): void {
+    public function replay(BudgetEnvelopeUserId $userId): void
+    {
         $this->assertOwnership($userId);
         $budgetEnvelopeReplayedDomainEvent = new BudgetEnvelopeReplayedDomainEvent(
             (string) $this->budgetEnvelopeId,
@@ -254,7 +186,6 @@ final class BudgetEnvelope implements AggregateRootInterface
             $this->updatedAt->format(\DateTimeInterface::ATOM),
             $this->isDeleted,
         );
-        $this->apply($budgetEnvelopeReplayedDomainEvent);
         $this->raiseDomainEvents($budgetEnvelopeReplayedDomainEvent);
     }
 
@@ -263,23 +194,19 @@ final class BudgetEnvelope implements AggregateRootInterface
         return $this->aggregateVersion;
     }
 
-    private function apply(DomainEventInterface $event): void
+    public function getBudgetEnvelopeName(): BudgetEnvelopeName
     {
-        match ($event::class) {
-            BudgetEnvelopeAddedDomainEvent::class => $this->applyBudgetEnvelopeAddedDomainEvent($event),
-            BudgetEnvelopeRenamedDomainEvent::class => $this->applyBudgetEnvelopeRenamedDomainEvent($event),
-            BudgetEnvelopeCreditedDomainEvent::class => $this->applyBudgetEnvelopeCreditedDomainEvent($event),
-            BudgetEnvelopeDebitedDomainEvent::class => $this->applyBudgetEnvelopeDebitedDomainEvent($event),
-            BudgetEnvelopeDeletedDomainEvent::class => $this->applyBudgetEnvelopeDeletedDomainEvent($event),
-            BudgetEnvelopeReplayedDomainEvent::class => $this->applyBudgetEnvelopeReplayedDomainEvent($event),
-            BudgetEnvelopeRewoundDomainEvent::class => $this->applyBudgetEnvelopeRewoundDomainEvent($event),
-            BudgetEnvelopeTargetedAmountChangedDomainEvent::class => $this->applyBudgetEnvelopeTargetedAmountChangedDomainEvent($event),
-            BudgetEnvelopeCurrencyChangedDomainEvent::class => $this->applyBudgetEnvelopeCurrencyChangedDomainEvent($event),
-            default => throw new \RuntimeException('envelopes.unknownEvent'),
-        };
+        return $this->budgetEnvelopeName;
     }
 
-    private function applyBudgetEnvelopeAddedDomainEvent(
+    public function setAggregateVersion(int $aggregateVersion): self
+    {
+        $this->aggregateVersion = $aggregateVersion;
+
+        return $this;
+    }
+
+    public function applyBudgetEnvelopeAddedDomainEvent(
         BudgetEnvelopeAddedDomainEvent $budgetEnvelopeAddedDomainEvent,
     ): void {
         $this->budgetEnvelopeId = BudgetEnvelopeId::fromString($budgetEnvelopeAddedDomainEvent->aggregateId);
@@ -298,13 +225,13 @@ final class BudgetEnvelope implements AggregateRootInterface
         $this->isDeleted = false;
     }
 
-    private function applyBudgetEnvelopeRenamedDomainEvent(BudgetEnvelopeRenamedDomainEvent $event): void
+    public function applyBudgetEnvelopeRenamedDomainEvent(BudgetEnvelopeRenamedDomainEvent $event): void
     {
         $this->budgetEnvelopeName = BudgetEnvelopeName::fromString($event->name);
         $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
     }
 
-    private function applyBudgetEnvelopeCreditedDomainEvent(
+    public function applyBudgetEnvelopeCreditedDomainEvent(
         BudgetEnvelopeCreditedDomainEvent $budgetEnvelopeCreditedDomainEvent,
     ): void {
         $this->budgetEnvelopeCurrentAmount = BudgetEnvelopeCurrentAmount::fromString(
@@ -320,7 +247,7 @@ final class BudgetEnvelope implements AggregateRootInterface
         $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeCreditedDomainEvent->occurredOn);
     }
 
-    private function applyBudgetEnvelopeDebitedDomainEvent(
+    public function applyBudgetEnvelopeDebitedDomainEvent(
         BudgetEnvelopeDebitedDomainEvent $budgetEnvelopeDebitedDomainEvent,
     ): void {
         $this->budgetEnvelopeCurrentAmount = BudgetEnvelopeCurrentAmount::fromString(
@@ -336,14 +263,14 @@ final class BudgetEnvelope implements AggregateRootInterface
         $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeDebitedDomainEvent->occurredOn);
     }
 
-    private function applyBudgetEnvelopeDeletedDomainEvent(
+    public function applyBudgetEnvelopeDeletedDomainEvent(
         BudgetEnvelopeDeletedDomainEvent $budgetEnvelopeDeletedDomainEvent,
     ): void {
         $this->isDeleted = $budgetEnvelopeDeletedDomainEvent->isDeleted;
         $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeDeletedDomainEvent->occurredOn);
     }
 
-    private function applyBudgetEnvelopeTargetedAmountChangedDomainEvent(
+    public function applyBudgetEnvelopeTargetedAmountChangedDomainEvent(
         BudgetEnvelopeTargetedAmountChangedDomainEvent $budgetEnvelopeTargetedAmountChangedDomainEvent,
     ): void {
         $this->budgetEnvelopeTargetedAmount = BudgetEnvelopeTargetedAmount::fromString(
@@ -353,7 +280,7 @@ final class BudgetEnvelope implements AggregateRootInterface
         $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeTargetedAmountChangedDomainEvent->occurredOn);
     }
 
-    private function applyBudgetEnvelopeCurrencyChangedDomainEvent(
+    public function applyBudgetEnvelopeCurrencyChangedDomainEvent(
         BudgetEnvelopeCurrencyChangedDomainEvent $budgetEnvelopeCurrencyChangedDomainEvent,
     ): void {
         $this->budgetEnvelopeCurrency = BudgetEnvelopeCurrency::fromString(
@@ -362,7 +289,7 @@ final class BudgetEnvelope implements AggregateRootInterface
         $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeCurrencyChangedDomainEvent->occurredOn);
     }
 
-    private function applyBudgetEnvelopeReplayedDomainEvent(
+    public function applyBudgetEnvelopeReplayedDomainEvent(
         BudgetEnvelopeReplayedDomainEvent $budgetEnvelopeReplayedDomainEvent,
     ): void {
         $this->budgetEnvelopeName = BudgetEnvelopeName::fromString($budgetEnvelopeReplayedDomainEvent->name);
@@ -377,7 +304,7 @@ final class BudgetEnvelope implements AggregateRootInterface
         $this->isDeleted = $budgetEnvelopeReplayedDomainEvent->isDeleted;
     }
 
-    private function applyBudgetEnvelopeRewoundDomainEvent(
+    public function applyBudgetEnvelopeRewoundDomainEvent(
         BudgetEnvelopeRewoundDomainEvent $budgetEnvelopeRewoundDomainEvent,
     ): void {
         $this->budgetEnvelopeName = BudgetEnvelopeName::fromString($budgetEnvelopeRewoundDomainEvent->name);

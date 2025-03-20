@@ -6,36 +6,58 @@ namespace App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers;
 
 use App\BudgetEnvelopeContext\Application\Commands\AddABudgetEnvelopeCommand;
 use App\BudgetEnvelopeContext\Domain\Aggregates\BudgetEnvelope;
+use App\BudgetEnvelopeContext\Domain\Builders\BudgetEnvelopeNameRegistryBuilder;
 use App\BudgetEnvelopeContext\Domain\Exceptions\BudgetEnvelopeAlreadyExistsException;
-use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeViewRepositoryInterface;
+use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeNameRegistryId;
+use App\Libraries\FluxCapacitor\EventStore\Exceptions\EventsNotFoundForAggregateException;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
+use App\SharedContext\Domain\Ports\Outbound\UuidGeneratorInterface;
 
 final readonly class AddABudgetEnvelopeCommandHandler
 {
     public function __construct(
         private EventSourcedRepositoryInterface $eventSourcedRepository,
-        private BudgetEnvelopeViewRepositoryInterface $budgetEnvelopeViewRepository,
-    ) {
+        private UuidGeneratorInterface $uuidGenerator,
+    )
+    {
     }
 
-    public function __invoke(AddABudgetEnvelopeCommand $addABudgetEnvelopeCommand): void
+    public function __invoke(AddABudgetEnvelopeCommand $command): void
     {
-        $events = $this->eventSourcedRepository->get((string) $addABudgetEnvelopeCommand->getBudgetEnvelopeId());
+        try {
+            $aggregate = $this->eventSourcedRepository->get((string) $command->getBudgetEnvelopeId());
 
-        if ($events->current()) {
-            throw new BudgetEnvelopeAlreadyExistsException();
+            if ($aggregate instanceof BudgetEnvelope) {
+                throw new BudgetEnvelopeAlreadyExistsException();
+            }
+        } catch (EventsNotFoundForAggregateException) {
+            $aggregate = BudgetEnvelope::create(
+                $command->getBudgetEnvelopeId(),
+                $command->getBudgetEnvelopeUserId(),
+                $command->getBudgetEnvelopeTargetedAmount(),
+                $command->getBudgetEnvelopeName(),
+                $command->getBudgetEnvelopeCurrency(),
+            );
+            $aggregatesToSave = BudgetEnvelopeNameRegistryBuilder::build(
+                $this->eventSourcedRepository,
+                $this->uuidGenerator,
+            )
+                ->loadOrCreateRegistry(
+                    BudgetEnvelopeNameRegistryId::fromUserIdAndBudgetEnvelopeName(
+                        $command->getBudgetEnvelopeUserId(),
+                        $command->getBudgetEnvelopeName(),
+                        $this->uuidGenerator,
+                    ),
+                )
+                ->ensureNameIsAvailable($command->getBudgetEnvelopeName(), $command->getBudgetEnvelopeUserId())
+                ->registerName(
+                    $command->getBudgetEnvelopeName(),
+                    $command->getBudgetEnvelopeUserId(),
+                    $command->getBudgetEnvelopeId(),
+                )
+                ->getRegistryAggregates();
+            $aggregatesToSave[] = $aggregate;
+            $this->eventSourcedRepository->saveMultiAggregate($aggregatesToSave);
         }
-
-        $aggregate = BudgetEnvelope::create(
-            $addABudgetEnvelopeCommand->getBudgetEnvelopeId(),
-            $addABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
-            $addABudgetEnvelopeCommand->getBudgetEnvelopeTargetedAmount(),
-            $addABudgetEnvelopeCommand->getBudgetEnvelopeName(),
-            $addABudgetEnvelopeCommand->getBudgetEnvelopeCurrency(),
-            $this->budgetEnvelopeViewRepository,
-        );
-
-        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), 0);
-        $aggregate->clearRaisedDomainEvents();
     }
 }

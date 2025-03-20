@@ -6,35 +6,26 @@ namespace App\BudgetPlanContext\Application\Handlers\CommandHandlers;
 
 use App\BudgetPlanContext\Application\Commands\AddABudgetPlanSavingCommand;
 use App\BudgetPlanContext\Domain\Aggregates\BudgetPlan;
-use App\Libraries\FluxCapacitor\Ports\EventClassMapInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 
 final readonly class AddABudgetPlanSavingCommandHandler
 {
-    public function __construct(
-        private EventSourcedRepositoryInterface $eventSourcedRepository,
-        private EventClassMapInterface $eventClassMap,
-    ) {
+    public function __construct(private EventSourcedRepositoryInterface $eventSourcedRepository)
+    {
     }
 
-    public function __invoke(
-        AddABudgetPlanSavingCommand $addABudgetPlanSavingCommand
-    ): void {
-        $aggregate = BudgetPlan::fromEvents(
-            $this->eventSourcedRepository->get(
-                (string) $addABudgetPlanSavingCommand->getBudgetPlanId(),
-            ),
-            $this->eventClassMap,
-        );
+    public function __invoke(AddABudgetPlanSavingCommand $command): void
+    {
+        /** @var BudgetPlan $aggregate */
+        $aggregate = $this->eventSourcedRepository->get((string) $command->getBudgetPlanId());
         $aggregate->addSaving(
-            $addABudgetPlanSavingCommand->getBudgetPlanId(),
-            $addABudgetPlanSavingCommand->getEntryId(),
-            $addABudgetPlanSavingCommand->getName(),
-            $addABudgetPlanSavingCommand->getAmount(),
-            $addABudgetPlanSavingCommand->getCategory(),
-            $addABudgetPlanSavingCommand->getUserId(),
+            $command->getBudgetPlanId(),
+            $command->getEntryId(),
+            $command->getName(),
+            $command->getAmount(),
+            $command->getCategory(),
+            $command->getUserId(),
         );
-        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), $aggregate->aggregateVersion());
-        $aggregate->clearRaisedDomainEvents();
+        $this->eventSourcedRepository->save($aggregate);
     }
 }

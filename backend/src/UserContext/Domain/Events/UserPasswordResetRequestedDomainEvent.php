@@ -2,8 +2,8 @@
 
 namespace App\UserContext\Domain\Events;
 
-use App\Libraries\FluxCapacitor\Ports\DomainEventInterface;
-use App\UserContext\Domain\Ports\Inbound\UserDomainEventInterface;
+use App\Libraries\FluxCapacitor\Anonymizer\Ports\UserDomainEventInterface;
+use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
 
 final class UserPasswordResetRequestedDomainEvent implements UserDomainEventInterface
 {

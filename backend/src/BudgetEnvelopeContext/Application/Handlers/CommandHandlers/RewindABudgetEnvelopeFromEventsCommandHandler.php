@@ -6,31 +6,51 @@ namespace App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers;
 
 use App\BudgetEnvelopeContext\Application\Commands\RewindABudgetEnvelopeFromEventsCommand;
 use App\BudgetEnvelopeContext\Domain\Aggregates\BudgetEnvelope;
-use App\Libraries\FluxCapacitor\Ports\EventClassMapInterface;
+use App\BudgetEnvelopeContext\Domain\Builders\BudgetEnvelopeNameRegistryBuilder;
+use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeNameRegistryId;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
+use App\SharedContext\Domain\Ports\Outbound\UuidGeneratorInterface;
 
 final readonly class RewindABudgetEnvelopeFromEventsCommandHandler
 {
     public function __construct(
         private EventSourcedRepositoryInterface $eventSourcedRepository,
-        private EventClassMapInterface $eventClassMap,
+        private UuidGeneratorInterface $uuidGenerator,
     ) {
     }
 
-    public function __invoke(RewindABudgetEnvelopeFromEventsCommand $rewindABudgetEnvelopeCommand): void
+    public function __invoke(RewindABudgetEnvelopeFromEventsCommand $command): void
     {
-        $aggregate = BudgetEnvelope::fromEvents(
-            $this->eventSourcedRepository->get(
-                (string) $rewindABudgetEnvelopeCommand->getBudgetEnvelopeId(),
-                $rewindABudgetEnvelopeCommand->getDesiredDateTime(),
-            ),
-            $this->eventClassMap,
+        /** @var BudgetEnvelope $aggregate */
+        $aggregate = $this->eventSourcedRepository->get(
+            (string) $command->getBudgetEnvelopeId(),
+            $command->getDesiredDateTime(),
         );
-        $aggregate->rewind(
-            $rewindABudgetEnvelopeCommand->getBudgetEnvelopeUserId(),
-            $rewindABudgetEnvelopeCommand->getDesiredDateTime(),
+        $aggregate->rewind($command->getBudgetEnvelopeUserId(), $command->getDesiredDateTime());
+        $budgetEnvelopeNameRegistryId = BudgetEnvelopeNameRegistryId::fromUserIdAndBudgetEnvelopeName(
+            $command->getBudgetEnvelopeUserId(),
+            $aggregate->getBudgetEnvelopeName(),
+            $this->uuidGenerator,
         );
-        $this->eventSourcedRepository->save($aggregate->raisedDomainEvents(), $aggregate->aggregateVersion());
-        $aggregate->clearRaisedDomainEvents();
+        $aggregatesToSave = BudgetEnvelopeNameRegistryBuilder::build(
+            $this->eventSourcedRepository,
+            $this->uuidGenerator
+        )
+            ->loadOldRegistry($budgetEnvelopeNameRegistryId)
+            ->releaseName($aggregate->getBudgetEnvelopeName(), $command->getBudgetEnvelopeUserId())
+            ->loadOrCreateRegistry($budgetEnvelopeNameRegistryId)
+            ->ensureNameIsAvailable(
+                $aggregate->getBudgetEnvelopeName(),
+                $command->getBudgetEnvelopeUserId(),
+                $command->getBudgetEnvelopeId()
+            )
+            ->registerName(
+                $aggregate->getBudgetEnvelopeName(),
+                $command->getBudgetEnvelopeUserId(),
+                $command->getBudgetEnvelopeId()
+            )
+            ->getRegistryAggregates();
+        $aggregatesToSave[] = $aggregate;
+        $this->eventSourcedRepository->saveMultiAggregate($aggregatesToSave);
     }
 }
