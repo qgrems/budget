@@ -15,11 +15,11 @@ interface CreateFromExistingModalProps {
 }
 
 export default function CreateFromExistingModal({
-                                                    isOpen,
-                                                    onClose,
-                                                    selectedDate,
-                                                    budgetPlansCalendar,
-                                                }: CreateFromExistingModalProps) {
+    isOpen,
+    onClose,
+    selectedDate,
+    budgetPlansCalendar,
+}: CreateFromExistingModalProps) {
     const { t, language } = useTranslation()
     const { createBudgetPlanFromExisting, loading } = useBudgetPlans()
 
@@ -38,7 +38,7 @@ export default function CreateFromExistingModal({
         if (!budgetPlansCalendar) return []
 
         const plans: Array<{ year: number; month: number; id: string }> = []
-
+        console.log(budgetPlansCalendar)
         Object.entries(budgetPlansCalendar).forEach(([year, months]) => {
             Object.entries(months).forEach(([month, id]) => {
                 // Don't include the current selected date
@@ -108,11 +108,10 @@ export default function CreateFromExistingModal({
                         <div className="space-y-2 max-h-60 overflow-y-auto neomorphic-inset p-2 rounded-md">
                             {availablePlans.map((plan) => (
                                 <button
-                                    key={plan.id}
+                                    key={plan.uuid}
                                     onClick={() => setSelectedPlanId(plan.id)}
-                                    className={`w-full text-left p-3 rounded-md transition-colors ${
-                                        selectedPlanId === plan.id ? "neomorphic-button bg-primary/10 text-primary" : "hover:bg-accent"
-                                    }`}
+                                    className={`w-full text-left p-3 rounded-md transition-colors ${selectedPlanId === plan.id ? "neomorphic-button bg-primary/10 text-primary" : "hover:bg-accent"
+                                        }`}
                                 >
                                     {formatDate(plan.year, plan.month)}
                                 </button>

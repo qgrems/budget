@@ -5,12 +5,11 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recha
 import { useTranslation } from "../../hooks/useTranslation"
 import { formatCurrency } from "../../utils/envelope/currencyUtils"
 import { useBudgetPlans } from "../../domain/budget/budgetHooks"
-import type { BudgetPlan } from "../../domain/budget/budgetTypes"
+import type { BudgetPlan, Category } from "../../domain/budget/budgetTypes"
 import { Calculator, DollarSign, PiggyBank, ShoppingBag, Plus, Edit2, Trash2, Loader2, Tag } from "lucide-react"
 import BudgetItemModal from "./BudgetItemModal"
 import DeleteConfirmationModal from "./DeleteConfirmationModal"
 import { useSocket } from "../../hooks/useSocket"
-import type { Category } from "../../domain/category/categoryTypes"
 
 interface BudgetPlanDetailsProps {
     budgetPlan: BudgetPlan
@@ -243,9 +242,9 @@ export default function BudgetPlanDetails({ budgetPlan, categories }: BudgetPlan
                             <div className="flex items-center">
                                 <span className="font-medium mr-2">{item[fields.name]}</span>
                                 <span className="text-sm bg-gray-200 text-gray-700 px-2 py-1 rounded-full flex items-center">
-                  <Tag className="w-3 h-3 mr-1" />
+                                    <Tag className="w-3 h-3 mr-1" />
                                     {getCategoryName(type, item[fields.category])}
-                </span>
+                                </span>
                             </div>
                             <div className="flex items-center">
                                 <span className="font-semibold mr-3">{formatCurrency(item[fields.amount], planDetails?.currency)}</span>
@@ -287,17 +286,17 @@ export default function BudgetPlanDetails({ budgetPlan, categories }: BudgetPlan
                     <div className="flex justify-between font-semibold text-lg">
                         <span>{t(`budgetTracker.total${type.charAt(0).toUpperCase() + type.slice(1)}s`)}</span>
                         <span>
-              {formatCurrency(
-                  type === "need"
-                      ? totalNeeds
-                      : type === "want"
-                          ? totalWants
-                          : type === "saving"
-                              ? totalSavings
-                              : totalIncome,
-                  planDetails?.currency,
-              )}
-            </span>
+                            {formatCurrency(
+                                type === "need"
+                                    ? totalNeeds
+                                    : type === "want"
+                                        ? totalWants
+                                        : type === "saving"
+                                            ? totalSavings
+                                            : totalIncome,
+                                planDetails?.currency,
+                            )}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -321,11 +320,10 @@ export default function BudgetPlanDetails({ budgetPlan, categories }: BudgetPlan
                         <button
                             key={tab}
                             onClick={() => handleTabChange(tab as TabType)}
-                            className={`py-2 px-3 rounded-md text-sm ${
-                                activeTab === tab
-                                    ? "neomorphic-inset text-primary font-semibold"
-                                    : "neomorphic-button text-muted-foreground"
-                            }`}
+                            className={`py-2 px-3 rounded-md text-sm ${activeTab === tab
+                                ? "neomorphic-inset text-primary font-semibold"
+                                : "neomorphic-button text-muted-foreground"
+                                }`}
                         >
                             {tab === "overview" && <Calculator className="h-4 w-4 inline mr-1" />}
                             {tab === "needs" && <DollarSign className="h-4 w-4 inline mr-1" />}
@@ -371,8 +369,8 @@ export default function BudgetPlanDetails({ budgetPlan, categories }: BudgetPlan
                                         <li key={income.uuid} className="flex justify-between">
                                             <span>{income.incomeName}</span>
                                             <span className="font-semibold">
-                        {formatCurrency(income.incomeAmount, planDetails?.currency)}
-                      </span>
+                                                {formatCurrency(income.incomeAmount, planDetails?.currency)}
+                                            </span>
                                         </li>
                                     ))}
                                 </ul>

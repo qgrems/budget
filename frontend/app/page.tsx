@@ -14,7 +14,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!loading && user) {
-      router.push('/dashboard')
+      router.push('/envelopes')
     }
   }, [user, loading, router])
 

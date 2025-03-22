@@ -9,6 +9,12 @@ import { TermsModal } from "../components/TermsModal"
 import { v4 as uuidv4 } from "uuid"
 import { useError } from "../contexts/ErrorContext"
 import { useValidMessage } from "../contexts/ValidContext"
+import InputText from "../components/inputs/envelopeInput/textInput"
+import TextInput from "../components/inputs/formInputs/textInputs"
+import PasswordInput from "../components/inputs/passwordInput"
+import CustomSelect from "../components/inputs/customSelect"
+import { languageOptions } from "../constants/languageOptions"
+import ActionButton from "../components/buttons/formButton/formButton"
 
 export default function SignUp() {
     const [firstname, setFirstname] = useState("")
@@ -66,97 +72,78 @@ export default function SignUp() {
                     <form onSubmit={handleSubmit} className="mt-8 space-y-6 neomorphic p-8 rounded-lg">
                         <div className="rounded-md space-y-4">
                             <div>
-                                <label htmlFor="firstname" className="sr-only">
-                                    {t("signup.firstname")}
-                                </label>
-                                <input
+                                <TextInput
                                     id="firstname"
                                     name="firstname"
                                     type="text"
-                                    required
                                     value={firstname}
                                     onChange={(e) => setFirstname(e.target.value)}
-                                    className="neomorphic-input w-full px-3 py-2 text-foreground"
+                                    className=""
+                                    label={t("signup.firstname")}
                                     placeholder={t("signup.firstname")}
                                 />
                             </div>
                             <div>
                                 <label htmlFor="lastname" className="sr-only">
-                                    {t("signup.lastname")}
                                 </label>
-                                <input
+                                <TextInput
                                     id="lastname"
                                     name="lastname"
                                     type="text"
-                                    required
                                     value={lastname}
                                     onChange={(e) => setLastname(e.target.value)}
-                                    className="neomorphic-input w-full px-3 py-2 text-foreground"
+                                    className=""
+                                    label={t("signup.lastname")}
+
                                     placeholder={t("signup.lastname")}
                                 />
+
                             </div>
                             <div>
                                 <label htmlFor="email" className="sr-only">
-                                    {t("signup.email")}
                                 </label>
-                                <input
+                                <TextInput
                                     id="email"
                                     name="email"
                                     type="email"
-                                    autoComplete="email"
-                                    required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="neomorphic-input w-full px-3 py-2 text-foreground"
+                                    className=""
+                                    label={t("signup.email")}
                                     placeholder={t("signup.email")}
                                 />
                             </div>
                             <div>
-                                <label htmlFor="password" className="sr-only">
-                                    {t("signup.password")}
-                                </label>
-                                <input
+                                <PasswordInput
                                     id="password"
-                                    name="password"
-                                    type="password"
-                                    autoComplete="new-password"
-                                    required
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="neomorphic-input w-full px-3 py-2 text-foreground"
+                                    onChange={setPassword}
                                     placeholder={t("signup.password")}
+                                    label={t("signup.password")}
+                                    required
                                 />
                             </div>
                             <div>
-                                <label htmlFor="confirmPassword" className="sr-only">
-                                    {t("signup.confirmPassword")}
-                                </label>
-                                <input
+                                <PasswordInput
                                     id="confirmPassword"
-                                    name="confirmPassword"
-                                    type="password"
-                                    autoComplete="new-password"
-                                    required
                                     value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    className="neomorphic-input w-full px-3 py-2 text-foreground"
+                                    onChange={setConfirmPassword}
                                     placeholder={t("signup.confirmPassword")}
+                                    label={t("signup.confirmPassword")}
+                                    required
                                 />
                             </div>
                             <div>
                                 <label htmlFor="languagePreference" className="block text-sm font-medium text-gray-700 mb-1">
                                     {t("signup.languagePreference")}
                                 </label>
-                                <select
-                                    id="languagePreference"
-                                    value={languagePreference}
+                                <CustomSelect
+                                    options={languageOptions}
                                     onChange={(e) => setLanguagePreference(e.target.value)}
+                                    value={languagePreference}
                                     className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                                >
-                                    <option value="">{t("signup.selectLanguage")}</option>
-                                    <option value="en">{t("signup.english")}</option>
-                                    <option value="fr">{t("signup.french")}</option>
-                                </select>
+                                    t={t}
+                                />
                             </div>
                         </div>
 
@@ -181,17 +168,9 @@ export default function SignUp() {
                                 </button>
                             </label>
                         </div>
-
                         {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-
                         <div>
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="group relative w-full flex justify-center py-2 px-4 neomorphic-button text-primary hover:text-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                            >
-                                {loading ? t("signup.signingUp") : t("signup.signUp")}
-                            </button>
+                            <ActionButton type="submit" label={loading ? t("signup.signingUp") : t("signup.signUp")} disabled={loading} className="" />
                         </div>
                     </form>
                 )}

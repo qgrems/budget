@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { useTranslation } from "../../hooks/useTranslation"
-import InputText from "../inputs/inputText"
+import InputText from "../inputs/envelopeInput/textInput"
 import InputNumber from "../inputs/inputNumber"
 import ActionButton from "../buttons/actionButton"
 import type { Category } from "../../domain/budget/budgetTypes"
@@ -27,17 +27,17 @@ interface BudgetItemModalProps {
 }
 
 export default function BudgetItemModal({
-                                            isOpen,
-                                            onClose,
-                                            onSubmit,
-                                            title,
-                                            initialName = "",
-                                            initialAmount = "",
-                                            initialCategory = "",
-                                            isEdit = false,
-                                            itemType,
-                                            categories,
-                                        }: BudgetItemModalProps) {
+    isOpen,
+    onClose,
+    onSubmit,
+    title,
+    initialName = "",
+    initialAmount = "",
+    initialCategory = "",
+    isEdit = false,
+    itemType,
+    categories,
+}: BudgetItemModalProps) {
     const { t } = useTranslation()
     const [name, setName] = useState(initialName)
     const [amount, setAmount] = useState(initialAmount)
@@ -45,8 +45,8 @@ export default function BudgetItemModal({
 
     const itemCategories =
         categories[
-            itemType === "need" ? "needs" : itemType === "want" ? "wants" : itemType === "saving" ? "savings" : "incomes"
-            ]
+        itemType === "need" ? "needs" : itemType === "want" ? "wants" : itemType === "saving" ? "savings" : "incomes"
+        ]
 
     const handleAmountChange = (value: string) => {
         // Remove any non-digit and non-dot characters

@@ -61,12 +61,7 @@ export default function Header() {
                             <ul className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 p-4 sm:p-0">
                                 {appIsAuthenticated ? (
                                     <>
-                                        <li>
-                                            <NavLink href="/dashboard">
-                                                <PieChart className="inline-block mr-1 h-4 w-4" />
-                                                {t("nav.dashboard")}
-                                            </NavLink>
-                                        </li>
+                                        
                                         <li>
                                             <NavLink
                                                 href="/envelopes"

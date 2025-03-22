@@ -9,9 +9,9 @@ import { useError } from "../contexts/ErrorContext";
 import { useValidMessage } from "../contexts/ValidContext";
 import ActionButton from '../components/buttons/actionButton'
 import ValidInputButton from '../components/buttons/validInputButton'
-import InputText from '../components/inputs/inputText'
-import InputNameEnvelope from '../components/inputs/inputNameEnvelope'
-import PasswordInput from '../components/inputs/inputPassword'
+import InputText from '../components/inputs/envelopeInput/textInput'
+import InputNameEnvelope from '../components/inputs/envelopeInput/inputNameEnvelope'
+import PasswordInput from '../components/inputs/passwordInput'
 
 export default function SettingsPage() {
   const { user, updateFirstname, updateLastname, changePassword, signOut } = useUser()
@@ -138,8 +138,8 @@ export default function SettingsPage() {
                   <div className='flex items-center flex-grow'>
                     <InputNameEnvelope
                       value={lastname}
-                      onChange={(value) => setLastname(value)} // Just pass the string directly
-                      className="custom-input-class" // Tu peux ajouter des classes supplémentaires si nécessaire
+                      onChange={(value) => setLastname(value)}
+                      className="custom-input-class"
                     />
                     <ValidInputButton
                       onClick={handleUpdateLastname}

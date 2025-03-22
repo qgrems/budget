@@ -42,7 +42,6 @@ export function MobileNavBar() {
         <>
             {appIsAuthenticated ? (
                 <div className="mobile-nav-bar">
-                    <NavLink href={"/dashboard"}>Home</NavLink>
                     <NavLink href={"/envelopes"}>Enveloppes</NavLink>
                     <NavLink href={"/budget-tracker"}>Budget</NavLink>
                     <NavLink href={"/settings"}>Settings</NavLink>
