@@ -49,6 +49,9 @@ export const api = {
             fetchWithAuth("/users/lastname", { method: "POST", body: JSON.stringify({ lastname }) }),
         changePassword: (oldPassword: string, newPassword: string) =>
             fetchWithAuth("/users/change-password", { method: "POST", body: JSON.stringify({ oldPassword, newPassword }) }),
+        deleteAccount: () =>
+            fetchWithAuth("/users/delete", { method: "POST" }),
+
     },
     queries: {
         getCurrentUser: () => fetchWithAuth("/users/me"),

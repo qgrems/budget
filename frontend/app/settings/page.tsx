@@ -3,18 +3,18 @@
 import { useState, useEffect } from 'react'
 import { useUser } from '../domain/user/userHooks'
 import { useTranslation } from '../hooks/useTranslation'
-import { Check, X, Mail } from 'lucide-react'
+import { Check, X, Mail, Users } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useError } from "../contexts/ErrorContext";
 import { useValidMessage } from "../contexts/ValidContext";
 import ActionButton from '../components/buttons/actionButton'
 import ValidInputButton from '../components/buttons/validInputButton'
-import InputText from '../components/inputs/envelopeInput/textInput'
 import InputNameEnvelope from '../components/inputs/envelopeInput/inputNameEnvelope'
 import PasswordInput from '../components/inputs/passwordInput'
+import { Modal } from '../components/Modal'
 
 export default function SettingsPage() {
-  const { user, updateFirstname, updateLastname, changePassword, signOut } = useUser()
+  const { user, updateFirstname, updateLastname, changePassword, signOut, deleteAccount } = useUser()
   const { t } = useTranslation()
   const [firstname, setFirstname] = useState('')
   const [lastname, setLastname] = useState('')
@@ -23,6 +23,7 @@ export default function SettingsPage() {
   const [confirmNewPassword, setConfirmNewPassword] = useState('')
   const [editingFirstname, setEditingFirstname] = useState(false)
   const [editingLastname, setEditingLastname] = useState(false)
+  const [modalDeleteAccountOpen, setModalDeleteAccountOpen] = useState(false)
   const [success, setSuccess] = useState<string | null>(null)
   const { validMessage, setValidMessage } = useValidMessage();
   const router = useRouter()
@@ -33,7 +34,6 @@ export default function SettingsPage() {
       setLastname(user.lastname || '')
     }
   }, [user])
-
   const handleUpdateFirstname = async () => {
     setError(null)
     setSuccess(null)
@@ -59,7 +59,7 @@ export default function SettingsPage() {
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault()
     if (newPassword !== confirmNewPassword) {
-      setError(("users.oldPasswordIsIncorrect"))
+      setError(("users.passwordsDoNotMatch"))
       return
     }
     setError(null)
@@ -72,9 +72,14 @@ export default function SettingsPage() {
       setConfirmNewPassword('')
     }
   }
-
+  const toggleModalDeleteAccount = () => {
+    setModalDeleteAccountOpen(prev => !prev);
+  };
+  const handleDeleteAccount = async () => {
+    await deleteAccount(setError, setValidMessage, t)
+  }
   const handleSignOut = async () => {
-    await signOut(setError, setValidMessage)
+    await signOut(setError)
     router.push('/')
   }
 
@@ -105,6 +110,7 @@ export default function SettingsPage() {
                         icon={<Check className="h-4 w-4 md:h-5 md:w-5" />}
                         className=" text-green-500 mr-1"
                         disabled={user.pending}
+                        text=""
                       />
                       <ValidInputButton
                         onClick={() => {
@@ -114,6 +120,7 @@ export default function SettingsPage() {
                         icon={<X className="h-4 w-4" />}
                         className="text-red-500 mr-1"
                         disabled={user.pending}
+                        text=""
                       />
                     </div>
 
@@ -146,6 +153,7 @@ export default function SettingsPage() {
                       icon={<Check className="h-4 w-4 md:h-5 md:w-5" />}
                       className=" text-green-500 mr-1"
                       disabled={user.pending}
+                      text=""
                     />
                     <ValidInputButton
                       onClick={() => {
@@ -155,6 +163,7 @@ export default function SettingsPage() {
                       icon={<X className="h-4 w-4" />}
                       className="text-red-500 mr-1"
                       disabled={user.pending}
+                      text=""
                     />
 
                   </div>
@@ -179,6 +188,14 @@ export default function SettingsPage() {
                   {user.email}
                 </span>
               </div>
+            </div>
+            <div className="mt-8">
+              <ActionButton
+                onClick={toggleModalDeleteAccount}
+                disabled={user.pending}
+                label={t('settings.deleteAccount')}
+                className="w-full py-2 px-4 neomorphic-button text-red-500 hover:text-red-700 transition-colors"
+              />
             </div>
           </div>
         </div>
@@ -214,6 +231,7 @@ export default function SettingsPage() {
               className="text-primary neomorphic-button text-primary w-full py-2"
             />
           </form>
+
         </div>
       </div>
       <div className="mt-8">
@@ -224,6 +242,21 @@ export default function SettingsPage() {
           className="w-full py-2 px-4 neomorphic-button text-red-500 hover:text-red-700 transition-colors"
         />
       </div>
+      <Modal isOpen={modalDeleteAccountOpen} onClose={toggleModalDeleteAccount}>
+        <h2 className='font-semibold'>{t('users.confirmDeleteAccount')}</h2>
+        <div className="flex justify-around">
+          <ActionButton onClick={handleDeleteAccount}
+            disabled={user.pending}
+            label={t('yes')}
+            className=" py-2 px-4 neomorphic-button text-red-500 hover:text-red-700 transition-colors">
+          </ActionButton>
+          <ActionButton onClick={toggleModalDeleteAccount}
+            disabled={user.pending}
+            label={t('no')}
+            className=" py-2 px-4 neomorphic-button text-primary">
+          </ActionButton>
+        </div>
+      </Modal>
     </div>
   )
 }

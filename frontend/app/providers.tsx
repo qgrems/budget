@@ -8,6 +8,9 @@ interface User {
   id: string
   email: string
   name: string
+  firstname: string
+  lastname: string
+  pending: boolean
 }
 
 interface AppState {
@@ -93,9 +96,9 @@ export function Providers({ children }: { children: ReactNode }) {
   }
 
   return (
-      <AppContext.Provider value={{ state, setState, login, logout }}>
-        {children}
-      </AppContext.Provider>
+    <AppContext.Provider value={{ state, setState, login, logout }}>
+      {children}
+    </AppContext.Provider>
   )
 }
 

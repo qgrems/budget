@@ -51,11 +51,10 @@ export const authService = {
 
   logout: async () => {
     try {
-      const refreshToken = localStorage.getItem('refreshToken')
+      const refreshToken = await localStorage.getItem('refreshToken')
       if (!refreshToken) {
         throw new Error('No refresh token found')
       }
-
       const response = await fetch(`${API_URL}/users/logout`, {
         method: 'POST',
         headers: {
@@ -102,6 +101,7 @@ export const authService = {
       if (data.token) {
         authService.setToken(data.token)
         if (data.refresh_token) {
+
           localStorage.setItem('refreshToken', data.refresh_token)
         }
         return true
