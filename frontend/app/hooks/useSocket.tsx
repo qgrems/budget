@@ -37,12 +37,10 @@ export const SocketProvider = ({ children, user }: { children: React.ReactNode, 
 
         const onConnect = () => {
             setIsConnected(true)
-            console.log("WebSocket connected")
         }
 
         const onDisconnect = () => {
             setIsConnected(false)
-            console.log("WebSocket disconnected")
         }
 
         newSocket.on("connect", onConnect)

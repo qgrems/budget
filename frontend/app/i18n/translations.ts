@@ -1,5 +1,7 @@
 export const translations = {
     en: {
+        yes: "yes",
+        no: "no",
         home: {
             title: "Master Your Finances with GoGoBudgeto",
             subtitle: "Smart, intuitive, and comprehensive budgeting for everyone",
@@ -153,6 +155,7 @@ export const translations = {
             userAlreadyExists: "User with this email already exists",
             notFound: "User not found",
             oldPasswordIsIncorrect: "Old password is incorrect",
+            passwordsDoNotMatch: "The new passwords do not match. Please check them again.",
             unknownEvent: "Unsupported event type",
             notOwner: "You are not this user",
             emailInvalid: "Email must be a valid email address",
@@ -163,6 +166,9 @@ export const translations = {
             lastnameMaxLength: "Last name must be at most 50 characters long",
             consentNotGiven: "You must agree to the terms and conditions",
             passwordMaxLength: "Password must be at most 50 characters long",
+            confirmDeleteAccount: "Are you sure you want to delete your account?",
+            accountDeleted: "Your account has been successfully deleted."
+
         },
         footer: {
             allRightsReserved: "All rights reserved.",
@@ -258,6 +264,7 @@ export const translations = {
             personalInfo: "Personal Information",
             edit: "Edit",
             signOut: "Sign Out",
+            deleteAccount: "Delete account",
         },
         budgetTracker: {
             title: "Budget Tracker",
@@ -351,6 +358,8 @@ export const translations = {
         },
     },
     fr: {
+        yes: "oui",
+        no: "non",
         home: {
             title: "Maîtrisez vos finances avec GoGoBudgeto",
             subtitle: "Budgétisation intelligente, intuitive et complète pour tous",
@@ -504,6 +513,7 @@ export const translations = {
             userAlreadyExists: "Un utilisateur avec cet email existe déjà",
             notFound: "Utilisateur non trouvé",
             oldPasswordIsIncorrect: "Ancien mot de passe incorrect",
+            passwordsDoNotMatch: "Les nouveaux mots de passe ne correspondent pas. Veuillez les vérifier.",
             unknownEvent: "Type d'événement non pris en charge",
             notOwner: "Vous n'êtes cet utilisateur",
             emailInvalid: "L'email doit être une adresse email valide",
@@ -514,6 +524,8 @@ export const translations = {
             lastnameMaxLength: "Le nom doit comporter au plus 50 caractères",
             consentNotGiven: "Vous devez accepter les conditions générales d'utilisation",
             passwordMaxLength: "Le mot de passe doit comporter au plus 50 caractères",
+            confirmDeleteAccount: "Êtes-vous sûr de vouloir supprimer votre compte ?",
+            accountDeleted: "Votre compte a été supprimé avec succès."
         },
         footer: {
             allRightsReserved: "Tous droits réservés.",
@@ -609,6 +621,7 @@ export const translations = {
             personalInfo: "Informations personnelles",
             edit: "Modifier",
             signOut: "Se déconnecter",
+            deleteAccount: "Supprimer le compte"
         },
         budgetTracker: {
             title: "Suivi Budgétaire",
