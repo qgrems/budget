@@ -48,10 +48,6 @@ export default function Navigation() {
                         <LanguageSelector showText={isMenuOpen} iconSize={16} className="w-full md:w-auto" />
                         {user ? (
                             <>
-                                <NavLink href="/dashboard">
-                                    <PieChart className="inline-block mr-1 h-4 w-4" />
-                                    {t('nav.dashboard')}
-                                </NavLink>
                                 <NavLink href="/envelopes" onClick={(e) => {
                                     if (pathname === '/envelopes') {
                                         e.preventDefault();

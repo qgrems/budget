@@ -14,8 +14,8 @@ import { DescriptionModal } from "./DescriptionModal"
 import type React from "react"
 import InputNumber from "./inputs/inputNumber"
 import ActionButton from "./buttons/actionButton"
-import InputNameEnvelope from "./inputs/inputNameEnvelope"
-import InputText from "./inputs/inputText"
+import InputNameEnvelope from "./inputs/envelopeInput/inputNameEnvelope"
+import InputText from "./inputs/envelopeInput/textInput"
 import ValidInputButton from "./buttons/validInputButton"
 import EnvelopeCard from "./card/EnvelopeCard"
 import DeletButton from "./buttons/deletButton"
@@ -29,10 +29,10 @@ import formatAmount from "../utils/envelope/formatAmount"
 import handleDeleteEntity from "../utils/envelope/deleteUtils"
 import handleUpdateEnvelopeName from "../function/EnvelopeFunction/handleUpdateEnvelopeName"
 import handleAmountChange from "../utils/envelope/handleAmountChange"
-import CurrencySelect from "./inputs/currencySelect"
-import { currencyOptions, getCurrencySymbol } from "../constants/currencyOption"
 import { formatCurrency } from "../utils/envelope/currencyUtils"
 import AnimatedCard from "./card/AnimatedCard"
+import { currencyOptions } from "../constants/currencyOption"
+import CustomSelect from "./inputs/customSelect"
 
 export default function EnvelopeManagement() {
     const {
@@ -353,9 +353,10 @@ export default function EnvelopeManagement() {
                             />
                         </div>
                         <div>
-                            <CurrencySelect options={currencyOptions}
+                            <CustomSelect options={currencyOptions}
                                 onChange={handleCurrencyChange}
                                 value={currency} className={''}
+                                t={t}
                             />
                         </div>
                         <div className="flex justify-between">

@@ -12,11 +12,11 @@ interface BudgetCalendarProps {
 }
 
 export default function BudgetCalendar({
-                                           budgetPlansCalendar,
-                                           onMonthClick,
-                                           currentYear,
-                                           onYearChange,
-                                       }: BudgetCalendarProps) {
+    budgetPlansCalendar,
+    onMonthClick,
+    currentYear,
+    onYearChange,
+}: BudgetCalendarProps) {
     const { t, language } = useTranslation()
 
     const months =
@@ -69,11 +69,10 @@ export default function BudgetCalendar({
                             onClick={() => onMonthClick(currentYear, index + 1)}
                             className={`
                 p-3 text-center rounded-md transition-colors
-                ${
-                                hasData
+                ${hasData
                                     ? "neomorphic-button text-primary hover:text-primary-dark"
                                     : "neomorphic-inset text-muted-foreground hover:text-foreground"
-                            }
+                                }
                 ${isCurrentMonth ? "border-2 border-primary" : ""}
               `}
                         >

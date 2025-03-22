@@ -9,10 +9,10 @@ import { useBudgetPlans } from "../../domain/budget/budgetHooks"
 import { currencyOptions } from "../../constants/currencyOption"
 import { Plus, Trash2 } from "lucide-react"
 import ActionButton from "../buttons/actionButton"
-import InputText from "../inputs/inputText"
 import InputNumber from "../inputs/inputNumber"
-import CurrencySelect from "../inputs/currencySelect"
 import type { Income, Category } from "../../domain/budget/budgetTypes"
+import CustomSelect from "../inputs/customSelect"
+import InputText from "../inputs/envelopeInput/textInput"
 
 interface CreateBudgetPlanModalProps {
     isOpen: boolean
@@ -28,12 +28,12 @@ interface CreateBudgetPlanModalProps {
 }
 
 export default function CreateBudgetPlanModal({
-                                                  isOpen,
-                                                  onClose,
-                                                  onCreateFromExisting,
-                                                  selectedDate,
-                                                  categories,
-                                              }: CreateBudgetPlanModalProps) {
+    isOpen,
+    onClose,
+    onCreateFromExisting,
+    selectedDate,
+    categories,
+}: CreateBudgetPlanModalProps) {
     const { t } = useTranslation()
     const { createBudgetPlan, loading, redirectToBudgetPlanId } = useBudgetPlans(categories)
 
@@ -125,14 +125,12 @@ export default function CreateBudgetPlanModal({
             console.log("Form is not valid. Submission prevented.")
             return
         }
-
         console.log("Submitting form with data:", { selectedDate, currency, incomes })
-
         // Create a Date object for the first day of the selected month in UTC
         const date = new Date(Date.UTC(selectedDate.year, selectedDate.month - 1, 1))
-
         try {
             const newBudgetPlanId = await createBudgetPlan(date, currency, incomes)
+            onClose()
             console.log("Budget plan creation initiated with ID:", newBudgetPlanId)
         } catch (error) {
             console.error("Error creating budget plan:", error)
@@ -179,11 +177,12 @@ export default function CreateBudgetPlanModal({
 
                 <div className="mb-4">
                     <label className="block text-sm font-medium mb-1">{t("budgetTracker.currency")}</label>
-                    <CurrencySelect
+                    <CustomSelect
                         options={currencyOptions}
                         onChange={handleCurrencyChange}
                         value={currency}
                         className="w-full"
+                        t={t}
                     />
                 </div>
 

@@ -5,7 +5,10 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useUser } from '../domain/user/userHooks'
 import { useTranslation } from '../hooks/useTranslation'
-import {useError} from "../contexts/ErrorContext";
+import { useError } from "../contexts/ErrorContext";
+import TextInput from '../components/inputs/formInputs/textInputs'
+import PasswordInput from '../components/inputs/passwordInput'
+import ActionButton from '../components/buttons/formButton/formButton'
 
 export default function SignIn() {
   const [email, setEmail] = useState('')
@@ -13,13 +16,13 @@ export default function SignIn() {
   const { signIn, isAuthenticated, loading, hasEnvelopes } = useUser()
   const router = useRouter()
   const { t } = useTranslation()
-  const {error, setError} = useError()
+  const { error, setError } = useError()
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
       if (isAuthenticated) {
         const userHasEnvelopes = await hasEnvelopes()
         if (userHasEnvelopes) {
-          router.push('/dashboard')
+          router.push('/envelopes')
         } else {
           router.push('/envelopes')
         }
@@ -31,11 +34,11 @@ export default function SignIn() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const success = await signIn(email, password,setError)
+    const success = await signIn(email, password, setError)
     if (success) {
       const userHasEnvelopes = await hasEnvelopes()
       if (userHasEnvelopes) {
-        router.push('/dashboard')
+        router.push('/envelopes')
       } else {
         router.push('/envelopes')
       }
@@ -53,69 +56,52 @@ export default function SignIn() {
   }
 
   return (
-      <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-background">
-        <div className="max-w-md w-full space-y-8">
-          <div className="text-center">
-            <h1 className="text-3xl font-extrabold text-foreground">{t('signin.title')}</h1>
-          </div>
-          <form onSubmit={handleSubmit} className="mt-8 space-y-6 neomorphic p-8 rounded-lg">
-            <div className="rounded-md space-y-4">
-              <div>
-                <label htmlFor="email" className="sr-only">{t('signin.email')}</label>
-                <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="neomorphic-input w-full px-3 py-2 text-foreground"
-                    placeholder={t('signin.email')}
-                />
-              </div>
-              <div>
-                <label htmlFor="password" className="sr-only">{t('signin.password')}</label>
-                <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="neomorphic-input w-full px-3 py-2 text-foreground"
-                    placeholder={t('signin.password')}
-                />
-              </div>
-            </div>
-
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-
-            <div className="flex items-center justify-between">
-              <div className="text-sm">
-                <Link href="/forgot-password" className="font-medium text-primary hover:text-primary-dark">
-                  {t('signin.forgotPassword')}
-                </Link>
-              </div>
-            </div>
-
-            <div>
-              <button
-                  type="submit"
-                  className="group relative w-full flex justify-center py-2 px-4 neomorphic-button text-primary hover:text-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-              >
-                {t('signin.signIn')}
-              </button>
-            </div>
-          </form>
-          <p className="mt-2 text-center text-sm text-foreground">
-            {t('signin.dontHaveAccount')}{' '}
-            <Link href="/signup" className="font-medium text-primary hover:text-primary-dark">
-              {t('signin.signUp')}
-            </Link>
-          </p>
+    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-background">
+      <div className="max-w-md w-full space-y-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-extrabold text-foreground">{t('signin.title')}</h1>
         </div>
+        <form onSubmit={handleSubmit} className="mt-8 space-y-6 neomorphic p-8 rounded-lg">
+          <div className="rounded-md space-y-4">
+
+            <TextInput
+              id="email"
+              name="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className=""
+              label={t("signup.email")}
+              placeholder={t("signup.email")}
+            />
+            <PasswordInput
+              id="password"
+              value={password}
+              onChange={setPassword}
+              placeholder={t("signup.password")}
+              label={t("signup.password")}
+              required
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="text-sm">
+              <Link href="/forgot-password" className="font-medium text-primary hover:text-primary-dark">
+                {t('signin.forgotPassword')}
+              </Link>
+            </div>
+          </div>
+          <div>
+            <ActionButton type="submit" label={t('signin.signIn')} disabled={loading} className="" />
+
+          </div>
+        </form>
+        <p className="mt-2 text-center text-sm text-foreground">
+          {t('signin.dontHaveAccount')}{' '}
+          <Link href="/signup" className="font-medium text-primary hover:text-primary-dark">
+            {t('signin.signUp')}
+          </Link>
+        </p>
       </div>
+    </div>
   )
 }

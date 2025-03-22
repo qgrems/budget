@@ -35,7 +35,7 @@ export function useBudgetPlans() {
             const [needs, wants, savings, incomes] = await Promise.all([
                 api.budgetQueries.getNeedsCategories(),
                 api.budgetQueries.getWantsCategories(),
-                api.budgetQueries.getWantsCategories(),
+                api.budgetQueries.getSavingsCategories(),
                 api.budgetQueries.getIncomesCategories(),
             ])
             setNeedsCategories(needs)
