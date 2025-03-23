@@ -19,6 +19,5 @@ final readonly class RewindAUserFromEventsCommandHandler
         /** @var User $aggregate */
         $aggregate = $this->eventSourcedRepository->get((string) $command->getUserId(), $command->getDesiredDateTime());
         $aggregate->rewind($command->getUserId());
-        $this->eventSourcedRepository->save($aggregate);
     }
 }

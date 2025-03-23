@@ -43,6 +43,5 @@ final readonly class ChangeAUserPasswordCommandHandler
             ),
             $command->getUserId(),
         );
-        $this->eventSourcedRepository->save($aggregate);
     }
 }

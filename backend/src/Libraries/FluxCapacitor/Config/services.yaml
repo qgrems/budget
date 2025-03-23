@@ -1,0 +1,14 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  App\Libraries\FluxCapacitor\:
+    resource: '../'
+    exclude:
+      - '../Config/'
+
+  App\Libraries\FluxCapacitor\Anonymizer\Repositories\KeyManagementRepository:
+    arguments:
+      $connection: '@doctrine.dbal.default_connection'
+      $passphrase: '%env(KEY_MANAGEMENT_SECRET)%'

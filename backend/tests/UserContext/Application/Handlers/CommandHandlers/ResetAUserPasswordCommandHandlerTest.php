@@ -108,12 +108,6 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
             ->with($userId)
             ->willReturn($user);
 
-        $this->eventStore->expects($this->once())
-            ->method('save')
-            ->with($this->callback(function ($savedUser) {
-                return $savedUser instanceof User;
-            }));
-
         $this->handler->__invoke($command);
     }
 
@@ -204,9 +198,6 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
             ->with($userId)
             ->willReturn($user);
 
-        $this->eventStore->expects($this->never())
-            ->method('save');
-
         $this->expectException(InvalidUserOperationException::class);
         $this->handler->__invoke($command);
     }
@@ -246,9 +237,6 @@ class ResetAUserPasswordCommandHandlerTest extends TestCase
             ->method('load')
             ->with($userId)
             ->willThrowException(new EventsNotFoundForAggregateException());
-
-        $this->eventStore->expects($this->never())
-            ->method('save');
 
         $this->expectException(EventsNotFoundForAggregateException::class);
         $this->handler->__invoke($command);

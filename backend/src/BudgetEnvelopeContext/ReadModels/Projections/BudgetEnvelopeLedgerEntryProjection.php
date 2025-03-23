@@ -50,7 +50,7 @@ final readonly class BudgetEnvelopeLedgerEntryProjection
             $this->publisher->publishNotificationEvents([
                 BudgetEnvelopeLedgerCreditEntryAddedNotificationEvent::fromDomainEvent($budgetEnvelopeCreditedDomainEvent),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
     }
 
@@ -66,7 +66,7 @@ final readonly class BudgetEnvelopeLedgerEntryProjection
             $this->publisher->publishNotificationEvents([
                 BudgetEnvelopeLedgerDebitEntryAddedNotificationEvent::fromDomainEvent($budgetEnvelopeDebitedDomainEvent),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
     }
 
@@ -101,7 +101,7 @@ final readonly class BudgetEnvelopeLedgerEntryProjection
             $this->publisher->publishNotificationEvents([
                 BudgetEnvelopeLedgerEntriesRewoundNotificationEvent::fromDomainEvent($budgetEnvelopeRewoundDomainEvent),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
     }
 
@@ -136,7 +136,7 @@ final readonly class BudgetEnvelopeLedgerEntryProjection
             $this->publisher->publishNotificationEvents([
                 BudgetEnvelopeLedgerEntriesReplayedNotificationEvent::fromDomainEvent($budgetEnvelopeReplayedDomainEvent),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
     }
 }

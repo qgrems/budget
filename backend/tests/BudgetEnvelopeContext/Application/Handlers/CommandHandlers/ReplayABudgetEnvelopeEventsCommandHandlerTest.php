@@ -50,7 +50,6 @@ class ReplayABudgetEnvelopeEventsCommandHandlerTest extends TestCase
                 BudgetEnvelopeCurrency::fromString('EUR'),
             ),
         );
-        $this->eventStore->expects($this->once())->method('save');
 
         $this->replayABudgetEnvelopeEventsCommandHandler->__invoke($replayABudgetEnvelopeEventsCommand);
     }

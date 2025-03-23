@@ -541,6 +541,12 @@ parameters:
 			path: src/SharedContext/Infrastructure/EventListener/RequestIdListener.php
 
 		-
+			message: '#^Cannot access an offset on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/UserContext/Application/Handlers/CommandHandlers/SignUpAUserCommandHandler.php
+
+		-
 			message: '#^Method App\\UserContext\\Domain\\Aggregates\\User\:\:getKeyByUserId\(\) should return string\|null but returns mixed\.$#'
 			identifier: return.type
 			count: 1

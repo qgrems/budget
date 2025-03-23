@@ -100,12 +100,6 @@ class ChangeAUserPasswordCommandHandlerTest extends TestCase
             ->method('hash')
             ->willReturn('87654321');
 
-        $this->eventStore->expects($this->once())
-            ->method('save')
-            ->with($this->callback(function ($savedUser) {
-                return $savedUser instanceof User;
-            }));
-
         $this->handler->__invoke($command);
     }
 

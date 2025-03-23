@@ -9,4 +9,6 @@ interface AggregateRootInterface
     public static function empty(): self;
 
     public function setAggregateVersion(int $aggregateVersion): self;
+
+    public function getAggregateId(): string;
 }

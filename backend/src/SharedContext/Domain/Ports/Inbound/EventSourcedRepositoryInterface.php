@@ -21,5 +21,9 @@ interface EventSourcedRepositoryInterface
 
     public function save(AggregateRootInterface $aggregate): void;
 
+    public function trackAggregate(AggregateRootInterface $aggregate): void;
+
+    public function trackAggregates(array $aggregates): void;
+
     public function saveMultiAggregate(array $aggregates): void;
 }

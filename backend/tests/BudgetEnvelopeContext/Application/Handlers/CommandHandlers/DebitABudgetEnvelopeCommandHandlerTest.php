@@ -68,12 +68,6 @@ class DebitABudgetEnvelopeCommandHandlerTest extends TestCase
             ->method('load')
             ->willReturn($envelope);
 
-        $this->eventStore->expects($this->once())
-            ->method('save')
-            ->with($this->callback(function ($savedEnvelope) {
-                return $savedEnvelope instanceof BudgetEnvelope;
-            }));
-
         $this->debitABudgetEnvelopeCommandHandler->__invoke($debitABudgetEnvelopeCommand);
     }
 

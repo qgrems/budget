@@ -36,6 +36,5 @@ final readonly class RequestAUserPasswordResetCommandHandler
             UserPasswordResetToken::fromString($this->passwordResetTokenGenerator->generate()),
             UserId::fromString($userView->getUuid()),
         );
-        $this->eventSourcedRepository->save($aggregate);
     }
 }

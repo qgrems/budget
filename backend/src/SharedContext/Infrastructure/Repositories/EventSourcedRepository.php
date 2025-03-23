@@ -18,6 +18,16 @@ final readonly class EventSourcedRepository implements EventSourcedRepositoryInt
         return $this->eventStore->load($aggregateId, $desiredDateTime);
     }
 
+    public function trackAggregate(AggregateRootInterface $aggregate): void
+    {
+        $this->eventStore->trackAggregate($aggregate);
+    }
+
+    public function trackAggregates(array $aggregates): void
+    {
+        $this->eventStore->trackAggregates($aggregates);
+    }
+
     #[\Override]
     public function getByDomainEvents(
         string $aggregateId,

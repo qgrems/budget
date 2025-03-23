@@ -23,6 +23,5 @@ final readonly class CreditABudgetEnvelopeCommandHandler
             $command->getBudgetEnvelopeEntryDescription(),
             $command->getBudgetEnvelopeUserId(),
         );
-        $this->eventSourcedRepository->save($aggregate);
     }
 }

@@ -56,12 +56,6 @@ class ReplayAUserEventsCommandHandlerTest extends TestCase
             ->with($userId)
             ->willReturn($user);
 
-        $this->eventStore->expects($this->once())
-            ->method('save')
-            ->with($this->callback(function ($savedUser) {
-                return $savedUser instanceof User;
-            }));
-
         $this->handler->__invoke($command);
     }
 

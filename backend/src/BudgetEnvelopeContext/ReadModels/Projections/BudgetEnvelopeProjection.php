@@ -62,7 +62,7 @@ final readonly class BudgetEnvelopeProjection
             $this->publisher->publishNotificationEvents(
                 [BudgetEnvelopeAddedNotificationEvent::fromDomainEvent($budgetEnvelopeAddedDomainEvent)],
             );
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
     }
 
@@ -83,7 +83,7 @@ final readonly class BudgetEnvelopeProjection
             $this->publisher->publishNotificationEvents(
                 [BudgetEnvelopeCreditedNotificationEvent::fromDomainEvent($budgetEnvelopeCreditedDomainEvent)],
             );
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
     }
 
@@ -104,7 +104,7 @@ final readonly class BudgetEnvelopeProjection
             $this->publisher->publishNotificationEvents(
                 [BudgetEnvelopeDebitedNotificationEvent::fromDomainEvent($budgetEnvelopeDebitedDomainEvent)],
             );
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
     }
 
@@ -125,7 +125,7 @@ final readonly class BudgetEnvelopeProjection
             $this->publisher->publishNotificationEvents(
                 [BudgetEnvelopeRenamedNotificationEvent::fromDomainEvent($budgetEnvelopeRenamedDomainEvent)],
             );
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
     }
 
@@ -146,7 +146,7 @@ final readonly class BudgetEnvelopeProjection
             $this->publisher->publishNotificationEvents(
                 [BudgetEnvelopeDeletedNotificationEvent::fromDomainEvent($budgetEnvelopeDeletedDomainEvent)],
             );
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
     }
 
@@ -167,7 +167,7 @@ final readonly class BudgetEnvelopeProjection
             $this->publisher->publishNotificationEvents(
                 [BudgetEnvelopeRewoundNotificationEvent::fromDomainEvent($budgetEnvelopeRewoundDomainEvent)],
             );
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
     }
 
@@ -188,7 +188,7 @@ final readonly class BudgetEnvelopeProjection
             $this->publisher->publishNotificationEvents(
                 [BudgetEnvelopeReplayedNotificationEvent::fromDomainEvent($budgetEnvelopeReplayedDomainEvent)],
             );
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
     }
 
@@ -211,7 +211,7 @@ final readonly class BudgetEnvelopeProjection
                     $budgetEnvelopeTargetedAmountChangedDomainEvent,
                 ),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
     }
 
@@ -234,7 +234,7 @@ final readonly class BudgetEnvelopeProjection
                     $budgetEnvelopeCurrencyChangedDomainEvent,
                 ),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
     }
 }

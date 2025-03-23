@@ -70,7 +70,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
             });
 
         $this->eventStore->expects($this->once())
-            ->method('saveMultiAggregate');
+            ->method('trackAggregates');
 
         $this->renameABudgetEnvelopeCommandHandler->__invoke($renameABudgetEnvelopeCommand);
     }
@@ -89,7 +89,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
             ->willThrowException(new EventsNotFoundForAggregateException());
 
         $this->eventStore->expects($this->never())
-            ->method('saveMultiAggregate');
+            ->method('trackAggregates');
 
         $this->expectException(EventsNotFoundForAggregateException::class);
 
@@ -111,7 +111,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
             ->willReturn($this->createDeletedEnvelope());
 
         $this->eventStore->expects($this->never())
-            ->method('saveMultiAggregate');
+            ->method('trackAggregates');
 
         $this->expectException(InvalidBudgetEnvelopeOperationException::class);
 
@@ -141,7 +141,7 @@ class RenameABudgetEnvelopeCommandHandlerTest extends TestCase
             ->willReturn($envelope);
 
         $this->eventStore->expects($this->never())
-            ->method('saveMultiAggregate');
+            ->method('trackAggregates');
 
         $this->expectException(BudgetEnvelopeIsNotOwnedByUserException::class);
 

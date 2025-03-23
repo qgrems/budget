@@ -42,7 +42,7 @@ final readonly class GenerateABudgetPlanWithOneThatAlreadyExistsCommandHandler
                 $aggregateToCopy,
                 $this->uuidGenerator,
             );
-            $this->eventSourcedRepository->save($aggregate);
+            $this->eventSourcedRepository->trackAggregate($aggregate);
         }
     }
 }

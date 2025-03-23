@@ -19,20 +19,12 @@ final readonly class DeleteAUserCommandHandler
     {
         /** @var User $user */
         $user = $this->eventSourcedRepository->get((string) $deleteAUserCommand->getUserId());
-        $registryBuilder = UserEmailRegistryBuilder::build($this->eventSourcedRepository)
+        UserEmailRegistryBuilder::build($this->eventSourcedRepository)
             ->loadOrCreateRegistry()
             ->releaseEmail(
                 $user->getEmail(),
                 $deleteAUserCommand->getUserId()
             );
         $user->delete($deleteAUserCommand->getUserId());
-        $aggregatesToSave = [];
-
-        if ($registryAggregate = $registryBuilder->getRegistryAggregate()) {
-            $aggregatesToSave[] = $registryAggregate;
-        }
-
-        $aggregatesToSave[] = $user;
-        $this->eventSourcedRepository->saveMultiAggregate($aggregatesToSave);
     }
 }

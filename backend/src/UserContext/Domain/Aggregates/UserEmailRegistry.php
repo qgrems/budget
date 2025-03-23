@@ -92,6 +92,11 @@ final class UserEmailRegistry implements AggregateRootInterface
         return $this->raisedDomainEvents;
     }
 
+    public function getAggregateId(): string
+    {
+        return $this->userEmailRegistryId;
+    }
+
     public function applyUserEmailRegisteredDomainEvent(UserEmailRegisteredDomainEvent $event): void
     {
         $this->userEmailRegistryId = $event->aggregateId;

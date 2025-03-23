@@ -1,0 +1,15 @@
+doctrine:
+  orm:
+    mappings:
+      EventStore:
+        type: attribute
+        is_bundle: false
+        dir: '%kernel.project_dir%/src/Libraries/FluxCapacitor/EventStore/Entities'
+        prefix: 'App\Libraries\FluxCapacitor\EventStore\Entities'
+        alias: EventStore
+      EncryptionKey:
+        type: attribute
+        is_bundle: false
+        dir: '%kernel.project_dir%/src/Libraries/FluxCapacitor/Anonymizer/Entities'
+        prefix: 'App\Libraries\FluxCapacitor\Anonymizer\Entities'
+        alias: EncryptionKey

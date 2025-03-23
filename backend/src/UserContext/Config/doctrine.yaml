@@ -1,0 +1,15 @@
+doctrine:
+  orm:
+    mappings:
+      UserView:
+        type: attribute
+        is_bundle: false
+        dir: '%kernel.project_dir%/src/UserContext/ReadModels/Views'
+        prefix: 'App\UserContext\ReadModels\Views'
+        alias: UserView
+      RefreshToken:
+        type: attribute
+        is_bundle: false
+        dir: '%kernel.project_dir%/src/UserContext/Infrastructure/Entities'
+        prefix: 'App\UserContext\Infrastructure\Entities'
+        alias: RefreshToken

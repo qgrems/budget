@@ -41,7 +41,7 @@ final readonly class GenerateABudgetPlanCommandHandler
                 $this->uuidGenerator,
                 $this->translator,
             );
-            $this->eventSourcedRepository->save($aggregate);
+            $this->eventSourcedRepository->trackAggregate($aggregate);
         }
     }
 }

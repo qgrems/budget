@@ -19,6 +19,5 @@ final readonly class RemoveABudgetPlanIncomeCommandHandler
         /** @var BudgetPlan $aggregate */
         $aggregate = $this->eventSourcedRepository->get((string) $command->getBudgetPlanId());
         $aggregate->removeAnIncome($command->getEntryId(), $command->getBudgetPlanUserId());
-        $this->eventSourcedRepository->save($aggregate);
     }
 }

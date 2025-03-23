@@ -1,0 +1,22 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  App\BudgetEnvelopeContext\:
+    resource: '../'
+    exclude:
+      - '../Domain/Events/'
+      - '../Config/'
+
+  App\BudgetEnvelopeContext\Application\Handlers\CommandHandlers\:
+    resource: '../Application/Handlers/CommandHandlers/'
+    tags: ['messenger.message_handler']
+
+  App\BudgetEnvelopeContext\Application\Handlers\QueryHandlers\:
+    resource: '../Application/Handlers/QueryHandlers/'
+    tags: [ 'messenger.message_handler' ]
+
+  App\BudgetEnvelopeContext\ReadModels\Projections\:
+    resource: '../ReadModels/Projections/'
+    tags: [ 'messenger.message_handler' ]

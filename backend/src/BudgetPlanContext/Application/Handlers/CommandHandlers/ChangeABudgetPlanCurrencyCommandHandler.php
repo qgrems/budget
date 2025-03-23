@@ -19,6 +19,5 @@ final readonly class ChangeABudgetPlanCurrencyCommandHandler
         /** @var BudgetPlan $aggregate */
         $aggregate = $this->eventSourcedRepository->get((string) $command->getBudgetPlanId());
         $aggregate->changeCurrency($command->getBudgetPlanCurrency(), $command->getBudgetPlanUserId());
-        $this->eventSourcedRepository->save($aggregate);
     }
 }

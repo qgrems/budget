@@ -19,6 +19,5 @@ final readonly class ChangeAUserLanguagePreferenceCommandHandler
         /** @var User $aggregate */
         $aggregate = $this->eventSourcedRepository->get((string) $command->getUserId());
         $aggregate->updateLanguagePreference($command->getLanguagePreference(), $command->getUserId());
-        $this->eventSourcedRepository->save($aggregate);
     }
 }
