@@ -259,12 +259,6 @@ parameters:
 			path: src/Libraries/FluxCapacitor/Anonymizer/Entities/EncryptionKey.php
 
 		-
-			message: '#^Binary operation "\." between non\-empty\-string and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: src/Libraries/FluxCapacitor/Anonymizer/Repositories/KeyManagementRepository.php
-
-		-
 			message: '#^Method App\\Libraries\\FluxCapacitor\\Anonymizer\\Repositories\\KeyManagementRepository\:\:decryptKey\(\) should return string but returns string\|false\.$#'
 			identifier: return.type
 			count: 1
@@ -584,6 +578,12 @@ parameters:
 
 		-
 			message: '#^Method App\\UserContext\\ReadModels\\Views\\UserView\:\:getRoles\(\) should return array\<string\> but returns array\.$#'
+			identifier: return.type
+			count: 1
+			path: src/UserContext/ReadModels/Views/UserView.php
+
+		-
+			message: '#^Method App\\UserContext\\ReadModels\\Views\\UserView\:\:getUserIdentifier\(\) should return non\-empty\-string but returns string\.$#'
 			identifier: return.type
 			count: 1
 			path: src/UserContext/ReadModels/Views/UserView.php

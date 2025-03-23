@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\BudgetEnvelopeContext\Domain\Events;
 
 use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
+use App\SharedContext\Domain\ValueObjects\UtcClock;
 
 final class BudgetEnvelopeReplayedDomainEvent implements DomainEventInterface
 {
@@ -39,7 +40,7 @@ final class BudgetEnvelopeReplayedDomainEvent implements DomainEventInterface
         $this->updatedAt = new \DateTime($updatedAt);
         $this->requestId = $requestId;
         $this->isDeleted = $isDeleted;
-        $this->occurredOn = new \DateTimeImmutable();
+        $this->occurredOn = UtcClock::now();
     }
 
     #[\Override]

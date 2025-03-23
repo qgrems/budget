@@ -6,6 +6,7 @@ use App\Libraries\FluxCapacitor\Anonymizer\Attributes\PersonalData;
 use App\Libraries\FluxCapacitor\Anonymizer\Ports\AbstractUserSignedUpDomainEventInterface;
 use App\Libraries\FluxCapacitor\Anonymizer\Ports\UserDomainEventInterface;
 use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
+use App\SharedContext\Domain\ValueObjects\UtcClock;
 
 final class UserSignedUpDomainEvent implements UserDomainEventInterface, AbstractUserSignedUpDomainEventInterface
 {
@@ -48,7 +49,7 @@ final class UserSignedUpDomainEvent implements UserDomainEventInterface, Abstrac
         $this->roles = $roles;
         $this->userId = $userId;
         $this->requestId = $requestId;
-        $this->occurredOn = new \DateTimeImmutable();
+        $this->occurredOn = UtcClock::now();
     }
 
     #[\Override]

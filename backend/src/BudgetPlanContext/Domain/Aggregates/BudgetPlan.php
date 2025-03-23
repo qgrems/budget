@@ -41,6 +41,7 @@ use App\Libraries\FluxCapacitor\EventStore\Traits\DomainEventsCapabilityTrait;
 use App\SharedContext\Domain\Ports\Outbound\TranslatorInterface;
 use App\SharedContext\Domain\Ports\Outbound\UuidGeneratorInterface;
 use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
+use App\SharedContext\Domain\ValueObjects\UtcClock;
 
 final class BudgetPlan implements AggregateRootInterface
 {
@@ -95,7 +96,7 @@ final class BudgetPlan implements AggregateRootInterface
         BudgetPlan $budgetPlanToCopy,
         UuidGeneratorInterface $uuidGenerator,
     ): self {
-        $currentDate = new \DateTimeImmutable();
+        $currentDate = UtcClock::now();
         $budgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent = new BudgetPlanGeneratedWithOneThatAlreadyExistsDomainEvent(
             (string) $budgetPlanId,
             $date->format(\DateTimeInterface::ATOM),

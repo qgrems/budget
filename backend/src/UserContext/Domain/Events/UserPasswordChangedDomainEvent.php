@@ -5,6 +5,7 @@ namespace App\UserContext\Domain\Events;
 use App\Libraries\FluxCapacitor\Anonymizer\Attributes\PersonalData;
 use App\Libraries\FluxCapacitor\Anonymizer\Ports\UserDomainEventInterface;
 use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
+use App\SharedContext\Domain\ValueObjects\UtcClock;
 
 final class UserPasswordChangedDomainEvent implements UserDomainEventInterface
 {
@@ -29,7 +30,7 @@ final class UserPasswordChangedDomainEvent implements UserDomainEventInterface
         $this->newPassword = $newPassword;
         $this->userId = $userId;
         $this->requestId = $requestId;
-        $this->occurredOn = new \DateTimeImmutable();
+        $this->occurredOn = UtcClock::now();
     }
 
     #[\Override]

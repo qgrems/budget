@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\BudgetEnvelopeContext\Domain\Events;
 
 use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
+use App\SharedContext\Domain\ValueObjects\UtcClock;
 
 final class BudgetEnvelopeAddedDomainEvent implements DomainEventInterface
 {
@@ -30,7 +31,7 @@ final class BudgetEnvelopeAddedDomainEvent implements DomainEventInterface
         $this->targetedAmount = $targetedAmount;
         $this->currency = $currency;
         $this->requestId = $requestId;
-        $this->occurredOn = new \DateTimeImmutable();
+        $this->occurredOn = UtcClock::now();
     }
 
     #[\Override]

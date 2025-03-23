@@ -7,6 +7,7 @@ use App\Libraries\FluxCapacitor\Anonymizer\Traits\EncryptedKeyCacheTrait;
 use App\Libraries\FluxCapacitor\EventStore\Ports\AggregateRootInterface;
 use App\Libraries\FluxCapacitor\EventStore\Ports\UserAggregateInterface;
 use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
+use App\SharedContext\Domain\ValueObjects\UtcClock;
 use App\UserContext\Domain\Events\UserDeletedDomainEvent;
 use App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent;
 use App\UserContext\Domain\Events\UserLanguagePreferenceChangedDomainEvent;
@@ -160,7 +161,7 @@ final class User implements AggregateRootInterface, UserAggregateInterface
     {
         $this->assertOwnership($userId);
 
-        if ($this->passwordResetTokenExpiry < new \DateTimeImmutable()) {
+        if ($this->passwordResetTokenExpiry < UtcClock::now()) {
             throw InvalidUserOperationException::operationOnResetUserPassword();
         }
 
@@ -244,7 +245,7 @@ final class User implements AggregateRootInterface, UserAggregateInterface
         $this->updatedAt = \DateTime::createFromImmutable($userSignedUpDomainEvent->occurredOn);
         $this->createdAt = $userSignedUpDomainEvent->occurredOn;
         $this->consentGiven = UserConsent::fromBool($userSignedUpDomainEvent->isConsentGiven);
-        $this->consentDate = new \DateTimeImmutable();
+        $this->consentDate = UtcClock::now();
         $this->roles = ['ROLE_USER'];
         $this->passwordResetToken = null;
         $this->passwordResetTokenExpiry = null;

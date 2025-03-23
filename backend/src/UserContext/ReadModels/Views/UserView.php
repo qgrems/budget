@@ -6,6 +6,7 @@ namespace App\UserContext\ReadModels\Views;
 
 use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
 use App\SharedContext\Domain\ValueObjects\UserLanguagePreference;
+use App\SharedContext\Domain\ValueObjects\UtcClock;
 use App\UserContext\Domain\Events\UserFirstnameChangedDomainEvent;
 use App\UserContext\Domain\Events\UserLanguagePreferenceChangedDomainEvent;
 use App\UserContext\Domain\Events\UserLastnameChangedDomainEvent;
@@ -224,7 +225,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
         $this->updatedAt = \DateTime::createFromImmutable($userSignedUpDomainEvent->occurredOn);
         $this->createdAt = $userSignedUpDomainEvent->occurredOn;
         $this->consentGiven = $userSignedUpDomainEvent->isConsentGiven;
-        $this->consentDate = new \DateTimeImmutable();
+        $this->consentDate = UtcClock::now();
         $this->roles = ['ROLE_USER'];
         $this->passwordResetToken = null;
         $this->passwordResetTokenExpiry = null;
