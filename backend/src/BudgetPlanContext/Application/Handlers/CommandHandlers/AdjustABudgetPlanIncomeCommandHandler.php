@@ -26,6 +26,5 @@ final readonly class AdjustABudgetPlanIncomeCommandHandler
             $command->getCategory(),
             $command->getUserId(),
         );
-        $this->eventSourcedRepository->save($aggregate);
     }
 }

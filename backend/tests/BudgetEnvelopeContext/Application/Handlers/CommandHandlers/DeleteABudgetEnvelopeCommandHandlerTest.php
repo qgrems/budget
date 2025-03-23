@@ -76,15 +76,6 @@ class DeleteABudgetEnvelopeCommandHandlerTest extends TestCase
                 throw new EventsNotFoundForAggregateException();
             });
 
-        $this->eventStore->expects($this->once())
-            ->method('saveMultiAggregate');
-
-        $this->eventStore->expects($this->once())
-            ->method('save')
-            ->with($this->callback(function ($savedEnvelope) {
-                return $savedEnvelope instanceof BudgetEnvelope;
-            }));
-
         $this->deleteABudgetEnvelopeCommandHandler->__invoke($deleteABudgetEnvelopeCommand);
     }
 
@@ -125,8 +116,6 @@ class DeleteABudgetEnvelopeCommandHandlerTest extends TestCase
                 }
                 throw new EventsNotFoundForAggregateException();
             });
-
-        $this->eventStore->expects($this->once())->method('saveMultiAggregate');
 
         $this->deleteABudgetEnvelopeCommandHandler->__invoke($deleteABudgetEnvelopeCommand);
     }

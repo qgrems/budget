@@ -43,6 +43,5 @@ final readonly class ResetAUserPasswordCommandHandler
             ),
             UserId::fromString($userView->getUuid()),
         );
-        $this->eventSourcedRepository->save($aggregate);
     }
 }

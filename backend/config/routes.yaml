@@ -1,20 +1,5 @@
-controllers_rest_envelope:
-    resource:
-        path: ../src/Gateway/BudgetEnvelope/Presentation/HTTP/Controllers/
-        namespace: App\Gateway\BudgetEnvelope\Presentation\HTTP\Controllers
-    type: attribute
-
-controllers_rest_budget_plan:
-    resource:
-        path: ../src/Gateway/BudgetPlan/Presentation/HTTP/Controllers/
-        namespace: App\Gateway\BudgetPlan\Presentation\HTTP\Controllers
-    type: attribute
-
-controllers_rest_user:
-    resource:
-        path: ../src/Gateway/User/Presentation/HTTP/Controllers/
-        namespace: App\Gateway\User\Presentation\HTTP\Controllers
-    type: attribute
+imports:
+    resource: '../src/Gateway/Config/routes.yaml'
 
 api_login_check:
     path: /api/login_check

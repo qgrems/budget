@@ -26,6 +26,5 @@ final readonly class AdjustABudgetPlanNeedCommandHandler
             $command->getCategory(),
             $command->getUserId(),
         );
-        $this->eventSourcedRepository->save($aggregate);
     }
 }

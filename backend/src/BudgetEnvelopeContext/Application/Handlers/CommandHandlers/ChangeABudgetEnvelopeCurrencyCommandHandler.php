@@ -17,13 +17,7 @@ final readonly class ChangeABudgetEnvelopeCurrencyCommandHandler
     public function __invoke(ChangeABudgetEnvelopeCurrencyCommand $command): void
     {
         /** @var BudgetEnvelope $aggregate */
-        $aggregate = $this->eventSourcedRepository->get(
-            (string) $command->getBudgetEnvelopeId(),
-        );
-        $aggregate->changeCurrency(
-            $command->getBudgetEnvelopeCurrency(),
-            $command->getBudgetEnvelopeUserId(),
-        );
-        $this->eventSourcedRepository->save($aggregate);
+        $aggregate = $this->eventSourcedRepository->get((string) $command->getBudgetEnvelopeId());
+        $aggregate->changeCurrency($command->getBudgetEnvelopeCurrency(), $command->getBudgetEnvelopeUserId());
     }
 }

@@ -19,6 +19,5 @@ final readonly class ReplayAUserEventsCommandHandler
         /** @var User $aggregate */
         $aggregate = $this->eventSourcedRepository->get((string) $replayAUserEventsCommand->getUserId());
         $aggregate->replay($replayAUserEventsCommand->getUserId());
-        $this->eventSourcedRepository->save($aggregate);
     }
 }

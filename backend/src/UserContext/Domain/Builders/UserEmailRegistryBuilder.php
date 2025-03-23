@@ -7,7 +7,7 @@ namespace App\UserContext\Domain\Builders;
 use App\Libraries\FluxCapacitor\EventStore\Exceptions\EventsNotFoundForAggregateException;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\UserContext\Domain\Aggregates\UserEmailRegistry;
-use App\UserContext\Domain\Exceptions\UserEmailAlreadyExistsException;
+use App\UserContext\Domain\Exceptions\UserAlreadyExistsException;
 use App\UserContext\Domain\ValueObjects\UserEmail;
 use App\UserContext\Domain\ValueObjects\UserEmailRegistryId;
 use App\UserContext\Domain\ValueObjects\UserId;
@@ -53,7 +53,7 @@ final class UserEmailRegistryBuilder
         if ($this->registry->isEmailRegistered($email)) {
             $owner = $this->registry->getEmailOwner($email);
             if ($currentUserId === null || $owner !== (string) $currentUserId) {
-                throw new UserEmailAlreadyExistsException();
+                throw new UserAlreadyExistsException();
             }
         }
 

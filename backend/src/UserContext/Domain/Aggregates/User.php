@@ -228,6 +228,11 @@ final class User implements AggregateRootInterface, UserAggregateInterface
         return $this->email;
     }
 
+    public function getAggregateId(): string
+    {
+        return (string) $this->userId;
+    }
+
     public function applyUserSignedUpDomainEvent(UserSignedUpDomainEvent $userSignedUpDomainEvent): void
     {
         $this->userId = UserId::fromString($userSignedUpDomainEvent->aggregateId);

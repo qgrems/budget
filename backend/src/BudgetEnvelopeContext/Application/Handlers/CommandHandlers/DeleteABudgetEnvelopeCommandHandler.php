@@ -24,7 +24,7 @@ final readonly class DeleteABudgetEnvelopeCommandHandler
         /** @var BudgetEnvelope $aggregate */
         $aggregate = $this->eventSourcedRepository->get((string) $command->getBudgetEnvelopeId());
         $aggregate->delete($command->getBudgetEnvelopeUserId());
-        $aggregatesToSave = BudgetEnvelopeNameRegistryBuilder::build(
+        BudgetEnvelopeNameRegistryBuilder::build(
             $this->eventSourcedRepository,
             $this->uuidGenerator,
         )
@@ -35,10 +35,6 @@ final readonly class DeleteABudgetEnvelopeCommandHandler
                     $this->uuidGenerator,
                 ),
             )
-            ->releaseName($aggregate->getBudgetEnvelopeName(), $command->getBudgetEnvelopeUserId())
-            ->getRegistryAggregates();
-        $aggregatesToSave[] = $aggregate;
-        $this->eventSourcedRepository->saveMultiAggregate($aggregatesToSave);
-        $this->eventSourcedRepository->save($aggregate);
+            ->releaseName($aggregate->getBudgetEnvelopeName(), $command->getBudgetEnvelopeUserId());
     }
 }

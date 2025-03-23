@@ -1,3 +1,9 @@
+imports:
+    - { resource: '../../src/Libraries/FluxCapacitor/Config/doctrine.yaml' }
+    - { resource: '../../src/BudgetEnvelopeContext/Config/doctrine.yaml' }
+    - { resource: '../../src/BudgetPlanContext/Config/doctrine.yaml' }
+    - { resource: '../../src/UserContext/Config/doctrine.yaml' }
+
 doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
@@ -15,43 +21,6 @@ doctrine:
         validate_xml_mapping: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
-        mappings:
-            UserView:
-                type: attribute
-                is_bundle: false
-                dir: '%kernel.project_dir%/src/UserContext/ReadModels/Views'
-                prefix: 'App\UserContext\ReadModels\Views'
-                alias: UserView
-            EnvelopeView:
-                type: attribute
-                is_bundle: false
-                dir: '%kernel.project_dir%/src/BudgetEnvelopeContext/ReadModels/Views'
-                prefix: 'App\BudgetEnvelopeContext\ReadModels\Views'
-                alias: EnvelopeView
-            BudgetPlanView:
-                type: attribute
-                is_bundle: false
-                dir: '%kernel.project_dir%/src/BudgetPlanContext/ReadModels/Views'
-                prefix: 'App\BudgetPlanContext\ReadModels\Views'
-                alias: BudgetPlanView
-            EventStore:
-                type: attribute
-                is_bundle: false
-                dir: '%kernel.project_dir%/src/Libraries/FluxCapacitor/EventStore/Entities'
-                prefix: 'App\Libraries\FluxCapacitor\EventStore\Entities'
-                alias: EventStore
-            EncryptionKey:
-                type: attribute
-                is_bundle: false
-                dir: '%kernel.project_dir%/src/Libraries/FluxCapacitor/Anonymizer/Entities'
-                prefix: 'App\Libraries\FluxCapacitor\Anonymizer\Entities'
-                alias: EncryptionKey
-            RefreshToken:
-                type: attribute
-                is_bundle: false
-                dir: '%kernel.project_dir%/src/UserContext/Infrastructure/Entities'
-                prefix: 'App\UserContext\Infrastructure\Entities'
-                alias: RefreshToken
         controller_resolver:
             auto_mapping: false
 

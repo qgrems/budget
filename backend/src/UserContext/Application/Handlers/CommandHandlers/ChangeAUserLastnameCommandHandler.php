@@ -19,6 +19,5 @@ final readonly class ChangeAUserLastnameCommandHandler
         /** @var User $aggregate */
         $aggregate = $this->eventSourcedRepository->get((string) $command->getUserId());
         $aggregate->updateLastname($command->getUserLastname(), $command->getUserId());
-        $this->eventSourcedRepository->save($aggregate);
     }
 }

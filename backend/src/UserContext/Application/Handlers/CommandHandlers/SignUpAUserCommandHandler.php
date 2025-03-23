@@ -31,15 +31,16 @@ final readonly class SignUpAUserCommandHandler
                 throw new UserAlreadyExistsException();
             }
         } catch (EventsNotFoundForAggregateException) {
-            $registryBuilder = UserEmailRegistryBuilder::build($this->eventSourcedRepository)
+            $aggregatesToSave[] = UserEmailRegistryBuilder::build($this->eventSourcedRepository)
                 ->loadOrCreateRegistry()
                 ->ensureEmailIsAvailable($signUpAUserCommand->getUserEmail())
                 ->registerEmail(
                     $signUpAUserCommand->getUserEmail(),
                     $signUpAUserCommand->getUserId()
-                );
-
-            $user = User::create(
+                )
+                ->getRegistryAggregate()
+            ;
+            $aggregate = User::create(
                 $signUpAUserCommand->getUserId(),
                 $signUpAUserCommand->getUserEmail(),
                 UserPassword::fromString(
@@ -65,14 +66,8 @@ final readonly class SignUpAUserCommandHandler
                 $signUpAUserCommand->getUserLanguagePreference(),
                 $signUpAUserCommand->isUserConsentGiven(),
             );
-            $aggregatesToSave = [];
-
-            if ($registryAggregate = $registryBuilder->getRegistryAggregate()) {
-                $aggregatesToSave[] = $registryAggregate;
-            }
-
-            $aggregatesToSave[] = $user;
-            $this->eventSourcedRepository->saveMultiAggregate($aggregatesToSave);
+            $aggregatesToSave[] = $aggregate;
+            $this->eventSourcedRepository->trackAggregates($aggregatesToSave);
         }
     }
 }

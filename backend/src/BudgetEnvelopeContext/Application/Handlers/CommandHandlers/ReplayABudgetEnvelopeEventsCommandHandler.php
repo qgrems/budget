@@ -19,6 +19,5 @@ final readonly class ReplayABudgetEnvelopeEventsCommandHandler
         /** @var BudgetEnvelope $aggregate */
         $aggregate = $this->eventSourcedRepository->get((string) $command->getBudgetEnvelopeId());
         $aggregate->replay($command->getBudgetEnvelopeUserId());
-        $this->eventSourcedRepository->save($aggregate);
     }
 }

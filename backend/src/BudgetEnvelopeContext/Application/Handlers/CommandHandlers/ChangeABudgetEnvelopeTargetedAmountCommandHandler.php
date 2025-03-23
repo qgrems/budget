@@ -17,13 +17,10 @@ final readonly class ChangeABudgetEnvelopeTargetedAmountCommandHandler
     public function __invoke(ChangeABudgetEnvelopeTargetedAmountCommand $command): void
     {
         /** @var BudgetEnvelope $aggregate */
-        $aggregate = $this->eventSourcedRepository->get(
-            (string) $command->getBudgetEnvelopeId(),
-        );
+        $aggregate = $this->eventSourcedRepository->get((string) $command->getBudgetEnvelopeId());
         $aggregate->updateTargetedAmount(
             $command->getBudgetEnvelopeTargetedAmount(),
             $command->getBudgetEnvelopeUserId(),
         );
-        $this->eventSourcedRepository->save($aggregate);
     }
 }

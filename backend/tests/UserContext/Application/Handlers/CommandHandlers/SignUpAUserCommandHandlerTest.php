@@ -13,7 +13,6 @@ use App\UserContext\Application\Handlers\CommandHandlers\SignUpAUserCommandHandl
 use App\UserContext\Domain\Aggregates\User;
 use App\UserContext\Domain\Aggregates\UserEmailRegistry;
 use App\UserContext\Domain\Exceptions\UserAlreadyExistsException;
-use App\UserContext\Domain\Exceptions\UserEmailAlreadyExistsException;
 use App\UserContext\Domain\Ports\Outbound\PasswordHasherInterface;
 use App\UserContext\Domain\ValueObjects\UserConsent;
 use App\UserContext\Domain\ValueObjects\UserEmail;
@@ -86,7 +85,7 @@ class SignUpAUserCommandHandlerTest extends TestCase
             ->willReturn($hashedPassword);
 
         $this->eventStore->expects($this->once())
-            ->method('saveMultiAggregate')
+            ->method('trackAggregates')
             ->with($this->callback(function($aggregates) {
                 return count($aggregates) === 2 &&
                     $aggregates[0] instanceof UserEmailRegistry &&
@@ -195,7 +194,7 @@ class SignUpAUserCommandHandlerTest extends TestCase
         $this->eventStore->expects($this->never())
             ->method('saveMultiAggregate');
 
-        $this->expectException(UserEmailAlreadyExistsException::class);
+        $this->expectException(UserAlreadyExistsException::class);
         $this->handler->__invoke($command);
     }
 }

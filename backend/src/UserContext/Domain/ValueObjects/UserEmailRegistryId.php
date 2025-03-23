@@ -16,9 +16,8 @@ final readonly class UserEmailRegistryId
         ;
     }
 
-    public static function fromString(
-        string $uuid,
-    ): self {
+    public static function fromString(string $uuid): self
+    {
         return new self($uuid);
     }
 

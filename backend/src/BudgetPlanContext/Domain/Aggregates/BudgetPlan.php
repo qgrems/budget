@@ -417,6 +417,11 @@ final class BudgetPlan implements AggregateRootInterface
         return $this;
     }
 
+    public function getAggregateId(): string
+    {
+        return (string) $this->budgetPlanId;
+    }
+
     public function applyBudgetPlanGeneratedDomainEvent(BudgetPlanGeneratedDomainEvent $event): void
     {
         $this->budgetPlanId = BudgetPlanId::fromString($event->aggregateId);

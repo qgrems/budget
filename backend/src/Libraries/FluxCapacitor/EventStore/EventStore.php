@@ -14,13 +14,16 @@ use App\Libraries\FluxCapacitor\EventStore\Ports\EventClassMapInterface;
 use App\Libraries\FluxCapacitor\EventStore\Ports\EventStoreInterface;
 use App\Libraries\FluxCapacitor\EventStore\Ports\UserAggregateInterface;
 use App\Libraries\FluxCapacitor\EventStore\Services\RequestIdProvider;
+use App\Libraries\FluxCapacitor\EventStore\Traits\AggregateTrackerTrait;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 
-final readonly class EventStore implements EventStoreInterface
+final class EventStore implements EventStoreInterface
 {
+    use AggregateTrackerTrait;
+
     public function __construct(
         private Connection $connection,
         private DomainEventPublisherInterface $publisher,
@@ -38,8 +41,10 @@ final readonly class EventStore implements EventStoreInterface
     {
         $queryBuilder = $this->createBaseQueryBuilder($uuid, $desiredDateTime);
         $eventsIterator = $queryBuilder->executeQuery()->iterateAssociative();
+        $aggregate = $this->createAggregateFromEvents($eventsIterator, $uuid);
+        $this->trackAggregate($aggregate);
 
-        return $this->createAggregateFromEvents($eventsIterator, $uuid);
+        return $aggregate;
     }
 
     #[\Override]
@@ -122,6 +127,7 @@ final readonly class EventStore implements EventStoreInterface
             $this->connection->rollBack();
             throw new PublishDomainEventsException();
         }
+        $this->untrackAggregate($aggregate);
     }
 
     private function createBaseQueryBuilder(string $uuid, ?\DateTimeImmutable $desiredDateTime = null): QueryBuilder

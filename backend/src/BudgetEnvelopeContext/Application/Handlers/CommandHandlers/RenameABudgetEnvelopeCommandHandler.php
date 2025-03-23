@@ -55,7 +55,6 @@ final readonly class RenameABudgetEnvelopeCommandHandler
                 $command->getBudgetEnvelopeId(),
             )
             ->getRegistryAggregates();
-        $aggregatesToSave[] = $aggregate;
-        $this->eventSourcedRepository->saveMultiAggregate($aggregatesToSave);
+        $this->eventSourcedRepository->trackAggregates($aggregatesToSave);
     }
 }

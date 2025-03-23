@@ -77,7 +77,7 @@ class RewindABudgetEnvelopeFromEventsCommandHandlerTest extends TestCase
             });
 
         $this->eventStore->expects($this->once())
-            ->method('saveMultiAggregate')
+            ->method('trackAggregates')
             ->with($this->callback(function ($aggregates) {
                 return is_array($aggregates) && count($aggregates) >= 1;
             }));

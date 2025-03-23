@@ -18,8 +18,7 @@ final readonly class AddABudgetEnvelopeCommandHandler
     public function __construct(
         private EventSourcedRepositoryInterface $eventSourcedRepository,
         private UuidGeneratorInterface $uuidGenerator,
-    )
-    {
+    ) {
     }
 
     public function __invoke(AddABudgetEnvelopeCommand $command): void
@@ -57,7 +56,7 @@ final readonly class AddABudgetEnvelopeCommandHandler
                 )
                 ->getRegistryAggregates();
             $aggregatesToSave[] = $aggregate;
-            $this->eventSourcedRepository->saveMultiAggregate($aggregatesToSave);
+            $this->eventSourcedRepository->trackAggregates($aggregatesToSave);
         }
     }
 }

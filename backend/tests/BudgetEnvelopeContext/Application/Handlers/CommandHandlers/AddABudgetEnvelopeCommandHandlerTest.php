@@ -68,7 +68,7 @@ class AddABudgetEnvelopeCommandHandlerTest extends TestCase
             ->willThrowException(new EventsNotFoundForAggregateException());
 
         $this->eventStore->expects($this->once())
-            ->method('saveMultiAggregate');
+            ->method('trackAggregates');
 
         $this->addABudgetEnvelopeCommandHandler->__invoke($addABudgetEnvelopeCommand);
     }

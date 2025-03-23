@@ -64,12 +64,6 @@ class CreditABudgetEnvelopeCommandHandlerTest extends TestCase
             ->with('10a33b8c-853a-4df8-8fc9-e8bb00b78da4')
             ->willReturn($envelope);
 
-        $this->eventStore->expects($this->once())
-            ->method('save')
-            ->with($this->callback(function ($savedEnvelope) {
-                return $savedEnvelope instanceof BudgetEnvelope;
-            }));
-
         $this->creditABudgetEnvelopeCommandHandler->__invoke($creditABudgetEnvelopeCommand);
     }
 

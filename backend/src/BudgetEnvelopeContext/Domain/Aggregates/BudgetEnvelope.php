@@ -206,6 +206,11 @@ final class BudgetEnvelope implements AggregateRootInterface
         return $this;
     }
 
+    public function getAggregateId(): string
+    {
+        return (string) $this->budgetEnvelopeId;
+    }
+
     public function applyBudgetEnvelopeAddedDomainEvent(
         BudgetEnvelopeAddedDomainEvent $budgetEnvelopeAddedDomainEvent,
     ): void {

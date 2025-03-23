@@ -71,14 +71,6 @@ class DeleteAUserCommandHandlerTest extends TestCase
                 throw new \RuntimeException("Unexpected ID: $id");
             });
 
-        $this->eventStore->expects($this->once())
-            ->method('saveMultiAggregate')
-            ->with($this->callback(function($aggregates) {
-                return count($aggregates) === 2 &&
-                       $aggregates[0] instanceof UserEmailRegistry &&
-                       $aggregates[1] instanceof User;
-            }));
-
         $this->handler->__invoke($command);
     }
 

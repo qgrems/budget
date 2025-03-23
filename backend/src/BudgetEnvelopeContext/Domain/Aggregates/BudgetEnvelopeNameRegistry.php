@@ -50,14 +50,14 @@ final class BudgetEnvelopeNameRegistry implements AggregateRootInterface
             throw new BudgetEnvelopeNameAlreadyExistsForUserException();
         }
 
-        $event = new BudgetEnvelopeNameRegisteredDomainEvent(
-            $this->budgetEnvelopeNameRegistryId,
-            (string) $userId,
-            (string) $name,
-            (string) $envelopeId,
+        $this->raiseDomainEvents(
+            new BudgetEnvelopeNameRegisteredDomainEvent(
+                $this->budgetEnvelopeNameRegistryId,
+                (string) $userId,
+                (string) $name,
+                (string) $envelopeId,
+            ),
         );
-
-        $this->raiseDomainEvents($event);
     }
 
     public function releaseName(
@@ -81,6 +81,11 @@ final class BudgetEnvelopeNameRegistry implements AggregateRootInterface
         $this->aggregateVersion = $aggregateVersion;
 
         return $this;
+    }
+
+    public function getAggregateId(): string
+    {
+        return $this->budgetEnvelopeNameRegistryId;
     }
 
     public function applyBudgetEnvelopeNameRegisteredDomainEvent(BudgetEnvelopeNameRegisteredDomainEvent $event): void
