@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\BudgetPlanContext\Domain\Events;
 
 use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
+use App\SharedContext\Domain\ValueObjects\UtcClock;
 
 final class BudgetPlanNeedRemovedDomainEvent implements DomainEventInterface
 {
@@ -24,7 +25,7 @@ final class BudgetPlanNeedRemovedDomainEvent implements DomainEventInterface
         $this->uuid = $uuid;
         $this->userId = $userId;
         $this->requestId = $requestId;
-        $this->occurredOn = new \DateTimeImmutable();
+        $this->occurredOn = UtcClock::now();
     }
 
     #[\Override]

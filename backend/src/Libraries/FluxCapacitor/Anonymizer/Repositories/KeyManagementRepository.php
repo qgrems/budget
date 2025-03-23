@@ -23,7 +23,10 @@ final readonly class KeyManagementRepository implements KeyManagementRepositoryI
         $this->connection->insert('encryption_keys', [
             'user_id' => $userId,
             'encryption_key' => $encryptedKey,
-            'created_at' => new \DateTimeImmutable()->format(\DateTimeImmutable::ATOM),
+            'created_at' => new \DateTimeImmutable(
+                'now',
+                new \DateTimeZone('UTC'),
+            )->format(\DateTimeImmutable::ATOM),
         ]);
 
         return $key;

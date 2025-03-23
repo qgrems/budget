@@ -6,6 +6,7 @@ namespace App\UserContext\Domain\Events;
 
 use App\Libraries\FluxCapacitor\Anonymizer\Ports\UserDomainEventInterface;
 use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
+use App\SharedContext\Domain\ValueObjects\UtcClock;
 
 final class UserEmailRegisteredDomainEvent implements UserDomainEventInterface
 {
@@ -25,7 +26,7 @@ final class UserEmailRegisteredDomainEvent implements UserDomainEventInterface
         $this->userId = $userId;
         $this->email = $email;
         $this->requestId = $requestId;
-        $this->occurredOn = new \DateTimeImmutable();
+        $this->occurredOn = UtcClock::now();
     }
 
     #[\Override]

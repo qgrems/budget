@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\BudgetPlanContext\Domain\Events;
 
 use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
+use App\SharedContext\Domain\ValueObjects\UtcClock;
 
 final class BudgetPlanSavingAddedDomainEvent implements DomainEventInterface
 {
@@ -33,7 +34,7 @@ final class BudgetPlanSavingAddedDomainEvent implements DomainEventInterface
         $this->category = $category;
         $this->name = $name;
         $this->requestId = $requestId;
-        $this->occurredOn = new \DateTimeImmutable();
+        $this->occurredOn = UtcClock::now();
     }
 
     public function toArray(): array

@@ -4,6 +4,7 @@ namespace App\UserContext\Domain\Events;
 
 use App\Libraries\FluxCapacitor\Anonymizer\Ports\UserDomainEventInterface;
 use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
+use App\SharedContext\Domain\ValueObjects\UtcClock;
 
 final class UserPasswordResetRequestedDomainEvent implements UserDomainEventInterface
 {
@@ -27,7 +28,7 @@ final class UserPasswordResetRequestedDomainEvent implements UserDomainEventInte
         $this->passwordResetTokenExpiry = $passwordResetTokenExpiry;
         $this->userId = $userId;
         $this->requestId = $requestId;
-        $this->occurredOn = new \DateTimeImmutable();
+        $this->occurredOn = UtcClock::now();
     }
 
     #[\Override]
