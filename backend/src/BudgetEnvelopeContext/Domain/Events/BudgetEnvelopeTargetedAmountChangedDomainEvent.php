@@ -25,7 +25,7 @@ final class BudgetEnvelopeTargetedAmountChangedDomainEvent implements DomainEven
         $this->userId = $userId;
         $this->targetedAmount = $targetedAmount;
         $this->requestId = $requestId;
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
     }
 
     #[\Override]

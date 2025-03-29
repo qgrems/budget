@@ -26,21 +26,21 @@ final readonly class UserViewRepository implements UserViewRepositoryInterface
     public function save(UserViewInterface $user): void
     {
         $this->connection->executeStatement('
-            INSERT INTO user_view (uuid, created_at, updated_at, email, password, firstname, lastname, language_preference, consent_given, consent_date, roles, password_reset_token, password_reset_token_expiry)
-            VALUES (:uuid, :created_at, :updated_at, :email, :password, :firstname, :lastname, :language_preference, :consent_given, :consent_date, :roles, :password_reset_token, :password_reset_token_expiry)
-            ON DUPLICATE KEY UPDATE
-                updated_at = VALUES(updated_at),
-                email = VALUES(email),
-                password = VALUES(password),
-                firstname = VALUES(firstname),
-                lastname = VALUES(lastname),
-                language_preference = VALUES(language_preference),
-                consent_given = VALUES(consent_given),
-                consent_date = VALUES(consent_date),
-                roles = VALUES(roles),
-                password_reset_token = VALUES(password_reset_token),
-                password_reset_token_expiry = VALUES(password_reset_token_expiry)
-        ', [
+        INSERT INTO user_view (uuid, created_at, updated_at, email, password, firstname, lastname, language_preference, consent_given, consent_date, roles, password_reset_token, password_reset_token_expiry)
+        VALUES (:uuid, :created_at, :updated_at, :email, :password, :firstname, :lastname, :language_preference, :consent_given, :consent_date, :roles, :password_reset_token, :password_reset_token_expiry)
+        ON CONFLICT (uuid) DO UPDATE SET
+            updated_at = EXCLUDED.updated_at,
+            email = EXCLUDED.email,
+            password = EXCLUDED.password,
+            firstname = EXCLUDED.firstname,
+            lastname = EXCLUDED.lastname,
+            language_preference = EXCLUDED.language_preference,
+            consent_given = EXCLUDED.consent_given,
+            consent_date = EXCLUDED.consent_date,
+            roles = EXCLUDED.roles,
+            password_reset_token = EXCLUDED.password_reset_token,
+            password_reset_token_expiry = EXCLUDED.password_reset_token_expiry
+    ', [
             'uuid' => $user->uuid,
             'created_at' => $user->createdAt->format(\DateTimeImmutable::ATOM),
             'updated_at' => $user->updatedAt->format(\DateTime::ATOM),
@@ -49,7 +49,7 @@ final readonly class UserViewRepository implements UserViewRepositoryInterface
             'firstname' => $user->firstname,
             'lastname' => $user->lastname,
             'language_preference' => $user->languagePreference,
-            'consent_given' => $user->consentGiven ? 1 : 0,
+            'consent_given' => $user->consentGiven,
             'consent_date' => $user->consentDate->format(\DateTimeImmutable::ATOM),
             'roles' => json_encode($user->roles),
             'password_reset_token' => $user->passwordResetToken,

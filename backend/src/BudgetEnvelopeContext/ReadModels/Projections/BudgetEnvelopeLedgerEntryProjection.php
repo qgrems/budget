@@ -15,8 +15,10 @@ use App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelope
 use App\BudgetEnvelopeContext\Infrastructure\Events\Notifications\BudgetEnvelopeLedgerEntriesRewoundNotificationEvent;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeLedgerEntryView;
 use App\Libraries\FluxCapacitor\EventStore\Ports\DomainEventInterface;
+use App\Libraries\FluxCapacitor\EventStore\Ports\EventClassMapInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
+use App\SharedContext\Domain\ValueObjects\UtcClock;
 
 final readonly class BudgetEnvelopeLedgerEntryProjection
 {
@@ -24,6 +26,7 @@ final readonly class BudgetEnvelopeLedgerEntryProjection
         private BudgetEnvelopeLedgerEntryViewRepositoryInterface $budgetEnvelopeLedgerEntryViewRepository,
         private EventSourcedRepositoryInterface $eventSourcedRepository,
         private PublisherInterface $publisher,
+        private EventClassMapInterface $eventClassMap,
     ) {
     }
 
@@ -77,12 +80,12 @@ final readonly class BudgetEnvelopeLedgerEntryProjection
         $budgetEnvelopeEvents = $this->eventSourcedRepository->getByDomainEvents(
             $budgetEnvelopeRewoundDomainEvent->aggregateId,
             [BudgetEnvelopeCreditedDomainEvent::class, BudgetEnvelopeDebitedDomainEvent::class],
-            $budgetEnvelopeRewoundDomainEvent->desiredDateTime,
+            UtcClock::fromStringToImmutable($budgetEnvelopeRewoundDomainEvent->desiredDateTime->format(\DateTimeInterface::ATOM)),
         );
 
         /** @var array{type: string, payload: string} $budgetEnvelopeEvent */
         foreach ($budgetEnvelopeEvents as $budgetEnvelopeEvent) {
-            match ($budgetEnvelopeEvent['type']) {
+            match ($this->eventClassMap->getEventPathByClassName($budgetEnvelopeEvent['event_name'])) {
                 BudgetEnvelopeCreditedDomainEvent::class => $this->handleBudgetEnvelopeCreditedDomainEvent(
                     BudgetEnvelopeCreditedDomainEvent::fromArray(
                         (json_decode($budgetEnvelopeEvent['payload'], true)),
@@ -112,12 +115,12 @@ final readonly class BudgetEnvelopeLedgerEntryProjection
         $budgetEnvelopeEvents = $this->eventSourcedRepository->getByDomainEvents(
             $budgetEnvelopeReplayedDomainEvent->aggregateId,
             [BudgetEnvelopeCreditedDomainEvent::class, BudgetEnvelopeDebitedDomainEvent::class],
-            $budgetEnvelopeReplayedDomainEvent->occurredOn,
+            UtcClock::fromStringToImmutable(($budgetEnvelopeReplayedDomainEvent->updatedAt)->format(\DateTimeInterface::ATOM)),
         );
 
         /** @var array{type: string, payload: string} $budgetEnvelopeEvent */
         foreach ($budgetEnvelopeEvents as $budgetEnvelopeEvent) {
-            match ($budgetEnvelopeEvent['type']) {
+            match ($this->eventClassMap->getEventPathByClassName($budgetEnvelopeEvent['event_name'])) {
                 BudgetEnvelopeCreditedDomainEvent::class => $this->handleBudgetEnvelopeCreditedDomainEvent(
                     BudgetEnvelopeCreditedDomainEvent::fromArray(
                         json_decode($budgetEnvelopeEvent['payload'], true),

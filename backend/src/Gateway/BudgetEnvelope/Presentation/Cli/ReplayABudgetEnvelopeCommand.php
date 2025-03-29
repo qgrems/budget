@@ -8,6 +8,7 @@ use App\BudgetEnvelopeContext\Application\Commands\ReplayABudgetEnvelopeEventsCo
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\SharedContext\Domain\Ports\Outbound\CommandBusInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,6 +16,10 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
+#[AsCommand(
+    name: 'app:replay-a-budget-envelope',
+    description: 'Replays events for a budget envelope.',
+)]
 final class ReplayABudgetEnvelopeCommand extends Command
 {
     protected static $defaultName = 'app:replay-a-budget-envelope';

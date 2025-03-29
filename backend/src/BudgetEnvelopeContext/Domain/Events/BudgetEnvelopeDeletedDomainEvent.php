@@ -25,7 +25,7 @@ final class BudgetEnvelopeDeletedDomainEvent implements DomainEventInterface
         $this->userId = $userId;
         $this->isDeleted = $isDeleted;
         $this->requestId = $requestId;
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
     }
 
     #[\Override]

@@ -26,7 +26,7 @@ final class UserFirstnameChangedDomainEvent implements UserDomainEventInterface
         $this->firstname = $firstname;
         $this->userId = $userId;
         $this->requestId = $requestId;
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
     }
 
     #[\Override]

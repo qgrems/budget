@@ -36,7 +36,7 @@ final readonly class RenameABudgetEnvelopeCommandHandler
                     $this->uuidGenerator,
                 ),
             )
-            ->releaseName($oldName, $command->getBudgetEnvelopeUserId())
+            ->releaseName($oldName, $command->getBudgetEnvelopeUserId(), $command->getBudgetEnvelopeId())
             ->loadOrCreateRegistry(
                 BudgetEnvelopeNameRegistryId::fromUserIdAndBudgetEnvelopeName(
                     $command->getBudgetEnvelopeUserId(),

@@ -37,14 +37,14 @@ final class BudgetPlanSavingEntryViewRepository implements BudgetPlanSavingEntry
     public function save(BudgetPlanSavingEntryViewInterface $budgetPlanSavingEntryView): void
     {
         $this->connection->executeStatement('
-            INSERT INTO budget_plan_saving_entry_view (uuid, budget_plan_uuid, saving_name, saving_amount, category, created_at, updated_at)
-            VALUES (:uuid, :budget_plan_uuid, :saving_name, :saving_amount, :category, :created_at, :updated_at)
-            ON DUPLICATE KEY UPDATE
-                saving_name = VALUES(saving_name),
-                saving_amount = VALUES(saving_amount),
-                updated_at = VALUES(updated_at),
-                category = VALUES(category)
-        ', [
+        INSERT INTO budget_plan_saving_entry_view (uuid, budget_plan_uuid, saving_name, saving_amount, category, created_at, updated_at)
+        VALUES (:uuid, :budget_plan_uuid, :saving_name, :saving_amount, :category, :created_at, :updated_at)
+        ON CONFLICT (uuid) DO UPDATE SET
+            saving_name = EXCLUDED.saving_name,
+            saving_amount = EXCLUDED.saving_amount,
+            updated_at = EXCLUDED.updated_at,
+            category = EXCLUDED.category
+    ', [
             'uuid' => $budgetPlanSavingEntryView->uuid,
             'budget_plan_uuid' => $budgetPlanSavingEntryView->budgetPlanUuid,
             'saving_name' => $budgetPlanSavingEntryView->savingName,

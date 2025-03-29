@@ -42,6 +42,15 @@ final class EventStore implements EventStoreInterface
         $queryBuilder = $this->createBaseQueryBuilder($uuid, $desiredDateTime);
         $eventsIterator = $queryBuilder->executeQuery()->iterateAssociative();
         $aggregate = $this->createAggregateFromEvents($eventsIterator, $uuid);
+
+        if ($desiredDateTime instanceof \DateTimeImmutable) {
+            $aggregateVersion = $this->connection->fetchOne(
+                'SELECT MAX(stream_version) FROM event_store WHERE stream_id = :id',
+                ['id' => $uuid],
+            );
+            $aggregate->setAggregateVersion((int) $aggregateVersion);
+        }
+
         $this->trackAggregate($aggregate);
 
         return $aggregate;
@@ -125,6 +134,7 @@ final class EventStore implements EventStoreInterface
             }
         } catch (Exception $e) {
             $this->connection->rollBack();
+            dump($e);
             throw new PublishDomainEventsException();
         }
         $this->untrackAggregate($aggregate);

@@ -12,6 +12,7 @@ final class BudgetEnvelopeNameReleasedDomainEvent implements DomainEventInterfac
     public string $aggregateId;
     public string $userId;
     public string $name;
+    public string $budgetEnvelopeId;
     public string $requestId;
     public \DateTimeImmutable $occurredOn;
 
@@ -19,13 +20,15 @@ final class BudgetEnvelopeNameReleasedDomainEvent implements DomainEventInterfac
         string $aggregateId,
         string $userId,
         string $name,
+        string $budgetEnvelopeId,
         string $requestId = DomainEventInterface::DEFAULT_REQUEST_ID,
     ) {
         $this->aggregateId = $aggregateId;
         $this->userId = $userId;
         $this->name = $name;
+        $this->budgetEnvelopeId = $budgetEnvelopeId;
         $this->requestId = $requestId;
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
     }
 
     #[\Override]
@@ -36,6 +39,7 @@ final class BudgetEnvelopeNameReleasedDomainEvent implements DomainEventInterfac
             'userId' => $this->userId,
             'requestId' => $this->requestId,
             'name' => $this->name,
+            'budgetEnvelopeId' => $this->budgetEnvelopeId,
             'occurredOn' => $this->occurredOn->format(\DateTimeInterface::ATOM),
         ];
     }
@@ -47,6 +51,7 @@ final class BudgetEnvelopeNameReleasedDomainEvent implements DomainEventInterfac
             $data['aggregateId'],
             $data['userId'],
             $data['name'],
+            $data['budgetEnvelopeId'],
             $data['requestId'],
         );
         $event->occurredOn = new \DateTimeImmutable($data['occurredOn']);

@@ -34,7 +34,7 @@ final class BudgetPlanWantAdjustedDomainEvent implements DomainEventInterface
         $this->name = $name;
         $this->category = $category;
         $this->requestId = $requestId;
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
     }
 
     public function toArray(): array

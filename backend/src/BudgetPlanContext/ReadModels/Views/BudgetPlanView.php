@@ -37,7 +37,8 @@ final class BudgetPlanView implements \JsonSerializable, BudgetPlanViewInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
-    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'budget_plan_view_id_seq', allocationSize: 1, initialValue: 1)]
     private(set) int $id;
 
     #[ORM\Column(type: 'string', length: 36, unique: true)]

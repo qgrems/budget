@@ -27,4 +27,9 @@ final readonly class BudgetEnvelopeName
     {
         return $this->budgetEnvelopeName;
     }
+
+    public function equals(BudgetEnvelopeName $budgetEnvelopeName): bool
+    {
+        return $this->budgetEnvelopeName === $budgetEnvelopeName->budgetEnvelopeName;
+    }
 }

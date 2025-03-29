@@ -40,7 +40,7 @@ final class BudgetEnvelopeReplayedDomainEvent implements DomainEventInterface
         $this->updatedAt = new \DateTime($updatedAt);
         $this->requestId = $requestId;
         $this->isDeleted = $isDeleted;
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
     }
 
     #[\Override]

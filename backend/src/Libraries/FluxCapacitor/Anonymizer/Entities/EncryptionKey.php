@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'encryption_keys')]
-#[ORM\Index(name: 'idx_user_id', columns: ['user_id'])]
+#[ORM\Index(name: 'idx_encryption_keys_user_id', columns: ['user_id'])]
 final class EncryptionKey
 {
     #[ORM\Id]

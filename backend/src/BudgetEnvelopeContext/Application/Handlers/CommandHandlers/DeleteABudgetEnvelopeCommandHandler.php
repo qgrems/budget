@@ -35,6 +35,10 @@ final readonly class DeleteABudgetEnvelopeCommandHandler
                     $this->uuidGenerator,
                 ),
             )
-            ->releaseName($aggregate->getBudgetEnvelopeName(), $command->getBudgetEnvelopeUserId());
+            ->releaseName(
+                $aggregate->getBudgetEnvelopeName(),
+                $command->getBudgetEnvelopeUserId(),
+                $command->getBudgetEnvelopeId(),
+            );
     }
 }

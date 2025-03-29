@@ -21,7 +21,7 @@ final class UserDeletedDomainEvent implements UserDomainEventInterface
         $this->aggregateId = $aggregateId;
         $this->userId = $userId;
         $this->requestId = $requestId;
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
     }
 
     #[\Override]

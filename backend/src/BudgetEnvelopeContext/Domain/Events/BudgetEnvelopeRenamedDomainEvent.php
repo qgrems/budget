@@ -25,7 +25,7 @@ final class BudgetEnvelopeRenamedDomainEvent implements DomainEventInterface
         $this->userId = $userId;
         $this->name = $name;
         $this->requestId = $requestId;
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
     }
 
     #[\Override]

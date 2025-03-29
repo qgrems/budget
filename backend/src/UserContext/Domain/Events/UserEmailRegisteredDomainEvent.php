@@ -26,7 +26,7 @@ final class UserEmailRegisteredDomainEvent implements UserDomainEventInterface
         $this->userId = $userId;
         $this->email = $email;
         $this->requestId = $requestId;
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
     }
 
     #[\Override]

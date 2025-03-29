@@ -26,7 +26,7 @@ final class UserPasswordResetDomainEvent implements UserDomainEventInterface
         $this->password = $password;
         $this->userId = $userId;
         $this->requestId = $requestId;
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
     }
 
     #[\Override]
