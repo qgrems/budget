@@ -96,7 +96,7 @@ final class BudgetEnvelopeNameRegistryBuilder
     public function registerName(
         BudgetEnvelopeName $name,
         BudgetEnvelopeUserId $userId,
-        BudgetEnvelopeId $envelopeId
+        BudgetEnvelopeId $envelopeId,
     ): self {
         if ($this->currentRegistry === null) {
             $this->loadOrCreateRegistry(
@@ -138,6 +138,7 @@ final class BudgetEnvelopeNameRegistryBuilder
     public function releaseName(
         BudgetEnvelopeName $name,
         BudgetEnvelopeUserId $userId,
+        BudgetEnvelopeId $budgetEnvelopeId,
     ): self {
         if ($this->oldRegistry === null) {
             $this->loadOldRegistry(
@@ -149,7 +150,7 @@ final class BudgetEnvelopeNameRegistryBuilder
             );
         }
 
-        $this->oldRegistry?->releaseName($name, $userId);
+        $this->oldRegistry?->releaseName($name, $userId, $budgetEnvelopeId);
 
         return $this;
     }

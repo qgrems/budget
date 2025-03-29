@@ -37,14 +37,74 @@ class RewindABudgetEnvelopeFromEventsCommandHandlerTest extends TestCase
         );
     }
 
-    public function testRewindSuccess(): void
+    public function testRewindSuccessWithNameChange(): void
+    {
+        $userId = '18e04f53-0ea6-478c-a02b-81b7f3d6e8c1';
+        $envelopeId = '3e6a6763-4c4d-4648-bc3f-e9447dbed12c';
+        $oldName = 'old name';
+        $newName = 'new name';
+        $desiredDateTime = new \DateTimeImmutable('2020-10-10T12:00:00Z');
+
+        $rewindCommand = new RewindABudgetEnvelopeFromEventsCommand(
+            BudgetEnvelopeId::fromString($envelopeId),
+            BudgetEnvelopeUserId::fromString($userId),
+            $desiredDateTime,
+        );
+
+        $oldEnvelope = BudgetEnvelope::create(
+            BudgetEnvelopeId::fromString($envelopeId),
+            BudgetEnvelopeUserId::fromString($userId),
+            BudgetEnvelopeTargetedAmount::fromString('20.00', '0.00'),
+            BudgetEnvelopeName::fromString($oldName),
+            BudgetEnvelopeCurrency::fromString('EUR')
+        );
+
+        $newEnvelope = BudgetEnvelope::create(
+            BudgetEnvelopeId::fromString($envelopeId),
+            BudgetEnvelopeUserId::fromString($userId),
+            BudgetEnvelopeTargetedAmount::fromString('20.00', '0.00'),
+            BudgetEnvelopeName::fromString($newName),
+            BudgetEnvelopeCurrency::fromString('EUR')
+        );
+
+        $oldNameRegistryId = BudgetEnvelopeNameRegistryId::fromUserIdAndBudgetEnvelopeName(
+            BudgetEnvelopeUserId::fromString($userId),
+            BudgetEnvelopeName::fromString($oldName),
+            $this->uuidGenerator
+        );
+
+        $newNameRegistryId = BudgetEnvelopeNameRegistryId::fromUserIdAndBudgetEnvelopeName(
+            BudgetEnvelopeUserId::fromString($userId),
+            BudgetEnvelopeName::fromString($newName),
+            $this->uuidGenerator
+        );
+
+        $this->eventStore->expects($this->atLeastOnce())
+            ->method('load')
+            ->willReturnCallback(function ($id, $datetime = null) use ($oldEnvelope, $newEnvelope, $envelopeId, $oldNameRegistryId, $newNameRegistryId, $desiredDateTime) {
+                if ($id === $envelopeId) {
+                    return $datetime !== null ? $newEnvelope : $oldEnvelope;
+                }
+                throw new EventsNotFoundForAggregateException();
+            });
+
+        $this->eventStore->expects($this->once())
+            ->method('trackAggregates')
+            ->with($this->callback(function ($aggregates) {
+                return is_array($aggregates) && count($aggregates) >= 1;
+            }));
+
+        $this->rewindABudgetEnvelopeFromEventsCommandHandler->__invoke($rewindCommand);
+    }
+
+    public function testRewindSuccessWithNoNameChange(): void
     {
         $userId = '18e04f53-0ea6-478c-a02b-81b7f3d6e8c1';
         $envelopeId = '3e6a6763-4c4d-4648-bc3f-e9447dbed12c';
         $envelopeName = 'test name';
         $desiredDateTime = new \DateTimeImmutable('2020-10-10T12:00:00Z');
 
-        $rewindABudgetEnvelopeFromEventsCommand = new RewindABudgetEnvelopeFromEventsCommand(
+        $rewindCommand = new RewindABudgetEnvelopeFromEventsCommand(
             BudgetEnvelopeId::fromString($envelopeId),
             BudgetEnvelopeUserId::fromString($userId),
             $desiredDateTime,
@@ -70,20 +130,15 @@ class RewindABudgetEnvelopeFromEventsCommandHandlerTest extends TestCase
                 if ($id === $envelopeId) {
                     return $envelope;
                 }
-                if ($id === (string) $nameRegistryId) {
-                    throw new EventsNotFoundForAggregateException();
-                }
                 throw new EventsNotFoundForAggregateException();
             });
 
-        $this->eventStore->expects($this->once())
-            ->method('trackAggregates')
-            ->with($this->callback(function ($aggregates) {
-                return is_array($aggregates) && count($aggregates) >= 1;
-            }));
+        $this->eventStore->expects($this->never())
+            ->method('trackAggregates');
 
-        $this->rewindABudgetEnvelopeFromEventsCommandHandler->__invoke($rewindABudgetEnvelopeFromEventsCommand);
+        $this->rewindABudgetEnvelopeFromEventsCommandHandler->__invoke($rewindCommand);
     }
+
     public function testRewindFailure(): void
     {
         $rewindABudgetEnvelopeFromEventsCommand = new RewindABudgetEnvelopeFromEventsCommand(

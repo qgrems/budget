@@ -8,6 +8,8 @@ use App\BudgetEnvelopeContext\Application\Commands\RewindABudgetEnvelopeFromEven
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeId;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\SharedContext\Domain\Ports\Outbound\CommandBusInterface;
+use App\SharedContext\Domain\ValueObjects\UtcClock;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,6 +17,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
+
+#[AsCommand(
+    name: 'app:rewind-a-budget-envelope',
+    description: 'Rewinds events for a budget envelope.',
+)]
 final class RewindABudgetEnvelopeCommand extends Command
 {
     protected static $defaultName = 'app:rewind-a-budget-envelope';
@@ -69,7 +76,7 @@ final class RewindABudgetEnvelopeCommand extends Command
             $desiredDateTime = $helper->ask(
                 $input,
                 $output,
-                new Question('Please enter the desired date and time (Y-m-d H:i:s): '),
+                new Question('Please enter the desired date and time: '),
             );
         } else {
             $budgetEnvelopeId = $input->getArgument('budgetEnvelopeId');
@@ -77,9 +84,9 @@ final class RewindABudgetEnvelopeCommand extends Command
             $desiredDateTime = $input->getArgument('desiredDateTime');
         }
 
-        $desiredDateTime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $desiredDateTime);
+        $desiredDateTime = UtcClock::fromStringToImmutable($desiredDateTime);
         if (!$desiredDateTime) {
-            $output->writeln('<error>Invalid date format. Use Y-m-d H:i:s.</error>');
+            $output->writeln('<error>Invalid date format.</error>');
             return Command::FAILURE;
         }
 

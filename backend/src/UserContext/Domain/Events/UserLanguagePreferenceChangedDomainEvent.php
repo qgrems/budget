@@ -26,7 +26,7 @@ final class UserLanguagePreferenceChangedDomainEvent implements UserDomainEventI
         $this->languagePreference = $languagePreference;
         $this->userId = $userId;
         $this->requestId = $requestId;
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
     }
 
     #[\Override]

@@ -37,14 +37,14 @@ final class BudgetPlanNeedEntryViewRepository implements BudgetPlanNeedEntryView
     public function save(BudgetPlanNeedEntryViewInterface $budgetPlanNeedEntryView): void
     {
         $this->connection->executeStatement('
-            INSERT INTO budget_plan_need_entry_view (uuid, budget_plan_uuid, need_name, need_amount, category, created_at, updated_at)
-            VALUES (:uuid, :budget_plan_uuid, :need_name, :need_amount, :category, :created_at, :updated_at)
-            ON DUPLICATE KEY UPDATE
-                need_name = VALUES(need_name),
-                need_amount = VALUES(need_amount),
-                updated_at = VALUES(updated_at),
-                category = VALUES(category)
-        ', [
+        INSERT INTO budget_plan_need_entry_view (uuid, budget_plan_uuid, need_name, need_amount, category, created_at, updated_at)
+        VALUES (:uuid, :budget_plan_uuid, :need_name, :need_amount, :category, :created_at, :updated_at)
+        ON CONFLICT (uuid) DO UPDATE SET
+            need_name = EXCLUDED.need_name,
+            need_amount = EXCLUDED.need_amount,
+            updated_at = EXCLUDED.updated_at,
+            category = EXCLUDED.category
+    ', [
             'uuid' => $budgetPlanNeedEntryView->uuid,
             'budget_plan_uuid' => $budgetPlanNeedEntryView->budgetPlanUuid,
             'need_name' => $budgetPlanNeedEntryView->needName,

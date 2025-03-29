@@ -12,13 +12,14 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_stream_id', columns: ['stream_id'])]
 #[ORM\Index(name: 'idx_stream_name', columns: ['stream_name'])]
 #[ORM\Index(name: 'idx_event_name', columns: ['event_name'])]
-#[ORM\Index(name: 'idx_user_id', columns: ['user_id'])]
+#[ORM\Index(name: 'idx_event_user_id', columns: ['user_id'])]
 #[ORM\Index(name: 'idx_occurred_on', columns: ['occurred_on'])]
 final class EventStore
 {
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
-    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'event_store_id_seq', allocationSize: 1, initialValue: 1)]
     private int $id {
         get {
             return $this->id;

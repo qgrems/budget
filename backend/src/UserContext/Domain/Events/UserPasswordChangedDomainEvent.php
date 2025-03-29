@@ -30,7 +30,7 @@ final class UserPasswordChangedDomainEvent implements UserDomainEventInterface
         $this->newPassword = $newPassword;
         $this->userId = $userId;
         $this->requestId = $requestId;
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
     }
 
     #[\Override]

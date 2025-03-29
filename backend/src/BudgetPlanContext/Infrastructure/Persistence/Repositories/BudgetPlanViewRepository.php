@@ -13,10 +13,12 @@ use App\BudgetPlanContext\ReadModels\Views\BudgetPlanView;
 use App\BudgetPlanContext\ReadModels\Views\BudgetPlanWantEntryView;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Query\QueryBuilder;
 
-final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterface
+final readonly class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterface
 {
     private Connection $connection;
+    private const array BOOLEAN_FIELDS = ['is_deleted'];
 
     public function __construct(Connection $connection)
     {
@@ -30,14 +32,14 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
     public function save(BudgetPlanViewInterface $budgetPlanView): void
     {
         $this->connection->executeStatement('
-            INSERT INTO budget_plan_view (uuid, user_uuid, date, currency, created_at, updated_at, is_deleted)
-            VALUES (:uuid, :user_uuid, :date, :currency, :created_at, :updated_at, :is_deleted)
-            ON DUPLICATE KEY UPDATE
-                user_uuid = VALUES(user_uuid),
-                date = VALUES(date),
-                currency = VALUES(currency),
-                updated_at = VALUES(updated_at),
-                is_deleted = VALUES(is_deleted)
+        INSERT INTO budget_plan_view (uuid, user_uuid, date, currency, created_at, updated_at, is_deleted)
+        VALUES (:uuid, :user_uuid, :date, :currency, :created_at, :updated_at, :is_deleted)
+        ON CONFLICT (uuid) DO UPDATE SET
+            user_uuid = EXCLUDED.user_uuid,
+            date = EXCLUDED.date,
+            currency = EXCLUDED.currency,
+            updated_at = EXCLUDED.updated_at,
+            is_deleted = EXCLUDED.is_deleted
         ', [
             'uuid' => $budgetPlanView->uuid,
             'user_uuid' => $budgetPlanView->userId,
@@ -45,7 +47,7 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
             'currency' => $budgetPlanView->currency,
             'created_at' => $budgetPlanView->createdAt->format(\DateTimeImmutable::ATOM),
             'updated_at' => $budgetPlanView->updatedAt->format(\DateTime::ATOM),
-            'is_deleted' => $budgetPlanView->isDeleted ? 1 : 0,
+            'is_deleted' => $budgetPlanView->isDeleted ? '1' : '0',
         ]);
     }
 
@@ -64,9 +66,15 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
     #[\Override]
     public function findOneBy(array $criteria, ?array $orderBy = null): ?BudgetPlanViewInterface
     {
-        $sql = sprintf('SELECT * FROM budget_plan_view WHERE %s LIMIT 1', $this->buildWhereClause($criteria));
-        $stmt = $this->connection->prepare($sql);
-        $result = $stmt->executeQuery($criteria)->fetchAssociative();
+        $qb = $this->connection->createQueryBuilder()
+            ->select('*')
+            ->from('budget_plan_view')
+            ->setMaxResults(1);
+
+        $this->addWhereClauses($qb, $criteria);
+        $this->addOrderByClauses($qb, $orderBy);
+
+        $result = $qb->executeQuery()->fetchAssociative();
 
         return $result ? BudgetPlanView::fromRepository($result) : null;
     }
@@ -77,139 +85,128 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
     #[\Override]
     public function findOnePlanWithEntriesBy(array $criteria, ?array $orderBy = null): array
     {
-        $sql = sprintf(
-            'SELECT pv.*,
-            (SELECT JSON_ARRAYAGG(JSON_OBJECT(
-                "uuid", nv.uuid,
-                "budget_plan_uuid", nv.budget_plan_uuid,
-                "need_name", nv.need_name,
-                "need_amount", nv.need_amount,
-                "category", nv.category,
-                "created_at", nv.created_at,
-                "updated_at", nv.updated_at
-            )) FROM budget_plan_need_entry_view nv WHERE pv.uuid = nv.budget_plan_uuid) AS needs,
-            (SELECT JSON_ARRAYAGG(JSON_OBJECT(
-                "uuid", sv.uuid,
-                "budget_plan_uuid", sv.budget_plan_uuid,
-                "saving_name", sv.saving_name,
-                "saving_amount", sv.saving_amount,
-                "category", sv.category,
-                "created_at", sv.created_at,
-                "updated_at", sv.updated_at
-            )) FROM budget_plan_saving_entry_view sv WHERE pv.uuid = sv.budget_plan_uuid) AS savings,
-            (SELECT JSON_ARRAYAGG(JSON_OBJECT(
-                "uuid", wv.uuid,
-                "budget_plan_uuid", wv.budget_plan_uuid,
-                "want_name", wv.want_name,
-                "want_amount", wv.want_amount,
-                "category", wv.category,
-                "created_at", wv.created_at,
-                "updated_at", wv.updated_at
-            )) FROM budget_plan_want_entry_view wv WHERE pv.uuid = wv.budget_plan_uuid) AS wants,
-            (SELECT JSON_ARRAYAGG(JSON_OBJECT(
-                "uuid", iv.uuid,
-                "budget_plan_uuid", iv.budget_plan_uuid,
-                "income_name", iv.income_name,
-                "income_amount", iv.income_amount,
-                "category", iv.category,
-                "created_at", iv.created_at,
-                "updated_at", iv.updated_at
-            )) FROM budget_plan_income_entry_view iv WHERE pv.uuid = iv.budget_plan_uuid) AS incomes,
-            JSON_OBJECT(
-                "incomeCategoriesRatio", JSON_OBJECTAGG(iv.category, iv.income_amount / iv.total_income_amount),
-                "incomesTotal", JSON_OBJECTAGG(iv.category, iv.income_amount)
-            ) AS incomeCategories,
-            JSON_OBJECT(
-                "needCategoriesRatio", JSON_OBJECTAGG(nv.category, nv.need_amount / nv.total_need_amount),
-                "needsTotal", JSON_OBJECTAGG(nv.category, nv.need_amount)
-            ) AS needCategories,
-            JSON_OBJECT(
-                "savingCategoriesRatio", JSON_OBJECTAGG(sv.category, sv.saving_amount / sv.total_saving_amount),
-                "savingsTotal", JSON_OBJECTAGG(sv.category, sv.saving_amount)
-            ) AS savingCategories,
-            JSON_OBJECT(
-                "wantCategoriesRatio", JSON_OBJECTAGG(wv.category, wv.want_amount / wv.total_want_amount),
-                "wantsTotal", JSON_OBJECTAGG(wv.category, wv.want_amount)
-            ) AS wantCategories
+        $sql = '
+        SELECT pv.*,
+        (SELECT json_agg(
+            json_build_object(
+                \'uuid\', nv.uuid,
+                \'budget_plan_uuid\', nv.budget_plan_uuid,
+                \'need_name\', nv.need_name,
+                \'need_amount\', nv.need_amount,
+                \'category\', nv.category,
+                \'created_at\', nv.created_at,
+                \'updated_at\', nv.updated_at
+            )
+        ) FROM budget_plan_need_entry_view nv WHERE pv.uuid = nv.budget_plan_uuid) AS needs,
+        
+        (SELECT json_agg(
+            json_build_object(
+                \'uuid\', sv.uuid,
+                \'budget_plan_uuid\', sv.budget_plan_uuid,
+                \'saving_name\', sv.saving_name,
+                \'saving_amount\', sv.saving_amount,
+                \'category\', sv.category,
+                \'created_at\', sv.created_at,
+                \'updated_at\', sv.updated_at
+            )
+        ) FROM budget_plan_saving_entry_view sv WHERE pv.uuid = sv.budget_plan_uuid) AS savings,
+        
+        (SELECT json_agg(
+            json_build_object(
+                \'uuid\', wv.uuid,
+                \'budget_plan_uuid\', wv.budget_plan_uuid,
+                \'want_name\', wv.want_name,
+                \'want_amount\', wv.want_amount,
+                \'category\', wv.category,
+                \'created_at\', wv.created_at,
+                \'updated_at\', wv.updated_at
+            )
+        ) FROM budget_plan_want_entry_view wv WHERE pv.uuid = wv.budget_plan_uuid) AS wants,
+        
+        (SELECT json_agg(
+            json_build_object(
+                \'uuid\', iv.uuid,
+                \'budget_plan_uuid\', iv.budget_plan_uuid,
+                \'income_name\', iv.income_name,
+                \'income_amount\', iv.income_amount,
+                \'category\', iv.category,
+                \'created_at\', iv.created_at,
+                \'updated_at\', iv.updated_at
+            )
+        ) FROM budget_plan_income_entry_view iv WHERE pv.uuid = iv.budget_plan_uuid) AS incomes
+        
         FROM budget_plan_view pv
-        LEFT JOIN (
-            SELECT
-                budget_plan_uuid,
-                category,
-                income_amount,
-                SUM(income_amount) OVER (PARTITION BY budget_plan_uuid) AS total_income_amount
-            FROM budget_plan_income_entry_view
-        ) iv ON pv.uuid = iv.budget_plan_uuid
-        LEFT JOIN (
-            SELECT
-                budget_plan_uuid,
-                category,
-                need_amount,
-                SUM(need_amount) OVER (PARTITION BY budget_plan_uuid) AS total_need_amount
-            FROM budget_plan_need_entry_view
-        ) nv ON pv.uuid = nv.budget_plan_uuid
-        LEFT JOIN (
-            SELECT
-                budget_plan_uuid,
-                category,
-                saving_amount,
-                SUM(saving_amount) OVER (PARTITION BY budget_plan_uuid) AS total_saving_amount
-            FROM budget_plan_saving_entry_view
-        ) sv ON pv.uuid = sv.budget_plan_uuid
-        LEFT JOIN (
-            SELECT
-                budget_plan_uuid,
-                category,
-                want_amount,
-                SUM(want_amount) OVER (PARTITION BY budget_plan_uuid) AS total_want_amount
-            FROM budget_plan_want_entry_view
-        ) wv ON pv.uuid = wv.budget_plan_uuid
-        WHERE %s
-        GROUP BY pv.uuid',
-            $this->buildWhereClauseWithAlias($criteria, 'pv')
-        );
+        WHERE ';
+
+        $sql .= $this->buildWhereClauseWithAlias($criteria, 'pv');
 
         if ($orderBy) {
-            $sql = sprintf(
-                '%s ORDER BY %s',
-                $sql,
-                implode(
-                    ', ',
-                    array_map(fn($key, $value) => sprintf('%s %s', $key, $value), array_keys($orderBy), $orderBy)
-                )
-            );
+            $orderByClauses = [];
+            foreach ($orderBy as $field => $direction) {
+                $orderByClauses[] = "{$field} {$direction}";
+            }
+            $sql .= ' ORDER BY ' . implode(', ', $orderByClauses);
         }
 
         $stmt = $this->connection->prepare($sql);
-        $result = $stmt->executeQuery($criteria)->fetchAssociative();
+        $result = $stmt->executeQuery($this->processCriteria($criteria))->fetchAssociative();
 
         if (!$result) {
             return [];
         }
 
-        $incomes = json_decode($result['incomes'], true);
-        $needs = json_decode($result['needs'], true);
-        $savings = json_decode($result['savings'], true);
-        $wants = json_decode($result['wants'], true);
-        $incomeCategories = json_decode($result['incomeCategories'], true);
-        $needCategories = json_decode($result['needCategories'], true);
-        $savingCategories = json_decode($result['savingCategories'], true);
-        $wantCategories = json_decode($result['wantCategories'], true);
+        $incomes = json_decode($result['incomes'] ?? '[]', true);
+        $needs = json_decode($result['needs'] ?? '[]', true);
+        $savings = json_decode($result['savings'] ?? '[]', true);
+        $wants = json_decode($result['wants'] ?? '[]', true);
+
+        $incomeCategories = $this->calculateCategoryData($incomes, 'income_amount');
+        $needCategories = $this->calculateCategoryData($needs, 'need_amount');
+        $savingCategories = $this->calculateCategoryData($savings, 'saving_amount');
+        $wantCategories = $this->calculateCategoryData($wants, 'want_amount');
 
         return [
             'budgetPlan' => BudgetPlanView::fromRepository($result),
-            'needs' => array_map([$this, 'mapToBudgetPlanNeedEntryView'], $needs ?? []),
-            'savings' => array_map([$this, 'mapToBudgetPlanSavingEntryView'], $savings ?? []),
-            'wants' => array_map([$this, 'mapToBudgetPlanWantEntryView'], $wants ?? []),
-            'incomes' => array_map([$this, 'mapToBudgetPlanIncomeEntryView'], $incomes ?? []),
-            'incomeCategoriesRatio' => array_map([$this, 'formatPercentage'], $incomeCategories['incomeCategoriesRatio']),
-            'incomesTotal' => $incomeCategories['incomesTotal'],
-            'needCategoriesRatio' => array_map([$this, 'formatPercentage'], $needCategories['needCategoriesRatio']),
-            'needsTotal' => $needCategories['needsTotal'],
-            'savingCategoriesRatio' => array_map([$this, 'formatPercentage'], $savingCategories['savingCategoriesRatio']),
-            'savingsTotal' => $savingCategories['savingsTotal'],
-            'wantCategoriesRatio' => array_map([$this, 'formatPercentage'], $wantCategories['wantCategoriesRatio']),
-            'wantsTotal' => $wantCategories['wantsTotal'],
+            'needs' => array_map([$this, 'mapToBudgetPlanNeedEntryView'], $needs ?: []),
+            'savings' => array_map([$this, 'mapToBudgetPlanSavingEntryView'], $savings ?: []),
+            'wants' => array_map([$this, 'mapToBudgetPlanWantEntryView'], $wants ?: []),
+            'incomes' => array_map([$this, 'mapToBudgetPlanIncomeEntryView'], $incomes ?: []),
+            'incomeCategoriesRatio' => $incomeCategories['ratios'],
+            'incomesTotal' => $incomeCategories['totals'],
+            'needCategoriesRatio' => $needCategories['ratios'],
+            'needsTotal' => $needCategories['totals'],
+            'savingCategoriesRatio' => $savingCategories['ratios'],
+            'savingsTotal' => $savingCategories['totals'],
+            'wantCategoriesRatio' => $wantCategories['ratios'],
+            'wantsTotal' => $wantCategories['totals'],
+        ];
+    }
+
+    private function calculateCategoryData(array $entries, string $amountField): array
+    {
+        $totals = [];
+        $ratios = [];
+
+        foreach ($entries as $entry) {
+            $category = $entry['category'] ?? 'Uncategorized';
+            $amount = (float)$entry[$amountField];
+
+            if (!isset($totals[$category])) {
+                $totals[$category] = 0;
+            }
+            $totals[$category] += $amount;
+        }
+
+        $totalAmount = array_sum($totals);
+        if ($totalAmount > 0) {
+            foreach ($totals as $category => $amount) {
+                $ratios[$category] = $this->formatPercentage($amount / $totalAmount);
+            }
+        }
+
+        return [
+            'totals' => $totals,
+            'ratios' => $ratios
         ];
     }
 
@@ -230,47 +227,47 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
     ): array {
         $sql = sprintf(
             'SELECT
-            YEAR(pv.date) AS year,
-            MONTH(pv.date) AS month,
-            pv.uuid,
-            JSON_OBJECT(
-                "incomeCategories", JSON_OBJECTAGG(iv.category, iv.income_amount),
-                "needCategories", JSON_OBJECTAGG(nv.category, nv.need_amount),
-                "savingCategories", JSON_OBJECTAGG(sv.category, sv.saving_amount),
-                "wantCategories", JSON_OBJECTAGG(wv.category, wv.want_amount)
-            ) AS categories
-        FROM budget_plan_view pv
-        LEFT JOIN (
-            SELECT
-                budget_plan_uuid,
-                category,
-                income_amount
-            FROM budget_plan_income_entry_view
-        ) iv ON pv.uuid = iv.budget_plan_uuid
-        LEFT JOIN (
-            SELECT
-                budget_plan_uuid,
-                category,
-                need_amount
-            FROM budget_plan_need_entry_view
-        ) nv ON pv.uuid = nv.budget_plan_uuid
-        LEFT JOIN (
-            SELECT
-                budget_plan_uuid,
-                category,
-                saving_amount
-            FROM budget_plan_saving_entry_view
-        ) sv ON pv.uuid = sv.budget_plan_uuid
-        LEFT JOIN (
-            SELECT
-                budget_plan_uuid,
-                category,
-                want_amount
-            FROM budget_plan_want_entry_view
-        ) wv ON pv.uuid = wv.budget_plan_uuid
-        WHERE %s
-        GROUP BY year, month, pv.uuid',
-            $this->buildWhereClauseWithYear($criteria)
+        EXTRACT(YEAR FROM pv.date) AS year,
+        EXTRACT(MONTH FROM pv.date) AS month,
+        pv.uuid,
+        json_build_object(
+            \'incomeCategories\', jsonb_object_agg(iv.category, CAST(iv.income_amount AS NUMERIC)),
+            \'needCategories\', jsonb_object_agg(nv.category, CAST(nv.need_amount AS NUMERIC)),
+            \'savingCategories\', jsonb_object_agg(sv.category, CAST(sv.saving_amount AS NUMERIC)),
+            \'wantCategories\', jsonb_object_agg(wv.category, CAST(wv.want_amount AS NUMERIC))
+        ) AS categories
+    FROM budget_plan_view pv
+    LEFT JOIN (
+        SELECT
+            budget_plan_uuid,
+            category,
+            income_amount
+        FROM budget_plan_income_entry_view
+    ) iv ON pv.uuid = iv.budget_plan_uuid
+    LEFT JOIN (
+        SELECT
+            budget_plan_uuid,
+            category,
+            need_amount
+        FROM budget_plan_need_entry_view
+    ) nv ON pv.uuid = nv.budget_plan_uuid
+    LEFT JOIN (
+        SELECT
+            budget_plan_uuid,
+            category,
+            saving_amount
+        FROM budget_plan_saving_entry_view
+    ) sv ON pv.uuid = sv.budget_plan_uuid
+    LEFT JOIN (
+        SELECT
+            budget_plan_uuid,
+            category,
+            want_amount
+        FROM budget_plan_want_entry_view
+    ) wv ON pv.uuid = wv.budget_plan_uuid
+    WHERE %s
+    GROUP BY year, month, pv.uuid',
+            $this->buildWhereClauseWithAlias($criteria, 'pv')
         );
 
         if ($orderBy) {
@@ -282,6 +279,8 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
                     array_map(fn($key, $value) => sprintf('%s %s', $key, $value), array_keys($orderBy), $orderBy)
                 )
             );
+        } else {
+            $sql .= ' ORDER BY year DESC, month ASC';
         }
 
         if ($limit) {
@@ -292,7 +291,7 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
             $sql = sprintf('%s OFFSET %d', $sql, $offset);
         }
 
-        $results = $this->connection->prepare($sql)->executeQuery($this->filterCriteria($criteria))->fetchAllAssociative();
+        $results = $this->connection->prepare($sql)->executeQuery($this->processCriteria($criteria))->fetchAllAssociative();
 
         $formattedResults = [];
         $yearlyTotals = [
@@ -316,22 +315,33 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
             $categories = json_decode($result['categories'], true);
 
             $updateTotals = function (&$totals, $categories) {
+                if (!$categories) return;
+
                 array_walk($categories, function ($amount, $category) use (&$totals) {
                     if (!isset($totals[$category])) {
                         $totals[$category] = 0;
                     }
-                    $totals[$category] += $amount;
+                    $totals[$category] += (float) $amount;
                 });
             };
 
-            array_walk($categories, function ($categoryAmounts, $categoryType) use (&$yearlyTotals, $updateTotals) {
-                $updateTotals($yearlyTotals[$categoryType], $categoryAmounts);
-            });
+            foreach ($categories as $categoryType => $categoryAmounts) {
+                if (isset($yearlyTotals[$categoryType])) {
+                    $updateTotals($yearlyTotals[$categoryType], $categoryAmounts);
+                }
+            }
         });
 
         array_walk($yearlyTotals, function ($totals, $key) use (&$formattedResults) {
             $totalAmount = array_sum($totals);
-            $ratios = array_map(fn($amount) => $amount / $totalAmount, $totals);
+            $ratios = [];
+
+            if ($totalAmount > 0) {
+                foreach ($totals as $category => $amount) {
+                    $ratios[$category] = $amount / $totalAmount;
+                }
+            }
+
             $formattedResults[$key . 'Ratio'] = array_map([$this, 'formatPercentage'], $ratios);
             $formattedResults[$key . 'Total'] = array_map(fn($amount) => (string) round($amount, 2), $totals);
         });
@@ -349,57 +359,91 @@ final class BudgetPlanViewRepository implements BudgetPlanViewRepositoryInterfac
         ?int $limit = null,
         ?int $offset = null
     ): array {
-        $sql = sprintf('SELECT uuid, date FROM budget_plan_view WHERE %s', $this->buildWhereClause($criteria));
+        $qb = $this->connection->createQueryBuilder()
+            ->select('uuid', 'date')
+            ->from('budget_plan_view');
 
-        if ($orderBy) {
-            $sql = sprintf(
-                '%s ORDER BY %s',
-                $sql,
-                implode(
-                    ', ',
-                    array_map(fn ($key, $value) => sprintf('%s %s', $key, $value), array_keys($orderBy), $orderBy)
-                )
-            );
-        }
+        $this->addWhereClauses($qb, $criteria);
+        $this->addOrderByClauses($qb, $orderBy);
 
         if ($limit) {
-            $sql = sprintf('%s LIMIT %d', $sql, $limit);
+            $qb->setMaxResults($limit);
         }
 
         if ($offset) {
-            $sql = sprintf('%s OFFSET %d', $sql, $offset);
+            $qb->setFirstResult($offset);
         }
 
-        return $this->connection->prepare($sql)->executeQuery($this->filterCriteria($criteria))->fetchAllAssociative();
+        return $qb->executeQuery()->fetchAllAssociative();
     }
 
-    private function buildWhereClauseWithYear(array $criteria): string
+    private function addWhereClauses(QueryBuilder $qb, array $criteria): void
     {
-        return implode(
-            ' AND ',
-            array_map(fn ($key, $value) => $key === 'year' ? sprintf('YEAR(date) = :%s', $key) : (null === $value ? sprintf('%s IS NULL', $key) : sprintf('%s = :%s', $key, $key)), array_keys($criteria), $criteria)
-        );
+        $processedCriteria = $this->processCriteria($criteria);
+
+        foreach ($processedCriteria as $field => $value) {
+            if ($value === null) {
+                $qb->andWhere($qb->expr()->isNull($field));
+            } else if ($field === 'year') {
+                $qb->andWhere('EXTRACT(YEAR FROM date) = :year');
+                $qb->setParameter('year', $value);
+            } else {
+                $qb->andWhere($qb->expr()->eq($field, ":$field"));
+                $qb->setParameter($field, $value);
+            }
+        }
     }
 
-    private function buildWhereClause(array $criteria): string
+    private function addOrderByClauses(QueryBuilder $qb, ?array $orderBy): void
     {
-        return implode(
-            ' AND ',
-            array_map(fn ($key, $value) => null === $value ? sprintf('%s IS NULL', $key) : sprintf('%s = :%s', $key, $key), array_keys($criteria), $criteria)
-        );
+        if (!$orderBy) {
+            return;
+        }
+
+        foreach ($orderBy as $field => $direction) {
+            $qb->addOrderBy($field, $direction);
+        }
     }
 
     private function buildWhereClauseWithAlias(array $criteria, string $alias): string
     {
-        return implode(
-            ' AND ',
-            array_map(fn ($key, $value) => null === $value ? sprintf('%s.%s IS NULL', $alias, $key) : sprintf('%s.%s = :%s', $alias, $key, $key), array_keys($criteria), $criteria)
-        );
+        $processed = $this->processCriteria($criteria);
+        $clauses = [];
+
+        foreach ($processed as $field => $value) {
+            if ($value === null) {
+                $clauses[] = "{$alias}.{$field} IS NULL";
+            } else if ($field === 'year') {
+                $clauses[] = "EXTRACT(YEAR FROM {$alias}.date) = :{$field}";
+            } else {
+                $clauses[] = "{$alias}.{$field} = :{$field}";
+            }
+        }
+
+        return !empty($clauses) ? implode(' AND ', $clauses) : '1=1';
     }
 
-    private function filterCriteria(array $criteria): array
+    private function processCriteria(array $criteria): array
     {
-        return array_filter($criteria, fn ($value) => null !== $value);
+        $processed = [];
+
+        foreach ($criteria as $field => $value) {
+            if ($value === null) {
+                continue;
+            }
+
+            if (in_array($field, self::BOOLEAN_FIELDS, true)) {
+                $processed[$field] = is_bool($value) ? ($value ? '1' : '0') : '0';
+            } else {
+                $processed[$field] = $value;
+            }
+        }
+
+        if (!isset($processed['is_deleted']) && !isset($criteria['is_deleted'])) {
+            $processed['is_deleted'] = '0';
+        }
+
+        return $processed;
     }
 
     private function mapToBudgetPlanNeedEntryView(array $data): BudgetPlanNeedEntryView

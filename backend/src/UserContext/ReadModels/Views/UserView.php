@@ -34,7 +34,8 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
 {
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
-    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'user_view_id_seq', allocationSize: 1, initialValue: 1)]
     private(set) int $id;
 
     #[ORM\Column(name: 'uuid', type: 'string', length: 36, unique: true)]
@@ -225,7 +226,7 @@ final class UserView implements UserViewInterface, UserInterface, PasswordAuthen
         $this->updatedAt = \DateTime::createFromImmutable($userSignedUpDomainEvent->occurredOn);
         $this->createdAt = $userSignedUpDomainEvent->occurredOn;
         $this->consentGiven = $userSignedUpDomainEvent->isConsentGiven;
-        $this->consentDate = UtcClock::now();
+        $this->consentDate = UtcClock::immutableNow();
         $this->roles = ['ROLE_USER'];
         $this->passwordResetToken = null;
         $this->passwordResetTokenExpiry = null;

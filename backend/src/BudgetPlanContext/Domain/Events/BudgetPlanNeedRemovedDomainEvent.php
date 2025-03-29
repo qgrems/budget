@@ -25,7 +25,7 @@ final class BudgetPlanNeedRemovedDomainEvent implements DomainEventInterface
         $this->uuid = $uuid;
         $this->userId = $userId;
         $this->requestId = $requestId;
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
     }
 
     #[\Override]

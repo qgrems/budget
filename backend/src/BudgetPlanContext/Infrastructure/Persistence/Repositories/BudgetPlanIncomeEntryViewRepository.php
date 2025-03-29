@@ -37,14 +37,14 @@ final class BudgetPlanIncomeEntryViewRepository implements BudgetPlanIncomeEntry
     public function save(BudgetPlanIncomeEntryViewInterface $budgetPlanIncomeEntryView): void
     {
         $this->connection->executeStatement('
-            INSERT INTO budget_plan_income_entry_view (uuid, budget_plan_uuid, income_name, income_amount, category, created_at, updated_at)
-            VALUES (:uuid, :budget_plan_uuid, :income_name, :income_amount, :category, :created_at, :updated_at)
-            ON DUPLICATE KEY UPDATE
-                income_name = VALUES(income_name),
-                income_amount = VALUES(income_amount),
-                updated_at = VALUES(updated_at),
-                category = VALUES(category)
-        ', [
+        INSERT INTO budget_plan_income_entry_view (uuid, budget_plan_uuid, income_name, income_amount, category, created_at, updated_at)
+        VALUES (:uuid, :budget_plan_uuid, :income_name, :income_amount, :category, :created_at, :updated_at)
+        ON CONFLICT (uuid) DO UPDATE SET
+            income_name = EXCLUDED.income_name,
+            income_amount = EXCLUDED.income_amount,
+            updated_at = EXCLUDED.updated_at,
+            category = EXCLUDED.category
+    ', [
             'uuid' => $budgetPlanIncomeEntryView->uuid,
             'budget_plan_uuid' => $budgetPlanIncomeEntryView->budgetPlanUuid,
             'income_name' => $budgetPlanIncomeEntryView->incomeName,

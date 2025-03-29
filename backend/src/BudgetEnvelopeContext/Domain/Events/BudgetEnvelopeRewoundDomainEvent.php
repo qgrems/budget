@@ -41,7 +41,7 @@ final class BudgetEnvelopeRewoundDomainEvent implements DomainEventInterface
         $this->currency = $currency;
         $this->updatedAt = new \DateTime($updatedAt);
         $this->desiredDateTime = new \DateTimeImmutable($desiredDateTime);
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
         $this->isDeleted = $isDeleted;
         $this->requestId = $requestId;
     }

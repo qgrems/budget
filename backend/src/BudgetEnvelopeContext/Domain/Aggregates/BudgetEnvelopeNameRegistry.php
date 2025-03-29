@@ -62,13 +62,17 @@ final class BudgetEnvelopeNameRegistry implements AggregateRootInterface
 
     public function releaseName(
         BudgetEnvelopeName $name,
-        BudgetEnvelopeUserId $userId
+        BudgetEnvelopeUserId $userId,
+        BudgetEnvelopeId $envelopeId,
     ): void {
-        $this->raiseDomainEvents(new BudgetEnvelopeNameReleasedDomainEvent(
-            $this->budgetEnvelopeNameRegistryId,
-            (string) $userId,
-            (string) $name,
-        ));
+        $this->raiseDomainEvents(
+            new BudgetEnvelopeNameReleasedDomainEvent(
+                $this->budgetEnvelopeNameRegistryId,
+                (string) $userId,
+                (string) $name,
+                (string) $envelopeId,
+            ),
+        );
     }
 
     public function aggregateVersion(): int

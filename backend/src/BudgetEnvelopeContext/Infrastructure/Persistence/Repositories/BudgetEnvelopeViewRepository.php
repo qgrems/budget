@@ -13,10 +13,13 @@ use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopesPaginated;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeView;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Query\QueryBuilder;
 
 final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewRepositoryInterface
 {
     private Connection $connection;
+    private const array BOOLEAN_FIELDS = ['is_deleted'];
+    private const string TABLE_NAME = 'budget_envelope_view';
 
     public function __construct(Connection $connection)
     {
@@ -29,28 +32,23 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
     #[\Override]
     public function save(BudgetEnvelopeViewInterface $budgetEnvelope): void
     {
-        $this->connection->executeStatement('
-    INSERT INTO budget_envelope_view (uuid, created_at, updated_at, current_amount, targeted_amount, name, user_uuid, currency, is_deleted)
-    VALUES (:uuid, :created_at, :updated_at, :current_amount, :targeted_amount, :name, :user_uuid, :currency, :is_deleted)
-    ON DUPLICATE KEY UPDATE
-        updated_at = VALUES(updated_at),
-        current_amount = VALUES(current_amount),
-        targeted_amount = VALUES(targeted_amount),
-        name = VALUES(name),
-        user_uuid = VALUES(user_uuid),
-        currency = VALUES(currency),
-        is_deleted = VALUES(is_deleted)
-', [
-            'uuid' => $budgetEnvelope->uuid,
-            'created_at' => $budgetEnvelope->createdAt->format(\DateTimeImmutable::ATOM),
-            'updated_at' => $budgetEnvelope->updatedAt->format(\DateTime::ATOM),
-            'current_amount' => $budgetEnvelope->currentAmount,
-            'targeted_amount' => $budgetEnvelope->targetedAmount,
-            'name' => $budgetEnvelope->name,
-            'user_uuid' => $budgetEnvelope->userUuid,
-            'currency' => $budgetEnvelope->currency,
-            'is_deleted' => $budgetEnvelope->isDeleted ? 1 : 0,
-        ]);
+        $this->connection->executeStatement(
+            'INSERT INTO ' . self::TABLE_NAME . ' (
+                uuid, created_at, updated_at, current_amount, targeted_amount, 
+                name, user_uuid, currency, is_deleted
+            ) VALUES (
+                :uuid, :created_at, :updated_at, :current_amount, :targeted_amount,
+                :name, :user_uuid, :currency, :is_deleted
+            ) ON CONFLICT (uuid) DO UPDATE SET
+                updated_at = EXCLUDED.updated_at,
+                current_amount = EXCLUDED.current_amount,
+                targeted_amount = EXCLUDED.targeted_amount,
+                name = EXCLUDED.name,
+                user_uuid = EXCLUDED.user_uuid,
+                currency = EXCLUDED.currency,
+                is_deleted = EXCLUDED.is_deleted',
+            $this->prepareDataForSave($budgetEnvelope)
+        );
     }
 
     /**
@@ -59,7 +57,7 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
     #[\Override]
     public function delete(BudgetEnvelopeViewInterface $budgetEnvelope): void
     {
-        $this->connection->delete('envelope', ['uuid' => $budgetEnvelope->uuid]);
+        $this->connection->delete(self::TABLE_NAME, ['uuid' => $budgetEnvelope->uuid]);
     }
 
     /**
@@ -68,9 +66,15 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
     #[\Override]
     public function findOneBy(array $criteria, ?array $orderBy = null): ?BudgetEnvelopeViewInterface
     {
-        $sql = sprintf('SELECT * FROM budget_envelope_view WHERE %s LIMIT 1', $this->buildWhereClause($criteria));
-        $stmt = $this->connection->prepare($sql);
-        $result = $stmt->executeQuery($criteria)->fetchAssociative();
+        $qb = $this->connection->createQueryBuilder()
+            ->select('*')
+            ->from(self::TABLE_NAME)
+            ->setMaxResults(1);
+
+        $this->addWhereClauses($qb, $criteria);
+        $this->addOrderByClauses($qb, $orderBy);
+
+        $result = $qb->executeQuery()->fetchAssociative();
 
         return $result ? BudgetEnvelopeView::fromRepository($result) : null;
     }
@@ -81,16 +85,20 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
     #[\Override]
     public function findOneEnvelopeWithItsLedgerBy(array $criteria, ?array $orderBy = null): array
     {
-        $sql = sprintf(
-            'SELECT ev.uuid, ev.created_at, ev.updated_at, ev.current_amount, ev.targeted_amount, ev.name, ev.user_uuid, ev.is_deleted, ev.currency, ehv.budget_envelope_uuid, ehv.created_at AS ledger_created_at, ehv.monetary_amount, ehv.entry_type, ehv.description
-         FROM budget_envelope_view ev
-         LEFT JOIN budget_envelope_ledger_entry_view ehv ON ev.uuid = ehv.budget_envelope_uuid
-         WHERE %s
-         ORDER BY ehv.created_at DESC',
-            $this->buildWhereClauseWithAlias($criteria, 'ev')
-        );
-        $stmt = $this->connection->prepare($sql);
-        $result = $stmt->executeQuery($criteria)->fetchAllAssociative();
+        $qb = $this->connection->createQueryBuilder();
+        $qb->select(
+                'ev.uuid', 'ev.created_at', 'ev.updated_at', 'ev.current_amount',
+                'ev.targeted_amount', 'ev.name', 'ev.user_uuid', 'ev.is_deleted', 'ev.currency',
+                'ehv.budget_envelope_uuid', 'ehv.created_at AS ledger_created_at',
+                'ehv.monetary_amount', 'ehv.entry_type', 'ehv.description'
+            )
+            ->from(self::TABLE_NAME, 'ev')
+            ->leftJoin('ev', 'budget_envelope_ledger_entry_view', 'ehv', 'ev.uuid = ehv.budget_envelope_uuid')
+            ->orderBy('ehv.created_at', 'DESC');
+
+        $this->addWhereClausesWithAlias($qb, $criteria, 'ev');
+
+        $result = $qb->executeQuery()->fetchAllAssociative();
 
         if (!$result) {
             return [];
@@ -108,17 +116,15 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
         return [
             'envelope' => BudgetEnvelopeView::fromRepository($budgetEnvelopeData),
             'ledger' => null !== $result[0]['ledger_created_at'] ? array_map(
-                [$this, 'mapToBudgetEnvelopeLedgerView'],
-                array_map(function ($row) {
-                    return [
-                        'aggregate_id' => $row['budget_envelope_uuid'],
-                        'user_uuid' => $row['user_uuid'],
-                        'created_at' => $row['ledger_created_at'],
-                        'monetary_amount' => $row['monetary_amount'],
-                        'entry_type' => $row['entry_type'],
-                        'description' => $row['description'],
-                    ];
-                }, $result)
+                fn($row) => $this->mapToBudgetEnvelopeLedgerView([
+                    'aggregate_id' => $row['budget_envelope_uuid'],
+                    'user_uuid' => $row['user_uuid'],
+                    'created_at' => $row['ledger_created_at'],
+                    'monetary_amount' => $row['monetary_amount'],
+                    'entry_type' => $row['entry_type'],
+                    'description' => $row['description'],
+                ]),
+                $result
             ) : [],
         ];
     }
@@ -133,63 +139,104 @@ final readonly class BudgetEnvelopeViewRepository implements BudgetEnvelopeViewR
         ?int $limit = null,
         ?int $offset = null,
     ): BudgetEnvelopesPaginatedInterface {
-        $sql = sprintf('SELECT * FROM budget_envelope_view WHERE %s', $this->buildWhereClause($criteria));
+        $qb = $this->connection->createQueryBuilder()
+            ->select('*')
+            ->from(self::TABLE_NAME);
 
-        if ($orderBy) {
-            $sql = sprintf(
-                '%s ORDER BY %s',
-                $sql,
-                implode(
-                    ', ',
-                    array_map(fn ($key, $value) => sprintf(
-                        '%s %s',
-                        $key,
-                        $value,
-                    ), array_keys($orderBy), $orderBy),
-                )
-            );
-        }
+        $this->addWhereClauses($qb, $criteria);
+        $this->addOrderByClauses($qb, $orderBy);
 
         if ($limit) {
-            $sql = sprintf('%s LIMIT %d', $sql, $limit);
+            $qb->setMaxResults($limit);
         }
 
         if ($offset) {
-            $sql = sprintf('%s OFFSET %d', $sql, $offset);
+            $qb->setFirstResult($offset);
         }
 
-        $stmt = $this->connection->prepare($sql);
-        $query = $stmt->executeQuery($this->filterCriteria($criteria));
-        $results = $query->fetchAllAssociative();
-        $count = $query->rowCount();
+        $result = $qb->executeQuery();
 
         return new BudgetEnvelopesPaginated(
-            array_map([$this, 'mapToBudgetEnvelopeView'], $results),
-            $count,
+            array_map([$this, 'mapToBudgetEnvelopeView'], $result->fetchAllAssociative()),
+            $result->rowCount()
         );
     }
 
-    private function buildWhereClause(array $criteria): string
+    private function prepareDataForSave(BudgetEnvelopeViewInterface $budgetEnvelope): array
     {
-        return implode(
-            ' AND ',
-            array_map(fn ($key, $value) => null === $value ? sprintf('%s IS NULL', $key) :
-                sprintf('%s = :%s', $key, $key), array_keys($criteria), $criteria),
-        );
+        return [
+            'uuid' => $budgetEnvelope->uuid,
+            'created_at' => $budgetEnvelope->createdAt->format(\DateTimeImmutable::ATOM),
+            'updated_at' => $budgetEnvelope->updatedAt->format(\DateTime::ATOM),
+            'current_amount' => $budgetEnvelope->currentAmount,
+            'targeted_amount' => $budgetEnvelope->targetedAmount,
+            'name' => $budgetEnvelope->name,
+            'user_uuid' => $budgetEnvelope->userUuid,
+            'currency' => $budgetEnvelope->currency,
+            'is_deleted' => $budgetEnvelope->isDeleted ? '1' : '0',
+        ];
     }
 
-    private function buildWhereClauseWithAlias(array $criteria, string $alias): string
+    private function addWhereClauses(QueryBuilder $qb, array $criteria): void
     {
-        return implode(
-            ' AND ',
-            array_map(fn ($key, $value) => null === $value ? sprintf('%s.%s IS NULL', $alias, $key) :
-                sprintf('%s.%s = :%s', $alias, $key, $key), array_keys($criteria), $criteria),
-        );
+        $processedCriteria = $this->processCriteria($criteria);
+
+        foreach ($processedCriteria as $field => $value) {
+            if ($value === null) {
+                $qb->andWhere($qb->expr()->isNull($field));
+            } else {
+                $qb->andWhere($qb->expr()->eq($field, ":$field"));
+                $qb->setParameter($field, $value);
+            }
+        }
     }
 
-    private function filterCriteria(array $criteria): array
+    private function addWhereClausesWithAlias(QueryBuilder $qb, array $criteria, string $alias): void
     {
-        return array_filter($criteria, fn ($value) => null !== $value);
+        $processedCriteria = $this->processCriteria($criteria);
+
+        foreach ($processedCriteria as $field => $value) {
+            if ($value === null) {
+                $qb->andWhere($qb->expr()->isNull("$alias.$field"));
+            } else {
+                $qb->andWhere($qb->expr()->eq("$alias.$field", ":$field"));
+                $qb->setParameter($field, $value);
+            }
+        }
+    }
+
+    private function addOrderByClauses(QueryBuilder $qb, ?array $orderBy): void
+    {
+        if (!$orderBy) {
+            return;
+        }
+
+        foreach ($orderBy as $field => $direction) {
+            $qb->addOrderBy($field, $direction);
+        }
+    }
+
+    private function processCriteria(array $criteria): array
+    {
+        $processed = [];
+
+        foreach ($criteria as $field => $value) {
+            if ($value === null) {
+                continue;
+            }
+
+            if (in_array($field, self::BOOLEAN_FIELDS, true)) {
+                $processed[$field] = is_bool($value) ? ($value ? '1' : '0') : '0';
+            } else {
+                $processed[$field] = $value;
+            }
+        }
+
+        if (!isset($processed['is_deleted']) && !isset($criteria['is_deleted'])) {
+            $processed['is_deleted'] = '0';
+        }
+
+        return $processed;
     }
 
     private function mapToBudgetEnvelopeView(array $data): BudgetEnvelopeViewInterface

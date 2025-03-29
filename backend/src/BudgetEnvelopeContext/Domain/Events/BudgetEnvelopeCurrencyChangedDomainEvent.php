@@ -25,7 +25,7 @@ final class BudgetEnvelopeCurrencyChangedDomainEvent implements DomainEventInter
         $this->userId = $userId;
         $this->currency = $currency;
         $this->requestId = $requestId;
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
     }
 
     #[\Override]

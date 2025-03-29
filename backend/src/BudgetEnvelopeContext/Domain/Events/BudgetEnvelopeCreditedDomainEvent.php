@@ -28,7 +28,7 @@ final class BudgetEnvelopeCreditedDomainEvent implements DomainEventInterface
         $this->creditMoney = $creditMoney;
         $this->description = $description;
         $this->requestId = $requestId;
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
     }
 
     #[\Override]

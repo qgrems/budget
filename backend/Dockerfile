@@ -10,9 +10,10 @@ RUN apt-get update && apt-get install -y \
     unzip \
     curl \
     supervisor \
+    libpq-dev \
     && docker-php-ext-install \
         intl \
-        pdo_mysql \
+        pdo_pgsql \
         bcmath \
         sockets \
     && pecl install amqp xdebug \

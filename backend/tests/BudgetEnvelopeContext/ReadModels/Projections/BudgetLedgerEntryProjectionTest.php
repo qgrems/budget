@@ -9,10 +9,12 @@ use App\BudgetEnvelopeContext\Domain\Ports\Inbound\BudgetEnvelopeLedgerEntryView
 use App\BudgetEnvelopeContext\ReadModels\Projections\BudgetEnvelopeLedgerEntryProjection;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeLedgerEntryView;
 use App\BudgetEnvelopeContext\ReadModels\Views\BudgetEnvelopeView;
+use App\Libraries\FluxCapacitor\EventStore\Ports\EventClassMapInterface;
 use App\SharedContext\Domain\Ports\Inbound\EventSourcedRepositoryInterface;
 use App\SharedContext\Domain\Ports\Outbound\PublisherInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class BudgetLedgerEntryProjectionTest extends TestCase
 {
@@ -20,16 +22,19 @@ class BudgetLedgerEntryProjectionTest extends TestCase
     private EventSourcedRepositoryInterface&MockObject $eventSourcedRepository;
     private BudgetEnvelopeLedgerEntryProjection $budgetEnvelopeLedgerEntryProjection;
     private PublisherInterface&MockObject $publisher;
+    private EventClassMapInterface&MockObject $eventClassMap;
 
     protected function setUp(): void
     {
         $this->budgetEnvelopeLedgerEntryViewRepository = $this->createMock(BudgetEnvelopeLedgerEntryViewRepositoryInterface::class);
         $this->eventSourcedRepository = $this->createMock(EventSourcedRepositoryInterface::class);
         $this->publisher = $this->createMock(PublisherInterface::class);
+        $this->eventClassMap = $this->createMock(EventClassMapInterface::class);
         $this->budgetEnvelopeLedgerEntryProjection = new BudgetEnvelopeLedgerEntryProjection(
             $this->budgetEnvelopeLedgerEntryViewRepository,
             $this->eventSourcedRepository,
             $this->publisher,
+            $this->eventClassMap,
         );
     }
 

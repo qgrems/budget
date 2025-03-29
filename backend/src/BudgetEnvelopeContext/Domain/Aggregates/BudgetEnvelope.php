@@ -26,6 +26,7 @@ use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeTargetedAmount;
 use App\BudgetEnvelopeContext\Domain\ValueObjects\BudgetEnvelopeUserId;
 use App\Libraries\FluxCapacitor\EventStore\Ports\AggregateRootInterface;
 use App\Libraries\FluxCapacitor\EventStore\Traits\DomainEventsCapabilityTrait;
+use App\SharedContext\Domain\ValueObjects\UtcClock;
 
 final class BudgetEnvelope implements AggregateRootInterface
 {
@@ -166,8 +167,8 @@ final class BudgetEnvelope implements AggregateRootInterface
             (string) $this->budgetEnvelopeTargetedAmount,
             (string) $this->budgetEnvelopeCurrentAmount,
             (string) $this->budgetEnvelopeCurrency,
-            $this->updatedAt->format(\DateTimeInterface::ATOM),
-            $desiredDateTime->format(\DateTimeInterface::ATOM),
+            UtcClock::fromDateTimeToString($this->updatedAt),
+            UtcClock::fromImmutableToString($desiredDateTime),
             $this->isDeleted,
         );
         $this->raiseDomainEvents($budgetEnvelopeRewoundDomainEvent);
@@ -183,7 +184,7 @@ final class BudgetEnvelope implements AggregateRootInterface
             (string) $this->budgetEnvelopeTargetedAmount,
             (string) $this->budgetEnvelopeCurrentAmount,
             (string) $this->budgetEnvelopeCurrency,
-            $this->updatedAt->format(\DateTimeInterface::ATOM),
+            UtcClock::fromDateTimeToString($this->updatedAt),
             $this->isDeleted,
         );
         $this->raiseDomainEvents($budgetEnvelopeReplayedDomainEvent);
@@ -226,14 +227,14 @@ final class BudgetEnvelope implements AggregateRootInterface
             $budgetEnvelopeAddedDomainEvent->targetedAmount,
         );
         $this->budgetEnvelopeCurrency = BudgetEnvelopeCurrency::fromString($budgetEnvelopeAddedDomainEvent->currency);
-        $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeAddedDomainEvent->occurredOn);
+        $this->updatedAt = UtcClock::fromImmutableToDateTime($budgetEnvelopeAddedDomainEvent->occurredOn);
         $this->isDeleted = false;
     }
 
     public function applyBudgetEnvelopeRenamedDomainEvent(BudgetEnvelopeRenamedDomainEvent $event): void
     {
         $this->budgetEnvelopeName = BudgetEnvelopeName::fromString($event->name);
-        $this->updatedAt = \DateTime::createFromImmutable($event->occurredOn);
+        $this->updatedAt = UtcClock::fromImmutableToDateTime($event->occurredOn);
     }
 
     public function applyBudgetEnvelopeCreditedDomainEvent(
@@ -249,7 +250,7 @@ final class BudgetEnvelope implements AggregateRootInterface
             ),
             (string) $this->budgetEnvelopeTargetedAmount,
         );
-        $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeCreditedDomainEvent->occurredOn);
+        $this->updatedAt = UtcClock::fromImmutableToDateTime($budgetEnvelopeCreditedDomainEvent->occurredOn);
     }
 
     public function applyBudgetEnvelopeDebitedDomainEvent(
@@ -265,14 +266,14 @@ final class BudgetEnvelope implements AggregateRootInterface
             ),
             (string) $this->budgetEnvelopeTargetedAmount,
         );
-        $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeDebitedDomainEvent->occurredOn);
+        $this->updatedAt = UtcClock::fromImmutableToDateTime($budgetEnvelopeDebitedDomainEvent->occurredOn);
     }
 
     public function applyBudgetEnvelopeDeletedDomainEvent(
         BudgetEnvelopeDeletedDomainEvent $budgetEnvelopeDeletedDomainEvent,
     ): void {
         $this->isDeleted = $budgetEnvelopeDeletedDomainEvent->isDeleted;
-        $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeDeletedDomainEvent->occurredOn);
+        $this->updatedAt = UtcClock::fromImmutableToDateTime($budgetEnvelopeDeletedDomainEvent->occurredOn);
     }
 
     public function applyBudgetEnvelopeTargetedAmountChangedDomainEvent(
@@ -282,7 +283,7 @@ final class BudgetEnvelope implements AggregateRootInterface
             $budgetEnvelopeTargetedAmountChangedDomainEvent->targetedAmount,
             (string) $this->budgetEnvelopeCurrentAmount,
         );
-        $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeTargetedAmountChangedDomainEvent->occurredOn);
+        $this->updatedAt = UtcClock::fromImmutableToDateTime($budgetEnvelopeTargetedAmountChangedDomainEvent->occurredOn);
     }
 
     public function applyBudgetEnvelopeCurrencyChangedDomainEvent(
@@ -291,7 +292,7 @@ final class BudgetEnvelope implements AggregateRootInterface
         $this->budgetEnvelopeCurrency = BudgetEnvelopeCurrency::fromString(
             $budgetEnvelopeCurrencyChangedDomainEvent->currency,
         );
-        $this->updatedAt = \DateTime::createFromImmutable($budgetEnvelopeCurrencyChangedDomainEvent->occurredOn);
+        $this->updatedAt = UtcClock::fromImmutableToDateTime($budgetEnvelopeCurrencyChangedDomainEvent->occurredOn);
     }
 
     public function applyBudgetEnvelopeReplayedDomainEvent(
@@ -306,6 +307,7 @@ final class BudgetEnvelope implements AggregateRootInterface
             $budgetEnvelopeReplayedDomainEvent->currentAmount,
             $budgetEnvelopeReplayedDomainEvent->targetedAmount,
         );
+        $this->updatedAt = UtcClock::fromDatetime($budgetEnvelopeReplayedDomainEvent->updatedAt);
         $this->isDeleted = $budgetEnvelopeReplayedDomainEvent->isDeleted;
     }
 
@@ -321,6 +323,7 @@ final class BudgetEnvelope implements AggregateRootInterface
             $budgetEnvelopeRewoundDomainEvent->currentAmount,
             $budgetEnvelopeRewoundDomainEvent->targetedAmount,
         );
+        $this->updatedAt = UtcClock::fromDatetime($budgetEnvelopeRewoundDomainEvent->updatedAt);
         $this->isDeleted = $budgetEnvelopeRewoundDomainEvent->isDeleted;
     }
 

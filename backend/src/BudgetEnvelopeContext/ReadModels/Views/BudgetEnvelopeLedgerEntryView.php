@@ -20,7 +20,8 @@ final class BudgetEnvelopeLedgerEntryView implements BudgetEnvelopeLedgerEntryVi
 {
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
-    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'budget_envelope_ledger_view_id_seq', allocationSize: 1, initialValue: 1)]
     private(set) int $id;
 
     #[ORM\Column(name: 'budget_envelope_uuid', type: 'string', length: 36, unique: false)]

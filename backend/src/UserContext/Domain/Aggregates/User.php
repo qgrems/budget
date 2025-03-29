@@ -151,7 +151,7 @@ final class User implements AggregateRootInterface, UserAggregateInterface
             new UserPasswordResetRequestedDomainEvent(
                 (string) $this->userId,
                 (string) $passwordResetToken,
-                new \DateTimeImmutable('+1 hour'),
+                UtcClock::fromDateTimeImmutable(new \DateTimeImmutable('+1 hour')),
                 (string) $this->userId,
             ),
         );
@@ -161,7 +161,7 @@ final class User implements AggregateRootInterface, UserAggregateInterface
     {
         $this->assertOwnership($userId);
 
-        if ($this->passwordResetTokenExpiry < UtcClock::now()) {
+        if ($this->passwordResetTokenExpiry < UtcClock::immutableNow()) {
             throw InvalidUserOperationException::operationOnResetUserPassword();
         }
 
@@ -186,8 +186,8 @@ final class User implements AggregateRootInterface, UserAggregateInterface
                 (string) $this->email,
                 (string) $this->password,
                 $this->consentGiven->toBool(),
-                $this->consentDate->format(\DateTimeInterface::ATOM),
-                $this->updatedAt->format(\DateTimeInterface::ATOM),
+                UtcClock::fromImmutableToString($this->consentDate),
+                UtcClock::fromDateTimeToString($this->updatedAt),
                 (string) $this->userId,
             ),
         );
@@ -205,8 +205,8 @@ final class User implements AggregateRootInterface, UserAggregateInterface
                 (string) $this->email,
                 (string) $this->password,
                 $this->consentGiven->toBool(),
-                $this->consentDate->format(\DateTimeInterface::ATOM),
-                $this->updatedAt->format(\DateTimeInterface::ATOM),
+                UtcClock::fromImmutableToString($this->consentDate),
+                UtcClock::fromDateTimeToString($this->updatedAt),
                 (string) $this->userId,
             ),
         );
@@ -234,70 +234,65 @@ final class User implements AggregateRootInterface, UserAggregateInterface
         return (string) $this->userId;
     }
 
-    public function applyUserSignedUpDomainEvent(UserSignedUpDomainEvent $userSignedUpDomainEvent): void
+    public function applyUserSignedUpDomainEvent(UserSignedUpDomainEvent $event): void
     {
-        $this->userId = UserId::fromString($userSignedUpDomainEvent->aggregateId);
-        $this->email = UserEmail::fromString($userSignedUpDomainEvent->email);
-        $this->password = UserPassword::fromString($userSignedUpDomainEvent->password);
-        $this->firstname = UserFirstname::fromString($userSignedUpDomainEvent->firstname);
-        $this->lastname = UserLastname::fromString($userSignedUpDomainEvent->lastname);
-        $this->languagePreference = UserLanguagePreference::fromString($userSignedUpDomainEvent->languagePreference);
-        $this->updatedAt = \DateTime::createFromImmutable($userSignedUpDomainEvent->occurredOn);
-        $this->createdAt = $userSignedUpDomainEvent->occurredOn;
-        $this->consentGiven = UserConsent::fromBool($userSignedUpDomainEvent->isConsentGiven);
-        $this->consentDate = UtcClock::now();
+        $this->userId = UserId::fromString($event->aggregateId);
+        $this->email = UserEmail::fromString($event->email);
+        $this->password = UserPassword::fromString($event->password);
+        $this->firstname = UserFirstname::fromString($event->firstname);
+        $this->lastname = UserLastname::fromString($event->lastname);
+        $this->languagePreference = UserLanguagePreference::fromString($event->languagePreference);
+        $this->updatedAt = UtcClock::fromImmutableToDateTime($event->occurredOn);
+        $this->createdAt = $event->occurredOn;
+        $this->consentGiven = UserConsent::fromBool($event->isConsentGiven);
+        $this->consentDate = UtcClock::immutableNow();
         $this->roles = ['ROLE_USER'];
         $this->passwordResetToken = null;
         $this->passwordResetTokenExpiry = null;
     }
 
-    public function applyUserFirstnameChangedDomainEvent(
-        UserFirstnameChangedDomainEvent $userFirstnameChangedDomainEvent,
-    ): void {
-        $this->firstname = UserFirstname::fromString($userFirstnameChangedDomainEvent->firstname);
-        $this->updatedAt = \DateTime::createFromImmutable($userFirstnameChangedDomainEvent->occurredOn);
-    }
-
-    public function applyUserLanguagePreferenceChangedDomainEvent(
-        UserLanguagePreferenceChangedDomainEvent $userFirstnameChangedDomainEvent,
-    ): void {
-        $this->languagePreference = UserLanguagePreference::fromString($userFirstnameChangedDomainEvent->languagePreference);
-        $this->updatedAt = \DateTime::createFromImmutable($userFirstnameChangedDomainEvent->occurredOn);
-    }
-
-    public function applyUserLastnameChangedDomainEvent(
-        UserLastnameChangedDomainEvent $userLastnameChangedDomainEvent,
-    ): void {
-        $this->lastname = UserLastname::fromString($userLastnameChangedDomainEvent->lastname);
-        $this->updatedAt = \DateTime::createFromImmutable($userLastnameChangedDomainEvent->occurredOn);
-    }
-
-    public function applyUserPasswordChangedDomainEvent(
-        UserPasswordChangedDomainEvent $userPasswordChangedDomainEvent
-    ): void {
-        $this->password = UserPassword::fromString($userPasswordChangedDomainEvent->newPassword);
-        $this->updatedAt = \DateTime::createFromImmutable($userPasswordChangedDomainEvent->occurredOn);
-    }
-
-    public function applyUserPasswordResetRequestedDomainEvent(
-        UserPasswordResetRequestedDomainEvent $userPasswordResetRequestedDomainEvent,
-    ): void {
-        $this->passwordResetToken = UserPasswordResetToken::fromString(
-            $userPasswordResetRequestedDomainEvent->passwordResetToken,
-        );
-        $this->passwordResetTokenExpiry = $userPasswordResetRequestedDomainEvent->passwordResetTokenExpiry;
-        $this->updatedAt = \DateTime::createFromImmutable($userPasswordResetRequestedDomainEvent->occurredOn);
-    }
-
-    public function applyUserPasswordResetDomainEvent(UserPasswordResetDomainEvent $userPasswordResetDomainEvent): void
+    public function applyUserFirstnameChangedDomainEvent(UserFirstnameChangedDomainEvent $event): void
     {
-        $this->password = UserPassword::fromString($userPasswordResetDomainEvent->password);
-        $this->updatedAt = \DateTime::createFromImmutable($userPasswordResetDomainEvent->occurredOn);
+        $this->firstname = UserFirstname::fromString($event->firstname);
+        $this->updatedAt = UtcClock::fromImmutableToDateTime($event->occurredOn);
+    }
+
+    public function applyUserLanguagePreferenceChangedDomainEvent(UserLanguagePreferenceChangedDomainEvent $event): void
+    {
+        $this->languagePreference = UserLanguagePreference::fromString($event->languagePreference);
+        $this->updatedAt = UtcClock::fromImmutableToDateTime($event->occurredOn);
+    }
+
+    public function applyUserLastnameChangedDomainEvent(UserLastnameChangedDomainEvent $event): void
+    {
+        $this->lastname = UserLastname::fromString($event->lastname);
+        $this->updatedAt = UtcClock::fromImmutableToDateTime($event->occurredOn);
+    }
+
+    public function applyUserPasswordChangedDomainEvent(UserPasswordChangedDomainEvent $event): void
+    {
+        $this->password = UserPassword::fromString($event->newPassword);
+        $this->updatedAt = UtcClock::fromImmutableToDateTime($event->occurredOn);
+    }
+
+    public function applyUserPasswordResetRequestedDomainEvent(UserPasswordResetRequestedDomainEvent $event): void
+    {
+        $this->passwordResetToken = UserPasswordResetToken::fromString(
+            $event->passwordResetToken,
+        );
+        $this->passwordResetTokenExpiry = $event->passwordResetTokenExpiry;
+        $this->updatedAt = UtcClock::fromImmutableToDateTime($event->occurredOn);
+    }
+
+    public function applyUserPasswordResetDomainEvent(UserPasswordResetDomainEvent $event): void
+    {
+        $this->password = UserPassword::fromString($event->password);
+        $this->updatedAt = UtcClock::fromImmutableToDateTime($event->occurredOn);
     }
 
     public function applyUserDeletedDomainEvent(): void
     {
-        $this->updatedAt = new \DateTime();
+        $this->updatedAt = UtcClock::now();
     }
 
     public function applyUserReplayedDomainEvent(UserReplayedDomainEvent $userReplayedDomainEvent): void
@@ -308,8 +303,8 @@ final class User implements AggregateRootInterface, UserAggregateInterface
         $this->email = UserEmail::fromString($userReplayedDomainEvent->email);
         $this->password = UserPassword::fromString($userReplayedDomainEvent->password);
         $this->consentGiven = UserConsent::fromBool($userReplayedDomainEvent->isConsentGiven);
-        $this->consentDate = $userReplayedDomainEvent->consentDate;
-        $this->updatedAt = $userReplayedDomainEvent->updatedAt;
+        $this->consentDate = UtcClock::fromDateTimeImmutable($userReplayedDomainEvent->consentDate);
+        $this->updatedAt = UtcClock::fromDatetime($userReplayedDomainEvent->updatedAt);
     }
 
     public function applyUserRewoundDomainEvent(UserRewoundDomainEvent $userRewoundDomainEvent): void
@@ -320,8 +315,8 @@ final class User implements AggregateRootInterface, UserAggregateInterface
         $this->email = UserEmail::fromString($userRewoundDomainEvent->email);
         $this->password = UserPassword::fromString($userRewoundDomainEvent->password);
         $this->consentGiven = UserConsent::fromBool($userRewoundDomainEvent->isConsentGiven);
-        $this->consentDate = $userRewoundDomainEvent->consentDate;
-        $this->updatedAt = $userRewoundDomainEvent->updatedAt;
+        $this->consentDate = UtcClock::fromDateTimeImmutable($userRewoundDomainEvent->consentDate);
+        $this->updatedAt = UtcClock::fromDatetime($userRewoundDomainEvent->updatedAt);
     }
 
     private function assertOwnership(UserId $userId): void

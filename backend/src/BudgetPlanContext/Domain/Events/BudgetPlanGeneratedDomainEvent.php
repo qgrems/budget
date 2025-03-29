@@ -40,7 +40,7 @@ final class BudgetPlanGeneratedDomainEvent implements DomainEventInterface
         $this->wants = $wants;
         $this->savings = $savings;
         $this->requestId = $requestId;
-        $this->occurredOn = UtcClock::now();
+        $this->occurredOn = UtcClock::immutableNow();
     }
 
     public function toArray(): array
