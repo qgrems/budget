@@ -5,7 +5,6 @@ import { useAppContext } from '../../providers'
 import { User, UserState } from './userTypes'
 import { api } from '../../infrastructure/api'
 import { authService } from '../../services/auth';
-import { useRouter } from 'next/router'
 
 export function useUser() {
   const { state, login, logout, setState } = useAppContext()
@@ -114,8 +113,7 @@ export function useUser() {
       await api.commands.deleteAccount()
       setValidMessage(t('users.accountDeleted'))
       logout();
-      const router = useRouter();
-      router.push('/');
+
     } catch (err) {
       setError(err.message)
       setState(prevState => ({

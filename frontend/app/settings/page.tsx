@@ -77,6 +77,7 @@ export default function SettingsPage() {
   };
   const handleDeleteAccount = async () => {
     await deleteAccount(setError, setValidMessage, t)
+    router.push('/')
   }
   const handleSignOut = async () => {
     await signOut(setError)
