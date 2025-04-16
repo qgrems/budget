@@ -33,7 +33,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     // Only connect to socket if user is authenticated
     if (user) {
       // Get the websocket URL from the environment or use the default one
-      const wsUrl = process.env.EXPO_PUBLIC_WS_URL || 'http://localhost:3001';
+      const wsUrl = 'http://localhost:3030';
       
       // Create socket instance with auth
       socketInstance = io(wsUrl, {

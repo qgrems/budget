@@ -1,41 +1,12 @@
 import { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
-import { useAuth } from '../contexts/AuthContext';
+import { View, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import GoogleSignInButton from '../components/GoogleSignInButton';
 
 export default function SignInScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login } = useAuth();
+  const [error] = useState<string | null>(null);
   const router = useRouter();
-
-  const handleSubmit = async () => {
-    if (!email || !password) {
-      setError('Email and password are required');
-      return;
-    }
-
-    setError(null);
-    setIsSubmitting(true);
-
-    try {
-      const success = await login(email, password);
-      
-      if (success) {
-        router.replace('/envelopes');
-      } else {
-        setError('Invalid credentials. Please try again.');
-      }
-    } catch (err) {
-      setError('An error occurred during sign in. Please try again.');
-      console.error('Login error:', err);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <KeyboardAvoidingView
@@ -52,50 +23,7 @@ export default function SignInScreen() {
           </View>
         )}
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email</Text>
-          <TextInput
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            placeholder="your@email.com"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            placeholder="Your password"
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-        </View>
-
-        <TouchableOpacity
-          style={styles.forgotPassword}
-          onPress={() => router.push('/forgot-password')}
-        >
-          <Text style={styles.forgotPasswordText}>Forgot password?</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleSubmit}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? (
-            <ActivityIndicator color="#FFF" />
-          ) : (
-            <Text style={styles.buttonText}>Sign In</Text>
-          )}
-        </TouchableOpacity>
+        <GoogleSignInButton />
 
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don't have an account? </Text>
@@ -143,6 +71,21 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     padding: 15,
     fontSize: 16,
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#ddd',
+  },
+  dividerText: {
+    paddingHorizontal: 10,
+    color: '#666',
+    fontSize: 14,
   },
   errorContainer: {
     backgroundColor: '#ffebee',
